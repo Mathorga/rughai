@@ -1,18 +1,37 @@
+import pyglet
+
 class GameObject:
-    def __init__(self):
-        pass
+    """
+    Generic game object, useful for custom update and draw.
 
-    def update(self):
-        pass
+    Methods
+    ----------
+    update(dt: int)
+    """
 
-class GameSprite(GameObject):
     def __init__(
         self,
-        resources_dir: str,
-        ysort = False,
+        x: int = 0,
+        y: int = 0
     ):
-        if resources_dir is not None:
-            pass
+        self._x = x
+        self._y = y
+        pass
 
-        self._ysort = ysort
+    def update(self, dt):
+        """
+        Updates the whole object.
+        All logic goes here, including movement.
+
+        Parameters
+        ----------
+        dt : int
+            Time (in ms) since the last frame was calculated.
+        """
+
+        pass
+
+    def draw(self):
+        """Draws the object."""
+
         pass

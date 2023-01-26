@@ -5,7 +5,7 @@ import pyglet.math as pm
 import settings
 from camera import Camera
 from fixed_resolution import FixedResolution
-from game_window import GameWindow
+from game_object import GameObject
 
 class Application:
     def __init__(
@@ -15,8 +15,12 @@ class Application:
         window_width: int,
         window_height: int,
         title,
-        fullscreen: bool = False
+        fullscreen: bool = False,
+        assets_path: str = "../assets"
     ):
+        pyglet.resource.path = [assets_path]
+        pyglet.resource.reindex()
+
         # Create a new window.
         self._window = self._create_window(
             window_width if window_width is not None else view_width,
@@ -26,7 +30,11 @@ class Application:
         )
 
         # Define a fixed resolution.
-        self._fr = self._create_fr(view_width, view_height)
+        self._fr = FixedResolution(
+            self._window,
+            width = view_width,
+            height = view_height
+        )
 
         # Create a camera.
         self._camera = Camera(
@@ -34,13 +42,17 @@ class Application:
         )
 
         self._window.push_handlers(self)
-        self._sprites = []
+        self._objects = []
+
+    def add_object(self, game_object: GameObject):
+        self._objects.append(game_object)
 
     def on_draw(self):
+        self._window.clear()
         with self._fr:
             with self._camera:
-                for sprite in self._sprites:
-                    sprite.draw()
+                for object in self._objects:
+                    object.draw()
 
     def _create_window(
         self,
@@ -49,10 +61,10 @@ class Application:
         title,
         fullscreen: bool
     ) -> pyglet.window.Window:
-        win = GameWindow(
-            view_width = view_width * 3 if not fullscreen else None,
-            view_height = view_height * 3 if not fullscreen else None,
-            title = title,
+        win = pyglet.window.Window(
+            view_width if not fullscreen else None,
+            view_height if not fullscreen else None,
+            title,
             fullscreen = fullscreen,
             resizable = True
         )
@@ -60,16 +72,9 @@ class Application:
 
         return win
 
-    def _create_fr(self, width, height):
-        fr = FixedResolution(
-            self._window,
-            width = width,
-            height = height
-        )
-        return fr
-
     def update(self, dt):
-        print("Giaccone")
+        for object in self._objects:
+            object.update(dt)
         pass
 
     def run(self):

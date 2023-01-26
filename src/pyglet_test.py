@@ -30,8 +30,8 @@ fr = FixedResolution(
 
 fps_display = pyglet.window.FPSDisplay(window)
 
-test_camera = Camera(
-    window = window,
+world_camera = Camera(
+    window = window
 )
 
 # Create a test label.
@@ -94,20 +94,26 @@ speed_line = pyglet.shapes.Line(
 speed_line.opacity = 100
 
 image = pyglet.resource.image("sprites/rughai/iryo/iryo.png")
+anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_run.gif")
 image.anchor_x = image.width / 2
 image.anchor_y = 0
+for frame in anim.frames:
+    frame.image.anchor_x = anim.get_max_width() / 2
+    frame.image.anchor_y = 0
+
 sprite = pyglet.sprite.Sprite(
-    img = image
+    img = anim
 )
 max_speed = 100
 speed = 0
 accel = 10
 dir = 0
 
-test_camera.position = (
+world_camera.position = (
     sprite.x - settings.VIEW_WIDTH / 2,
     sprite.y - settings.VIEW_HEIGHT / 2
 )
+cam_speed = 8
 
 keys = {
     key.W: False,
@@ -122,7 +128,7 @@ def on_draw():
 
     with fr:
         background.draw()
-        with test_camera:
+        with world_camera:
             sprite.draw()
             circle_1.draw()
             circle_2.draw()
@@ -153,15 +159,15 @@ def update(dt):
     sprite.y += movement.y
 
     camera_movement = pm.Vec2(
-        (sprite.x - settings.VIEW_WIDTH / 2 - test_camera.position[0]) * 0.1,
-        (sprite.y - settings.VIEW_HEIGHT / 2 - test_camera.position[1]) * 0.1
+        (sprite.x - settings.VIEW_WIDTH / 2 - world_camera.position[0]) * cam_speed * dt,
+        (sprite.y - settings.VIEW_HEIGHT / 2 - world_camera.position[1]) * cam_speed * dt
     )
-    test_camera.position = (
-        test_camera.position[0] + camera_movement.x,
-        test_camera.position[1] + camera_movement.y
+    world_camera.position = (
+        world_camera.position[0] + camera_movement.x,
+        world_camera.position[1] + camera_movement.y
     )
-    cam_line.x = test_camera.position[0] + settings.VIEW_WIDTH / 2
-    cam_line.y = test_camera.position[1] + settings.VIEW_HEIGHT / 2
+    cam_line.x = world_camera.position[0] + settings.VIEW_WIDTH / 2
+    cam_line.y = world_camera.position[1] + settings.VIEW_HEIGHT / 2
     cam_line.x2 = sprite.x
     cam_line.y2 = sprite.y
 
