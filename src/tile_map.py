@@ -1,3 +1,5 @@
+import os
+import json
 import pyglet
 import pyglet.gl as gl
 
@@ -41,11 +43,15 @@ class TileMap(GameObject):
     def __init__(
         self,
         order: int,
-        tile_set: TileSet
+        tile_set: TileSet,
+        map,
+        map_width
     ):
         self._group = pyglet.graphics.Group(order=order)
         self._batch = pyglet.graphics.Batch()
         self._tile_set = tile_set
+        self._map = map
+        self._map_width = map_width
         self._sprites = [
             pyglet.sprite.Sprite(
                 img = tex,
@@ -57,21 +63,38 @@ class TileMap(GameObject):
         ]
         pass
 
+    def from_tmx_file(
+        order: int,
+        source: str
+    ):
+        """Constructs a new TileMap from the given TMX (XML) file."""
+
+        # TODO Load TMX file.
+        return TileMap()
+
+    def from_tmj_file(
+        order: int,
+        source: str,
+        tile_set: TileSet
+    ):
+        """Constructs a new TileMap from the given TMJ (JSON) file."""
+
+        data: dict
+
+        # TODO Load TMJ file.
+        with open(f"{os.path.dirname(__file__)}/{pyglet.resource.path[0]}/{source}", "r") as content:
+            data = json.load(content)
+
+        map_width = data["width"]
+
+        return TileMap(
+            order = 1,
+            tile_set = tile_set,
+            # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
+            map = [i - 1 for i in data["layers"][0]["data"]]
+        )
+
     def draw(self):
         # self._sprites[21].draw()
         # self._sprites[0][0].draw()
         self._batch.draw()
-
-
-class GameBatch(GameObject):
-    def __init__(self):
-        self._batch = pyglet.graphics.Batch()
-
-    def draw(self):
-        self._batch.draw()
-
-    def add_sprite(self, sprite: pyglet.sprite.Sprite):
-        """
-        Adds the given sprite to the batch.
-        """
-        sprite.batch = self._batch

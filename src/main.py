@@ -13,10 +13,11 @@ app = Application(
     assets_path = "../assets"
 )
 
-rughai_ground_tile_map = TileMap(
+rughai_ground_tile_map = TileMap.from_tmj_file(
+    source = "tilemaps/rughai_hub_50_50.tmj",
     order = 1,
     tile_set = TileSet(
-        source = "tilesets/rughai/ground.png",
+        source = "tilemaps/tilesets/rughai/ground.png",
         tile_width = 8,
         tile_height = 8
     ),
