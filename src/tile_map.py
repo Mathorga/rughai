@@ -88,15 +88,6 @@ class TileMap(GameObject):
         self.__map = map
         self.__map_width = map_width
         self.__map_height = map_height
-        # self.__sprites = [
-        #     pyglet.sprite.Sprite(
-        #         img = tex,
-        #         x = tex_index % (tile_set.get_texture_width() / tile_set.__tile_width) * self.__tile_set.__tile_width,
-        #         y = 88 - int(tex_index / (tile_set.get_texture_width() / tile_set.__tile_width)) * self.__tile_set.__tile_height,
-        #         batch = self.__batch,
-        #         group = self.__group
-        #     ) for (tex_index, tex) in enumerate(self.__tile_set.get_tiles())
-        # ]
 
         width = self.__map_width * self.__tile_set.get_tile_width()
         height = (self.__map_height - 1) * self.__tile_set.get_tile_height()

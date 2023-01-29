@@ -84,6 +84,10 @@ class Application:
         pass
 
     def run(self):
+        # Enable depth testing in order to allow for depth sorting.
+        # TODO Try this out! Use the z coordinate as depth!
+        #gl.glEnable(gl.GL_DEPTH_TEST)
+
         # Scale textures using nearest neighbor filtering.
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
