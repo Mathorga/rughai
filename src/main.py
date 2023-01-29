@@ -1,7 +1,6 @@
 import settings
 from application import Application
 from tile_map import TileSet, TileMap
-import game_object
 
 # Create app.
 app = Application(
@@ -10,11 +9,12 @@ app = Application(
     window_width = 600,
     window_height = 600,
     title = settings.TITLE,
-    assets_path = "../assets"
+    assets_path = "../assets",
+    debug = True
 )
 
 rughai_ground_tile_map = TileMap.from_tmj_file(
-    source = "tilemaps/rughai_hub_50_50.tmj",
+    source = "tilemaps/rughai/hub.tmj",
     order = 1,
     tile_set = TileSet(
         source = "tilemaps/tilesets/rughai/ground.png",

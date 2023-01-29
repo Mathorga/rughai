@@ -16,7 +16,8 @@ class Application:
         window_height: int,
         title,
         fullscreen: bool = False,
-        assets_path: str = "../assets"
+        assets_path: str = "../assets",
+        debug: bool = False
     ):
         pyglet.resource.path = [assets_path]
         pyglet.resource.reindex()
@@ -28,6 +29,8 @@ class Application:
             title,
             fullscreen
         )
+
+        self.fps_display = pyglet.window.FPSDisplay(self._window) if debug else None
 
         # Define a fixed resolution.
         self._fr = FixedResolution(
@@ -53,6 +56,9 @@ class Application:
             with self._camera:
                 for object in self._objects:
                     object.draw()
+
+        if self.fps_display != None:
+            self.fps_display.draw()
 
     def _create_window(
         self,
