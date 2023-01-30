@@ -93,10 +93,7 @@ speed_line = pyglet.shapes.Line(
 )
 speed_line.opacity = 100
 
-image = pyglet.resource.image("sprites/rughai/iryo/iryo.png")
 anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_run.gif")
-image.anchor_x = image.width / 2
-image.anchor_y = 0
 for frame in anim.frames:
     frame.image.anchor_x = anim.get_max_width() / 2
     frame.image.anchor_y = 0

@@ -14,8 +14,8 @@ class GameObject:
         x: int = 0,
         y: int = 0
     ):
-        self._x = x
-        self._y = y
+        self.x = x
+        self.y = y
         pass
 
     def update(self, dt):
