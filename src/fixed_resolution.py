@@ -74,11 +74,11 @@ class FixedResolution:
     def _calculate_area(self, new_screen_width, new_screen_height):
         aspect_ratio = self.width / self.height
         aspect_width = new_screen_width
-        aspect_height = aspect_width / aspect_ratio + 0.5
+        aspect_height = (aspect_width / aspect_ratio) + 0.5
 
         if aspect_height > new_screen_height:
             aspect_height = new_screen_height
-            aspect_width = aspect_height * aspect_ratio + 0.5
+            aspect_width = (aspect_height * aspect_ratio) + 0.5
 
         return (
             # X.
