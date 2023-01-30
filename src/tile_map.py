@@ -95,7 +95,7 @@ class TileMap(GameObject):
             pyglet.sprite.Sprite(
                 img = self.__tile_set.get_tiles()[tex_index],
                 x = (index % self.__map_width) * self.__tile_set.get_tile_width(),
-                y = height - (int(index / self.__map_width) * self.__tile_set.get_tile_height()),
+                y = height - ((index // self.__map_width) * self.__tile_set.get_tile_height()),
                 group = self.__group,
                 batch = self.__batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
