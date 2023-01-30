@@ -6,6 +6,7 @@ import settings
 from camera import Camera
 from fixed_resolution import FixedResolution
 from game_object import GameObject
+from input_controller import InputController
 
 class Application:
     def __init__(
@@ -14,7 +15,7 @@ class Application:
         view_height: int,
         window_width: int,
         window_height: int,
-        title,
+        title: str,
         fullscreen: bool = False,
         assets_path: str = "../assets",
         debug: bool = False
@@ -29,8 +30,12 @@ class Application:
             title,
             fullscreen
         )
+        self.__fps_display = pyglet.window.FPSDisplay(self._window) if debug else None
 
-        self.fps_display = pyglet.window.FPSDisplay(self._window) if debug else None
+        # Create a new input controller.
+        self.__input_controller = InputController(
+            window = self._window
+        )
 
         # Define a fixed resolution.
         self._fr = FixedResolution(
@@ -57,8 +62,8 @@ class Application:
                 for object in self._objects:
                     object.draw()
 
-        if self.fps_display != None:
-            self.fps_display.draw()
+        if self.__fps_display != None:
+            self.__fps_display.draw()
 
     def _create_window(
         self,

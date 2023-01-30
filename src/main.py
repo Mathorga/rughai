@@ -13,6 +13,7 @@ app = Application(
     debug = True
 )
 
+# Add a tilemap to the app.
 rughai_ground_tile_map = TileMap.from_tmj_file(
     source = "tilemaps/rughai/hub.tmj",
     order = 1,
