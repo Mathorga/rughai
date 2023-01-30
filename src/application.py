@@ -51,8 +51,18 @@ class Application:
 
         self._window.push_handlers(self)
         self._objects = []
+        self._cam_target = None
 
-    def add_object(self, game_object: GameObject):
+    def add_object(
+        self,
+        game_object: GameObject,
+        cam_target: bool = False
+    ):
+        game_object.set_input_controller(self.__input_controller)
+
+        if cam_target:
+            self._cam_target = game_object
+
         self._objects.append(game_object)
 
     def on_draw(self):
@@ -84,9 +94,15 @@ class Application:
         return win
 
     def update(self, dt):
+        # Update camera.
+        if self._cam_target != None:
+            self._camera.position = (
+                self._cam_target.x,
+                self._cam_target.y
+            )
+
         for object in self._objects:
             object.update(dt)
-        pass
 
     def run(self):
         # Enable depth testing in order to allow for depth sorting.

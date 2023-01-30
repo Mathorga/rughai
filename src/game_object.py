@@ -12,8 +12,7 @@ class GameObject:
     def __init__(
         self,
         x: int = 0,
-        y: int = 0,
-        input_controller: InputController = None
+        y: int = 0
     ):
         """
         Creates a new game object.
@@ -30,7 +29,7 @@ class GameObject:
 
         self.x = x
         self.y = y
-        self._input_controller = input_controller
+        self._input_controller = None
         pass
 
     def update(self, dt):
@@ -50,3 +49,18 @@ class GameObject:
         """Draws the object."""
 
         pass
+
+    def set_input_controller(
+        self,
+        input_controller: InputController
+    ):
+        """
+        Sets the object's input controller.
+
+        Parameters
+        ----------
+        input_controller: InputController
+            The controller to assing to self.
+        """
+
+        self._input_controller = input_controller

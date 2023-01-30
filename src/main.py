@@ -1,6 +1,7 @@
 import settings
 from application import Application
 from tile_map import TileSet, TileMap
+from character import Player
 
 # Create app.
 app = Application(
@@ -24,7 +25,14 @@ rughai_ground_tile_map = TileMap.from_tmj_file(
     ),
 )
 
+iryo = Player(
+    res_folder = "sprites/rughai/iryo/iryo.gif",
+    x = 0,
+    y = 0
+)
+
 
 app.add_object(rughai_ground_tile_map)
+app.add_object(iryo, cam_target = True)
 
 app.run()

@@ -6,13 +6,21 @@ class InputController:
         window: pyglet.window.Window
     ):
         self.__window = window
-        self.keys = {}
+        self.keys = dict()
 
         self.__window.push_handlers(self)
 
 
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(
+        self,
+        symbol: int,
+        modifiers
+    ):
         self.keys[symbol] = True
 
-    def on_key_release(self, symbol, modifiers):
+    def on_key_release(
+        self,
+        symbol: int,
+        modifiers
+    ):
         self.keys[symbol] = False
