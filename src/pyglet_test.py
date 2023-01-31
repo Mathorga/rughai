@@ -4,7 +4,7 @@ import pyglet.gl as gl
 import pyglet.math as pm
 
 import settings
-from camera import Camera
+from engine.camera import Camera
 from fixed_resolution import FixedResolution
 
 pyglet.resource.path = ["../assets"]

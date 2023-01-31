@@ -1,9 +1,8 @@
-import os
 import json
 import pyglet
 import pyglet.gl as gl
 
-from game_object import GameObject
+from engine.game_object import GameObject
 
 
 class TileSet:
@@ -121,7 +120,7 @@ class TileMap(GameObject):
         data: dict
 
         # TODO Load TMJ file.
-        with open(f"{os.path.dirname(__file__)}/{pyglet.resource.path[0]}/{source}", "r") as content:
+        with open(f"{pyglet.resource.path[0]}/{source}", "r") as content:
             data = json.load(content)
 
         return TileMap(

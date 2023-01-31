@@ -1,4 +1,4 @@
-from input_controller import InputController
+from engine.input_controller import InputController
 
 class GameObject:
     """
@@ -23,13 +23,10 @@ class GameObject:
             X position of the object
         y: int
             Y position of the object
-        input_controller: InputController
-            Input handler for providing inputs to the object.
         """
 
         self.x = x
         self.y = y
-        self._input_controller = None
         pass
 
     def update(self, dt):

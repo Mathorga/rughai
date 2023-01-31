@@ -1,108 +1,74 @@
 import pyglet
 import pyglet.gl as gl
 import pyglet.math as pm
+from engine.character import Player
 
 import settings
-from camera import Camera
-from fixed_resolution import FixedResolution
-from game_object import GameObject
-from input_controller import InputController
+from engine.input_controller import InputController
+from engine.scene import Scene
+from engine.tile_map import TileMap, TileSet
 
 class Application:
     def __init__(
         self,
-        view_width: int,
-        view_height: int,
-        window_width: int,
-        window_height: int,
-        title: str,
-        fullscreen: bool = False,
-        assets_path: str = "../assets",
         debug: bool = False
     ):
-        pyglet.resource.path = [assets_path]
+        pyglet.resource.path = ["../assets"]
         pyglet.resource.reindex()
 
         # Create a new window.
-        self._window = self._create_window(
-            window_width if window_width is not None else view_width,
-            window_height if window_height is not None else view_height,
-            title,
-            fullscreen
+        self._window = pyglet.window.Window(
+            settings.WINDOW_WIDTH if not settings.FULLSCREEN else None,
+            settings.WINDOW_HEIGHT if not settings.FULLSCREEN else None,
+            settings.TITLE,
+            fullscreen = settings.FULLSCREEN,
+            resizable = True
         )
+        self._window.set_minimum_size(settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT)
+        self._window.push_handlers(self)
         self.__fps_display = pyglet.window.FPSDisplay(self._window) if debug else None
 
         # Create a new input controller.
-        self.__input_controller = InputController(
+        self._input = InputController(
             window = self._window
         )
 
-        # Define a fixed resolution.
-        self._fr = FixedResolution(
-            self._window,
-            width = view_width,
-            height = view_height
-        )
-
-        # Create a camera.
-        self._camera = Camera(
+        # Create the starting scene.
+        self._scene = Scene(
             window = self._window,
+            view_width = settings.VIEW_WIDTH,
+            view_height = settings.VIEW_HEIGHT
+        )
+        # Add a tilemap to the app.
+        rughai_ground_tile_map = TileMap.from_tmj_file(
+            source = "tilemaps/rughai/hub.tmj",
+            order = 1,
+            tile_set = TileSet(
+                source = "tilemaps/tilesets/rughai/ground.png",
+                tile_width = 8,
+                tile_height = 8
+            ),
         )
 
-        self._window.push_handlers(self)
-        self._objects = []
-        self._cam_target = None
+        iryo = Player(
+            res_folder = "sprites/rughai/iryo/iryo_idle.gif",
+            x = 0,
+            y = 0,
+            input_controller = self._input
+        )
 
-    def add_object(
-        self,
-        game_object: GameObject,
-        cam_target: bool = False
-    ):
-        game_object.set_input_controller(self.__input_controller)
-
-        if cam_target:
-            self._cam_target = game_object
-
-        self._objects.append(game_object)
+        self._scene.add_object(rughai_ground_tile_map)
+        self._scene.add_object(iryo, cam_target = True)
 
     def on_draw(self):
         self._window.clear()
-        with self._fr:
-            with self._camera:
-                for object in self._objects:
-                    object.draw()
+        self._scene.draw()
 
         if self.__fps_display != None:
             self.__fps_display.draw()
 
-    def _create_window(
-        self,
-        view_width: int,
-        view_height: int,
-        title,
-        fullscreen: bool
-    ) -> pyglet.window.Window:
-        win = pyglet.window.Window(
-            view_width if not fullscreen else None,
-            view_height if not fullscreen else None,
-            title,
-            fullscreen = fullscreen,
-            resizable = True
-        )
-        win.set_minimum_size(view_width, view_height)
-
-        return win
-
     def update(self, dt):
-        # Update camera.
-        if self._cam_target != None:
-            self._camera.position = (
-                self._cam_target.x,
-                self._cam_target.y
-            )
-
-        for object in self._objects:
-            object.update(dt)
+        self._scene.update(dt)
 
     def run(self):
         # Enable depth testing in order to allow for depth sorting.
@@ -115,3 +81,4 @@ class Application:
 
         pyglet.clock.schedule_interval(self.update, 1.0 / settings.TARGET_FPS)
         pyglet.app.run()
+        
