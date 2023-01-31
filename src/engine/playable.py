@@ -90,6 +90,8 @@ class Playable(GameObject):
             self._sprite.image = image_to_show
 
     def update(self, dt):
+        super().update(dt)
+
         self.input()
         self.move(dt)
         self.update_sprite()

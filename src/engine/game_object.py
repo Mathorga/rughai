@@ -27,7 +27,6 @@ class GameObject:
 
         self.x = x
         self.y = y
-        pass
 
     def update(self, dt):
         """
@@ -46,18 +45,3 @@ class GameObject:
         """Draws the object."""
 
         pass
-
-    def set_input_controller(
-        self,
-        input_controller: InputController
-    ):
-        """
-        Sets the object's input controller.
-
-        Parameters
-        ----------
-        input_controller: InputController
-            The controller to assing to self.
-        """
-
-        self._input_controller = input_controller

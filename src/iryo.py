@@ -24,12 +24,14 @@ class Iryo(Playable):
 
         super().__init__(
             input_controller = input_controller,
-            stats = Stats(
-                acceleration = 5
-            ),
+            stats = Stats(),
             idle_animation = idle_animation,
             walk_animation = walk_animation,
             run_animation = run_animation,
             x = x,
             y = y
         )
+
+    def update(self, dt):
+        super().update(dt)
+        pass

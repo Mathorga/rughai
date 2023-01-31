@@ -25,26 +25,39 @@ class Scene:
         self._camera = Camera(
             window = self._window
         )
-        self._camera_speed = 10
-
-        self._objects = []
+        self._cam_speed = 10
         self._cam_target = None
+
+        self._fixed_objs = []
+        self._sorted_objs = []
+
 
     def draw(self):
         with self._fr:
             with self._camera:
-                for obj in self._objects:
+                # Draw fixed objects.
+                for obj in self._fixed_objs:
+                    obj.draw()
+
+                # Draw sorted objects.
+                for obj in self._sorted_objs:
                     obj.draw()
 
     def update(self, dt):
-        for object in self._objects:
+        # Sort objects by y coord in order to get depth.
+        self._sorted_objs.sort(key = lambda obj : -obj.y)
+
+        for object in self._fixed_objs:
+            object.update(dt)
+
+        for object in self._sorted_objs:
             object.update(dt)
 
         # Update camera.
         if self._cam_target != None:
             camera_movement = pm.Vec2(
-                (self._cam_target.x - self._view_width / 2 - self._camera.position[0]) * self._camera_speed * dt,
-                (self._cam_target.y - self._view_height / 2 - self._camera.position[1]) * self._camera_speed * dt
+                (self._cam_target.x - self._view_width / 2 - self._camera.position[0]) * self._cam_speed * dt,
+                (self._cam_target.y - self._view_height / 2 - self._camera.position[1]) * self._cam_speed * dt
             )
             self._camera.position = (
                 self._camera.position[0] + camera_movement.x,
@@ -54,7 +67,8 @@ class Scene:
     def add_object(
         self,
         game_object: GameObject,
-        cam_target: bool = False
+        cam_target: bool = False,
+        sorted: bool = False
     ):
         if cam_target:
             self._cam_target = game_object
@@ -63,4 +77,7 @@ class Scene:
                 self._cam_target.y - self._view_height / 2,
             )
 
-        self._objects.append(game_object)
+        if sorted:
+            self._sorted_objs.append(game_object)
+        else:
+            self._fixed_objs.append(game_object)

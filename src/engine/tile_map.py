@@ -77,13 +77,12 @@ class TileSet:
 class TileMap(GameObject):
     def __init__(
         self,
-        order: int,
         tile_set: TileSet,
         map,
         map_width: int,
         map_height: int
     ):
-        self.__group = pyglet.graphics.Group(order=order)
+        super().__init__()
         self.__batch = pyglet.graphics.Batch()
         self.__tile_set = tile_set
         self.__map = map
@@ -97,14 +96,12 @@ class TileMap(GameObject):
                 img = self.__tile_set.get_tiles()[tex_index],
                 x = (index % self.__map_width) * self.__tile_set.get_tile_width(),
                 y = height - ((index // self.__map_width) * self.__tile_set.get_tile_height()),
-                group = self.__group,
                 batch = self.__batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
         pass
 
     def from_tmx_file(
-        order: int,
         source: str
     ):
         """Constructs a new TileMap from the given TMX (XML) file."""
@@ -113,7 +110,6 @@ class TileMap(GameObject):
         return TileMap()
 
     def from_tmj_file(
-        order: int,
         source: str,
         tile_set: TileSet
     ):
@@ -126,7 +122,6 @@ class TileMap(GameObject):
             data = json.load(content)
 
         return TileMap(
-            order = 1,
             tile_set = tile_set,
             # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
             map = [i - 1 for i in data["layers"][0]["data"]],
