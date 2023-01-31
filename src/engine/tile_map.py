@@ -37,6 +37,8 @@ class TileSet:
             for x in range(self.__margin, self.__texture_width - self.__spacing, self.__tile_width + self.__spacing):
                 # Cut the needed region from the given texture and save it.
                 tile = self.__texture.get_region(x, self.__texture_height - y - self.__tile_height, self.__tile_width, self.__tile_height)
+                tile.anchor_x = self.__tile_width / 2
+                tile.anchor_y = self.__tile_height / 2
                 self.__tiles.append(tile)
 
                 # Set texture clamping to avoid mis-rendering subpixel edges.

@@ -1,7 +1,7 @@
 import pyglet
 import pyglet.gl as gl
 import pyglet.math as pm
-from engine.character import Player
+from engine.playable import Playable
 
 import settings
 from engine.input_controller import InputController
@@ -50,7 +50,7 @@ class Application:
             ),
         )
 
-        iryo = Player(
+        iryo = Playable(
             res_folder = "sprites/rughai/iryo/iryo_idle.gif",
             x = 0,
             y = 0,

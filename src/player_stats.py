@@ -40,8 +40,8 @@ class PlayerStats(Stats):
         # Current values.
         self._health = self._max_health
         self._energy = self._max_energy
-        self.speed = 0
-        self.dir = 0
+        self._speed = 0
+        self._dir = 0
 
     def compute_stat(self, min_value, modifier, exponent):
         return min_value + pow((math.log(modifier + 1) / math.log(10)), exponent) * 100

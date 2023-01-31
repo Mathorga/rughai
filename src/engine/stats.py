@@ -1,4 +1,4 @@
-class PlayerStats:
+class Stats:
     def __init__(
         self,
         max_speed: int = 100,
