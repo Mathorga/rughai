@@ -17,8 +17,8 @@ class RugHaiHub(Scene):
     ):
         super().__init__(
             window = window,
-            view_width = settings.VIEW_WIDTH,
-            view_height = settings.VIEW_HEIGHT
+            view_width = settings.VIEW_WIDTH * settings.PIXEL_MULTIPLIER,
+            view_height = settings.VIEW_HEIGHT * settings.PIXEL_MULTIPLIER
         )
 
         # Define a tilemap.
@@ -44,8 +44,8 @@ class RugHaiHub(Scene):
 
         iryo = Iryo(
             input_controller = input_controller,
-            x = 10 * tile_size,
-            y = 10 * tile_size
+            x = 10 * tile_size * settings.PIXEL_MULTIPLIER,
+            y = 10 * tile_size * settings.PIXEL_MULTIPLIER
         )
 
         # Define tree.

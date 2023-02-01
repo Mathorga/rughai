@@ -18,7 +18,8 @@ class Playable(GameObject):
         run_animation,
         x: int = 0,
         y: int = 0,
-        run_threshold: float = 0.9
+        run_threshold: float = 0.9,
+        pixel_multiplier: float = 1.0
     ):
         super().__init__(
             x = x,
@@ -43,6 +44,7 @@ class Playable(GameObject):
             x = self.x,
             y = self.y
         )
+        self._sprite.scale = pixel_multiplier
         self._hor_facing = 1
 
     def input(self):
