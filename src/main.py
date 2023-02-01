@@ -2,7 +2,6 @@ import os.path
 
 import pyglet
 import pyglet.gl as gl
-import pyglet.math as pm
 
 from engine.input_controller import InputController
 
@@ -47,7 +46,7 @@ def update(dt):
 
 # Enable depth testing in order to allow for depth sorting.
 # TODO Try this out! Use the z coordinate as depth!
-gl.glEnable(gl.GL_DEPTH_TEST)
+# gl.glEnable(gl.GL_DEPTH_TEST)
 
 # Scale textures using nearest neighbor filtering.
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
