@@ -1,4 +1,5 @@
 import pyglet
+import pyglet.math as pm
 
 from engine.playable import Playable
 from engine.input_controller import InputController
@@ -31,7 +32,21 @@ class Iryo(Playable):
             x = x,
             y = y
         )
+        self._slow = False
 
-    def update(self, dt):
-        super().update(dt)
-        pass
+    def input(self):
+        super().input()
+        self._slow = self._input.keys[pyglet.window.key.LSHIFT]
+
+    def update_stats(self):
+        super().update_stats()
+
+        if self._slow:
+            # Clamp speed between 0 and walk speed.
+            self._stats._speed = pm.clamp(self._stats._speed, 0.0, self._stats._max_speed / 2)
+
+    def _init_input(self):
+        super()._init_input()
+
+        if self._input != None:
+            self._input.keys[pyglet.window.key.LSHIFT] = False

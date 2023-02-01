@@ -27,7 +27,7 @@ class Playable(GameObject):
 
         # Setup input handling.
         self._input = input_controller
-        self.__init_input()
+        self._init_input()
         self._move_input = pyglet.math.Vec2()
 
         self._stats = stats
@@ -49,9 +49,7 @@ class Playable(GameObject):
         keys = self._input.keys
         self._move_input = pyglet.math.Vec2(keys[key.D] - keys[key.A], keys[key.W] - keys[key.S]).normalize()
 
-    def move(self, dt):
-        movement_base = pm.Vec2.from_polar(1.0, self._stats._dir)
-
+    def update_stats(self):
         # Only update facing if there's any horizontal movement.
         if self._move_input.x != 0.0:
             self._hor_facing = 1 if self._move_input.x > 0 else -1
@@ -65,9 +63,9 @@ class Playable(GameObject):
         # Clamp speed between 0 and max speed.
         self._stats._speed = pm.clamp(self._stats._speed, 0.0, self._stats._max_speed)
 
+    def move(self, dt):
+        movement_base = pm.Vec2.from_polar(1.0, self._stats._dir)
         self._movement = movement_base.from_magnitude(self._stats._speed * dt)
-        self.x += self._movement.x
-        self.y += self._movement.y
 
     def update_sprite(self):
         # Update sprite position.
@@ -92,8 +90,20 @@ class Playable(GameObject):
     def update(self, dt):
         super().update(dt)
 
+        # Fetch input.
         self.input()
+
+        # Update stats based on input.
+        self.update_stats()
+
+        # Compute speed.
         self.move(dt)
+
+        # Apply movement.
+        self.x += self._movement.x
+        self.y += self._movement.y
+
+        # Update sprite accordingly.
         self.update_sprite()
 
     def draw(self):
@@ -101,9 +111,9 @@ class Playable(GameObject):
 
     def set_input(self, input_controller: InputController):
         self._input = input_controller
-        self.__init_input()
+        self._init_input()
 
-    def __init_input(self):
+    def _init_input(self):
         # Preset used values, so that later accesses do not need any checks.
         if self._input != None:
             self._input.keys[pyglet.window.key.W] = False

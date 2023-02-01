@@ -10,7 +10,6 @@ class InputController:
 
         self.__window.push_handlers(self)
 
-
     def on_key_press(
         self,
         symbol: int,
