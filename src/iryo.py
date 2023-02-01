@@ -38,8 +38,8 @@ class Iryo(Playable):
         super().input()
         self._slow = self._input.keys[pyglet.window.key.LSHIFT]
 
-    def update_stats(self):
-        super().update_stats()
+    def update_stats(self, dt):
+        super().update_stats(dt)
 
         if self._slow:
             # Clamp speed between 0 and walk speed.

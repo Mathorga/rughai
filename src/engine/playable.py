@@ -49,16 +49,16 @@ class Playable(GameObject):
         keys = self._input.keys
         self._move_input = pyglet.math.Vec2(keys[key.D] - keys[key.A], keys[key.W] - keys[key.S]).normalize()
 
-    def update_stats(self):
+    def update_stats(self, dt):
         # Only update facing if there's any horizontal movement.
         if self._move_input.x != 0.0:
             self._hor_facing = 1 if self._move_input.x > 0 else -1
 
         if self._move_input.mag > 0.5:
             self._stats._dir = self._move_input.heading
-            self._stats._speed += self._stats._accel
+            self._stats._speed += self._stats._accel * dt
         else:
-            self._stats._speed -= self._stats._accel
+            self._stats._speed -= self._stats._accel * dt
 
         # Clamp speed between 0 and max speed.
         self._stats._speed = pm.clamp(self._stats._speed, 0.0, self._stats._max_speed)
@@ -94,7 +94,7 @@ class Playable(GameObject):
         self.input()
 
         # Update stats based on input.
-        self.update_stats()
+        self.update_stats(dt)
 
         # Compute speed.
         self.move(dt)
