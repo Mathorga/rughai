@@ -17,6 +17,7 @@ class Scene:
         self._view_width = view_width
         self._view_height = view_height
         self._scaling = scaling
+
         self._fr = FixedResolution(
             window = self._window,
             width = self._view_width * self._scaling,

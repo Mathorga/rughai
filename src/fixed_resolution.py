@@ -50,7 +50,12 @@ import pyglet.gl as gl
 
 
 class FixedResolution:
-    def __init__(self, window, width, height):
+    def __init__(
+        self,
+        window: pyglet.window.Window,
+        width: int,
+        height: int
+    ):
         self.window = window
         self.width = width
         self.height = height
