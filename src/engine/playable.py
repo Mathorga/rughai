@@ -19,11 +19,12 @@ class Playable(GameObject):
         x: int = 0,
         y: int = 0,
         run_threshold: float = 0.9,
-        pixel_multiplier: float = 1.0
+        scaling: float = 1.0
     ):
         super().__init__(
             x = x,
-            y = y
+            y = y,
+            scaling = scaling
         )
 
         # Setup input handling.
@@ -44,7 +45,7 @@ class Playable(GameObject):
             x = self.x,
             y = self.y
         )
-        self._sprite.scale = pixel_multiplier
+        self._sprite.scale = scaling
         self._hor_facing = 1
 
     def input(self):
@@ -67,7 +68,7 @@ class Playable(GameObject):
 
     def move(self, dt):
         movement_base = pm.Vec2.from_polar(1.0, self._stats._dir)
-        self._movement = movement_base.from_magnitude(self._stats._speed * dt)
+        self._movement = movement_base.from_magnitude(self._stats._speed * self._scaling * dt)
 
     def update_sprite(self):
         # Update sprite position.

@@ -12,7 +12,8 @@ class GameObject:
     def __init__(
         self,
         x: int = 0,
-        y: int = 0
+        y: int = 0,
+        scaling: int = 1
     ):
         """
         Creates a new game object.
@@ -25,8 +26,9 @@ class GameObject:
             Y position of the object
         """
 
-        self.x = x
-        self.y = y
+        self._scaling = scaling
+        self.x = x * scaling
+        self.y = y * scaling
 
     def update(self, dt):
         """

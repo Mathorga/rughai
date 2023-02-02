@@ -10,15 +10,17 @@ class Scene:
         self,
         window: pyglet.window.Window,
         view_width: int,
-        view_height: int
+        view_height: int,
+        scaling: int = 1
     ):
         self._window = window
         self._view_width = view_width
         self._view_height = view_height
+        self._scaling = scaling
         self._fr = FixedResolution(
             window = self._window,
-            width = self._view_width,
-            height = self._view_height
+            width = self._view_width * self._scaling,
+            height = self._view_height * self._scaling
         )
 
         # Create a new camera.
@@ -31,6 +33,11 @@ class Scene:
         self._fixed_objs = []
         self._sorted_objs = []
 
+    def get_scaled_view_size(self):
+        return (
+            self._view_width * self._scaling,
+            self._view_height * self._scaling
+        )
 
     def draw(self):
         with self._fr:
@@ -56,8 +63,8 @@ class Scene:
         # Update camera.
         if self._cam_target != None:
             camera_movement = pm.Vec2(
-                (self._cam_target.x - self._view_width / 2 - self._camera.position[0]) * self._cam_speed * dt,
-                (self._cam_target.y - self._view_height / 2 - self._camera.position[1]) * self._cam_speed * dt
+                (self._cam_target.x - self.get_scaled_view_size()[0] / 2 - self._camera.position[0]) * self._cam_speed * dt,
+                (self._cam_target.y - self.get_scaled_view_size()[1] / 2 - self._camera.position[1]) * self._cam_speed * dt
             )
             self._camera.position = (
                 self._camera.position[0] + camera_movement.x,
@@ -73,8 +80,8 @@ class Scene:
         if cam_target:
             self._cam_target = game_object
             self._camera.position = (
-                self._cam_target.x - self._view_width / 2,
-                self._cam_target.y - self._view_height / 2,
+                self._cam_target.x - self.get_scaled_view_size()[0] / 2,
+                self._cam_target.y - self.get_scaled_view_size()[1] / 2,
             )
 
         if sorted:

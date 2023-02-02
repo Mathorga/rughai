@@ -41,8 +41,9 @@ class TileSet:
                 tile.anchor_y = self.__tile_height / 2
                 self.__tiles.append(tile)
 
-                # Set texture clamping to avoid mis-rendering subpixel edges.
                 gl.glBindTexture(tile.target, tile.id)
+
+                # Set texture clamping to avoid mis-rendering subpixel edges.
                 gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
                 gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
 
@@ -80,26 +81,31 @@ class TileMap(GameObject):
         tile_set: TileSet,
         map,
         map_width: int,
-        map_height: int
+        map_height: int,
+        scaling: int = 1
     ):
-        super().__init__()
+        super().__init__(
+            scaling = scaling
+        )
         self.__batch = pyglet.graphics.Batch()
         self.__tile_set = tile_set
         self.__map = map
         self.map_width = map_width
         self.map_height = map_height
 
-        width = self.map_width * self.__tile_set.get_tile_width()
-        height = (self.map_height - 1) * self.__tile_set.get_tile_height()
+        width = self.map_width * tile_set.get_tile_width() * scaling
+        height = (self.map_height - 1) * tile_set.get_tile_height() * scaling
         self.__sprites = [
             pyglet.sprite.Sprite(
                 img = self.__tile_set.get_tiles()[tex_index],
-                x = (index % self.map_width) * self.__tile_set.get_tile_width(),
-                y = height - ((index // self.map_width) * self.__tile_set.get_tile_height()),
+                x = (index % self.map_width) * self.__tile_set.get_tile_width() * scaling,
+                y = height - ((index // self.map_width) * self.__tile_set.get_tile_height()) * scaling,
                 batch = self.__batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
-        pass
+        
+        for spr in self.__sprites:
+            spr.scale = scaling
 
     def from_tmx_file(
         source: str
@@ -111,7 +117,8 @@ class TileMap(GameObject):
 
     def from_tmj_file(
         source: str,
-        tile_set: TileSet
+        tile_set: TileSet,
+        scaling: int = 1
     ):
         """Constructs a new TileMap from the given TMJ (JSON) file."""
 
@@ -126,7 +133,8 @@ class TileMap(GameObject):
             # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
             map = [i - 1 for i in data["layers"][0]["data"]],
             map_width = data["width"],
-            map_height = data["height"]
+            map_height = data["height"],
+            scaling = scaling
         )
 
     def draw(self):

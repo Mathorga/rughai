@@ -13,7 +13,8 @@ class Iryo(Playable):
         self,
         input_controller: InputController,
         x: int = 0,
-        y: int = 0
+        y: int = 0,
+        scaling: float = 1.0
     ):
         # Create animations.
         idle_animation = pyglet.resource.animation("sprites/rughai/iryo/iryo_idle.gif")
@@ -32,7 +33,8 @@ class Iryo(Playable):
             walk_animation = walk_animation,
             run_animation = run_animation,
             x = x,
-            y = y
+            y = y,
+            scaling = scaling
         )
         self._slow = False
 
