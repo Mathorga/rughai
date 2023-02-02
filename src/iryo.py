@@ -6,8 +6,6 @@ from engine.input_controller import InputController
 from engine.stats import Stats
 import engine.utils
 
-import settings
-
 class Iryo(Playable):
     def __init__(
         self,
