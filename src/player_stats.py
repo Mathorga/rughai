@@ -26,7 +26,7 @@ class PlayerStats(Stats):
         # Resistance.
         self._max_health = self.compute_stat(5.0, self._resistance, 2.0, self._resistance_variation)
         self._defense = self.compute_stat(5.0, self._resistance, 2.0, self._resistance_variation)
-        self._accel = self.compute_stat(10.0, self._resistance, 2.0, self._resistance_variation)
+        self._accel = self.compute_stat(100.0, self._resistance, 2.0, self._resistance_variation)
         # Vitality.
         self._max_speed = self.compute_stat(20.0, self._vitality, 2.0, self._vitality_variation)
         self._max_energy = self.compute_stat(50.0, self._vitality, 1.46, self._vitality_variation)

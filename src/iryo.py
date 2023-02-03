@@ -29,7 +29,7 @@ class Iryo(Playable):
             input_controller = input_controller,
             stats = PlayerStats(
                 vitality = 5,
-                resistance = 10,
+                resistance = 5,
                 odds = 1,
                 variation = 0.2
             ),
