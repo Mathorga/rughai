@@ -28,7 +28,7 @@ class Scene:
         self._camera = Camera(
             window = self._window
         )
-        self._cam_speed = 10
+        self._cam_speed = 5
         self._cam_target = None
 
         self._fixed_objs = []

@@ -27,12 +27,7 @@ class Iryo(Playable):
 
         super().__init__(
             input_controller = input_controller,
-            stats = PlayerStats(
-                vitality = 5,
-                resistance = 5,
-                odds = 1,
-                variation = 0.2
-            ),
+            stats = PlayerStats(),
             idle_animation = idle_animation,
             walk_animation = walk_animation,
             run_animation = run_animation,
