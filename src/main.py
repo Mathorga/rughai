@@ -15,40 +15,38 @@ class RugHai:
         pyglet.resource.reindex()
 
         # Create a window.
-        self._win = pyglet.window.Window(
+        self._window = pyglet.window.Window(
             settings.WINDOW_WIDTH if not settings.FULLSCREEN else None,
             settings.WINDOW_HEIGHT if not settings.FULLSCREEN else None,
             settings.TITLE,
             fullscreen = settings.FULLSCREEN,
-            resizable = True
+            resizable = False
         )
-        self._win.push_handlers(self)
+        self._window.push_handlers(self)
+        self._window.set_mouse_visible(False)
 
-        self._fps_display = pyglet.window.FPSDisplay(self._win) if settings.DEBUG else None
+        # Compute pixel scaling (minimum unit is <1 / scaling>)
+        # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
+        # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
+        self._scaling = 1 if settings.PIXEL_PERFECT else min(self._window.width // settings.VIEW_WIDTH, self._window.height // settings.VIEW_HEIGHT)
 
-        if settings.PIXEL_SCALING > self._win.width / settings.VIEW_WIDTH or settings.PIXEL_SCALING > self._win.height / settings.VIEW_HEIGHT:
-            settings.PIXEL_SCALING = min(self._win.width // settings.VIEW_WIDTH, self._win.height // settings.VIEW_HEIGHT)
-
-        self._win.set_minimum_size(
-            settings.VIEW_WIDTH * settings.PIXEL_SCALING,
-            settings.VIEW_HEIGHT * settings.PIXEL_SCALING
-        )
+        self._fps_display = pyglet.window.FPSDisplay(
+            window = self._window,
+            samples = settings.TARGET_FPS
+        ) if settings.DEBUG else None
 
         # Create an input handler.
-        self._input = InputController(window = self._win)
+        self._input = InputController(window = self._window)
 
         # Create a scene.
         self._scene = RugHaiHub(
-            window = self._win,
-            input_controller = self._input
+            window = self._window,
+            input_controller = self._input,
+            scaling = self._scaling
         )
 
-    def on_resize(self, width, height):
-        if settings.PIXEL_SCALING > width / settings.VIEW_WIDTH or settings.PIXEL_SCALING > height / settings.VIEW_HEIGHT:
-            settings.PIXEL_SCALING = min(width // settings.VIEW_WIDTH, height // settings.VIEW_HEIGHT)
-
     def on_draw(self):
-        self._win.clear()
+        self._window.clear()
         self._scene.draw()
 
         if self._fps_display != None:

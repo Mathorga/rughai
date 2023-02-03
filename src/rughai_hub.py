@@ -13,13 +13,14 @@ class RugHaiHub(Scene):
     def __init__(
         self,
         window: pyglet.window.Window,
-        input_controller: InputController
+        input_controller: InputController,
+        scaling: int = 1
     ):
         super().__init__(
             window = window,
             view_width = settings.VIEW_WIDTH,
             view_height = settings.VIEW_HEIGHT,
-            scaling = settings.PIXEL_SCALING
+            scaling = scaling
         )
 
         # Define a tilemap.
@@ -31,7 +32,7 @@ class RugHaiHub(Scene):
                 tile_width = tile_size,
                 tile_height = tile_size
             ),
-            scaling = settings.PIXEL_SCALING
+            scaling = scaling
         )
 
         # Define a background.
@@ -42,14 +43,14 @@ class RugHaiHub(Scene):
             x = (tile_map.map_width * tile_size) / 2,
             y = (tile_map.map_height * tile_size) / 2,
             image = pyglet.resource.image("bg.png"),
-            scaling = settings.PIXEL_SCALING
+            scaling = scaling
         )
 
         iryo = Iryo(
             input_controller = input_controller,
             x = 10 * tile_size,
             y = 10 * tile_size,
-            scaling = settings.PIXEL_SCALING
+            scaling = scaling
         )
 
         # Define tree.
@@ -61,7 +62,7 @@ class RugHaiHub(Scene):
             image = tree_img,
             x = 5 * tile_size,
             y = 5 * tile_size,
-            scaling = settings.PIXEL_SCALING
+            scaling = scaling
         )
 
         self.add_object(bg, sorted = False)

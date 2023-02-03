@@ -3,10 +3,9 @@ import pyglet.math as pm
 
 from engine.playable import Playable
 from engine.input_controller import InputController
-from engine.stats import Stats
 import engine.utils
 
-import settings
+from player_stats import PlayerStats
 
 class Iryo(Playable):
     def __init__(
@@ -28,7 +27,12 @@ class Iryo(Playable):
 
         super().__init__(
             input_controller = input_controller,
-            stats = Stats(),
+            stats = PlayerStats(
+                vitality = 5,
+                resistance = 10,
+                odds = 1,
+                variation = 0.2
+            ),
             idle_animation = idle_animation,
             walk_animation = walk_animation,
             run_animation = run_animation,
