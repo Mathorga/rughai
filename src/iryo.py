@@ -54,8 +54,11 @@ class Iryo(Playable):
         self._state = STATE_IDLE
 
         # Movement flags.
+        # Slow walking.
         self._slow = False
+        # Currently rolling.
         self._rolling = False
+        # Rolling started.
         self._rolled = False
 
     def input(self):
@@ -87,12 +90,12 @@ class Iryo(Playable):
             else:
                 self._stats._speed -= self._stats._accel * dt
 
-        if self._slow:
-            # Clamp speed between 0 and walk speed.
-            self._stats._speed = pm.clamp(self._stats._speed, 0.0, walk_speed)
-        elif self._rolling:
+        if self._rolling:
             # Clamp speed between 0 and roll speed.
             self._stats._speed = pm.clamp(self._stats._speed, 0.0, roll_speed)
+        elif self._slow:
+            # Clamp speed between 0 and walk speed.
+            self._stats._speed = pm.clamp(self._stats._speed, 0.0, walk_speed)
         else:
             # Clamp speed between 0 and max speed.
             self._stats._speed = pm.clamp(self._stats._speed, 0.0, self._stats._max_speed)
