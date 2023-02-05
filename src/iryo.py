@@ -42,7 +42,7 @@ class Iryo(Playable):
             stats = PlayerStats(
                 vitality = 5,
                 resistance = 5,
-                odds = 1,
+                odds = 5,
                 variation = 0.2
             ),
             animation = self._idle_anim,
@@ -76,7 +76,7 @@ class Iryo(Playable):
 
         walk_speed = self._stats._max_speed * 0.5
         roll_speed = self._stats._max_speed * 2.0
-        roll_accel = self._stats._accel * 1.2
+        roll_accel = self._stats._accel * 0.5
 
         if self._rolling:
             if self._rolled:

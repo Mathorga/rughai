@@ -4,7 +4,7 @@ import random
 from engine.stats import Stats
 
 DEFAULT_MIN = 5.0
-DEFAULT_MULTIPLIER = 20.0
+DEFAULT_MAX = 20.0
 
 class PlayerStats(Stats):
     def __init__(
@@ -27,18 +27,78 @@ class PlayerStats(Stats):
 
         # Stats.
         # Resistance.
-        self._max_health = self.compute_stat(DEFAULT_MIN, self._resistance, DEFAULT_MULTIPLIER, self._resistance_variation)
-        self._defense = self.compute_stat(DEFAULT_MIN, self._resistance, DEFAULT_MULTIPLIER, self._resistance_variation)
-        self._accel = self.compute_stat(150.0, self._resistance, 319.0, self._resistance_variation)
+        self._max_health = self.compute_stat(
+            mod = self._resistance,
+            max_mod = 25,
+            min_value = DEFAULT_MIN,
+            max_value = DEFAULT_MAX,
+            variation = self._resistance_variation
+        )
+        self._defense = self.compute_stat(
+            mod = self._resistance,
+            max_mod = 25,
+            min_value = DEFAULT_MIN,
+            max_value = DEFAULT_MAX,
+            variation = self._resistance_variation
+        )
+        self._max_energy = self.compute_stat(
+            mod = self._resistance,
+            max_mod = 25,
+            min_value = DEFAULT_MIN,
+            max_value = DEFAULT_MAX,
+            variation = self._resistance_variation
+        )
         # Vitality.
-        self._max_speed = self.compute_stat(60.0, self._vitality, 29.0, self._vitality_variation)
-        self._max_energy = self.compute_stat(DEFAULT_MIN, self._vitality, DEFAULT_MULTIPLIER, self._vitality_variation)
-        self._attack = self.compute_stat(DEFAULT_MIN, self._vitality, DEFAULT_MULTIPLIER, self._vitality_variation)
-        self._crit_damage = self.compute_stat(DEFAULT_MIN, self._vitality, DEFAULT_MULTIPLIER, self._vitality_variation)
-        self._fail_damage = self.compute_stat(DEFAULT_MIN, self._vitality, DEFAULT_MULTIPLIER, self._vitality_variation)
+        self._max_speed = self.compute_stat(
+            mod = self._vitality,
+            max_mod = 25,
+            min_value = 60.0,
+            max_value = 100.0,
+            variation = self._vitality_variation
+        )
+        self._accel = self.compute_stat(
+            mod = self._vitality,
+            max_mod = 25,
+            min_value = 150.0,
+            max_value = 600.0,
+            variation = self._vitality_variation
+        )
+        self._attack = self.compute_stat(
+            mod = self._vitality,
+            max_mod = 25,
+            min_value = DEFAULT_MIN,
+            max_value = DEFAULT_MAX,
+            variation = self._vitality_variation
+        )
+        self._crit_damage = self.compute_stat(
+            mod = self._vitality,
+            max_mod = 25,
+            min_value = DEFAULT_MIN,
+            max_value = DEFAULT_MAX,
+            variation = self._vitality_variation
+        )
+        self._fail_damage = self.compute_stat(
+            mod = self._vitality,
+            max_mod = 25,
+            min_value = DEFAULT_MIN,
+            max_value = DEFAULT_MAX,
+            variation = self._vitality_variation
+        )
         # Odds.
-        self._crit_rate = self.compute_stat(DEFAULT_MIN, self._odds, DEFAULT_MULTIPLIER,  self._odds_variation)
-        self._fail_rate = self.compute_stat(DEFAULT_MIN, self._odds, DEFAULT_MULTIPLIER,  self._odds_variation)
+        self._crit_rate = self.compute_stat(
+            mod = self._odds,
+            max_mod = 25,
+            min_value = DEFAULT_MIN,
+            max_value = DEFAULT_MAX,
+            variation = self._odds_variation
+        )
+        self._fail_rate = self.compute_stat(
+            mod = self._odds,
+            max_mod = 25,
+            min_value = DEFAULT_MIN,
+            max_value = DEFAULT_MAX,
+            variation = self._odds_variation
+        )
 
         # Current values.
         self._health = self._max_health
@@ -48,12 +108,14 @@ class PlayerStats(Stats):
 
     def compute_stat(
         self,
+        mod: int,
+        max_mod: int,
         min_value: float,
-        modifier: int,
-        multiplier: float,
+        max_value: float,
         variation: float
     ):
-        return min_value + ((math.log(modifier + 1) / math.log(10))) * multiplier + variation
+        multiplier = (max_value - min_value) / ((math.log(max_mod + 1) / math.log(10)))
+        return min_value + ((math.log(mod + 1) / math.log(10))) * multiplier + variation
 
     def get_value(self):
         return (self._vitality_variation / self._variation) * (self._resistance_variation / self._variation) * (self._odds_variation / self._variation)
