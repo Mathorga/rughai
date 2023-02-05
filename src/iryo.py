@@ -35,6 +35,7 @@ class Iryo(Playable):
         engine.utils.center_anim(self._atk_idle_anim)
 
         engine.utils.set_anim_duration(self._roll_anim, 0.08)
+        self._roll_anim.frames[-1].duration = None
 
         super().__init__(
             input_controller = input_controller,
