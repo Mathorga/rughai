@@ -20,7 +20,8 @@ class RugHaiHub(Scene):
             window = window,
             view_width = settings.VIEW_WIDTH,
             view_height = settings.VIEW_HEIGHT,
-            scaling = scaling
+            scaling = scaling,
+            cam_speed = 5.0
         )
 
         # Define a tilemap.

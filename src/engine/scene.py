@@ -11,7 +11,8 @@ class Scene:
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        scaling: int = 1
+        scaling: int = 1,
+        cam_speed: float = 10.0
     ):
         self._window = window
         self._view_width = view_width
@@ -28,7 +29,7 @@ class Scene:
         self._camera = Camera(
             window = self._window
         )
-        self._cam_speed = 10
+        self._cam_speed = cam_speed
         self._cam_target = None
 
         self._fixed_objs = []

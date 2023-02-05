@@ -6,3 +6,7 @@ def center_anim(anim):
 def scale_anim(anim, scale: float):
     for frame in anim.frames:
         frame.image.scale = scale
+
+def set_anim_duration(anim, duration: float):
+    for frame in anim.frames:
+        frame.duration = duration

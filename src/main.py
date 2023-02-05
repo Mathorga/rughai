@@ -1,4 +1,6 @@
+from collections import deque
 import os.path
+from statistics import mean
 
 import pyglet
 import pyglet.gl as gl
@@ -7,6 +9,41 @@ from engine.input_controller import InputController
 
 import settings
 from rughai_hub import RugHaiHub
+
+class FPSIndicator:
+    def __init__(
+        self,
+        window: pyglet.window.Window,
+        samples: int = 240,
+        update_period: float = 0.25
+    ):
+        self._window = window
+
+        self._fps_label = pyglet.text.Label(
+            text = "",
+            anchor_x = "left",
+            anchor_y = "top",
+            x = 10,
+            y = window.height - 10,
+            bold = True
+        )
+
+        self._update_period = update_period
+        self._elapsed = 0.0
+        self._delta_times = deque(maxlen=samples)
+
+        pyglet.clock.schedule(self.update_fps)
+
+    def update_fps(self, dt):
+        self._elapsed += dt
+        self._delta_times.append(dt)
+
+        if self._elapsed >= self._update_period:
+            self._elapsed = 0.0
+            self._fps_label.text = f"TPS: {1 / mean(self._delta_times):.0f}"
+
+    def draw(self):
+        self._fps_label.draw()
 
 class RugHai:
     def __init__(self):
@@ -35,6 +72,11 @@ class RugHai:
             samples = settings.TARGET_FPS
         ) if settings.DEBUG else None
 
+        self._fps_label = FPSIndicator(
+            window = self._window,
+            samples = settings.TARGET_FPS
+        ) if settings.DEBUG else None
+
         # Create an input handler.
         self._input = InputController(window = self._window)
 
@@ -51,6 +93,9 @@ class RugHai:
 
         if self._fps_display != None:
             self._fps_display.draw()
+
+        if self._fps_label != None:
+            self._fps_label.draw()
 
     def update(self, dt):
         self._scene.update(dt)
