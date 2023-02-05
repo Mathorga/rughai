@@ -6,7 +6,22 @@ class InputController:
         window: pyglet.window.Window
     ):
         self.__window = window
-        self.keys = dict()
+        self.keys = {
+            # Movement.
+            pyglet.window.key.W: False,
+            pyglet.window.key.A: False,
+            pyglet.window.key.S: False,
+            pyglet.window.key.D: False,
+            pyglet.window.key.UP: False,
+            pyglet.window.key.LEFT: False,
+            pyglet.window.key.DOWN: False,
+            pyglet.window.key.RIGHT: False,
+
+            pyglet.window.key.SPACE: False,
+
+            # Modifiers.
+            pyglet.window.key.LSHIFT: False
+        }
 
         self.__window.push_handlers(self)
 

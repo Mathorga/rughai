@@ -1,9 +1,9 @@
 import os.path
-
 import pyglet
 import pyglet.gl as gl
 
 from engine.input_controller import InputController
+from engine.benchmark import Benchmark
 
 import settings
 from rughai_hub import RugHaiHub
@@ -23,17 +23,24 @@ class RugHai:
             resizable = False
         )
         self._window.push_handlers(self)
-        self._window.set_mouse_visible(False)
+        if not settings.DEBUG:
+            self._window.set_mouse_visible(False)
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
         self._scaling = 1 if settings.PIXEL_PERFECT else min(self._window.width // settings.VIEW_WIDTH, self._window.height // settings.VIEW_HEIGHT)
 
-        self._fps_display = pyglet.window.FPSDisplay(
+        self._update_bench = Benchmark(
             window = self._window,
-            samples = settings.TARGET_FPS
-        ) if settings.DEBUG else None
+            text = "UT: "
+        )
+
+        self._render_bench = Benchmark(
+            window = self._window,
+            text = "RT: ",
+            y = self._window.height - 30
+        )
 
         # Create an input handler.
         self._input = InputController(window = self._window)
@@ -46,14 +53,17 @@ class RugHai:
         )
 
     def on_draw(self):
-        self._window.clear()
-        self._scene.draw()
+        with self._render_bench:
+            self._window.clear()
+            self._scene.draw()
 
-        if self._fps_display != None:
-            self._fps_display.draw()
+            if settings.DEBUG:
+                self._update_bench.draw()
+                self._render_bench.draw()
 
     def update(self, dt):
-        self._scene.update(dt)
+        with self._update_bench:
+            self._scene.update(dt)
 
     def run(self):
         # Enable depth testing in order to allow for depth sorting.
