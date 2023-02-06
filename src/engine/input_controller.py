@@ -8,6 +8,7 @@ class InputController:
         self.__window = window
 
         self.keys = {}
+        self.inst_keys = {}
 
         self.__window.push_handlers(self)
 
@@ -27,3 +28,9 @@ class InputController:
 
     def __getitem__(self, key):
         return self.keys.get(key, False)
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        pass

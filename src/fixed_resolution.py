@@ -102,7 +102,7 @@ class FixedResolution:
         self.framebuffer.bind()
         self.window.clear()
 
-    def __exit__(self, *unused):
+    def __exit__(self, exception_type, exception_value, traceback):
         self.framebuffer.unbind()
         self.texture.blit(*self._target_area)
 

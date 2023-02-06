@@ -61,16 +61,12 @@ class Iryo(Playable):
         self._rolling = False
         # Rolling started.
         self._rolled = False
-        self._roll_key_pressed = False
 
     def input(self):
-        self._roll_key_pressed = False
-
         if not self._rolling:
             super().input()
             self._slow = self._input[pyglet.window.key.LSHIFT]
-            self._roll_key_pressed = self._input[pyglet.window.key.SPACE]
-            self._rolling = self._roll_key_pressed
+            self._rolling = self._input[pyglet.window.key.SPACE]
 
             if (self._rolling):
                 print("ROLLED")
@@ -122,7 +118,7 @@ class Iryo(Playable):
             else:
                 image_to_show = self._run_anim
         
-        if image_to_show != None and self._sprite.image != image_to_show:
+        if image_to_show != None and (self._sprite.image != image_to_show or self._sprite.frame_index >= len(self._sprite.image.frames) - 1):
             self._sprite.image = image_to_show
 
     def on_animation_end(self):
