@@ -103,18 +103,11 @@ class TileMap(GameObject):
                 batch = self.__batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
-        
+
         for spr in self.__sprites:
             spr.scale = scaling
 
-    def from_tmx_file(
-        source: str
-    ):
-        """Constructs a new TileMap from the given TMX (XML) file."""
-
-        # TODO Load TMX file.
-        return TileMap()
-
+    @staticmethod
     def from_tmj_file(
         source: str,
         tile_set: TileSet,

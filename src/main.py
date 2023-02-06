@@ -48,6 +48,8 @@ class RugHai:
         # Create a scene.
         self._scene = RugHaiHub(
             window = self._window,
+            view_width = settings.VIEW_WIDTH,
+            view_height = settings.VIEW_HEIGHT,
             input_controller = self._input,
             scaling = self._scaling
         )

@@ -6,5 +6,5 @@ class Stats:
     ):
         self._max_speed = max_speed
         self._accel = acceleration
-        self._speed = 0
-        self._dir = 0
+        self._speed = 0.0
+        self._dir = 0.0

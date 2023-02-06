@@ -34,6 +34,7 @@ class Scene:
 
         self._fixed_objs = []
         self._sorted_objs = []
+        self._ui_objs = []
 
     def get_scaled_view_size(self):
         return (
@@ -51,6 +52,9 @@ class Scene:
                 # Draw sorted objects.
                 for obj in self._sorted_objs:
                     obj.draw()
+
+            for obj in self._ui_objs:
+                obj.draw()
 
     def update(self, dt):
         # Sort objects by y coord in order to get depth.
@@ -77,16 +81,20 @@ class Scene:
         self,
         game_object: GameObject,
         cam_target: bool = False,
-        sorted: bool = False
+        sorted: bool = False,
+        ui: bool = False
     ):
-        if cam_target:
-            self._cam_target = game_object
-            self._camera.position = (
-                self._cam_target.x - self.get_scaled_view_size()[0] / 2,
-                self._cam_target.y - self.get_scaled_view_size()[1] / 2,
-            )
-
-        if sorted:
-            self._sorted_objs.append(game_object)
+        if ui:
+            self._ui_objs.append(game_object)
         else:
-            self._fixed_objs.append(game_object)
+            if cam_target:
+                self._cam_target = game_object
+                self._camera.position = (
+                    self._cam_target.x - self.get_scaled_view_size()[0] / 2,
+                    self._cam_target.y - self.get_scaled_view_size()[1] / 2,
+                )
+
+            if sorted:
+                self._sorted_objs.append(game_object)
+            else:
+                self._fixed_objs.append(game_object)

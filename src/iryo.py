@@ -16,7 +16,7 @@ class Iryo(Playable):
         input_controller: InputController,
         x: int = 0,
         y: int = 0,
-        scaling: float = 1.0
+        scaling: int = 1
     ):
         # IDLE state animations.
         self._idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_idle.gif")
