@@ -61,14 +61,19 @@ class Iryo(Playable):
         self._rolling = False
         # Rolling started.
         self._rolled = False
+        self._roll_key_pressed = False
 
     def input(self):
+        self._roll_key_pressed = False
+
         if not self._rolling:
             super().input()
-            self._slow = self._input.keys[pyglet.window.key.LSHIFT]
-            self._rolling = self._input.keys[pyglet.window.key.SPACE]
+            self._slow = self._input[pyglet.window.key.LSHIFT]
+            self._roll_key_pressed = self._input[pyglet.window.key.SPACE]
+            self._rolling = self._roll_key_pressed
 
             if (self._rolling):
+                print("ROLLED")
                 self._rolled = True
 
     def update_stats(self, dt):
@@ -80,6 +85,7 @@ class Iryo(Playable):
 
         if self._rolling:
             if self._rolled:
+                print("UNROLLED")
                 self._stats._speed = roll_speed
                 self._rolled = False
             else:
@@ -101,8 +107,6 @@ class Iryo(Playable):
             # Clamp speed between 0 and max speed.
             self._stats._speed = pm.clamp(self._stats._speed, 0.0, self._stats._max_speed)
 
-
-
     def update_sprite(self):
         super().update_sprite()
 
@@ -123,6 +127,7 @@ class Iryo(Playable):
 
     def on_animation_end(self):
         if self._rolling:
+            print("ROLL_ANIM_END")
             self._rolling = False
 
     def update(self, dt):

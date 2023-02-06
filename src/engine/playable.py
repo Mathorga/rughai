@@ -39,8 +39,7 @@ class Playable(Mover):
         self._hor_facing = 1
 
     def input(self):
-        keys = self._input.keys
-        self._move_input = pyglet.math.Vec2(keys[key.D] - keys[key.A], keys[key.W] - keys[key.S]).normalize()
+        self._move_input = pyglet.math.Vec2(self._input[key.D] - self._input[key.A], self._input[key.W] - self._input[key.S]).normalize()
 
     def update_stats(self, dt):
         # Only update facing if there's any horizontal movement.

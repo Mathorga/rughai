@@ -25,9 +25,6 @@ class Mover(GameObject):
         self._stats = stats
         self._movement = pyglet.math.Vec2()
 
-    def update_stats():
-        pass
-
     def compute_movement(self, dt):
         # Define a vector direction.
         movement_base = pm.Vec2.from_polar(1.0, self._stats._dir)

@@ -75,14 +75,14 @@ class RugHaiHub(Scene):
         bar_img.anchor_y = bar_img.height
         energy_bar = EnergyBar(
             image = bar_img,
-            x = 8,
-            y = view_height - 8,
+            x = 4,
+            y = view_height - 4,
             scaling = scaling
         )
         health_bar = EnergyBar(
             image = bar_img,
-            x = 8,
-            y = view_height - 24,
+            x = 4,
+            y = view_height - 12,
             scaling = scaling
         )
 
