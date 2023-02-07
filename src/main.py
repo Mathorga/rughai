@@ -9,7 +9,7 @@ import settings
 from rughai_hub import RugHaiHub
 
 class RugHai:
-    def __init__(self):
+    def __init__(self) -> None:
         # Set resources path.
         pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
         pyglet.resource.reindex()
@@ -54,7 +54,7 @@ class RugHai:
             scaling = self._scaling
         )
 
-    def on_draw(self):
+    def on_draw(self) -> None:
         with self._render_bench:
             self._window.clear()
             self._scene.draw()
@@ -63,11 +63,14 @@ class RugHai:
                 self._update_bench.draw()
                 self._render_bench.draw()
 
-    def update(self, dt):
+    def update(self, dt) -> None:
+        # Benchmark measures render time.
         with self._update_bench:
-            self._scene.update(dt)
+            # InputController makes sure every input is handled correctly.
+            with self._input:
+                self._scene.update(dt)
 
-    def run(self):
+    def run(self) -> None:
         # Enable depth testing in order to allow for depth sorting.
         # TODO Try this out! Use the z coordinate as depth!
         # gl.glEnable(gl.GL_DEPTH_TEST)

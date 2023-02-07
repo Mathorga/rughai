@@ -66,10 +66,9 @@ class Iryo(Playable):
         if not self._rolling:
             super().input()
             self._slow = self._input[pyglet.window.key.LSHIFT]
-            self._rolling = self._input[pyglet.window.key.SPACE]
+            self._rolling = self._input.key_presses.get(pyglet.window.key.SPACE, False)
 
             if (self._rolling):
-                print("ROLLED")
                 self._rolled = True
 
     def update_stats(self, dt):
@@ -81,7 +80,6 @@ class Iryo(Playable):
 
         if self._rolling:
             if self._rolled:
-                print("UNROLLED")
                 self._stats._speed = roll_speed
                 self._rolled = False
             else:
