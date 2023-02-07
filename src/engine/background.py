@@ -8,7 +8,7 @@ class Background(GameObject):
         image,
         x: int = 0,
         y: int = 0,
-        scaling: float = 1.0
+        scaling: int = 1
     ):
         super().__init__(
             x = x,

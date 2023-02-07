@@ -105,9 +105,9 @@ class Camera:
         # Set the current camera offset so you can draw your scene.
 
         # Translate using the offset.
-        view_matrix = self._window.view.translate((-self.offset_x * self._zoom, -self.offset_y * self._zoom, 0))
+        view_matrix = self._window.view.translate(pyglet.math.Vec3(-self.offset_x * self._zoom, -self.offset_y * self._zoom, 0))
         # Scale by zoom level.
-        view_matrix = view_matrix.scale((self._zoom, self._zoom, 1))
+        view_matrix = view_matrix.scale(pyglet.math.Vec3(self._zoom, self._zoom, 1))
 
         self._window.view = view_matrix
 
@@ -116,9 +116,9 @@ class Camera:
         # it will multiply the current offset every draw update pushing it further and further away.
 
         # Reverse scale, since that was the last transform.
-        view_matrix = self._window.view.scale((1 / self._zoom, 1 / self._zoom, 1))
+        view_matrix = self._window.view.scale(pyglet.math.Vec3(1 / self._zoom, 1 / self._zoom, 1))
         # Reverse translate.
-        view_matrix = view_matrix.translate((self.offset_x * self._zoom, self.offset_y * self._zoom, 0))
+        view_matrix = view_matrix.translate(pyglet.math.Vec3(self.offset_x * self._zoom, self.offset_y * self._zoom, 0))
 
         self._window.view = view_matrix
 
@@ -136,15 +136,15 @@ class CenteredCamera(Camera):
         x = -self._window.width // 2 / self._zoom + self.offset_x
         y = -self._window.height // 2 / self._zoom + self.offset_y
 
-        view_matrix = self._window.view.translate((-x * self._zoom, -y * self._zoom, 0))
-        view_matrix = view_matrix.scale((self._zoom, self._zoom, 1))
+        view_matrix = self._window.view.translate(pyglet.math.Vec3(-x * self._zoom, -y * self._zoom, 0))
+        view_matrix = view_matrix.scale(pyglet.math.Vec3(self._zoom, self._zoom, 1))
         self._window.view = view_matrix
 
     def end(self):
         x = -self._window.width // 2 / self._zoom + self.offset_x
         y = -self._window.height // 2 / self._zoom + self.offset_y
 
-        view_matrix = self._window.view.scale((1 / self._zoom, 1 / self._zoom, 1))
-        view_matrix = view_matrix.translate((x * self._zoom, y * self._zoom, 0))
+        view_matrix = self._window.view.scale(pyglet.math.Vec3(1 / self._zoom, 1 / self._zoom, 1))
+        view_matrix = view_matrix.translate(pyglet.math.Vec3(x * self._zoom, y * self._zoom, 0))
         self._window.view = view_matrix
 

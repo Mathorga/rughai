@@ -33,7 +33,8 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-"""Demonstrates one way of fixing the display resolution to a certain
+"""
+Demonstrates one way of fixing the display resolution to a certain
 size, but rendering to the full screen.
 
 The method used in this example is:
@@ -48,8 +49,7 @@ The method used in this example is:
 import pyglet
 import pyglet.gl as gl
 
-
-class FixedResolution:
+class Upscaler:
     def __init__(
         self,
         window: pyglet.window.Window,
@@ -102,7 +102,7 @@ class FixedResolution:
         self.framebuffer.bind()
         self.window.clear()
 
-    def __exit__(self, exception_type, exception_value, traceback):
+    def __exit__(self, *params):
         self.framebuffer.unbind()
         self.texture.blit(*self._target_area)
 

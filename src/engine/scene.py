@@ -1,7 +1,7 @@
 import pyglet
 import pyglet.math as pm
 
-from fixed_resolution import FixedResolution
+from fixed_resolution import Upscaler
 from engine.camera import Camera
 from engine.game_object import GameObject
 
@@ -18,12 +18,6 @@ class Scene:
         self._view_width = view_width
         self._view_height = view_height
         self._scaling = scaling
-
-        self._fr = FixedResolution(
-            window = self._window,
-            width = self._view_width * self._scaling,
-            height = self._view_height * self._scaling
-        )
 
         # Create a new camera.
         self._camera = Camera(
@@ -43,18 +37,17 @@ class Scene:
         )
 
     def draw(self):
-        with self._fr:
-            with self._camera:
-                # Draw fixed objects.
-                for obj in self._fixed_objs:
-                    obj.draw()
-
-                # Draw sorted objects.
-                for obj in self._sorted_objs:
-                    obj.draw()
-
-            for obj in self._ui_objs:
+        with self._camera:
+            # Draw fixed objects.
+            for obj in self._fixed_objs:
                 obj.draw()
+
+            # Draw sorted objects.
+            for obj in self._sorted_objs:
+                obj.draw()
+
+        for obj in self._ui_objs:
+            obj.draw()
 
     def update(self, dt):
         # Sort objects by y coord in order to get depth.

@@ -4,6 +4,7 @@ import pyglet.gl as gl
 
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
+from fixed_resolution import Upscaler
 
 import settings
 from rughai_hub import RugHaiHub
@@ -29,7 +30,16 @@ class RugHai:
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
-        self._scaling = 1 if settings.PIXEL_PERFECT else min(self._window.width // settings.VIEW_WIDTH, self._window.height // settings.VIEW_HEIGHT)
+        self._scaling = 1 if settings.PIXEL_PERFECT else min(
+            self._window.width // settings.VIEW_WIDTH,
+            self._window.height // settings.VIEW_HEIGHT
+        )
+
+        self._upscaler = Upscaler(
+            window = self._window,
+            width = settings.VIEW_WIDTH * self._scaling,
+            height = settings.VIEW_HEIGHT * self._scaling
+        )
 
         self._update_bench = Benchmark(
             window = self._window,
@@ -55,16 +65,20 @@ class RugHai:
         )
 
     def on_draw(self) -> None:
+        # Benchmark measures render time.
         with self._render_bench:
             self._window.clear()
-            self._scene.draw()
+
+            # Upscaler handles maintaining the wanted output resolution.
+            with self._upscaler:
+                self._scene.draw()
 
             if settings.DEBUG:
                 self._update_bench.draw()
                 self._render_bench.draw()
 
     def update(self, dt) -> None:
-        # Benchmark measures render time.
+        # Benchmark measures update time.
         with self._update_bench:
             # InputController makes sure every input is handled correctly.
             with self._input:
