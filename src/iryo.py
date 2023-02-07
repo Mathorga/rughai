@@ -118,7 +118,7 @@ class Iryo(Playable):
             else:
                 image_to_show = self._run_anim
         
-        if image_to_show != None and (self._sprite.image != image_to_show or self._sprite.frame_index >= len(self._sprite.image.frames) - 1):
+        if image_to_show != None and (self._sprite.image != image_to_show):
             self._sprite.image = image_to_show
 
     def on_animation_end(self):
