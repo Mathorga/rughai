@@ -35,13 +35,13 @@ world_camera = Camera(
 )
 
 # Create a test label.
-font_size = 12.0
+font_size = 12
 title = pyglet.text.Label(
     settings.TITLE,
     # font_name = "Comic Sans MS",
     font_size = font_size,
     x = 0,
-    y = settings.VIEW_HEIGHT + font_size / 2,
+    y = settings.VIEW_HEIGHT + font_size // 2,
     anchor_x = "left",
     anchor_y = "top"
 )
