@@ -16,16 +16,7 @@ class RugHai:
         pyglet.resource.reindex()
 
         # Create a window.
-        self._window = pyglet.window.Window(
-            settings.WINDOW_WIDTH if not settings.FULLSCREEN else None,
-            settings.WINDOW_HEIGHT if not settings.FULLSCREEN else None,
-            settings.TITLE,
-            fullscreen = settings.FULLSCREEN,
-            resizable = False
-        )
-        self._window.push_handlers(self)
-        if not settings.DEBUG:
-            self._window.set_mouse_visible(False)
+        self._window = self.__create_window()
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
@@ -41,11 +32,11 @@ class RugHai:
             height = settings.VIEW_HEIGHT * self._scaling
         )
 
+        # Create benchmarks.
         self._update_bench = Benchmark(
             window = self._window,
             text = "UT: "
         )
-
         self._render_bench = Benchmark(
             window = self._window,
             text = "RT: ",
@@ -63,6 +54,20 @@ class RugHai:
             input_controller = self._input,
             scaling = self._scaling
         )
+
+    def __create_window(self) -> pyglet.window.Window:
+        window = pyglet.window.Window(
+            settings.WINDOW_WIDTH if not settings.FULLSCREEN else None,
+            settings.WINDOW_HEIGHT if not settings.FULLSCREEN else None,
+            settings.TITLE,
+            fullscreen = settings.FULLSCREEN,
+            resizable = False
+        )
+        window.push_handlers(self)
+        if not settings.DEBUG:
+            window.set_mouse_visible(False)
+
+        return window
 
     def on_draw(self) -> None:
         # Benchmark measures render time.
