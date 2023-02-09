@@ -121,7 +121,6 @@ class Iryo(Playable):
 
     def on_animation_end(self):
         if self._rolling:
-            print("ROLL_ANIM_END")
             self._rolling = False
 
     def update(self, dt):
