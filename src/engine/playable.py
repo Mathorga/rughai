@@ -36,6 +36,10 @@ class Playable(Mover):
             y = self.y
         )
         self._sprite.scale = scaling
+
+        self.width = self._sprite.image.get_max_width()
+        self.height = self._sprite.image.get_max_height()
+
         self._hor_facing = 1
 
     def input(self):

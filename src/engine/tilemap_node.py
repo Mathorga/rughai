@@ -2,10 +2,10 @@ import json
 import pyglet
 import pyglet.gl as gl
 
-from engine.game_object import GameObject
+from engine.node import Node
 
 
-class TileSet:
+class Tileset:
     def __init__(
         self,
         source: str,
@@ -75,18 +75,16 @@ class TileSet:
         return self.__tiles
 
 
-class TileMap(GameObject):
+class TilemapNode(Node):
     def __init__(
         self,
-        tile_set: TileSet,
+        tile_set: Tileset,
         map,
         map_width: int,
         map_height: int,
         scaling: int = 1
     ):
-        super().__init__(
-            scaling = scaling
-        )
+        self.__scaling = scaling
         self.__batch = pyglet.graphics.Batch()
         self.__tile_set = tile_set
         self.__map = map
@@ -110,7 +108,7 @@ class TileMap(GameObject):
     @staticmethod
     def from_tmj_file(
         source: str,
-        tile_set: TileSet,
+        tile_set: Tileset,
         scaling: int = 1
     ):
         """Constructs a new TileMap from the given TMJ (JSON) file."""
@@ -121,7 +119,7 @@ class TileMap(GameObject):
         with open(f"{pyglet.resource.path[0]}/{source}", "r") as content:
             data = json.load(content)
 
-        return TileMap(
+        return TilemapNode(
             tile_set = tile_set,
             # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
             map = [i - 1 for i in data["layers"][0]["data"]],
@@ -130,7 +128,7 @@ class TileMap(GameObject):
             scaling = scaling
         )
 
-    def draw(self):
+    def render(self):
         # self._sprites[21].draw()
         # self._sprites[0][0].draw()
         self.__batch.draw()
