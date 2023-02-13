@@ -9,7 +9,9 @@ class SpriteNode(PositionNode):
         on_animation_end,
         x: int = 0,
         y: int = 0,
-        scaling: int = 1
+        scaling: int = 1,
+        batch = None,
+        group = None
     ) -> None:
         super().__init__(
             x = x * scaling,
@@ -21,7 +23,9 @@ class SpriteNode(PositionNode):
         self.__sprite = pyglet.sprite.Sprite(
             img = resource,
             x = x * scaling,
-            y = y * scaling
+            y = y * scaling,
+            batch = batch,
+            group = group
         )
         self.__sprite.scale = scaling
         self.__sprite.push_handlers(self)
@@ -73,33 +77,36 @@ class SpriteNode(PositionNode):
     @staticmethod
     def image(
         image_path: str,
-        batch = None,
-        group = None,
         x: int = 0,
-        y: int = 0
+        y: int = 0,
+        batch = None,
+        group = None
     ):
         return SpriteNode(
             resource = pyglet.resource.image(image_path),
-            batch = batch,
-            group = group,
+            on_animation_end = lambda : None,
             x = x,
-            y = y
+            y = y,
+            batch = batch,
+            group = group
         )
 
     @staticmethod
     def animation(
         animation_path: str,
-        batch = None,
-        group = None,
+        on_animation_end,
         x: int = 0,
-        y: int = 0
+        y: int = 0,
+        batch = None,
+        group = None
     ):
         return SpriteNode(
             resource = pyglet.resource.animation(animation_path),
-            batch = batch,
-            group = group,
+            on_animation_end = on_animation_end,
             x = x,
-            y = y
+            y = y,
+            batch = batch,
+            group = group
         )
 
     def on_animation_end(self):
