@@ -30,7 +30,7 @@ class RugHaiHub(Scene):
         # Define a tilemap.
         tile_size = 8
         tile_map:TileMap = TileMap.from_tmj_file(
-            source = "tilemaps/rughai/hub.tmj",
+            source = "tilemaps/rughai/hub_50_50.tmj",
             tile_set = TileSet(
                 source = "tilemaps/tilesets/rughai/ground.png",
                 tile_width = tile_size,
