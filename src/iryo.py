@@ -3,7 +3,7 @@ import pyglet.math as pm
 
 from engine.playable import Playable
 from engine.input_controller import InputController
-import engine.utils
+import engine.utils as utils
 
 from player_stats import PlayerStats
 
@@ -28,13 +28,13 @@ class Iryo(Playable):
         self._atk_idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_idle.gif")
 
         # Center animations.
-        engine.utils.center_anim(self._idle_anim)
-        engine.utils.center_anim(self._walk_anim)
-        engine.utils.center_anim(self._run_anim)
-        engine.utils.center_anim(self._roll_anim)
-        engine.utils.center_anim(self._atk_idle_anim)
+        utils.center_anim(self._idle_anim)
+        utils.center_anim(self._walk_anim)
+        utils.center_anim(self._run_anim)
+        utils.center_anim(self._roll_anim)
+        utils.center_anim(self._atk_idle_anim)
 
-        engine.utils.set_anim_duration(self._roll_anim, 0.08)
+        utils.set_anim_duration(self._roll_anim, 0.08)
         self._roll_anim.frames[-1].duration = None
 
         super().__init__(

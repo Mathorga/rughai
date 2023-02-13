@@ -1,16 +1,14 @@
 import pyglet
-from energy_bar import EnergyBar
 
-from engine.scene import Scene
-from engine.background import Background
-from engine.tile_map import TileMap, TileSet
+from engine.node import Node
+from engine.scene_node import SceneNode
+from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
-from engine.prop import Prop
+from engine.tilemap_node import TilemapNode, Tileset
 
-import settings
-from iryo import Iryo
+from player_node import PlayerNode
 
-class RugHaiHub(Scene):
+class RugHaiHub(Node):
     def __init__(
         self,
         window: pyglet.window.Window,
@@ -19,7 +17,9 @@ class RugHaiHub(Scene):
         input_controller: InputController,
         scaling: int = 1
     ):
-        super().__init__(
+        super().__init__()
+
+        self.__scene = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
@@ -29,9 +29,9 @@ class RugHaiHub(Scene):
 
         # Define a tilemap.
         tile_size = 8
-        tile_map:TileMap = TileMap.from_tmj_file(
+        tilemap:TilemapNode = TilemapNode.from_tmj_file(
             source = "tilemaps/rughai/hub_50_50.tmj",
-            tile_set = TileSet(
+            tile_set = Tileset(
                 source = "tilemaps/tilesets/rughai/ground.png",
                 tile_width = tile_size,
                 tile_height = tile_size
@@ -43,14 +43,15 @@ class RugHaiHub(Scene):
         bg_image = pyglet.resource.image("bg.png")
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
-        bg = Background(
-            x = (tile_map.map_width * tile_size) // 2,
-            y = (tile_map.map_height * tile_size) // 2,
-            image = pyglet.resource.image("bg.png"),
+        bg = SpriteNode(
+            resource = pyglet.resource.image("bg.png"),
+            on_animation_end = lambda : None,
+            x = (tilemap.map_width * tile_size) // 2,
+            y = (tilemap.map_height * tile_size) // 2,
             scaling = scaling
         )
 
-        iryo = Iryo(
+        iryo = PlayerNode(
             input_controller = input_controller,
             x = 10 * tile_size,
             y = 10 * tile_size,
@@ -62,8 +63,9 @@ class RugHaiHub(Scene):
         tree_img = pyglet.resource.image("sprites/rughai/prop/tree_l.png")
         tree_img.anchor_x = tree_img.width / 2
         tree_img.anchor_y = 3
-        tree = Prop(
-            image = tree_img,
+        tree = SpriteNode(
+            resource = tree_img,
+            on_animation_end = lambda : None,
             x = 5 * tile_size,
             y = 5 * tile_size,
             scaling = scaling
@@ -73,22 +75,30 @@ class RugHaiHub(Scene):
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
         bar_img.anchor_x = 0
         bar_img.anchor_y = bar_img.height
-        energy_bar = EnergyBar(
-            image = bar_img,
+        energy_bar = SpriteNode(
+            resource = bar_img,
+            on_animation_end = lambda : None,
             x = 4,
             y = view_height - 4,
             scaling = scaling
         )
-        health_bar = EnergyBar(
-            image = bar_img,
+        health_bar = SpriteNode(
+            resource = bar_img,
+            on_animation_end = lambda : None,
             x = 4,
             y = view_height - 12,
             scaling = scaling
         )
 
-        self.add_object(bg)
-        self.add_object(tile_map)
-        self.add_object(iryo, cam_target = True, sorted = True)
-        self.add_object(tree, sorted = True)
-        self.add_object(energy_bar, ui = True)
-        self.add_object(health_bar, ui = True)
+        self.__scene.add_child(bg)
+        self.__scene.add_child(tilemap)
+        self.__scene.add_child(iryo, cam_target = True, sorted = True)
+        self.__scene.add_child(tree, sorted = True)
+        self.__scene.add_child(energy_bar, ui = True)
+        self.__scene.add_child(health_bar, ui = True)
+
+    def render(self) -> None:
+        self.__scene.render()
+
+    def update(self, dt) -> None:
+        self.__scene.update(dt)
