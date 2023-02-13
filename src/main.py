@@ -63,6 +63,7 @@ class RugHai:
             fullscreen = settings.FULLSCREEN,
             resizable = False
         )
+
         window.push_handlers(self)
         if not settings.DEBUG:
             window.set_mouse_visible(False)

@@ -2,8 +2,8 @@ import pyglet
 import pyglet.math as pm
 
 from engine.camera import Camera
-
-from engine.node import Node
+from engine.node import Node, PositionNode
+from engine.utils import *
 
 class SceneNode(Node):
     def __init__(
@@ -50,12 +50,11 @@ class SceneNode(Node):
             child.render()
 
     def update(self, dt):
-        # Sort objects by y coord in order to get depth.
-        self.__sorted_children.sort(key = lambda obj : -obj.y)
-
+        # Update all fixed children.
         for object in self.__fixed_children:
             object.update(dt)
 
+        # Update all sorted children.
         for object in self.__sorted_children:
             object.update(dt)
 
@@ -81,6 +80,9 @@ class SceneNode(Node):
             self.__ui_children.append(child)
         else:
             if cam_target:
+                # Make sure child is a PositionNode if camera target.
+                assert isinstance(child, PositionNode)
+
                 self.__cam_target = child
                 self.__camera.position = (
                     self.__cam_target.x - self.get_scaled_view_size()[0] / 2,

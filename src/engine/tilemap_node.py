@@ -74,7 +74,6 @@ class Tileset:
     def get_tiles(self):
         return self.__tiles
 
-
 class TilemapNode(Node):
     def __init__(
         self,
@@ -127,6 +126,14 @@ class TilemapNode(Node):
             map_height = data["height"],
             scaling = scaling
         )
+
+    # def update(self, dt) -> None:
+    #     # Implements culling, but is very inefficient. TODO Study.
+    #     for sprite in self.__sprites:
+    #         if not overlap(0, 0, self.map_width, self.map_height, sprite.x, sprite.y, sprite.width, sprite.height) and sprite.batch != self.__batch:
+    #             sprite.batch = self.__batch
+    #         elif sprite.batch != None:
+    #             sprite.batch = None
 
     def render(self):
         self.__batch.draw()
