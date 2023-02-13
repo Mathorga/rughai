@@ -129,6 +129,4 @@ class TilemapNode(Node):
         )
 
     def render(self):
-        # self._sprites[21].draw()
-        # self._sprites[0][0].draw()
         self.__batch.draw()
