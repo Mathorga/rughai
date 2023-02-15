@@ -50,6 +50,9 @@ class SceneNode(Node):
             child.render()
 
     def update(self, dt):
+        # Sort objects by y coord in order to get depth.
+        self.__sorted_children.sort(key = lambda obj : -obj.y)
+
         # Update all fixed children.
         for object in self.__fixed_children:
             object.update(dt)
