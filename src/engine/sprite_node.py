@@ -14,8 +14,8 @@ class SpriteNode(PositionNode):
         group = None
     ) -> None:
         super().__init__(
-            x = x * scaling,
-            y = y * scaling
+            x = x,
+            y = y
         )
 
         self.__scaling = scaling
@@ -35,19 +35,6 @@ class SpriteNode(PositionNode):
         return self.__sprite.image
 
     def set_position(
-        self,
-        x = None,
-        y = None
-    ) -> None:
-        if x is not None:
-            self.__x = x
-            self.__sprite.x = x
-
-        if y is not None:
-            self.__y = y
-            self.__sprite.y = y
-
-    def set_scaled_position(
         self,
         x = None,
         y = None
@@ -114,3 +101,9 @@ class SpriteNode(PositionNode):
 
     def render(self) -> None:
         self.__sprite.draw()
+
+    def get_width(self):
+        return self.__sprite.width
+
+    def get_height(self):
+        return self.__sprite.height

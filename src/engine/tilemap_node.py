@@ -2,7 +2,7 @@ import json
 import pyglet
 import pyglet.gl as gl
 
-from engine.node import Node
+from engine.node import Node, PositionNode
 
 
 class Tileset:
@@ -19,11 +19,11 @@ class Tileset:
         self.__texture = pyglet.resource.image(source)
         self.__texture_width = self.__texture.width
         self.__texture_height = self.__texture.height
-        self.__tile_width = tile_width
-        self.__tile_height = tile_height
-        self.__margin = margin
-        self.__spacing = spacing
-        self.__tiles = []
+        self.tile_width = tile_width
+        self.tile_height = tile_height
+        self.margin = margin
+        self.spacing = spacing
+        self.tiles = []
         self._fetch_tiles()
         pass
 
@@ -33,13 +33,13 @@ class Tileset:
         and saves all tiles as TextureRegions.
         """
 
-        for y in range(self.__margin, self.__texture_height - self.__spacing, self.__tile_height + self.__spacing):
-            for x in range(self.__margin, self.__texture_width - self.__spacing, self.__tile_width + self.__spacing):
+        for y in range(self.margin, self.__texture_height - self.spacing, self.tile_height + self.spacing):
+            for x in range(self.margin, self.__texture_width - self.spacing, self.tile_width + self.spacing):
                 # Cut the needed region from the given texture and save it.
-                tile = self.__texture.get_region(x, self.__texture_height - y - self.__tile_height, self.__tile_width, self.__tile_height)
-                tile.anchor_x = self.__tile_width / 2
-                tile.anchor_y = self.__tile_height / 2
-                self.__tiles.append(tile)
+                tile = self.__texture.get_region(x, self.__texture_height - y - self.tile_height, self.tile_width, self.tile_height)
+                tile.anchor_x = self.tile_width / 2
+                tile.anchor_y = self.tile_height / 2
+                self.tiles.append(tile)
 
                 gl.glBindTexture(tile.target, tile.id)
 
@@ -47,56 +47,35 @@ class Tileset:
                 gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
                 gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
 
-    def get_source(self):
-        return self.__source
-
-    def get_texture(self):
-        return self.__texture
-
-    def get_texture_width(self):
-        return self.__texture_width
-
-    def get_texture_height(self):
-        return self.__texture_height
-
-    def get_tile_width(self):
-        return self.__tile_width
-
-    def get_tile_height(self):
-        return self.__tile_height
-
-    def get_margin(self):
-        return self.__margin
-
-    def get_spacing(self):
-        return self.__spacing
-
-    def get_tiles(self):
-        return self.__tiles
-
-class TilemapNode(Node):
+class TilemapNode(PositionNode):
     def __init__(
         self,
-        tile_set: Tileset,
+        tileset: Tileset,
         map,
         map_width: int,
         map_height: int,
+        x: int = 0,
+        y: int = 0,
         scaling: int = 1
     ):
+        super().__init__(
+            x = x,
+            y = y
+        )
         self.__scaling = scaling
         self.__batch = pyglet.graphics.Batch()
-        self.__tile_set = tile_set
+        self.__tileset = tileset
         self.__map = map
         self.map_width = map_width
         self.map_height = map_height
 
-        width = self.map_width * tile_set.get_tile_width() * scaling
-        height = (self.map_height - 1) * tile_set.get_tile_height() * scaling
+        width = self.map_width * tileset.tile_width * scaling
+        height = (self.map_height - 1) * tileset.tile_height * scaling
         self.__sprites = [
             pyglet.sprite.Sprite(
-                img = self.__tile_set.get_tiles()[tex_index],
-                x = (index % self.map_width) * self.__tile_set.get_tile_width() * scaling,
-                y = height - ((index // self.map_width) * self.__tile_set.get_tile_height()) * scaling,
+                img = self.__tileset.tiles[tex_index],
+                x = (index % self.map_width) * self.__tileset.tile_width * scaling,
+                y = height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
                 batch = self.__batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
@@ -108,22 +87,26 @@ class TilemapNode(Node):
     def from_tmj_file(
         source: str,
         tile_set: Tileset,
+        x: int = 0,
+        y: int = 0,
         scaling: int = 1
     ):
         """Constructs a new TileMap from the given TMJ (JSON) file."""
 
         data: dict
 
-        # TODO Load TMJ file.
+        # Load TMJ file.
         with open(f"{pyglet.resource.path[0]}/{source}", "r") as content:
             data = json.load(content)
 
         return TilemapNode(
-            tile_set = tile_set,
+            tileset = tile_set,
             # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
             map = [i - 1 for i in data["layers"][0]["data"]],
             map_width = data["width"],
             map_height = data["height"],
+            x = x,
+            y = y,
             scaling = scaling
         )
 
@@ -137,3 +120,9 @@ class TilemapNode(Node):
 
     def render(self):
         self.__batch.draw()
+
+    def get_width(self):
+        return self.map_width * self.__tileset.tile_width
+
+    def get_height(self):
+        return self.map_height * self.__tileset.tile_height

@@ -26,8 +26,13 @@ class SceneNode(Node):
         self.__cam_speed = cam_speed
         self.__cam_target = None
 
+        # Lists of all children.
         self.__fixed_children = []
         self.__sorted_children = []
+
+        # Lists of visible children.
+        self.__visible_fixed_children = []
+        self.__visible_sorted_children = []
         self.__ui_children = []
 
     def get_scaled_view_size(self):
@@ -39,20 +44,17 @@ class SceneNode(Node):
     def render(self):
         with self.__camera:
             # Draw fixed objects.
-            for child in self.__fixed_children:
+            for child in self.__visible_fixed_children:
                 child.render()
 
             # Draw sorted objects.
-            for child in self.__sorted_children:
+            for child in self.__visible_sorted_children:
                 child.render()
 
         for child in self.__ui_children:
             child.render()
 
     def update(self, dt):
-        # Sort objects by y coord in order to get depth.
-        self.__sorted_children.sort(key = lambda obj : -obj.y)
-
         # Update all fixed children.
         for object in self.__fixed_children:
             object.update(dt)
@@ -64,17 +66,54 @@ class SceneNode(Node):
         # Update camera.
         if self.__cam_target != None:
             camera_movement = pm.Vec2(
-                (self.__cam_target.x - self.get_scaled_view_size()[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
-                (self.__cam_target.y - self.get_scaled_view_size()[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
+                (self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
+                (self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
             )
             self.__camera.position = (
                 self.__camera.position[0] + camera_movement.x,
                 self.__camera.position[1] + camera_movement.y
             )
 
+        # TODO Cull away children outside of the map.
+        # self.__visible_fixed_children = list(
+        #     filter(
+        #         lambda child : isinstance(child, PositionNode) and overlap(
+        #             self.__camera.position[0],
+        #             self.__camera.position[1],
+        #             self.__view_width * self.__scaling,
+        #             self.__view_height * self.__scaling,
+        #             child.x,
+        #             child.y,
+        #             child.get_width(),
+        #             child.get_height()
+        #         ),
+        #         self.__fixed_children
+        #     )
+        # )
+        # self.__visible_sorted_children = list(
+        #     filter(
+        #         lambda child : isinstance(child, PositionNode) and overlap(
+        #             self.__camera.position[0],
+        #             self.__camera.position[1],
+        #             self.__view_width * self.__scaling,
+        #             self.__view_height * self.__scaling,
+        #             child.x,
+        #             child.y,
+        #             child.get_width(),
+        #             child.get_height()
+        #         ),
+        #         self.__sorted_children
+        #     )
+        # )
+        self.__visible_fixed_children = self.__fixed_children
+        self.__visible_sorted_children = self.__sorted_children
+
+        # Sort objects by y coord in order to get depth.
+        self.__visible_sorted_children.sort(key = lambda child : -child.y)
+
     def add_child(
         self,
-        child: Node,
+        child: PositionNode,
         cam_target: bool = False,
         sorted: bool = False,
         ui: bool = False
@@ -83,13 +122,10 @@ class SceneNode(Node):
             self.__ui_children.append(child)
         else:
             if cam_target:
-                # Make sure child is a PositionNode if camera target.
-                assert isinstance(child, PositionNode)
-
                 self.__cam_target = child
                 self.__camera.position = (
-                    self.__cam_target.x - self.get_scaled_view_size()[0] / 2,
-                    self.__cam_target.y - self.get_scaled_view_size()[1] / 2,
+                    self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2,
+                    self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2,
                 )
 
             if sorted:

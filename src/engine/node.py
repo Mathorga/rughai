@@ -30,3 +30,9 @@ class PositionNode(Node):
         self.x = x
         self.y = y
         self.z = z
+
+    def get_width(self):
+        return 0
+
+    def get_height(self):
+        return 0

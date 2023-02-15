@@ -19,8 +19,8 @@ class PlayerNode(PositionNode):
         scaling: int = 1
     ) -> None:
         super().__init__(
-            x = x * scaling,
-            y = y * scaling
+            x = x,
+            y = y
         )
 
         self.__scaling = scaling
@@ -141,7 +141,7 @@ class PlayerNode(PositionNode):
     def compute_movement(self, dt):
         # Define a vector direction.
         movement_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
-        self.__movement = movement_base.from_magnitude(self.__stats._speed * self.__scaling * dt)
+        self.__movement = movement_base.from_magnitude(self.__stats._speed * dt)
 
     def move(self, dt):
         # Compute movement.
