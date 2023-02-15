@@ -29,6 +29,7 @@ class SpriteNode(PositionNode):
         )
         self.__sprite.scale = scaling
         self.__sprite.push_handlers(self)
+
         self.__on_animation_end = on_animation_end
 
     def get_image(self):
@@ -102,8 +103,15 @@ class SpriteNode(PositionNode):
     def render(self) -> None:
         self.__sprite.draw()
 
-    def get_width(self):
-        return self.__sprite.width
-
-    def get_height(self):
-        return self.__sprite.height
+    def get_bounding_box(self):
+        return (
+            self.__sprite.x - self.__sprite.image.anchor_x * self.__scaling,
+            self.__sprite.y - self.__sprite.image.anchor_y * self.__scaling,
+            self.__sprite.x + self.__sprite.width - self.__sprite.image.anchor_x * self.__scaling,
+            self.__sprite.y + self.__sprite.height - self.__sprite.image.anchor_y * self.__scaling
+        ) if isinstance(self.__sprite.image, pyglet.image.TextureRegion) else (
+            self.__sprite.x - self.__sprite.image.frames[0].image.anchor_x * self.__scaling,
+            self.__sprite.y - self.__sprite.image.frames[0].image.anchor_y * self.__scaling,
+            self.__sprite.x + self.__sprite.width - self.__sprite.image.frames[0].image.anchor_x * self.__scaling,
+            self.__sprite.y + self.__sprite.height - self.__sprite.image.frames[0].image.anchor_y * self.__scaling
+        )

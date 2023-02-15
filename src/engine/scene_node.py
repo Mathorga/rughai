@@ -82,10 +82,7 @@ class SceneNode(Node):
         #             self.__camera.position[1],
         #             self.__view_width * self.__scaling,
         #             self.__view_height * self.__scaling,
-        #             child.x,
-        #             child.y,
-        #             child.get_width(),
-        #             child.get_height()
+        #             *child.get_bounding_box()
         #         ),
         #         self.__fixed_children
         #     )
@@ -97,10 +94,7 @@ class SceneNode(Node):
         #             self.__camera.position[1],
         #             self.__view_width * self.__scaling,
         #             self.__view_height * self.__scaling,
-        #             child.x,
-        #             child.y,
-        #             child.get_width(),
-        #             child.get_height()
+        #             *child.get_bounding_box()
         #         ),
         #         self.__sorted_children
         #     )

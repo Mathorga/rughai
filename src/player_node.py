@@ -79,6 +79,8 @@ class PlayerNode(PositionNode):
 
     def render(self):
         self.__sprite.render()
+        self.point.draw()
+
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -172,3 +174,6 @@ class PlayerNode(PositionNode):
         
         if image_to_show != None and (self.__sprite.get_image() != image_to_show):
             self.__sprite.set_image(image_to_show)
+
+    def get_bounding_box(self):
+        return self.__sprite.get_bounding_box()

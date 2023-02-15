@@ -31,8 +31,5 @@ class PositionNode(Node):
         self.y = y
         self.z = z
 
-    def get_width(self):
-        return 0
-
-    def get_height(self):
-        return 0
+    def get_bounding_box(self):
+        return (self.x, self.y, self.x, self.y)

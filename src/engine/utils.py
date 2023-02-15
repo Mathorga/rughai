@@ -1,4 +1,6 @@
-def center_anim(anim):
+import pyglet
+
+def center_anim(anim: pyglet.image.animation.Animation):
     for frame in anim.frames:
         frame.image.anchor_x = anim.get_max_width() / 2
         frame.image.anchor_y = 0
