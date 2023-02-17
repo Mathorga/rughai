@@ -86,7 +86,7 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmj_file(
         source: str,
-        tile_set: Tileset,
+        tileset: Tileset,
         x: int = 0,
         y: int = 0,
         scaling: int = 1
@@ -100,7 +100,7 @@ class TilemapNode(PositionNode):
             data = json.load(content)
 
         return TilemapNode(
-            tileset = tile_set,
+            tileset = tileset,
             # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
             map = [i - 1 for i in data["layers"][0]["data"]],
             map_width = data["width"],
@@ -121,8 +121,10 @@ class TilemapNode(PositionNode):
     def render(self):
         self.__batch.draw()
 
-    def get_width(self):
-        return self.map_width * self.__tileset.tile_width
-
-    def get_height(self):
-        return self.map_height * self.__tileset.tile_height
+    def get_bounding_box(self):
+        return (
+            self.x * self.__scaling,
+            self.y * self.__scaling,
+            self.map_width * self.__tileset.tile_width * self.__scaling,
+            self.map_height * self.__tileset.tile_height * self.__scaling
+        )

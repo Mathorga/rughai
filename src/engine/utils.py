@@ -1,15 +1,24 @@
 import pyglet
 
+def animation_set_anchor(
+    animation: pyglet.image.animation.Animation,
+    x: int,
+    y: int
+):
+    for frame in animation.frames:
+        frame.image.anchor_x = x
+        frame.image.anchor_y = y
+
 def center_anim(anim: pyglet.image.animation.Animation):
     for frame in anim.frames:
         frame.image.anchor_x = anim.get_max_width() / 2
         frame.image.anchor_y = 0
 
-def scale_anim(anim, scale: float):
+def scale_anim(anim: pyglet.image.animation.Animation, scale: float):
     for frame in anim.frames:
         frame.image.scale = scale
 
-def set_anim_duration(anim, duration: float):
+def set_anim_duration(anim: pyglet.image.animation.Animation, duration: float):
     for frame in anim.frames:
         frame.duration = duration
 

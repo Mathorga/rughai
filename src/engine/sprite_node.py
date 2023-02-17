@@ -62,41 +62,6 @@ class SpriteNode(PositionNode):
     def set_image(self, image) -> None:
         self.__sprite.image = image
 
-    @staticmethod
-    def image(
-        image_path: str,
-        x: int = 0,
-        y: int = 0,
-        batch = None,
-        group = None
-    ):
-        return SpriteNode(
-            resource = pyglet.resource.image(image_path),
-            on_animation_end = lambda : None,
-            x = x,
-            y = y,
-            batch = batch,
-            group = group
-        )
-
-    @staticmethod
-    def animation(
-        animation_path: str,
-        on_animation_end,
-        x: int = 0,
-        y: int = 0,
-        batch = None,
-        group = None
-    ):
-        return SpriteNode(
-            resource = pyglet.resource.animation(animation_path),
-            on_animation_end = on_animation_end,
-            x = x,
-            y = y,
-            batch = batch,
-            group = group
-        )
-
     def on_animation_end(self):
         self.__on_animation_end()
 
@@ -108,15 +73,15 @@ class SpriteNode(PositionNode):
             return (
                 self.__sprite.x - self.__sprite.image.anchor_x * self.__scaling,
                 self.__sprite.y - self.__sprite.image.anchor_y * self.__scaling,
-                self.__sprite.x + self.__sprite.width - self.__sprite.image.anchor_x * self.__scaling,
-                self.__sprite.y + self.__sprite.height - self.__sprite.image.anchor_y * self.__scaling
+                self.__sprite.width,
+                self.__sprite.height
             )
         elif isinstance(self.__sprite.image, pyglet.image.animation.Animation):
             return (
                 self.__sprite.x - self.__sprite.image.frames[0].image.anchor_x * self.__scaling,
                 self.__sprite.y - self.__sprite.image.frames[0].image.anchor_y * self.__scaling,
-                self.__sprite.x + self.__sprite.width - self.__sprite.image.frames[0].image.anchor_x * self.__scaling,
-                self.__sprite.y + self.__sprite.height - self.__sprite.image.frames[0].image.anchor_y * self.__scaling
+                self.__sprite.width,
+                self.__sprite.height
             )
 
         return super().get_bounding_box()

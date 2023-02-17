@@ -77,8 +77,20 @@ class PlayerNode(PositionNode):
             scaling = scaling
         )
 
+        target_image = pyglet.resource.image("sprites/target.png")
+        target_image.anchor_x = target_image.width / 2
+        target_image.anchor_y = target_image.height / 2
+        self.__aim_sprite = SpriteNode(
+            resource = target_image,
+            on_animation_end = lambda : None,
+            x = x,
+            y = y,
+            scaling = scaling
+        )
+
     def render(self):
         self.__sprite.render()
+        self.__aim_sprite.render()
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -92,6 +104,9 @@ class PlayerNode(PositionNode):
 
         # Update sprite accordingly.
         self.update_sprite()
+
+        # Update aim sprite.
+        self.update_aim()
 
     def on_sprite_animation_end(self):
         if self.__rolling:
@@ -172,6 +187,9 @@ class PlayerNode(PositionNode):
         
         if image_to_show != None and (self.__sprite.get_image() != image_to_show):
             self.__sprite.set_image(image_to_show)
+
+    def update_aim(self):
+        self.__aim_sprite.set_position(self.x, self.y + 8)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()

@@ -1,4 +1,5 @@
 import pyglet
+from duk_node import DukNode
 
 from engine.node import Node
 from engine.scene_node import SceneNode
@@ -30,8 +31,8 @@ class RugHaiHub(Node):
         # Define a tilemap.
         tile_size = 8
         tilemap = TilemapNode.from_tmj_file(
-            source = "tilemaps/rughai/hub_50_50.tmj",
-            tile_set = Tileset(
+            source = "tilemaps/rughai/main_hub.tmj",
+            tileset = Tileset(
                 source = "tilemaps/tilesets/rughai/ground.png",
                 tile_width = tile_size,
                 tile_height = tile_size
@@ -52,10 +53,18 @@ class RugHaiHub(Node):
             scaling = scaling
         )
 
+        # Player.
         iryo = PlayerNode(
             input_controller = input_controller,
             x = 10 * tile_size,
             y = 10 * tile_size,
+            scaling = scaling
+        )
+
+        # Duk.
+        duk = DukNode(
+            x = 10 * tile_size,
+            y = 8 * tile_size,
             scaling = scaling
         )
 
@@ -94,6 +103,7 @@ class RugHaiHub(Node):
         self.__scene.add_child(bg)
         self.__scene.add_child(tilemap)
         self.__scene.add_child(iryo, cam_target = True, sorted = True)
+        self.__scene.add_child(duk, sorted = True)
         self.__scene.add_child(tree, sorted = True)
         self.__scene.add_child(energy_bar, ui = True)
         self.__scene.add_child(health_bar, ui = True)
