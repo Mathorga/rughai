@@ -79,8 +79,6 @@ class PlayerNode(PositionNode):
 
     def render(self):
         self.__sprite.render()
-        self.point.draw()
-
 
     def update(self, dt) -> None:
         # Fetch input.

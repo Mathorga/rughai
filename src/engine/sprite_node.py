@@ -104,14 +104,19 @@ class SpriteNode(PositionNode):
         self.__sprite.draw()
 
     def get_bounding_box(self):
-        return (
-            self.__sprite.x - self.__sprite.image.anchor_x * self.__scaling,
-            self.__sprite.y - self.__sprite.image.anchor_y * self.__scaling,
-            self.__sprite.x + self.__sprite.width - self.__sprite.image.anchor_x * self.__scaling,
-            self.__sprite.y + self.__sprite.height - self.__sprite.image.anchor_y * self.__scaling
-        ) if isinstance(self.__sprite.image, pyglet.image.TextureRegion) else (
-            self.__sprite.x - self.__sprite.image.frames[0].image.anchor_x * self.__scaling,
-            self.__sprite.y - self.__sprite.image.frames[0].image.anchor_y * self.__scaling,
-            self.__sprite.x + self.__sprite.width - self.__sprite.image.frames[0].image.anchor_x * self.__scaling,
-            self.__sprite.y + self.__sprite.height - self.__sprite.image.frames[0].image.anchor_y * self.__scaling
-        )
+        if isinstance(self.__sprite.image, pyglet.image.TextureRegion):
+            return (
+                self.__sprite.x - self.__sprite.image.anchor_x * self.__scaling,
+                self.__sprite.y - self.__sprite.image.anchor_y * self.__scaling,
+                self.__sprite.x + self.__sprite.width - self.__sprite.image.anchor_x * self.__scaling,
+                self.__sprite.y + self.__sprite.height - self.__sprite.image.anchor_y * self.__scaling
+            )
+        elif isinstance(self.__sprite.image, pyglet.image.animation.Animation):
+            return (
+                self.__sprite.x - self.__sprite.image.frames[0].image.anchor_x * self.__scaling,
+                self.__sprite.y - self.__sprite.image.frames[0].image.anchor_y * self.__scaling,
+                self.__sprite.x + self.__sprite.width - self.__sprite.image.frames[0].image.anchor_x * self.__scaling,
+                self.__sprite.y + self.__sprite.height - self.__sprite.image.frames[0].image.anchor_y * self.__scaling
+            )
+
+        return super().get_bounding_box()
