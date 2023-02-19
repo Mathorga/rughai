@@ -7,14 +7,20 @@ class InputController:
     ):
         self.__window = window
 
+        # Keyboard.
         self.keys = {}
         self.key_presses = {}
         self.key_releases = {}
+
+        self.buttons = {}
+        self.button_presses = {}
+        self.button_releases = {}
 
         self.__window.push_handlers(self)
 
         # Get controllers.
         controller_manager = pyglet.input.ControllerManager()
+        devs = pyglet.input.get_devices()
         controllers = controller_manager.get_controllers()
         if controllers:
             controller = controllers[0]
@@ -58,9 +64,16 @@ class InputController:
 
     def on_button_press(self, controller, button_name):
         print("button_press:", button_name)
+        self.buttons[button_name] = True
+
+        # Only save key press if the key has been released first.
+        self.button_presses[button_name] = self.key_releases.get(button_name, True)
+        self.button_releases[button_name] = False
 
     def on_button_release(self, controller, button_name):
-        print("button_release:", button_name)
+        self.buttons[button_name] = False
+        self.button_presses[button_name] = False
+        self.button_releases[button_name] = True
 
     def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
         print("dpad_motion:", dpleft, dpright, dpup, dpdown)
