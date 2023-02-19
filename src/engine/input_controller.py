@@ -14,11 +14,14 @@ class InputController:
         self.__window.push_handlers(self)
 
         # Get controllers.
-        controllers = pyglet.input.get_controllers()
+        controller_manager = pyglet.input.ControllerManager()
+        controllers = controller_manager.get_controllers()
         if controllers:
             controller = controllers[0]
             controller.open()
             controller.push_handlers(self)
+
+        controller_manager.push_handlers(self)
 
     # ----------------------------------------------------------------------
     # Keyboard events.
@@ -46,19 +49,27 @@ class InputController:
     # ----------------------------------------------------------------------
     # Controller events.
     # ----------------------------------------------------------------------
-    def on_button_press(controller, button_name):
-        if button_name == 'a':
-            # start firing
-            pass
-        elif button_name == 'b':
-            # do something else
-            pass
+    def on_connect(self, controller):
+        controller.open()
+        controller.push_handlers(self)
 
-    # def on_button_release(controller, button_name):
-    #     if button_name == 'a':
-    #         # stop firing
-    #     elif button_name == 'b':
-    #         # do something else
+    def on_disconnect(self, controller):
+        print("controller_disconnected:", controller)
+
+    def on_button_press(self, controller, button_name):
+        print("button_press:", button_name)
+
+    def on_button_release(self, controller, button_name):
+        print("button_release:", button_name)
+
+    def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
+        print("dpad_motion:", dpleft, dpright, dpup, dpdown)
+
+    def on_stick_motion(self, controller, stick, xvalue, yvalue):
+        print("stick_motion:", stick, xvalue, yvalue)
+
+    def on_trigger_motion(self, controller, trigger, value):
+        print("trigger_motion:", trigger, value)
 
     def __getitem__(self, key):
         return self.keys.get(key, False)
