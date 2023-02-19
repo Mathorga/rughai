@@ -2,6 +2,7 @@ import pyglet
 from duk_node import DukNode
 
 from engine.node import Node
+from engine.node import PositionNode
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
@@ -54,8 +55,10 @@ class RugHaiHub(Node):
         )
 
         # Player.
+        cam_target = PositionNode()
         iryo = PlayerNode(
             input_controller = input_controller,
+            cam_target = cam_target,
             x = 10 * tile_size,
             y = 10 * tile_size,
             scaling = scaling
@@ -102,7 +105,8 @@ class RugHaiHub(Node):
 
         self.__scene.add_child(bg)
         self.__scene.add_child(tilemap)
-        self.__scene.add_child(iryo, cam_target = True, sorted = True)
+        self.__scene.add_child(cam_target, cam_target = True)
+        self.__scene.add_child(iryo, sorted = True)
         self.__scene.add_child(duk, sorted = True)
         self.__scene.add_child(tree, sorted = True)
         self.__scene.add_child(energy_bar, ui = True)

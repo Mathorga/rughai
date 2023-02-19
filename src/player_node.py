@@ -1,3 +1,5 @@
+import math
+
 import pyglet
 import pyglet.math as pm
 from pyglet.window import key
@@ -31,16 +33,26 @@ class PlayerInput:
         return self.__controller.key_presses.get(key.SPACE, False) or self.__controller.button_presses.get("b", False)
 
     def get_move_input(self) -> pyglet.math.Vec2:
-        left_stick = self.__controller.sticks.get("leftstick", (0.0, 0.0))
+        stick = self.__controller.sticks.get("leftstick", (0.0, 0.0))
         return pyglet.math.Vec2(
-            (self.__controller[key.D] - self.__controller[key.A]) + left_stick[0],
-            (self.__controller[key.W] - self.__controller[key.S]) + left_stick[1]
+            (self.__controller[key.D] - self.__controller[key.A]) + stick[0],
+            (self.__controller[key.W] - self.__controller[key.S]) + stick[1]
+        )
+
+    def get_look_input(self) -> pyglet.math.Vec2:
+        stick = self.__controller.sticks.get("rightstick", (0.0, 0.0))
+        return pyglet.math.Vec2(
+            (self.__controller[key.RIGHT] - self.__controller[key.LEFT]) + stick[0],
+            (self.__controller[key.UP] - self.__controller[key.DOWN]) + stick[1]
         )
 
 class PlayerNode(PositionNode):
     def __init__(
         self,
         input_controller: InputController,
+        cam_target: PositionNode = None,
+        cam_target_distance: float = 80.0,
+        cam_target_offset: tuple = (0.0, 8.0),
         x: int = 0,
         y: int = 0,
         run_threshold: float = 0.75,
@@ -77,6 +89,15 @@ class PlayerNode(PositionNode):
         # Setup input handling.
         self.__input = PlayerInput(input_controller = input_controller)
         self.__move_input = pyglet.math.Vec2()
+        self.__look_input = pyglet.math.Vec2()
+
+        # Movement flags.
+        # Slow walking.
+        self.__slow = False
+        # Currently rolling.
+        self.__rolling = False
+        # Rolling started.
+        self.__rolled = False
 
         self.__run_threshold = run_threshold
 
@@ -86,14 +107,6 @@ class PlayerNode(PositionNode):
             odds = 5,
             variation = 0.2
         )
-
-        # Movement flags.
-        # Slow walking.
-        self.__slow = False
-        # Currently rolling.
-        self.__rolling = False
-        # Rolling started.
-        self.__rolled = False
 
         self.__hor_facing: float = 1.0
 
@@ -105,9 +118,16 @@ class PlayerNode(PositionNode):
             scaling = scaling
         )
 
+        # Aim sprite image.
         target_image = pyglet.resource.image("sprites/target.png")
         target_image.anchor_x = target_image.width / 2
         target_image.anchor_y = target_image.height / 2
+
+        # Aim sprite offset, defines the offset from self.x and self.y, respectively.
+        self.__aim_sprite_offset = (0.0, 8.0)
+
+        # Aim sprite distance, defines the distance at which the sprite floats.
+        self.__aim_sprite_distance = 10.0
         self.__aim_sprite = SpriteNode(
             resource = target_image,
             on_animation_end = lambda : None,
@@ -115,6 +135,12 @@ class PlayerNode(PositionNode):
             y = y,
             scaling = scaling
         )
+
+        self.__cam_target_distance = cam_target_distance
+        self.__cam_target_offset = cam_target_offset
+        self.__cam_target = cam_target
+        self.__cam_target.x = x + cam_target_offset[0]
+        self.__cam_target.y = y + cam_target_offset[1]
 
     def render(self):
         self.__sprite.render()
@@ -142,8 +168,8 @@ class PlayerNode(PositionNode):
 
     def input(self):
         if not self.__rolling:
-            # self.__move_input = pyglet.math.Vec2(self.__input[key.D] - self.__input[key.A], self.__input[key.W] - self.__input[key.S]).normalize()
             self.__move_input = self.__input.get_move_input().limit(1.0)
+            self.__look_input = self.__input.get_look_input().limit(1.0)
             self.__slow = self.__input.get_modifier()
             self.__rolling = self.__input.get_sprint()
 
@@ -151,10 +177,6 @@ class PlayerNode(PositionNode):
                 self.__rolled = True
 
     def update_stats(self, dt):
-        # Only update facing if there's any horizontal movement.
-        if self.__move_input.x != 0.0:
-            self.__hor_facing = 1.0 if self.__move_input.x > 0 else -1.0
-
         walk_speed = self.__stats._max_speed * 0.5
         roll_speed = self.__stats._max_speed * 2.0
         roll_accel = self.__stats._accel * 0.5
@@ -166,7 +188,7 @@ class PlayerNode(PositionNode):
             else:
                 self.__stats._speed -= roll_accel * dt
         else:
-            if self.__move_input.mag > 0.5:
+            if self.__move_input.mag > 0.0:
                 self.__stats._dir = self.__move_input.heading
                 self.__stats._speed += self.__stats._accel * dt
             else:
@@ -196,6 +218,12 @@ class PlayerNode(PositionNode):
         self.y += self.__movement.y
 
     def update_sprite(self):
+        # Only update facing if there's any horizontal movement.
+        dir_cos = math.cos(self.__stats._dir)
+        dir_len = abs(dir_cos)
+        if dir_len > 0.1:
+            self.__hor_facing = math.copysign(1.0, dir_cos)
+
         # Update sprite position.
         self.__sprite.set_position(self.x, self.y)
 
@@ -218,7 +246,15 @@ class PlayerNode(PositionNode):
             self.__sprite.set_image(image_to_show)
 
     def update_aim(self):
-        self.__aim_sprite.set_position(self.x, self.y + 8)
+        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
+        self.__aim_sprite.set_position(
+            self.x + self.__aim_sprite_offset[0] + aim_vec.x,
+            self.y + self.__aim_sprite_offset[1] + aim_vec.y
+        )
+
+        cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
+        self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
+        self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()

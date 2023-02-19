@@ -74,7 +74,7 @@ class InputController:
         self.buttons[button_name] = True
 
         # Only save key press if the key has been released first.
-        self.button_presses[button_name] = self.key_releases.get(button_name, True)
+        self.button_presses[button_name] = self.button_releases.get(button_name, True)
         self.button_releases[button_name] = False
 
     def on_button_release(self, controller, button_name):
