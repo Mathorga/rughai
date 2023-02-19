@@ -3,24 +3,28 @@ import pyglet
 class InputController:
     def __init__(
         self,
-        window: pyglet.window.Window
+        window: pyglet.window.Window,
+        sticks_threshold: float = 0.05
     ):
         self.__window = window
+        self.__sticks_threshold = sticks_threshold
 
         # Keyboard.
         self.keys = {}
         self.key_presses = {}
         self.key_releases = {}
 
+        # Controller.
         self.buttons = {}
         self.button_presses = {}
         self.button_releases = {}
+        self.sticks = {}
+        self.triggers = {}
 
         self.__window.push_handlers(self)
 
         # Get controllers.
         controller_manager = pyglet.input.ControllerManager()
-        devs = pyglet.input.get_devices()
         controllers = controller_manager.get_controllers()
         if controllers:
             controller = controllers[0]
@@ -58,12 +62,15 @@ class InputController:
     def on_connect(self, controller):
         controller.open()
         controller.push_handlers(self)
+        print("controller_connected:", controller)
 
     def on_disconnect(self, controller):
+        self.buttons.clear()
+        self.button_presses.clear()
+        self.button_releases.clear()
         print("controller_disconnected:", controller)
 
     def on_button_press(self, controller, button_name):
-        print("button_press:", button_name)
         self.buttons[button_name] = True
 
         # Only save key press if the key has been released first.
@@ -76,13 +83,16 @@ class InputController:
         self.button_releases[button_name] = True
 
     def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
-        print("dpad_motion:", dpleft, dpright, dpup, dpdown)
+        pass
 
     def on_stick_motion(self, controller, stick, xvalue, yvalue):
-        print("stick_motion:", stick, xvalue, yvalue)
+        self.sticks[stick] = (
+            xvalue if xvalue < -self.__sticks_threshold or xvalue > self.__sticks_threshold else 0.0,
+            yvalue if yvalue < -self.__sticks_threshold or yvalue > self.__sticks_threshold else 0.0
+        )
 
     def on_trigger_motion(self, controller, trigger, value):
-        print("trigger_motion:", trigger, value)
+        self.triggers[trigger] = value
 
     def __getitem__(self, key):
         return self.keys.get(key, False)

@@ -9,13 +9,41 @@ import engine.utils as utils
 
 from player_stats import PlayerStats
 
+class PlayerInput:
+    def __init__(
+        self,
+        input_controller: InputController
+    ) -> None:
+        self.__controller = input_controller
+
+    def get_modifier(self) -> bool:
+        """
+        Returns whether or not the modifier key is being pressed, either on controller or keyboard.
+        """
+
+        return self.__controller[key.LSHIFT] or self.__controller.buttons.get("leftshoulder", False)
+
+    def get_sprint(self) -> bool:
+        """
+        Returns whether the sprint button was pressed or not, either on controller or keyboard.
+        """
+
+        return self.__controller.key_presses.get(key.SPACE, False) or self.__controller.button_presses.get("b", False)
+
+    def get_move_input(self) -> pyglet.math.Vec2:
+        left_stick = self.__controller.sticks.get("leftstick", (0.0, 0.0))
+        return pyglet.math.Vec2(
+            (self.__controller[key.D] - self.__controller[key.A]) + left_stick[0],
+            (self.__controller[key.W] - self.__controller[key.S]) + left_stick[1]
+        )
+
 class PlayerNode(PositionNode):
     def __init__(
         self,
         input_controller: InputController,
         x: int = 0,
         y: int = 0,
-        run_threshold: float = 0.9,
+        run_threshold: float = 0.75,
         scaling: int = 1
     ) -> None:
         super().__init__(
@@ -47,7 +75,7 @@ class PlayerNode(PositionNode):
         self.__movement = pyglet.math.Vec2()
 
         # Setup input handling.
-        self.__input = input_controller
+        self.__input = PlayerInput(input_controller = input_controller)
         self.__move_input = pyglet.math.Vec2()
 
         self.__run_threshold = run_threshold
@@ -114,9 +142,10 @@ class PlayerNode(PositionNode):
 
     def input(self):
         if not self.__rolling:
-            self.__move_input = pyglet.math.Vec2(self.__input[key.D] - self.__input[key.A], self.__input[key.W] - self.__input[key.S]).normalize()
-            self.__slow = self.__input[pyglet.window.key.LSHIFT]
-            self.__rolling = self.__input.key_presses.get(pyglet.window.key.SPACE, False)
+            # self.__move_input = pyglet.math.Vec2(self.__input[key.D] - self.__input[key.A], self.__input[key.W] - self.__input[key.S]).normalize()
+            self.__move_input = self.__input.get_move_input().limit(1.0)
+            self.__slow = self.__input.get_modifier()
+            self.__rolling = self.__input.get_sprint()
 
             if (self.__rolling):
                 self.__rolled = True
@@ -151,7 +180,7 @@ class PlayerNode(PositionNode):
             self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, walk_speed)
         else:
             # Clamp speed between 0 and max speed.
-            self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed)
+            self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed * self.__move_input.mag)
 
     def compute_movement(self, dt):
         # Define a vector direction.
