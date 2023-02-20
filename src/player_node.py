@@ -50,7 +50,7 @@ class PlayerNode(PositionNode):
     def __init__(
         self,
         input_controller: InputController,
-        cam_target: PositionNode = None,
+        cam_target: PositionNode,
         cam_target_distance: float = 80.0,
         cam_target_offset: tuple = (0.0, 8.0),
         x: int = 0,
