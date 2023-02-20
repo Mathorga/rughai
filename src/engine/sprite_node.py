@@ -6,7 +6,7 @@ class SpriteNode(PositionNode):
     def __init__(
         self,
         resource,
-        on_animation_end,
+        on_animation_end = None,
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
@@ -63,7 +63,8 @@ class SpriteNode(PositionNode):
         self.__sprite.image = image
 
     def on_animation_end(self):
-        self.__on_animation_end()
+        if self.__on_animation_end:
+            self.__on_animation_end()
 
     def render(self) -> None:
         self.__sprite.draw()

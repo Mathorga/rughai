@@ -4,10 +4,10 @@ class InputController:
     def __init__(
         self,
         window: pyglet.window.Window,
-        sticks_threshold: float = 0.05
+        threshold: float = 0.05
     ):
         self.__window = window
-        self.__sticks_threshold = sticks_threshold
+        self.__threshold = threshold
 
         # Keyboard.
         self.keys = {}
@@ -87,12 +87,12 @@ class InputController:
 
     def on_stick_motion(self, controller, stick, xvalue, yvalue):
         self.sticks[stick] = (
-            xvalue if xvalue < -self.__sticks_threshold or xvalue > self.__sticks_threshold else 0.0,
-            yvalue if yvalue < -self.__sticks_threshold or yvalue > self.__sticks_threshold else 0.0
+            xvalue if xvalue < -self.__threshold or xvalue > self.__threshold else 0.0,
+            yvalue if yvalue < -self.__threshold or yvalue > self.__threshold else 0.0
         )
 
     def on_trigger_motion(self, controller, trigger, value):
-        self.triggers[trigger] = value
+        self.triggers[trigger] = value if value > self.__threshold else 0.0
 
     def __getitem__(self, key):
         return self.keys.get(key, False)

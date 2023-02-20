@@ -78,7 +78,6 @@ class RugHaiHub(Node):
         tree_img.anchor_y = 3
         tree = SpriteNode(
             resource = tree_img,
-            on_animation_end = lambda : None,
             x = 5 * tile_size,
             y = 5 * tile_size,
             scaling = scaling
@@ -90,14 +89,12 @@ class RugHaiHub(Node):
         bar_img.anchor_y = bar_img.height
         energy_bar = SpriteNode(
             resource = bar_img,
-            on_animation_end = lambda : None,
             x = 4,
             y = view_height - 4,
             scaling = scaling
         )
         health_bar = SpriteNode(
             resource = bar_img,
-            on_animation_end = lambda : None,
             x = 4,
             y = view_height - 12,
             scaling = scaling

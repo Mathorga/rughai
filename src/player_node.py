@@ -32,7 +32,39 @@ class PlayerInput:
 
         return self.__controller.key_presses.get(key.SPACE, False) or self.__controller.button_presses.get("b", False)
 
+    def get_main_atk(self) -> bool:
+        """
+        Returns whether the main attack button was pressed or not, either on controller or keyboard.
+        """
+
+        return self.__controller.key_presses.get(key.M, False) or self.__controller.button_presses.get("x", False)
+
+    def get_secondary_atk(self) -> bool:
+        """
+        Returns whether the secondary attack button was pressed or not, either on controller or keyboard.
+        """
+
+        return self.__controller.key_presses.get(key.K, False) or self.__controller.button_presses.get("y", False)
+
+    def get_fire_aim(self) -> bool:
+        """
+        Returns whether the range attack aim button was pressed or not.
+        """
+
+        return self.__controller.triggers.get("lefttrigger", 0.0) > 0.0
+
+    def get_fire_load(self) -> bool:
+        """
+        Returns whether the range attack load button was pressed or not.
+        """
+
+        return self.__controller.triggers.get("righttrigger", 0.0) > 0.0
+
     def get_move_input(self) -> pyglet.math.Vec2:
+        """
+        Returns the movement vector from keyboard and controller.
+        """
+
         stick = self.__controller.sticks.get("leftstick", (0.0, 0.0))
         return pyglet.math.Vec2(
             (self.__controller[key.D] - self.__controller[key.A]) + stick[0],
@@ -51,7 +83,7 @@ class PlayerNode(PositionNode):
         self,
         input_controller: InputController,
         cam_target: PositionNode,
-        cam_target_distance: float = 80.0,
+        cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
         x: int = 0,
         y: int = 0,
@@ -98,6 +130,7 @@ class PlayerNode(PositionNode):
         self.__rolling = False
         # Rolling started.
         self.__rolled = False
+        self.__main_atk = False
 
         self.__run_threshold = run_threshold
 
@@ -130,7 +163,6 @@ class PlayerNode(PositionNode):
         self.__aim_sprite_distance = 10.0
         self.__aim_sprite = SpriteNode(
             resource = target_image,
-            on_animation_end = lambda : None,
             x = x,
             y = y,
             scaling = scaling
@@ -167,14 +199,20 @@ class PlayerNode(PositionNode):
             self.__rolling = False
 
     def input(self):
-        if not self.__rolling:
-            self.__move_input = self.__input.get_move_input().limit(1.0)
-            self.__look_input = self.__input.get_look_input().limit(1.0)
-            self.__slow = self.__input.get_modifier()
-            self.__rolling = self.__input.get_sprint()
+        # Allow the player to look around even if they're rolling.
+        self.__look_input = self.__input.get_look_input().limit(1.0)
 
-            if (self.__rolling):
-                self.__rolled = True
+        # All other input should be fetched if not rolling.
+        if self.__rolling:
+            return
+
+        self.__move_input = self.__input.get_move_input().limit(1.0)
+        self.__slow = self.__input.get_modifier()
+        self.__rolling = self.__input.get_sprint()
+        self.__main_atk = self.__input.get_main_atk()
+
+        if (self.__rolling):
+            self.__rolled = True
 
     def update_stats(self, dt):
         walk_speed = self.__stats._max_speed * 0.5
