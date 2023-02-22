@@ -60,7 +60,8 @@ class SpriteNode(PositionNode):
             self.__sprite.scale_y = y_scale
 
     def set_image(self, image) -> None:
-        self.__sprite.image = image
+        if image != None and (self.__sprite.image != image or (self.__sprite.image != None and self.__sprite.frame_index >= len(self.__sprite.image.frames) - 1)):
+            self.__sprite.image = image
 
     def on_animation_end(self):
         if self.__on_animation_end:

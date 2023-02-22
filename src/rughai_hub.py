@@ -45,7 +45,6 @@ class RugHaiHub(Node):
         bg_image = pyglet.resource.image("bg.png")
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
-        print(type(bg_image))
         bg = SpriteNode(
             resource = pyglet.resource.image("bg.png"),
             on_animation_end = lambda : None,

@@ -101,20 +101,23 @@ class PlayerNode(PositionNode):
         self.__idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_idle.gif")
         self.__walk_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_walk.gif")
         self.__run_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_run.gif")
-        self.__roll_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_roll.gif")
+        self.__sprint_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_roll.gif")
 
         # ATK state animations.
         self.__atk_idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_idle.gif")
+        self.__atk_0_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_0.gif")
 
         # Center animations.
         utils.center_anim(self.__idle_anim)
         utils.center_anim(self.__walk_anim)
         utils.center_anim(self.__run_anim)
-        utils.center_anim(self.__roll_anim)
+        utils.center_anim(self.__sprint_anim)
         utils.center_anim(self.__atk_idle_anim)
+        utils.center_anim(self.__atk_0_anim)
+        self.__atk_0_anim.frames[-1].duration = None
 
-        utils.set_anim_duration(self.__roll_anim, 0.08)
-        self.__roll_anim.frames[-1].duration = None
+        utils.set_anim_duration(self.__sprint_anim, 0.08)
+        self.__sprint_anim.frames[-1].duration = None
 
         self.__movement = pyglet.math.Vec2()
 
@@ -124,13 +127,15 @@ class PlayerNode(PositionNode):
         self.__look_input = pyglet.math.Vec2()
 
         # Movement flags.
-        # Slow walking.
         self.__slow = False
-        # Currently rolling.
-        self.__rolling = False
-        # Rolling started.
-        self.__rolled = False
-        self.__main_atk = False
+
+        # Sprinting flags.
+        self.__sprint_ing = False
+        self.__sprint_ed = False
+
+        # Atk flags
+        self.__main_atk_ing = False
+        self.__main_atk_ed = False
 
         self.__run_threshold = run_threshold
 
@@ -180,51 +185,72 @@ class PlayerNode(PositionNode):
 
     def update(self, dt) -> None:
         # Fetch input.
-        self.input()
+        self.__fetch_input()
 
         # Update stats based on input.
-        self.update_stats(dt)
+        self.__update_stats(dt)
 
         # Compute and apply movement to self's x and y coords.
-        self.move(dt)
+        self.__move(dt)
 
         # Update sprite accordingly.
-        self.update_sprite()
+        self.__update_sprite()
 
         # Update aim sprite.
-        self.update_aim()
+        self.__update_aim()
 
     def on_sprite_animation_end(self):
-        if self.__rolling:
-            self.__rolling = False
+        if self.__sprint_ing:
+            self.__sprint_ing = False
 
-    def input(self):
+        if self.__main_atk_ing:
+            self.__main_atk_ing = False
+
+    def __fetch_input(self):
         # Allow the player to look around even if they're rolling.
         self.__look_input = self.__input.get_look_input().limit(1.0)
 
         # All other input should be fetched if not rolling.
-        if self.__rolling:
+        if self.__sprint_ing or self.__main_atk_ing:
             return
 
         self.__move_input = self.__input.get_move_input().limit(1.0)
         self.__slow = self.__input.get_modifier()
-        self.__rolling = self.__input.get_sprint()
-        self.__main_atk = self.__input.get_main_atk()
 
-        if (self.__rolling):
-            self.__rolled = True
+        self.__sprint_ing = self.__input.get_sprint()
+        if self.__sprint_ing:
+            self.__sprint_ed = True
 
-    def update_stats(self, dt):
+        self.__main_atk_ing = self.__input.get_main_atk()
+        if self.__main_atk_ing:
+            self.__main_atk_ed = True
+
+    def __update_dir(self):
+        if self.__move_input.mag > 0.0:
+            self.__stats._dir = self.__move_input.heading
+
+    def __update_stats(self, dt):
         walk_speed = self.__stats._max_speed * 0.5
         roll_speed = self.__stats._max_speed * 2.0
         roll_accel = self.__stats._accel * 0.5
 
-        if self.__rolling:
-            if self.__rolled:
+        if self.__sprint_ing:
+            # Sprinting.
+            if self.__sprint_ed:
+                # Update direction in order to correctly orient sprints.
+                self.__update_dir()
+
                 self.__stats._speed = roll_speed
-                self.__rolled = False
+                self.__sprint_ed = False
             else:
                 self.__stats._speed -= roll_accel * dt
+        elif self.__main_atk_ing:
+            # Main attacking.
+            if self.__main_atk_ed:
+                self.__update_dir()
+
+                self.__stats._speed = 0.0
+                self.__main_atk_ed = False
         else:
             if self.__move_input.mag > 0.0:
                 self.__stats._dir = self.__move_input.heading
@@ -232,7 +258,7 @@ class PlayerNode(PositionNode):
             else:
                 self.__stats._speed -= self.__stats._accel * dt
 
-        if self.__rolling:
+        if self.__sprint_ing:
             # Clamp speed between 0 and roll speed.
             self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, roll_speed)
         elif self.__slow:
@@ -242,20 +268,20 @@ class PlayerNode(PositionNode):
             # Clamp speed between 0 and max speed.
             self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed * self.__move_input.mag)
 
-    def compute_movement(self, dt):
+    def __compute_movement(self, dt):
         # Define a vector direction.
         movement_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
         self.__movement = movement_base.from_magnitude(self.__stats._speed * dt)
 
-    def move(self, dt):
+    def __move(self, dt):
         # Compute movement.
-        self.compute_movement(dt)
+        self.__compute_movement(dt)
 
         # Apply movement.
         self.x += self.__movement.x
         self.y += self.__movement.y
 
-    def update_sprite(self):
+    def __update_sprite(self):
         # Only update facing if there's any horizontal movement.
         dir_cos = math.cos(self.__stats._dir)
         dir_len = abs(dir_cos)
@@ -270,8 +296,10 @@ class PlayerNode(PositionNode):
 
         # Update sprite image based on current speed.
         image_to_show = None
-        if self.__rolling:
-            image_to_show = self.__roll_anim
+        if self.__sprint_ing:
+            image_to_show = self.__sprint_anim
+        elif self.__main_atk_ing:
+            image_to_show = self.__atk_0_anim
         else:
             if self.__stats._speed <= 0:
                 image_to_show = self.__idle_anim
@@ -280,10 +308,10 @@ class PlayerNode(PositionNode):
             else:
                 image_to_show = self.__run_anim
         
-        if image_to_show != None and self.__sprite.get_image() != image_to_show:
-            self.__sprite.set_image(image_to_show)
+        # if image_to_show != None and self.__sprite.get_image() != image_to_show:
+        self.__sprite.set_image(image_to_show)
 
-    def update_aim(self):
+    def __update_aim(self):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
         self.__aim_sprite.set_position(
             self.x + self.__aim_sprite_offset[0] + aim_vec.x,
