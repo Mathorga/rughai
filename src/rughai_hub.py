@@ -109,8 +109,8 @@ class RugHaiHub(Node):
         self.__scene.add_child(energy_bar, ui = True)
         self.__scene.add_child(health_bar, ui = True)
 
-    def render(self) -> None:
-        self.__scene.render()
+    def draw(self) -> None:
+        self.__scene.draw()
 
     def update(self, dt) -> None:
         self.__scene.update(dt)

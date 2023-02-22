@@ -66,7 +66,7 @@ class SpriteNode(PositionNode):
         if self.__on_animation_end:
             self.__on_animation_end()
 
-    def render(self) -> None:
+    def draw(self) -> None:
         self.__sprite.draw()
 
     def get_bounding_box(self):

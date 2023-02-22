@@ -30,5 +30,5 @@ class DukNode(PositionNode):
             on_animation_end = lambda : None
         )
 
-    def render(self) -> None:
-        self.__sprite.render()
+    def draw(self) -> None:
+        self.__sprite.draw()

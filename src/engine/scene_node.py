@@ -41,18 +41,18 @@ class SceneNode(Node):
             self.__view_height * self.__scaling
         )
 
-    def render(self):
+    def draw(self):
         with self.__camera:
             # Draw fixed objects.
             for child in self.__visible_fixed_children:
-                child.render()
+                child.draw()
 
             # Draw sorted objects.
             for child in self.__visible_sorted_children:
-                child.render()
+                child.draw()
 
         for child in self.__ui_children:
-            child.render()
+            child.draw()
 
     def update(self, dt):
         # Update all fixed children.

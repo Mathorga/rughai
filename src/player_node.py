@@ -174,9 +174,9 @@ class PlayerNode(PositionNode):
         self.__cam_target.x = x + cam_target_offset[0]
         self.__cam_target.y = y + cam_target_offset[1]
 
-    def render(self):
-        self.__sprite.render()
-        self.__aim_sprite.render()
+    def draw(self):
+        self.__sprite.draw()
+        self.__aim_sprite.draw()
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -280,7 +280,7 @@ class PlayerNode(PositionNode):
             else:
                 image_to_show = self.__run_anim
         
-        if image_to_show != None and (self.__sprite.get_image() != image_to_show):
+        if image_to_show != None and self.__sprite.get_image() != image_to_show:
             self.__sprite.set_image(image_to_show)
 
     def update_aim(self):

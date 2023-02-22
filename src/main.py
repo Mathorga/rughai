@@ -77,7 +77,7 @@ class RugHai:
 
             # Upscaler handles maintaining the wanted output resolution.
             with self._upscaler:
-                self._scene.render()
+                self._scene.draw()
 
             if settings.DEBUG:
                 self._update_bench.draw()

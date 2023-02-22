@@ -118,7 +118,7 @@ class TilemapNode(PositionNode):
     #         elif sprite.batch != None:
     #             sprite.batch = None
 
-    def render(self):
+    def draw(self):
         self.__batch.draw()
 
     def get_bounding_box(self):

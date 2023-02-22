@@ -2,7 +2,7 @@ class Node:
     def __init__(self) -> None:
         pass
 
-    def render(self) -> None:
+    def draw(self) -> None:
         """Renders the object."""
 
         pass
