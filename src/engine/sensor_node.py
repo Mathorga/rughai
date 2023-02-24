@@ -1,12 +1,11 @@
 import pyglet
 
 from engine.node import PositionNode
+from engine.shape_node import ShapeNode
 
 class SensorNode(PositionNode):
     def __init__(
         self,
-        resource,
-        on_animation_end = None,
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
@@ -20,17 +19,9 @@ class SensorNode(PositionNode):
 
         self.__scaling = scaling
 
-        self.__sprite = pyglet.sprite.Sprite(
-            img = resource,
-            x = x * scaling,
-            y = y * scaling,
-            batch = batch,
-            group = group
-        )
+        self.__sprite = ShapeNode()
         self.__sprite.scale = scaling
         self.__sprite.push_handlers(self)
-
-        self.__on_animation_end = on_animation_end
 
     def get_image(self):
         return self.__sprite.image
