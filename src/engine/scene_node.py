@@ -3,6 +3,7 @@ import pyglet.math as pm
 
 from engine.camera import Camera
 from engine.node import Node, PositionNode
+from engine.shape_node import ShapeNode
 from engine.utils import *
 
 class SceneNode(Node):
@@ -11,13 +12,17 @@ class SceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
+        on_scene_end = None,
         scaling: int = 1,
-        cam_speed: float = 10.0
+        cam_speed: float = 10.0,
+        curtain_speed: int = 100
     ):
         self.__window = window
         self.__view_width = view_width
         self.__view_height = view_height
         self.__scaling = scaling
+
+        self.__on_scene_end = on_scene_end
 
         # Create a new camera.
         self.__camera = Camera(
@@ -35,6 +40,19 @@ class SceneNode(Node):
         self.__visible_sorted_children = []
         self.__ui_children = []
 
+        self.__curtain = ShapeNode(
+            x = 0,
+            y = 0,
+            width = view_width,
+            height = view_height,
+            scaling = scaling
+        )
+        self.__curtain_opacity = 0xFF
+        self.__curtain_speed = curtain_speed
+        self.__curtain_opening = True
+        self.__curtain_closing = False
+        self.__curtain.set_opacity(self.__curtain_opacity)
+
     def get_scaled_view_size(self):
         return (
             self.__view_width * self.__scaling,
@@ -51,10 +69,40 @@ class SceneNode(Node):
             for child in self.__visible_sorted_children:
                 child.draw()
 
+        # Draw UI elements.
         for child in self.__ui_children:
             child.draw()
 
+        # Draw curtain as last element.
+        if self.__curtain_opacity >= 0x00:
+            self.__curtain.draw()
+
+    def __update_curtain(self, dt):
+        if self.__curtain_opening:
+            self.__curtain_opacity -= self.__curtain_speed * dt
+
+            if self.__curtain_opacity <= 0x00:
+                self.__curtain_opening = False
+                self.__curtain_opacity = 0x00
+
+            self.__curtain.set_opacity(int(self.__curtain_opacity))
+
+        if self.__curtain_closing:
+            self.__curtain_opacity += self.__curtain_speed * dt
+
+            if self.__curtain_opacity >= 0xFF:
+                self.__curtain_closing = False
+                self.__curtain_opacity = 0xFF
+
+                if self.__on_scene_end:
+                    self.__on_scene_end()
+
+            self.__curtain.set_opacity(int(self.__curtain_opacity))
+
     def update(self, dt):
+        # Update curtain.
+        self.__update_curtain(dt)
+
         # Update all fixed children.
         for object in self.__fixed_children:
             object.update(dt)
@@ -128,3 +176,7 @@ class SceneNode(Node):
                 self.__sorted_children.append(child)
             else:
                 self.__fixed_children.append(child)
+
+    def end(self):
+        self.__curtain_opening = False
+        self.__curtain_closing = True

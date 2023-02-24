@@ -10,7 +10,7 @@ from engine.tilemap_node import TilemapNode, Tileset
 from player_node import PlayerNode
 from duk_node import DukNode
 
-class RugHaiHub(Node):
+class RugHaiLower(Node):
     def __init__(
         self,
         window: pyglet.window.Window,

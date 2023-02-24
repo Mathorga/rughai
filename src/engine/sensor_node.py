@@ -2,7 +2,7 @@ import pyglet
 
 from engine.node import PositionNode
 
-class SpriteNode(PositionNode):
+class SensorNode(PositionNode):
     def __init__(
         self,
         resource,
