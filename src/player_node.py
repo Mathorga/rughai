@@ -148,12 +148,16 @@ class PlayerNode(PositionNode):
 
         self.__hor_facing: float = 1.0
 
+        self.__batch = pyglet.graphics.Batch()
+
         self.__sprite = SpriteNode(
             resource = self.__idle_anim,
             on_animation_end = self.on_sprite_animation_end,
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            group = pyglet.graphics.Group(order = 1),
+            batch = self.__batch
         )
 
         # Aim sprite image.
@@ -170,7 +174,23 @@ class PlayerNode(PositionNode):
             resource = target_image,
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            group = pyglet.graphics.Group(order = 2),
+            batch = self.__batch
+        )
+
+        # Shadow sprite image.
+        shadow_image = pyglet.resource.image("sprites/shadow.png")
+        shadow_image.anchor_x = shadow_image.width / 2
+        shadow_image.anchor_y = shadow_image.height / 2
+
+        self.__shadow_sprite = SpriteNode(
+            resource = shadow_image,
+            x = x,
+            y = y,
+            scaling = scaling,
+            group = pyglet.graphics.Group(order = 0),
+            batch = self.__batch
         )
 
         self.__cam_target_distance = cam_target_distance
@@ -180,8 +200,9 @@ class PlayerNode(PositionNode):
         self.__cam_target.y = y + cam_target_offset[1]
 
     def draw(self):
-        self.__sprite.draw()
-        self.__aim_sprite.draw()
+        # self.__sprite.draw()
+        # self.__aim_sprite.draw()
+        self.__batch.draw()
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -193,11 +214,8 @@ class PlayerNode(PositionNode):
         # Compute and apply movement to self's x and y coords.
         self.__move(dt)
 
-        # Update sprite accordingly.
-        self.__update_sprite()
-
-        # Update aim sprite.
-        self.__update_aim()
+        # Update sprites accordingly.
+        self.__update_sprites()
 
     def on_sprite_animation_end(self):
         if self.__sprint_ing:
@@ -281,7 +299,7 @@ class PlayerNode(PositionNode):
         self.x += self.__movement.x
         self.y += self.__movement.y
 
-    def __update_sprite(self):
+    def __update_sprites(self):
         # Only update facing if there's any horizontal movement.
         dir_cos = math.cos(self.__stats._dir)
         dir_len = abs(dir_cos)
@@ -311,6 +329,12 @@ class PlayerNode(PositionNode):
         # if image_to_show != None and self.__sprite.get_image() != image_to_show:
         self.__sprite.set_image(image_to_show)
 
+        # Update aim sprite.
+        self.__update_aim()
+
+        # Update shadow sprite.
+        self.__update_shadow()
+
     def __update_aim(self):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
         self.__aim_sprite.set_position(
@@ -321,6 +345,9 @@ class PlayerNode(PositionNode):
         cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
+
+    def __update_shadow(self):
+        self.__shadow_sprite.set_position(self.x, self.y)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()
