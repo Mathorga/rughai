@@ -61,6 +61,7 @@ class RugHai:
             settings.WINDOW_HEIGHT if not settings.FULLSCREEN else None,
             settings.TITLE,
             fullscreen = settings.FULLSCREEN,
+            vsync = True,
             resizable = False
         )
 
