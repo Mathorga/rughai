@@ -3,6 +3,7 @@ import pyglet
 from engine.node import Node
 from engine.node import PositionNode
 from engine.scene_node import SceneNode
+from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode, Tileset
@@ -82,7 +83,19 @@ class RugHaiHub(Node):
             scaling = scaling
         )
 
-        # Define energy bar.
+        # Place doors.
+        bottom_door = SensorNode(
+            x = 25 * tile_size,
+            y = 0,
+            width = 50 * tile_size,
+            height = 2 * tile_size,
+            anchor_x = 25 * tile_size,
+            anchor_y = 2 * tile_size,
+            scaling = scaling,
+            visible = True
+        )
+
+        # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
         bar_img.anchor_x = 0
         bar_img.anchor_y = bar_img.height
@@ -107,6 +120,7 @@ class RugHaiHub(Node):
         self.__scene.add_child(tree, sorted = True)
         self.__scene.add_child(energy_bar, ui = True)
         self.__scene.add_child(health_bar, ui = True)
+        self.__scene.add_child(bottom_door)
 
     def draw(self) -> None:
         self.__scene.draw()
