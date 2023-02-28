@@ -3,7 +3,7 @@ import pyglet.math as pm
 
 from engine.camera import Camera
 from engine.node import Node, PositionNode
-from engine.shape_node import ShapeNode
+from engine.shape_node import RectNode
 from engine.utils import *
 
 class SceneNode(Node):
@@ -40,13 +40,12 @@ class SceneNode(Node):
         self.__visible_sorted_children = []
         self.__ui_children = []
 
-        self.__curtain = ShapeNode(
+        self.__curtain = RectNode(
             x = 0,
             y = 0,
             width = view_width,
             height = view_height,
-            scaling = scaling,
-            color = (0x00, 0x00, 0x00)
+            scaling = scaling
         )
         self.__curtain_opacity = 0xFF
         self.__curtain_speed = curtain_speed

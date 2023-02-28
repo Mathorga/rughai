@@ -1,5 +1,5 @@
 from engine.node import PositionNode
-from engine.shape_node import ShapeNode
+from engine.shape_node import RectNode
 
 class SensorNode(PositionNode):
     def __init__(
@@ -28,7 +28,7 @@ class SensorNode(PositionNode):
         self.__scaling = scaling
         self.__visible = visible
 
-        self.__shape = ShapeNode(
+        self.__shape = RectNode(
             x = x,
             y = y,
             width = width,
@@ -36,6 +36,7 @@ class SensorNode(PositionNode):
             scaling = scaling,
             anchor_x = anchor_x,
             anchor_y = anchor_y,
+            color = (0xFF, 0xFF, 0x7F, 0x7F),
             batch = batch,
             group = group
         )

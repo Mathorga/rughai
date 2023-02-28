@@ -2,7 +2,7 @@ import pyglet
 
 from engine.node import PositionNode
 
-class ShapeNode(PositionNode):
+class RectNode(PositionNode):
     def __init__(
         self,
         x: int = 0,
@@ -11,7 +11,7 @@ class ShapeNode(PositionNode):
         height: int = 0,
         anchor_x: int = 0,
         anchor_y: int = 0,
-        color: tuple = (0xFF, 0xFF, 0x7F),
+        color: tuple = (0x00, 0x00, 0x00),
         scaling: int = 1,
         batch = None,
         group = None

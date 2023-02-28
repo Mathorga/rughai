@@ -7,7 +7,7 @@ from pyglet.window import key
 from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sensor_node import SensorNode
-from engine.shape_node import ShapeNode
+from engine.shape_node import RectNode
 from engine.sprite_node import SpriteNode
 import engine.utils as utils
 
@@ -199,10 +199,10 @@ class PlayerNode(PositionNode):
         self.__collider = SensorNode(
             x = x,
             y = y,
-            width = 16,
-            height = 12,
-            anchor_x = 8,
-            anchor_y = 6,
+            width = 8,
+            height = 6,
+            anchor_x = 4,
+            anchor_y = 3,
             scaling = scaling,
             visible = True
         )
