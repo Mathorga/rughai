@@ -1,5 +1,5 @@
 from engine.node import PositionNode
-from engine.shape_node import RectNode
+from engine.rect_node import RectNode
 
 class SensorNode(PositionNode):
     def __init__(

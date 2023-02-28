@@ -3,7 +3,7 @@ import pyglet.math as pm
 
 from engine.camera import Camera
 from engine.node import Node, PositionNode
-from engine.shape_node import RectNode
+from engine.rect_node import RectNode
 from engine.utils import *
 
 class SceneNode(Node):

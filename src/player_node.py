@@ -7,7 +7,7 @@ from pyglet.window import key
 from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sensor_node import SensorNode
-from engine.shape_node import RectNode
+from engine.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 import engine.utils as utils
 
