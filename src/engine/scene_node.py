@@ -45,7 +45,8 @@ class SceneNode(Node):
             y = 0,
             width = view_width,
             height = view_height,
-            scaling = scaling
+            scaling = scaling,
+            color = (0x00, 0x00, 0x00)
         )
         self.__curtain_opacity = 0xFF
         self.__curtain_speed = curtain_speed

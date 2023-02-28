@@ -6,6 +6,8 @@ from pyglet.window import key
 
 from engine.node import PositionNode
 from engine.input_controller import InputController
+from engine.sensor_node import SensorNode
+from engine.shape_node import ShapeNode
 from engine.sprite_node import SpriteNode
 import engine.utils as utils
 
@@ -193,6 +195,18 @@ class PlayerNode(PositionNode):
             batch = self.__batch
         )
 
+        # Collider.
+        self.__collider = SensorNode(
+            x = x,
+            y = y,
+            width = 16,
+            height = 12,
+            anchor_x = 8,
+            anchor_y = 6,
+            scaling = scaling,
+            visible = True
+        )
+
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset
         self.__cam_target = cam_target
@@ -200,8 +214,9 @@ class PlayerNode(PositionNode):
         self.__cam_target.y = y + cam_target_offset[1]
 
     def draw(self):
-        # self.__sprite.draw()
-        # self.__aim_sprite.draw()
+        # Draw collider out of batch.
+        self.__collider.draw()
+
         self.__batch.draw()
 
     def update(self, dt) -> None:
@@ -335,6 +350,9 @@ class PlayerNode(PositionNode):
         # Update shadow sprite.
         self.__update_shadow()
 
+        # Update collider.
+        self.__update_collider()
+
     def __update_aim(self):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
         self.__aim_sprite.set_position(
@@ -348,6 +366,9 @@ class PlayerNode(PositionNode):
 
     def __update_shadow(self):
         self.__shadow_sprite.set_position(self.x, self.y)
+
+    def __update_collider(self):
+        self.__collider.set_position(self.x, self.y)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()

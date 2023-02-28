@@ -9,7 +9,9 @@ class ShapeNode(PositionNode):
         y: int = 0,
         width: int = 0,
         height: int = 0,
-        color: tuple = (0x00, 0x00, 0x00),
+        anchor_x: int = 0,
+        anchor_y: int = 0,
+        color: tuple = (0xFF, 0xFF, 0x7F),
         scaling: int = 1,
         batch = None,
         group = None
@@ -21,6 +23,8 @@ class ShapeNode(PositionNode):
 
         self.__width = width
         self.__height = height
+        self.__anchor_x = anchor_x
+        self.__anchor_y = anchor_y
 
         self.__scaling = scaling
 
@@ -33,7 +37,7 @@ class ShapeNode(PositionNode):
             batch = batch,
             group = group
         )
-        self.__shape.anchor_position = (0, 0)
+        self.__shape.anchor_position = (anchor_x * scaling, anchor_y * scaling)
 
     def set_position(
         self,

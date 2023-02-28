@@ -1,5 +1,3 @@
-import pyglet
-
 from engine.node import PositionNode
 from engine.shape_node import ShapeNode
 
@@ -8,7 +6,12 @@ class SensorNode(PositionNode):
         self,
         x: int = 0,
         y: int = 0,
+        width: int = 0,
+        height: int = 0,
+        anchor_x: int = 0,
+        anchor_y: int = 0,
         scaling: int = 1,
+        visible: bool = False,
         batch = None,
         group = None
     ) -> None:
@@ -17,64 +20,47 @@ class SensorNode(PositionNode):
             y = y
         )
 
+        self.width = width
+        self.height = height
+        self.anchor_x = anchor_x
+        self.anchor_y = anchor_y
+
         self.__scaling = scaling
+        self.__visible = visible
 
-        self.__shape = ShapeNode()
-        self.__shape.scale = scaling
-        self.__shape.push_handlers(self)
-
-    def get_image(self):
-        return self.__shape.image
+        self.__shape = ShapeNode(
+            x = x,
+            y = y,
+            width = width,
+            height = height,
+            scaling = scaling,
+            anchor_x = anchor_x,
+            anchor_y = anchor_y,
+            batch = batch,
+            group = group
+        )
 
     def set_position(
         self,
         x = None,
         y = None
     ) -> None:
-        if x is not None:
+        if x != None:
             self.x = x
-            self.__shape.x = x * self.__scaling
 
-        if y is not None:
+        if y != None:
             self.y = y
-            self.__shape.y = y * self.__scaling
 
-    def set_scale(
-        self,
-        x_scale = None,
-        y_scale = None
-    ) -> None:
-        if x_scale is not None:
-            self.__shape.scale_x = x_scale
-
-        if y_scale is not None:
-            self.__shape.scale_y = y_scale
-
-    def set_image(self, image) -> None:
-        if image != None and (self.__shape.image != image or (self.__shape.image != None and self.__shape.frame_index >= len(self.__shape.image.frames) - 1)):
-            self.__shape.image = image
-
-    def on_animation_end(self):
-        if self.__on_animation_end:
-            self.__on_animation_end()
+        self.__shape.set_position(x, y)
 
     def draw(self) -> None:
-        self.__shape.draw()
+        if self.__visible:
+            self.__shape.draw()
 
     def get_bounding_box(self):
-        if isinstance(self.__shape.image, pyglet.image.TextureRegion):
-            return (
-                self.__shape.x - self.__shape.image.anchor_x * self.__scaling,
-                self.__shape.y - self.__shape.image.anchor_y * self.__scaling,
-                self.__shape.width,
-                self.__shape.height
-            )
-        elif isinstance(self.__shape.image, pyglet.image.animation.Animation):
-            return (
-                self.__shape.x - self.__shape.image.frames[0].image.anchor_x * self.__scaling,
-                self.__shape.y - self.__shape.image.frames[0].image.anchor_y * self.__scaling,
-                self.__shape.width,
-                self.__shape.height
-            )
-
-        return super().get_bounding_box()
+        return (
+            self.__shape.x - self.anchor_x * self.__scaling,
+            self.__shape.y - self.anchor_y * self.__scaling,
+            self.width,
+            self.height
+        )
