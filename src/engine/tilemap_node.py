@@ -1,4 +1,5 @@
 import json
+import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
 
@@ -88,6 +89,44 @@ class TilemapNode(PositionNode):
             spr.scale = scaling
 
     @staticmethod
+    def from_tmx_file(
+        source: str,
+        tileset: Tileset,
+        x: int = 0,
+        y: int = 0,
+        scaling: int = 1
+    ):
+        """Constructs a new TileMap from the given TMX (XML) file."""
+
+        root = xml.parse(f"{pyglet.resource.path[0]}/{source}").getroot()
+
+        map_width = int(root.attrib["width"])
+        map_height = int(root.attrib["height"])
+
+        tilemap_layers = root.findall("layer")
+
+        layer = tilemap_layers[0]
+        layer_data = layer.find("data")
+
+        if not layer_data or not layer_data.text:
+            # The provided file does not contain valid information.
+            raise Exception
+
+        # Remove all newline characters and split by comma.
+        layer_content = layer_data.text.replace("\n", "").split(",")
+
+        return TilemapNode(
+            tileset = tileset,
+            # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
+            map = [int(i) - 1 for i in layer_content],
+            map_width = map_width,
+            map_height = map_height,
+            x = x,
+            y = y,
+            scaling = scaling
+        )
+
+    @staticmethod
     def from_tmj_file(
         source: str,
         tileset: Tileset,
@@ -103,10 +142,12 @@ class TilemapNode(PositionNode):
         with open(f"{pyglet.resource.path[0]}/{source}", "r") as content:
             data = json.load(content)
 
+        tilemap_layers = data["layers"]
+
         return TilemapNode(
             tileset = tileset,
             # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
-            map = [i - 1 for i in data["layers"][0]["data"]],
+            map = [i - 1 for i in tilemap_layers[0]["data"]],
             map_width = data["width"],
             map_height = data["height"],
             x = x,

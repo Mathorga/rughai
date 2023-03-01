@@ -32,8 +32,17 @@ class RugHaiHub(Node):
 
         # Define a tilemap.
         tile_size = 8
-        tilemap = TilemapNode.from_tmj_file(
-            source = "tilemaps/rughai/main_hub.tmj",
+        # tilemap = TilemapNode.from_tmj_file(
+        #     source = "tilemaps/rughai/main_hub.tmj",
+        #     tileset = Tileset(
+        #         source = "tilemaps/tilesets/rughai/main_tileset.png",
+        #         tile_width = tile_size,
+        #         tile_height = tile_size
+        #     ),
+        #     scaling = scaling
+        # )
+        tilemap = TilemapNode.from_tmx_file(
+            source = "tilemaps/rughai/main_hub.tmx",
             tileset = Tileset(
                 source = "tilemaps/tilesets/rughai/main_tileset.png",
                 tile_width = tile_size,
