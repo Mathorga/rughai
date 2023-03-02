@@ -13,7 +13,8 @@ class SensorNode(PositionNode):
         scaling: int = 1,
         visible: bool = False,
         batch = None,
-        group = None
+        group = None,
+        tag: str = ""
     ) -> None:
         super().__init__(
             x = x,
@@ -40,6 +41,8 @@ class SensorNode(PositionNode):
             batch = batch,
             group = group
         )
+
+        self.tag = tag
 
     def set_position(
         self,

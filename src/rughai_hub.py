@@ -112,6 +112,17 @@ class RugHaiHub(Node):
             scaling = scaling
         )
 
+        cam_bound = SensorNode(
+            x = 50 * tile_size,
+            y = 25 * tile_size,
+            width = tile_size,
+            height = 50 * tile_size,
+            anchor_x = 0,
+            anchor_y = 25 * tile_size,
+            scaling = scaling,
+            visible = True
+        )
+
         self.__scene.add_child(bg)
         self.__scene.add_child(tilemap)
         self.__scene.add_child(cam_target, cam_target = True)
@@ -121,6 +132,7 @@ class RugHaiHub(Node):
         self.__scene.add_child(energy_bar, ui = True)
         self.__scene.add_child(health_bar, ui = True)
         self.__scene.add_child(bottom_door)
+        self.__scene.add_child(cam_bound)
 
     def draw(self) -> None:
         self.__scene.draw()

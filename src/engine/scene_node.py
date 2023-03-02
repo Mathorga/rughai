@@ -4,6 +4,7 @@ import pyglet.math as pm
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
+from engine.sensor_node import SensorNode
 from engine.utils import *
 
 class SceneNode(Node):
@@ -99,6 +100,37 @@ class SceneNode(Node):
 
             self.__curtain.set_opacity(int(self.__curtain_opacity))
 
+    def __update_camera(self, dt):
+        if self.__cam_target != None:
+            camera_movement = pm.Vec2(
+                (self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
+                (self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
+            )
+
+
+            for child in self.__fixed_children:
+                if (
+                    isinstance(child, SensorNode) and
+                    child.tag == "camera" and
+                    overlap(
+                        child.x * self.__scaling - child.anchor_x * self.__scaling,
+                        child.y * self.__scaling - child.anchor_y * self.__scaling,
+                        child.width * self.__scaling,
+                        child.height * self.__scaling,
+                        *self.__camera.position,
+                        self.__view_width * self.__scaling,
+                        self.__view_height * self.__scaling
+                    )
+                ):
+                    print("camera_overlapping")
+
+
+
+            self.__camera.position = (
+                self.__camera.position[0] + camera_movement.x,
+                self.__camera.position[1] + camera_movement.y
+            )
+
     def update(self, dt):
         # Update curtain.
         self.__update_curtain(dt)
@@ -112,15 +144,7 @@ class SceneNode(Node):
             object.update(dt)
 
         # Update camera.
-        if self.__cam_target != None:
-            camera_movement = pm.Vec2(
-                (self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
-                (self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
-            )
-            self.__camera.position = (
-                self.__camera.position[0] + camera_movement.x,
-                self.__camera.position[1] + camera_movement.y
-            )
+        self.__update_camera(dt)
 
         # TODO Cull away children outside of the map.
         # self.__visible_fixed_children = list(
