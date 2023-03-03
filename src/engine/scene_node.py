@@ -4,8 +4,22 @@ import pyglet.math as pm
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
-from engine.sensor_node import SensorNode
 from engine.utils import *
+
+class Bounds:
+    def __init__(
+        self,
+        top = None,
+        bottom = None,
+        left = None,
+        right = None,
+        scaling: int = 1
+    ) -> None:
+        self.__scaling = scaling
+        self.top = top * scaling if top != None else None
+        self.bottom = bottom * scaling if bottom != None else None
+        self.left = left * scaling if left != None else None
+        self.right = right * scaling if right != None else None
 
 class SceneNode(Node):
     def __init__(
@@ -17,10 +31,7 @@ class SceneNode(Node):
         scaling: int = 1,
         cam_speed: float = 10.0,
         curtain_speed: int = 100,
-        upper_cam_bound = None,
-        lower_cam_bound = None,
-        left_cam_bound = None,
-        right_cam_bound = None
+        cam_bounds: Bounds = Bounds()
     ):
         self.__window = window
         self.__view_width = view_width
@@ -35,12 +46,7 @@ class SceneNode(Node):
         )
         self.__cam_speed = cam_speed
         self.__cam_target = None
-        self.__cam_bounds = (
-            upper_cam_bound * scaling if upper_cam_bound != None else None,
-            lower_cam_bound * scaling if lower_cam_bound != None else None,
-            left_cam_bound * scaling if left_cam_bound != None else None,
-            right_cam_bound * scaling if right_cam_bound != None else None
-        )
+        self.__cam_bounds = cam_bounds
 
         # Lists of all children.
         self.__fixed_children = []
@@ -112,6 +118,7 @@ class SceneNode(Node):
 
     def __update_camera(self, dt):
         if self.__cam_target != None:
+            # Compute camera movement from camera target.
             camera_movement = pm.Vec2(
                 (self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
                 (self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
@@ -120,59 +127,21 @@ class SceneNode(Node):
             updated_x = self.__camera.position[0] + camera_movement.x
             updated_y = self.__camera.position[1] + camera_movement.y
 
-            if self.__cam_bounds[0] != None and self.__cam_bounds[0] < updated_y + self.__view_height * self.__scaling:
-                updated_y = self.__cam_bounds[0] - self.__view_height * self.__scaling
+            # Apply bounds to camera movement.
+            if self.__cam_bounds.top != None and self.__cam_bounds.top < updated_y + self.__view_height * self.__scaling:
+                updated_y = self.__cam_bounds.top - self.__view_height * self.__scaling
+            if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom > updated_y:
+                updated_y = self.__cam_bounds.bottom
+            if self.__cam_bounds.left != None and self.__cam_bounds.left > updated_x:
+                updated_x = self.__cam_bounds.left
+            if self.__cam_bounds.right != None and self.__cam_bounds.right < updated_x + self.__view_width * self.__scaling:
+                updated_x = self.__cam_bounds.right - self.__view_width * self.__scaling
 
-            if self.__cam_bounds[1] != None and self.__cam_bounds[1] > updated_y:
-                updated_y = self.__cam_bounds[1]
-
-            if self.__cam_bounds[2] != None and self.__cam_bounds[2] > updated_x:
-                updated_x = self.__cam_bounds[2]
-
-            if self.__cam_bounds[3] != None and self.__cam_bounds[3] < updated_x + self.__view_width * self.__scaling:
-                updated_x = self.__cam_bounds[3] - self.__view_width * self.__scaling
-
-
+            # Actually update camera position.
             self.__camera.position = (
                 updated_x,
                 updated_y
             )
-
-
-            # for child in self.__fixed_children:
-            #     # Only check distance to camera bounds children.
-            #     if (isinstance(child, SensorNode) and child.tag == "camera"):
-            #         # overlap(
-            #         #     child.x * self.__scaling - child.anchor_x * self.__scaling,
-            #         #     child.y * self.__scaling - child.anchor_y * self.__scaling,
-            #         #     child.width * self.__scaling,
-            #         #     child.height * self.__scaling,
-            #         #     self.__camera.position[0] + camera_movement.x,
-            #         #     self.__camera.position[1] + camera_movement.y,
-            #         #     self.__view_width * self.__scaling,
-            #         #     self.__view_height * self.__scaling
-            #         # )
-
-            #         # Compute distance to the child.
-            #         dist = distance(
-            #             ((child.x - child.anchor_x) + child.width / 2) * self.__scaling,
-            #             ((child.y - child.anchor_y) + child.height / 2)* self.__scaling,
-            #             child.width * self.__scaling,
-            #             child.height * self.__scaling,
-            #             updated_position[0] + ((self.__view_width / 2) * self.__scaling),
-            #             updated_position[1] + ((self.__view_height / 2) * self.__scaling),
-            #             self.__view_width * self.__scaling,
-            #             self.__view_height * self.__scaling
-            #         )
-            #         # Compute horizontal movement.
-            #         if abs(dist[0]) < abs(camera_movement.x):
-            #             camera_movement.x = dist[0]
-            #         # camera_movement.x = min(abs(dist[0]), abs(camera_movement.x))
-
-            #         # # Compute vertical movement.
-            #         if abs(dist[1]) < abs(camera_movement.y):
-            #             camera_movement.y = dist[1]
-            #         # camera_movement.y = min(abs(dist[1]), abs(camera_movement.y))
 
 
     def update(self, dt):

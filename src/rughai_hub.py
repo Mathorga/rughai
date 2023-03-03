@@ -2,7 +2,7 @@ import pyglet
 
 from engine.node import Node
 from engine.node import PositionNode
-from engine.scene_node import SceneNode
+from engine.scene_node import Bounds, SceneNode
 from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
@@ -104,27 +104,18 @@ class RugHaiHub(Node):
             scaling = scaling
         )
 
-        cam_bound = SensorNode(
-            x = 50 * tile_size,
-            y = 25 * tile_size,
-            width = tile_size,
-            height = 50 * tile_size,
-            anchor_x = 0,
-            anchor_y = 25 * tile_size,
-            scaling = scaling,
-            visible = True,
-            tag = "camera"
-        )
-
         self.__scene = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
             cam_speed = 5.0,
-            upper_cam_bound = 50 * tile_size,
-            lower_cam_bound = 0,
-            right_cam_bound = 50 * tile_size
+            cam_bounds = Bounds(
+                top = 50 * tile_size,
+                bottom = 0,
+                right = 50 * tile_size,
+                scaling = scaling
+            )
         )
 
         self.__scene.add_child(bg)
@@ -136,7 +127,6 @@ class RugHaiHub(Node):
         self.__scene.add_child(energy_bar, ui = True)
         self.__scene.add_child(health_bar, ui = True)
         self.__scene.add_child(bottom_door)
-        self.__scene.add_child(cam_bound)
 
     def draw(self) -> None:
         self.__scene.draw()

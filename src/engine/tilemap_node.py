@@ -38,8 +38,6 @@ class Tileset:
             for x in range(self.margin, self.__texture_width - self.spacing, self.tile_width + self.spacing):
                 # Cut the needed region from the given texture and save it.
                 tile = self.__texture.get_region(x, self.__texture_height - y - self.tile_height, self.tile_width, self.tile_height)
-                tile.anchor_x = self.tile_width / 2
-                tile.anchor_y = self.tile_height / 2
                 self.tiles.append(tile)
 
                 gl.glBindTexture(tile.target, tile.id)
