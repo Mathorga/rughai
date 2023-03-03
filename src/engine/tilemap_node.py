@@ -129,7 +129,6 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmx_file(
         source: str,
-        tileset: Tileset,
         x: int = 0,
         y: int = 0,
         scaling: int = 1
@@ -141,28 +140,43 @@ class TilemapNode(PositionNode):
         map_width = int(root.attrib["width"])
         map_height = int(root.attrib["height"])
 
-        tilemap_layers = root.findall("layer")
+        tile_width = int(root.attrib["tilewidth"])
+        tile_height = int(root.attrib["tileheight"])
 
-        layer = tilemap_layers[0]
-        layer_data = layer.find("data")
+        tilemap_tilesets = root.findall("tileset")
 
-        if not layer_data or not layer_data.text:
-            # The provided file does not contain valid information.
-            raise Exception
-
-        # Remove all newline characters and split by comma.
-        layer_content = layer_data.text.replace("\n", "").split(",")
-
-        return TilemapNode(
-            tileset = tileset,
-            # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
-            map = [int(i) - 1 for i in layer_content],
-            map_width = map_width,
-            map_height = map_height,
-            x = x,
-            y = y,
-            scaling = scaling
+        # Extract a tileset from all the given file.
+        tileset = Tileset(
+            sources = [f"tilemaps/tilesets/rughai/{ts.attrib['source'].split('.')[0]}.png" for ts in tilemap_tilesets],
+            tile_width = tile_width,
+            tile_height = tile_height
         )
+
+        tilemap_layers = root.findall("layer")
+        layers = []
+        for layer in tilemap_layers:
+            layer_data = layer.find("data")
+
+            if layer_data == None or layer_data.text == None:
+                # The provided file does not contain valid information.
+                raise Exception
+
+            # Remove all newline characters and split by comma.
+            layer_content = layer_data.text.replace("\n", "").split(",")
+
+            layers.append(layer_content)
+
+        return [
+            TilemapNode(
+                tileset = tileset,
+                map = [int(i) - 1 for i in layer],
+                map_width = map_width,
+                map_height = map_height,
+                x = x,
+                y = y,
+                scaling = scaling
+            ) for layer in layers
+        ]
 
     @staticmethod
     def from_tmj_file(
@@ -182,6 +196,7 @@ class TilemapNode(PositionNode):
         with open(f"{pyglet.resource.path[0]}/{source}", "r") as content:
             data = json.load(content)
 
+        # Extract a tileset from all the given file.
         tileset = Tileset(
             sources = [f"tilemaps/tilesets/rughai/{ts['source'].split('.')[0]}.png" for ts in data["tilesets"]],
             tile_width = data["tilewidth"],

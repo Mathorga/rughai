@@ -33,8 +33,8 @@ class RugHaiHub(Node):
         #     ),
         #     scaling = scaling
         # )
-        tilemaps = TilemapNode.from_tmj_file(
-            source = "tilemaps/rughai/main_hub.tmj",
+        tilemaps = TilemapNode.from_tmx_file(
+            source = "tilemaps/rughai/main_hub.tmx",
             scaling = scaling
         )
 
