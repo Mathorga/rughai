@@ -22,14 +22,6 @@ class RugHaiHub(Node):
     ):
         super().__init__()
 
-        self.__scene = SceneNode(
-            window = window,
-            view_width = view_width,
-            view_height = view_height,
-            scaling = scaling,
-            cam_speed = 5.0
-        )
-
         # Define a tilemap.
         tile_size = 8
         tilemap = TilemapNode.from_tmj_file(
@@ -120,7 +112,19 @@ class RugHaiHub(Node):
             anchor_x = 0,
             anchor_y = 25 * tile_size,
             scaling = scaling,
-            visible = True
+            visible = True,
+            tag = "camera"
+        )
+
+        self.__scene = SceneNode(
+            window = window,
+            view_width = view_width,
+            view_height = view_height,
+            scaling = scaling,
+            cam_speed = 5.0,
+            upper_cam_bound = 50 * tile_size,
+            lower_cam_bound = 0,
+            right_cam_bound = 50 * tile_size
         )
 
         self.__scene.add_child(bg)

@@ -27,3 +27,9 @@ def remap(x, x_min, x_max, y_min, y_max):
 
 def overlap(x1, y1, w1, h1, x2, y2, w2, h2):
     return x1 < x2 + w2 and x1 + w1 > x2 and y1 < y2 + h2 and h1 + y1 > y2
+
+def distance(x1, y1, w1, h1, x2, y2, w2, h2):
+    return (
+        abs(x1 - x2) - ((w1 + w2) / 2),
+        abs(y1 - y2) - ((h1 + h2) / 2)
+    )

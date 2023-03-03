@@ -16,7 +16,11 @@ class SceneNode(Node):
         on_scene_end = None,
         scaling: int = 1,
         cam_speed: float = 10.0,
-        curtain_speed: int = 100
+        curtain_speed: int = 100,
+        upper_cam_bound = None,
+        lower_cam_bound = None,
+        left_cam_bound = None,
+        right_cam_bound = None
     ):
         self.__window = window
         self.__view_width = view_width
@@ -31,6 +35,12 @@ class SceneNode(Node):
         )
         self.__cam_speed = cam_speed
         self.__cam_target = None
+        self.__cam_bounds = (
+            upper_cam_bound * scaling if upper_cam_bound != None else None,
+            lower_cam_bound * scaling if lower_cam_bound != None else None,
+            left_cam_bound * scaling if left_cam_bound != None else None,
+            right_cam_bound * scaling if right_cam_bound != None else None
+        )
 
         # Lists of all children.
         self.__fixed_children = []
@@ -107,29 +117,63 @@ class SceneNode(Node):
                 (self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
             )
 
+            updated_x = self.__camera.position[0] + camera_movement.x
+            updated_y = self.__camera.position[1] + camera_movement.y
 
-            for child in self.__fixed_children:
-                if (
-                    isinstance(child, SensorNode) and
-                    child.tag == "camera" and
-                    overlap(
-                        child.x * self.__scaling - child.anchor_x * self.__scaling,
-                        child.y * self.__scaling - child.anchor_y * self.__scaling,
-                        child.width * self.__scaling,
-                        child.height * self.__scaling,
-                        *self.__camera.position,
-                        self.__view_width * self.__scaling,
-                        self.__view_height * self.__scaling
-                    )
-                ):
-                    print("camera_overlapping")
+            if self.__cam_bounds[0] != None and self.__cam_bounds[0] < updated_y + self.__view_height * self.__scaling:
+                updated_y = self.__cam_bounds[0] - self.__view_height * self.__scaling
 
+            if self.__cam_bounds[1] != None and self.__cam_bounds[1] > updated_y:
+                updated_y = self.__cam_bounds[1]
+
+            if self.__cam_bounds[2] != None and self.__cam_bounds[2] > updated_x:
+                updated_x = self.__cam_bounds[2]
+
+            if self.__cam_bounds[3] != None and self.__cam_bounds[3] < updated_x + self.__view_width * self.__scaling:
+                updated_x = self.__cam_bounds[3] - self.__view_width * self.__scaling
 
 
             self.__camera.position = (
-                self.__camera.position[0] + camera_movement.x,
-                self.__camera.position[1] + camera_movement.y
+                updated_x,
+                updated_y
             )
+
+
+            # for child in self.__fixed_children:
+            #     # Only check distance to camera bounds children.
+            #     if (isinstance(child, SensorNode) and child.tag == "camera"):
+            #         # overlap(
+            #         #     child.x * self.__scaling - child.anchor_x * self.__scaling,
+            #         #     child.y * self.__scaling - child.anchor_y * self.__scaling,
+            #         #     child.width * self.__scaling,
+            #         #     child.height * self.__scaling,
+            #         #     self.__camera.position[0] + camera_movement.x,
+            #         #     self.__camera.position[1] + camera_movement.y,
+            #         #     self.__view_width * self.__scaling,
+            #         #     self.__view_height * self.__scaling
+            #         # )
+
+            #         # Compute distance to the child.
+            #         dist = distance(
+            #             ((child.x - child.anchor_x) + child.width / 2) * self.__scaling,
+            #             ((child.y - child.anchor_y) + child.height / 2)* self.__scaling,
+            #             child.width * self.__scaling,
+            #             child.height * self.__scaling,
+            #             updated_position[0] + ((self.__view_width / 2) * self.__scaling),
+            #             updated_position[1] + ((self.__view_height / 2) * self.__scaling),
+            #             self.__view_width * self.__scaling,
+            #             self.__view_height * self.__scaling
+            #         )
+            #         # Compute horizontal movement.
+            #         if abs(dist[0]) < abs(camera_movement.x):
+            #             camera_movement.x = dist[0]
+            #         # camera_movement.x = min(abs(dist[0]), abs(camera_movement.x))
+
+            #         # # Compute vertical movement.
+            #         if abs(dist[1]) < abs(camera_movement.y):
+            #             camera_movement.y = dist[1]
+            #         # camera_movement.y = min(abs(dist[1]), abs(camera_movement.y))
+
 
     def update(self, dt):
         # Update curtain.
