@@ -214,6 +214,19 @@ class SceneNode(Node):
             else:
                 self.__fixed_children.append(child)
 
+    def add_children(
+        self,
+        children: list,
+        sorted: bool = False,
+        ui: bool = False
+    ):
+        for child in children:
+            self.add_child(
+                child = child,
+                sorted = sorted,
+                ui = ui
+            )
+
     def end(self):
         self.__curtain_opening = False
         self.__curtain_closing = True

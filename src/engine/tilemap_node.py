@@ -3,30 +3,69 @@ import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
 
-from engine.node import Node, PositionNode
+from engine.node import PositionNode
 
+# class Tileset:
+#     def __init__(
+#         self,
+#         source: str,
+#         tile_width: int,
+#         tile_height: int,
+#         margin: int = 0,
+#         spacing: int = 0
+#     ):
+#         # Load the provided texture.
+#         self.__source = source
+#         self.__texture = pyglet.resource.image(source)
+#         self.__texture_width = self.__texture.width
+#         self.__texture_height = self.__texture.height
+#         self.tile_width = tile_width
+#         self.tile_height = tile_height
+#         self.margin = margin
+#         self.spacing = spacing
+#         self.tiles = []
+#         self._fetch_tiles()
+
+#     def _fetch_tiles(self):
+#         """
+#         Splits the provided texture (in source) by tile width, tile height, margin and spacing
+#         and saves all tiles as TextureRegions.
+#         """
+
+#         for y in range(self.margin, self.__texture_height - self.spacing, self.tile_height + self.spacing):
+#             for x in range(self.margin, self.__texture_width - self.spacing, self.tile_width + self.spacing):
+#                 # Cut the needed region from the given texture and save it.
+#                 tile = self.__texture.get_region(x, self.__texture_height - y - self.tile_height, self.tile_width, self.tile_height)
+#                 self.tiles.append(tile)
+
+#                 gl.glBindTexture(tile.target, tile.id)
+
+#                 # Set texture clamping to avoid mis-rendering subpixel edges.
+#                 gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+#                 gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+#                 # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT)
+#                 # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT)
+#                 # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_MIRRORED_REPEAT)
+#                 # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_MIRRORED_REPEAT)
 
 class Tileset:
     def __init__(
         self,
-        source: str,
+        sources: list,
         tile_width: int,
         tile_height: int,
         margin: int = 0,
         spacing: int = 0
     ):
         # Load the provided texture.
-        self.__source = source
-        self.__texture = pyglet.resource.image(source)
-        self.__texture_width = self.__texture.width
-        self.__texture_height = self.__texture.height
+        self.__sources = sources
+        self.__textures = [pyglet.resource.image(source) for source in sources]
         self.tile_width = tile_width
         self.tile_height = tile_height
         self.margin = margin
         self.spacing = spacing
         self.tiles = []
         self._fetch_tiles()
-        pass
 
     def _fetch_tiles(self):
         """
@@ -34,21 +73,22 @@ class Tileset:
         and saves all tiles as TextureRegions.
         """
 
-        for y in range(self.margin, self.__texture_height - self.spacing, self.tile_height + self.spacing):
-            for x in range(self.margin, self.__texture_width - self.spacing, self.tile_width + self.spacing):
-                # Cut the needed region from the given texture and save it.
-                tile = self.__texture.get_region(x, self.__texture_height - y - self.tile_height, self.tile_width, self.tile_height)
-                self.tiles.append(tile)
+        for texture in self.__textures:
+            for y in range(self.margin, texture.height - self.spacing, self.tile_height + self.spacing):
+                for x in range(self.margin, texture.width - self.spacing, self.tile_width + self.spacing):
+                    # Cut the needed region from the given texture and save it.
+                    tile = texture.get_region(x, texture.height - y - self.tile_height, self.tile_width, self.tile_height)
+                    self.tiles.append(tile)
 
-                gl.glBindTexture(tile.target, tile.id)
+                    gl.glBindTexture(tile.target, tile.id)
 
-                # Set texture clamping to avoid mis-rendering subpixel edges.
-                gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-                # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT)
-                # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT)
-                # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_MIRRORED_REPEAT)
-                # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_MIRRORED_REPEAT)
+                    # Set texture clamping to avoid mis-rendering subpixel edges.
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT)
+                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT)
+                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_MIRRORED_REPEAT)
+                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_MIRRORED_REPEAT)
 
 class TilemapNode(PositionNode):
     def __init__(
@@ -127,12 +167,14 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmj_file(
         source: str,
-        tileset: Tileset,
         x: int = 0,
         y: int = 0,
         scaling: int = 1
     ):
-        """Constructs a new TileMap from the given TMJ (JSON) file."""
+        """
+        Constructs a new tilemaps list from the given TMJ (JSON) file.
+        Returns a tilemap for each layer.
+        """
 
         data: dict
 
@@ -140,18 +182,25 @@ class TilemapNode(PositionNode):
         with open(f"{pyglet.resource.path[0]}/{source}", "r") as content:
             data = json.load(content)
 
+        tileset = Tileset(
+            sources = [f"tilemaps/tilesets/rughai/{ts['source'].split('.')[0]}.png" for ts in data["tilesets"]],
+            tile_width = data["tilewidth"],
+            tile_height = data["tileheight"]
+        )
+
         tilemap_layers = data["layers"]
 
-        return TilemapNode(
-            tileset = tileset,
-            # TMJ data shows indexes in range [1, N], so map them to [0, N - 1].
-            map = [i - 1 for i in tilemap_layers[0]["data"]],
-            map_width = data["width"],
-            map_height = data["height"],
-            x = x,
-            y = y,
-            scaling = scaling
-        )
+        return [
+            TilemapNode(
+                tileset = tileset,
+                map = [i - 1 for i in layer["data"]],
+                map_width = data["width"],
+                map_height = data["height"],
+                x = x,
+                y = y,
+                scaling = scaling
+            ) for layer in tilemap_layers
+        ]
 
     # def update(self, dt) -> None:
     #     # Implements culling, but is very inefficient. TODO Study.
