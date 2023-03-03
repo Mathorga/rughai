@@ -24,15 +24,6 @@ class RugHaiHub(Node):
 
         # Define a tilemap.
         tile_size = 8
-        # tilemap = TilemapNode.from_tmj_file(
-        #     source = "tilemaps/rughai/main_hub.tmj",
-        #     tileset = Tileset(
-        #         sources = ["tilemaps/tilesets/rughai/main_tileset.png"],
-        #         tile_width = tile_size,
-        #         tile_height = tile_size
-        #     ),
-        #     scaling = scaling
-        # )
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/main_hub.tmx",
             scaling = scaling
@@ -123,7 +114,6 @@ class RugHaiHub(Node):
         )
 
         self.__scene.add_child(bg)
-        # self.__scene.add_child(tilemap)
         self.__scene.add_children(tilemaps)
         self.__scene.add_child(cam_target, cam_target = True)
         self.__scene.add_child(iryo, sorted = True)
