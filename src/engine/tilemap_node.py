@@ -99,14 +99,17 @@ class TilemapNode(PositionNode):
         map_height: int,
         x: int = 0,
         y: int = 0,
-        scaling: int = 1
+        scaling: int = 1,
+        batch: pyglet.graphics.Batch = pyglet.graphics.Batch(),
+        group: pyglet.graphics.Group = None
     ):
         super().__init__(
             x = x,
             y = y
         )
         self.__scaling = scaling
-        self.__batch = pyglet.graphics.Batch()
+        self.__batch = batch
+        self.__group = group
         self.__tileset = tileset
         self.__map = map
         self.map_width = map_width
@@ -119,7 +122,8 @@ class TilemapNode(PositionNode):
                 img = self.__tileset.tiles[tex_index],
                 x = (index % self.map_width) * self.__tileset.tile_width * scaling,
                 y = height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
-                batch = self.__batch
+                batch = batch,
+                group = group
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
@@ -165,6 +169,9 @@ class TilemapNode(PositionNode):
             layer_content = layer_data.text.replace("\n", "").split(",")
 
             layers.append(layer_content)
+
+        # Create a single batch for all layers.
+        batch = pyglet.graphics.Batch()
 
         return [
             TilemapNode(
