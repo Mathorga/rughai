@@ -1,3 +1,4 @@
+from typing import Optional, Union
 import pyglet
 
 from engine.node import PositionNode
@@ -5,13 +6,13 @@ from engine.node import PositionNode
 class SpriteNode(PositionNode):
     def __init__(
         self,
-        resource,
+        resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
         on_animation_end = None,
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
-        batch = None,
-        group = None
+        batch: Optional[pyglet.graphics.Batch] = None,
+        group: Optional[pyglet.graphics.Group] = None
     ) -> None:
         super().__init__(
             x = x,
@@ -37,8 +38,8 @@ class SpriteNode(PositionNode):
 
     def set_position(
         self,
-        x = None,
-        y = None
+        x: Optional[int] = None,
+        y: Optional[int] = None
     ) -> None:
         if x is not None:
             self.x = x
@@ -50,8 +51,8 @@ class SpriteNode(PositionNode):
 
     def set_scale(
         self,
-        x_scale = None,
-        y_scale = None
+        x_scale: Optional[int] = None,
+        y_scale: Optional[int] = None
     ) -> None:
         if x_scale is not None:
             self.__sprite.scale_x = x_scale
@@ -69,6 +70,9 @@ class SpriteNode(PositionNode):
 
     def draw(self) -> None:
         self.__sprite.draw()
+
+    def update(self, dt) -> None:
+        self.__sprite.z = self.y
 
     def get_bounding_box(self):
         if isinstance(self.__sprite.image, pyglet.image.TextureRegion):

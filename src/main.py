@@ -94,6 +94,7 @@ class RugHai:
     def run(self) -> None:
         # Enable depth testing in order to allow for depth sorting.
         # TODO Try this out! Use the z coordinate as depth!
+        # gl.glDepthFunc(gl.GL_LESS)
         # gl.glEnable(gl.GL_DEPTH_TEST)
 
         # Scale textures using nearest neighbor filtering.
