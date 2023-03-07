@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
@@ -101,7 +102,7 @@ class TilemapNode(PositionNode):
         y: int = 0,
         scaling: int = 1,
         batch: pyglet.graphics.Batch = pyglet.graphics.Batch(),
-        group: pyglet.graphics.Group = None
+        group: Optional[pyglet.graphics.Group] = None
     ):
         super().__init__(
             x = x,
