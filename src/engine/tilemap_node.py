@@ -84,12 +84,10 @@ class Tileset:
                     gl.glBindTexture(tile.target, tile.id)
 
                     # Set texture clamping to avoid mis-rendering subpixel edges.
-                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT)
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT)
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_MIRRORED_REPEAT)
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_MIRRORED_REPEAT)
+                    gl.glTexParameterf(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameterf(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+
+                    gl.glBindTexture(tile.target, 0)
 
 class TilemapNode(PositionNode):
     def __init__(

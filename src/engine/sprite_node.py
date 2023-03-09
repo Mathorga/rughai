@@ -38,8 +38,8 @@ class SpriteNode(PositionNode):
 
     def set_position(
         self,
-        x: Optional[int] = None,
-        y: Optional[int] = None
+        x: Optional[float] = None,
+        y: Optional[float] = None
     ) -> None:
         if x is not None:
             self.x = x

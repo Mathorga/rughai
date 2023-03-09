@@ -7,7 +7,10 @@ class Node:
 
         pass
 
-    def update(self, dt) -> None:
+    def update(
+            self,
+            dt: int
+        ) -> None:
         """
         Updates the whole object.
         All logic goes here, including movement.

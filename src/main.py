@@ -98,8 +98,8 @@ class RugHai:
         # gl.glEnable(gl.GL_DEPTH_TEST)
 
         # Scale textures using nearest neighbor filtering.
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
         pyglet.clock.schedule_interval(self.update, 1.0 / settings.TARGET_FPS)
         pyglet.app.run()

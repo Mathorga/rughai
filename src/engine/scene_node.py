@@ -1,3 +1,5 @@
+from types import FunctionType
+from typing import Optional
 import pyglet
 import pyglet.math as pm
 
@@ -9,10 +11,10 @@ from engine.utils import *
 class Bounds:
     def __init__(
         self,
-        top = None,
-        bottom = None,
-        left = None,
-        right = None,
+        top: Optional[int] = None,
+        bottom: Optional[int] = None,
+        left: Optional[int] = None,
+        right: Optional[int] = None,
         scaling: int = 1
     ) -> None:
         self.__scaling = scaling
@@ -27,7 +29,7 @@ class SceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        on_scene_end = None,
+        on_scene_end: Optional[FunctionType] = None,
         scaling: int = 1,
         cam_speed: float = 10.0,
         curtain_speed: int = 100,
@@ -127,7 +129,7 @@ class SceneNode(Node):
             updated_x = self.__camera.position[0] + camera_movement.x
             updated_y = self.__camera.position[1] + camera_movement.y
 
-            # Apply bounds to camera movement.
+            # Apply bounds to camera movement by limiting updated position.
             if self.__cam_bounds.top != None and self.__cam_bounds.top < updated_y + self.__view_height * self.__scaling:
                 updated_y = self.__cam_bounds.top - self.__view_height * self.__scaling
             if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom > updated_y:
@@ -139,10 +141,9 @@ class SceneNode(Node):
 
             # Actually update camera position.
             self.__camera.position = (
-                updated_x,
-                updated_y
+                round(updated_x),
+                round(updated_y)
             )
-
 
     def update(self, dt):
         # Update curtain.

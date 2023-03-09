@@ -148,7 +148,7 @@ class PlayerNode(PositionNode):
             variation = 0.2
         )
 
-        self.__hor_facing: float = 1.0
+        self.__hor_facing: int = 1
 
         self.__batch = pyglet.graphics.Batch()
 
@@ -319,7 +319,7 @@ class PlayerNode(PositionNode):
         dir_cos = math.cos(self.__stats._dir)
         dir_len = abs(dir_cos)
         if dir_len > 0.1:
-            self.__hor_facing = math.copysign(1.0, dir_cos)
+            self.__hor_facing = int(math.copysign(1.0, dir_cos))
 
         # Update sprite position.
         self.__sprite.set_position(self.x, self.y)
@@ -347,6 +347,9 @@ class PlayerNode(PositionNode):
         # Update aim sprite.
         self.__update_aim()
 
+        # Update camera target.
+        self.__update_cam_target()
+
         # Update shadow sprite.
         self.__update_shadow()
 
@@ -360,6 +363,7 @@ class PlayerNode(PositionNode):
             self.y + self.__aim_sprite_offset[1] + aim_vec.y
         )
 
+    def __update_cam_target(self):
         cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
