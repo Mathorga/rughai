@@ -140,6 +140,7 @@ class SceneNode(Node):
                 updated_x = self.__cam_bounds.right - self.__view_width * self.__scaling
 
             # Actually update camera position.
+            # Values are rounded in order not to cause subpixel movements and therefore texture bleeding.
             self.__camera.position = (
                 round(updated_x),
                 round(updated_y)

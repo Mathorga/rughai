@@ -6,49 +6,6 @@ import pyglet.gl as gl
 
 from engine.node import PositionNode
 
-# class Tileset:
-#     def __init__(
-#         self,
-#         source: str,
-#         tile_width: int,
-#         tile_height: int,
-#         margin: int = 0,
-#         spacing: int = 0
-#     ):
-#         # Load the provided texture.
-#         self.__source = source
-#         self.__texture = pyglet.resource.image(source)
-#         self.__texture_width = self.__texture.width
-#         self.__texture_height = self.__texture.height
-#         self.tile_width = tile_width
-#         self.tile_height = tile_height
-#         self.margin = margin
-#         self.spacing = spacing
-#         self.tiles = []
-#         self._fetch_tiles()
-
-#     def _fetch_tiles(self):
-#         """
-#         Splits the provided texture (in source) by tile width, tile height, margin and spacing
-#         and saves all tiles as TextureRegions.
-#         """
-
-#         for y in range(self.margin, self.__texture_height - self.spacing, self.tile_height + self.spacing):
-#             for x in range(self.margin, self.__texture_width - self.spacing, self.tile_width + self.spacing):
-#                 # Cut the needed region from the given texture and save it.
-#                 tile = self.__texture.get_region(x, self.__texture_height - y - self.tile_height, self.tile_width, self.tile_height)
-#                 self.tiles.append(tile)
-
-#                 gl.glBindTexture(tile.target, tile.id)
-
-#                 # Set texture clamping to avoid mis-rendering subpixel edges.
-#                 gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-#                 gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-#                 # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT)
-#                 # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT)
-#                 # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_MIRRORED_REPEAT)
-#                 # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_MIRRORED_REPEAT)
-
 class Tileset:
     def __init__(
         self,
@@ -81,13 +38,14 @@ class Tileset:
                     tile = texture.get_region(x, texture.height - y - self.tile_height, self.tile_width, self.tile_height)
                     self.tiles.append(tile)
 
-                    gl.glBindTexture(tile.target, tile.id)
+                    # gl.glBindTexture(tile.target, tile.id)
 
-                    # Set texture clamping to avoid mis-rendering subpixel edges.
-                    gl.glTexParameterf(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                    gl.glTexParameterf(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+                    # # Set texture clamping to avoid mis-rendering subpixel edges.
+                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
 
-                    gl.glBindTexture(tile.target, 0)
+                    # gl.glBindTexture(tile.target, 0)
 
 class TilemapNode(PositionNode):
     def __init__(

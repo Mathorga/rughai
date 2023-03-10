@@ -299,11 +299,13 @@ class PlayerNode(PositionNode):
             self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, walk_speed)
         else:
             # Clamp speed between 0 and max speed.
-            self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed * self.__move_input.mag)
+            self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed)
 
     def __compute_movement(self, dt):
         # Define a vector direction.
         movement_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
+
+        # Scale movement to current speed.
         self.__movement = movement_base.from_magnitude(self.__stats._speed * dt)
 
     def __move(self, dt):
