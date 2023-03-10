@@ -1,5 +1,6 @@
 import pyglet
 from pyglet.window import key
+from pyglet.graphics.shader import Shader, ShaderProgram
 import pyglet.gl as gl
 import pyglet.math as pm
 
@@ -21,7 +22,6 @@ window = pyglet.window.Window(
     resizable = True
 )
 window.set_minimum_size(settings.VIEW_WIDTH, settings.VIEW_HEIGHT)
-gl.glEnable(gl.GL_DEPTH_TEST)
 
 fr = Upscaler(
     window,
@@ -94,20 +94,80 @@ world_camera = Camera(
 # )
 # speed_line.opacity = 100
 
-anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_run.gif")
-for frame in anim.frames:
-    frame.image.anchor_x = anim.get_max_width() / 2
-    frame.image.anchor_y = 0
+vertex_source = """#version 150 core
+    in vec3 translate;
+    in vec4 colors;
+    in vec3 tex_coords;
+    in vec2 scale;
+    in vec3 position;
+    in float rotation;
+
+    out vec4 vertex_colors;
+    out vec3 texture_coords;
+
+    uniform WindowBlock
+    {
+        mat4 projection;
+        mat4 view;
+    } window;
+
+    mat4 m_scale = mat4(1.0);
+    mat4 m_rotation = mat4(1.0);
+    mat4 m_translate = mat4(1.0);
+
+    void main()
+    {
+        m_scale[0][0] = scale.x;
+        m_scale[1][1] = scale.y;
+        m_translate[3][0] = translate.x;
+        m_translate[3][1] = translate.y;
+        m_translate[3][2] = translate.z;
+        m_rotation[0][0] =  cos(-radians(rotation)); 
+        m_rotation[0][1] =  sin(-radians(rotation));
+        m_rotation[1][0] = -sin(-radians(rotation));
+        m_rotation[1][1] =  cos(-radians(rotation));
+
+        gl_Position = window.projection * window.view * m_translate * m_rotation * m_scale * vec4(position, 1.0);
+
+        vertex_colors = colors;
+        texture_coords = tex_coords;
+    }
+"""
+
+fragment_source = """#version 150 core
+    in vec4 vertex_colors;
+    in vec3 texture_coords;
+    out vec4 final_colors;
+
+    uniform sampler2D sprite_texture;
+
+    void main()
+    {
+        final_colors = texture(sprite_texture, texture_coords.xy) * vertex_colors * 0.4;
+    }
+"""
+
+vert_shader = Shader(vertex_source, 'vertex')
+frag_shader = Shader(fragment_source, 'fragment')
+program = ShaderProgram(vert_shader, frag_shader)
+
+anim = pyglet.resource.image("sprites/rughai/iryo/iryo.png")
+# for frame in anim.frames:
+#     frame.image.anchor_x = anim.get_max_width() / 2
+#     frame.image.anchor_y = 0
 
 batch = pyglet.graphics.Batch()
 group = pyglet.graphics.Group()
 
-sprite = pyglet.sprite.Sprite(
+sprite = pyglet.sprite.AdvancedSprite(
     img = anim,
     # z = 10,
     # batch = batch,
-    # group = group
+    # group = group,
+    program = program
 )
+
+# sprite.program = program
 
 sprite2 = pyglet.sprite.Sprite(
     img = anim,
@@ -136,11 +196,13 @@ keys = {
 @window.event
 def on_draw():
     window.clear()
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
     with fr:
         # background.draw()
         with world_camera:
             # batch.draw()
+            anim.blit(sprite.x + 20, sprite.y + 20, sprite.z)
             sprite.draw()
             sprite2.draw()
             # circle_1.draw()
@@ -168,8 +230,10 @@ def update(dt):
         if speed <= 0:
             speed = 0
     movement = movement_base.from_magnitude(speed * dt)
-    sprite.update(x = sprite.x + movement.x, y = sprite.y + movement.y, z = 10)
-    sprite2.update(x = sprite2.x, y = sprite2.y, z = 0)
+    sprite.update(x = sprite.x + movement.x, y = sprite.y + movement.y, z = 0.1)
+    # sprite2.update(x = sprite2.x, y = sprite2.y, z = 0.5)
+    sprite.image.z = 0.5
+    sprite2.image.z = 0.8
     print(sprite.z, sprite2.z)
     # sprite.x += movement.x
     # sprite.y += movement.y
@@ -201,10 +265,14 @@ def on_key_release(symbol, modifiers):
     keys[symbol] = False
 
 if __name__ == '__main__':
+    gl.glEnable(gl.GL_DEPTH_TEST)
+    gl.glDepthFunc(gl.GL_LESS)
+    # gl.glEnable(gl.GL_BLEND)
+    # gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+
     # Scale textures using nearest neighbor filtering.
     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-
 
     pyglet.clock.schedule_interval(update, 1.0 / settings.TARGET_FPS)
     pyglet.app.run()
