@@ -21,7 +21,7 @@ class SpriteNode(PositionNode):
 
         self.__scaling = scaling
 
-        self.__sprite = pyglet.sprite.Sprite(
+        self.__sprite = pyglet.sprite.AdvancedSprite(
             img = resource,
             x = x * scaling,
             y = y * scaling,
