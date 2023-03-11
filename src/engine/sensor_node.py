@@ -1,5 +1,6 @@
 from engine.node import PositionNode
 from engine.rect_node import RectNode
+import engine.utils as utils
 
 class SensorNode(PositionNode):
     def __init__(
@@ -16,7 +17,8 @@ class SensorNode(PositionNode):
         group = None,
         tag: str = ""
     ) -> None:
-        super().__init__(
+        PositionNode.__init__(
+            self,
             x = x,
             y = y
         )
@@ -43,6 +45,7 @@ class SensorNode(PositionNode):
         )
 
         self.tag = tag
+        self.collisions = set()
 
     def set_position(
         self,
@@ -61,10 +64,23 @@ class SensorNode(PositionNode):
         if self.__visible:
             self.__shape.draw()
 
-    def get_bounding_box(self):
+    def get_collision_bounds(self):
         return (
-            self.__shape.x - self.anchor_x * self.__scaling,
-            self.__shape.y - self.anchor_y * self.__scaling,
+            self.__shape.x - self.anchor_x,
+            self.__shape.y - self.anchor_y,
             self.width,
             self.height
         )
+
+    def overlap(self, other):
+        if (issubclass(type(other), SensorNode) and
+            other.tag == self.tag
+        ):
+            if other not in self.collisions and utils.overlap(
+                *self.get_collision_bounds(),
+                *other.get_collision_bounds()
+            ):
+                self.collisions.add(other)
+                print("COLLISION", self, other)
+            elif other in self.collisions:
+                self.collisions.remove(other)

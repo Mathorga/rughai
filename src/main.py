@@ -1,6 +1,7 @@
 import os.path
 import pyglet
 import pyglet.gl as gl
+from engine.collision_manager import CollisionManager
 
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
@@ -17,6 +18,9 @@ class RugHai:
 
         # Create a window.
         self._window = self.__create_window()
+
+        # Create a collision manager.
+        self._collision_manager = CollisionManager()
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
@@ -49,6 +53,7 @@ class RugHai:
         # Create a scene.
         self._scene = RugHaiHub(
             window = self._window,
+            collision_manager = self._collision_manager,
             view_width = settings.VIEW_WIDTH,
             view_height = settings.VIEW_HEIGHT,
             input_controller = self._input,
@@ -85,6 +90,9 @@ class RugHai:
                 self._render_bench.draw()
 
     def update(self, dt) -> None:
+        # Compute collisions through collision manager.
+        self._collision_manager.update(dt)
+
         # Benchmark measures update time.
         with self._update_bench:
             # InputController makes sure every input is handled correctly.

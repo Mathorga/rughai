@@ -44,7 +44,7 @@ class SceneNode(Node):
 
         # Create a new camera.
         self.__camera = Camera(
-            window = self.__window
+            window = window
         )
         self.__cam_speed = cam_speed
         self.__cam_target = None
@@ -58,6 +58,9 @@ class SceneNode(Node):
         self.__visible_fixed_children = []
         self.__visible_sorted_children = []
         self.__ui_children = []
+
+        # Colliding children.
+        # self.__colliders = []
 
         self.__curtain = RectNode(
             x = 0,
@@ -146,6 +149,12 @@ class SceneNode(Node):
                 round(updated_y)
             )
 
+    # def __check_collisions(self):
+    #     for child in self.__colliders:
+    #         for other in self.__colliders:
+    #             if child != other:
+    #                 child.overlap(other)
+
     def update(self, dt):
         # Update curtain.
         self.__update_curtain(dt)
@@ -202,6 +211,7 @@ class SceneNode(Node):
         ui: bool = False
     ):
         if ui:
+            # Store UI children.
             self.__ui_children.append(child)
         else:
             if cam_target:
@@ -215,6 +225,9 @@ class SceneNode(Node):
                 self.__sorted_children.append(child)
             else:
                 self.__fixed_children.append(child)
+
+            # if issubclass(type(child), CollisionMixin):
+            #     self.__colliders.append(child)
 
     def add_children(
         self,

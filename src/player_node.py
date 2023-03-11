@@ -3,6 +3,7 @@ import math
 import pyglet
 import pyglet.math as pm
 from pyglet.window import key
+from engine.collision_manager import CollisionManager
 
 from engine.node import PositionNode
 from engine.input_controller import InputController
@@ -84,15 +85,18 @@ class PlayerNode(PositionNode):
     def __init__(
         self,
         input_controller: InputController,
+        collision_manager: CollisionManager,
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
         x: int = 0,
         y: int = 0,
         run_threshold: float = 0.75,
-        scaling: int = 1
+        scaling: int = 1,
+        collision_tag: str = ""
     ) -> None:
-        super().__init__(
+        PositionNode.__init__(
+            self,
             x = x,
             y = y
         )
@@ -204,8 +208,10 @@ class PlayerNode(PositionNode):
             anchor_x = 4,
             anchor_y = 3,
             scaling = scaling,
-            visible = True
+            visible = True,
+            tag = collision_tag
         )
+        collision_manager.add_collider(self.__collider)
 
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset

@@ -1,4 +1,5 @@
 import pyglet
+from engine.collision_manager import CollisionManager
 
 from engine.node import Node
 from engine.node import PositionNode
@@ -15,6 +16,7 @@ class RugHaiHub(Node):
     def __init__(
         self,
         window: pyglet.window.Window,
+        collision_manager: CollisionManager,
         view_width: int,
         view_height: int,
         input_controller: InputController,
@@ -45,10 +47,12 @@ class RugHaiHub(Node):
         cam_target = PositionNode()
         iryo = PlayerNode(
             input_controller = input_controller,
+            collision_manager = collision_manager,
             cam_target = cam_target,
             x = 10 * tile_size,
             y = 10 * tile_size,
-            scaling = scaling
+            scaling = scaling,
+            collision_tag = "player"
         )
 
         # Duk.
@@ -79,8 +83,10 @@ class RugHaiHub(Node):
             anchor_x = 25 * tile_size,
             anchor_y = 2 * tile_size,
             scaling = scaling,
-            visible = True
+            visible = True,
+            tag = "player"
         )
+        collision_manager.add_collider(bottom_door)
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
