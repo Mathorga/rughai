@@ -81,10 +81,10 @@ class SensorNode(PositionNode):
                 *other.get_collision_bounds()
             ):
                 self.collisions.add(other)
-                print("COLLISION", self, other)
+                print("COLLISION")
             elif other in self.collisions and not utils.overlap(
                 *self.get_collision_bounds(),
                 *other.get_collision_bounds()
             ):
                 self.collisions.remove(other)
-                print("UN-COLLISION", self, other)
+                print("UN-COLLISION")
