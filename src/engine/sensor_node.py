@@ -1,3 +1,5 @@
+from types import FunctionType
+from typing import Optional
 from engine.node import PositionNode
 from engine.rect_node import RectNode
 import engine.utils as utils
@@ -15,7 +17,8 @@ class SensorNode(PositionNode):
         visible: bool = False,
         batch = None,
         group = None,
-        tag: str = ""
+        tag: str = "",
+        on_triggered: Optional[FunctionType] = None
     ) -> None:
         PositionNode.__init__(
             self,
@@ -31,6 +34,9 @@ class SensorNode(PositionNode):
         self.__scaling = scaling
         self.__visible = visible
 
+        self.tag = tag
+        self.__on_triggered = on_triggered
+
         self.__shape = RectNode(
             x = x,
             y = y,
@@ -44,7 +50,6 @@ class SensorNode(PositionNode):
             group = group
         )
 
-        self.tag = tag
         self.collisions = set()
 
     def set_position(
@@ -80,11 +85,19 @@ class SensorNode(PositionNode):
                 *self.get_collision_bounds(),
                 *other.get_collision_bounds()
             ):
+                # Store the colliding sensor.
                 self.collisions.add(other)
-                print("COLLISION")
+
+                # Collision enter callback.
+                if self.__on_triggered:
+                    self.__on_triggered(True)
             elif other in self.collisions and not utils.overlap(
                 *self.get_collision_bounds(),
                 *other.get_collision_bounds()
             ):
+                # Remove if not colliding anymore.
                 self.collisions.remove(other)
-                print("UN-COLLISION")
+
+                # Collision exit callback.
+                if self.__on_triggered:
+                    self.__on_triggered(False)

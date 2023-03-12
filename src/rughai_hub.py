@@ -1,3 +1,5 @@
+from types import FunctionType
+from typing import Optional
 import pyglet
 from engine.collision_manager import CollisionManager
 
@@ -20,9 +22,12 @@ class RugHaiHub(Node):
         view_width: int,
         view_height: int,
         input_controller: InputController,
-        scaling: int = 1
+        scaling: int = 1,
+        on_bottom_door_entered: Optional[FunctionType] = None
     ):
         super().__init__()
+
+        self.__on_bottom_door_entered = on_bottom_door_entered
 
         # Define a tilemap.
         tile_size = 8
@@ -84,7 +89,8 @@ class RugHaiHub(Node):
             anchor_y = 2 * tile_size,
             scaling = scaling,
             visible = True,
-            tag = "player"
+            tag = "player",
+            on_triggered = self.on_bottom_door_triggered
         )
         collision_manager.add_collider(bottom_door)
 
@@ -128,6 +134,11 @@ class RugHaiHub(Node):
         self.__scene.add_child(energy_bar, ui = True)
         self.__scene.add_child(health_bar, ui = True)
         self.__scene.add_child(bottom_door)
+
+    def on_bottom_door_triggered(self, value: bool):
+        if value:
+            # Pass a package containing all useful information for the next room.
+            self.__on_bottom_door_entered()
 
     def draw(self) -> None:
         self.__scene.draw()

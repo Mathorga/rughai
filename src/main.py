@@ -57,7 +57,8 @@ class RugHai:
             view_width = settings.VIEW_WIDTH,
             view_height = settings.VIEW_HEIGHT,
             input_controller = self._input,
-            scaling = self._scaling
+            scaling = self._scaling,
+            on_bottom_door_entered = lambda : print("bottom_door_entered")
         )
 
     def __create_window(self) -> pyglet.window.Window:
