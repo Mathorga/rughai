@@ -23,11 +23,11 @@ class RugHaiHub(Node):
         view_height: int,
         input_controller: InputController,
         scaling: int = 1,
-        on_bottom_door_entered: Optional[Callable[[], None]] = None
+        on_scene_end: Optional[Callable[[dict], None]] = None
     ):
         super().__init__()
 
-        self.__on_bottom_door_entered = on_bottom_door_entered
+        self.__on_scene_end = on_scene_end
 
         # Define a tilemap.
         tile_size = 8
@@ -136,9 +136,17 @@ class RugHaiHub(Node):
         self.__scene.add_child(bottom_door)
 
     def on_bottom_door_triggered(self, value: bool):
-        if self.__on_bottom_door_entered and value:
+        if self.__on_scene_end and value:
             # Pass a package containing all useful information for the next room.
-            self.__on_bottom_door_entered()
+            self.__on_scene_end(
+                {
+                    "next_room": "rughai_bottom",
+                    "iryo_position": {
+                        "top": 0.0,
+                        "left": 100.0
+                    }
+                }
+            )
 
     def draw(self) -> None:
         self.__scene.draw()
