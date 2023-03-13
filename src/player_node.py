@@ -3,8 +3,8 @@ import math
 import pyglet
 import pyglet.math as pm
 from pyglet.window import key
-from engine.collision_manager import CollisionManager
 
+from engine.collision_manager import CollisionManager
 from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sensor_node import SensorNode
@@ -128,6 +128,7 @@ class PlayerNode(PositionNode):
         self.__movement = pyglet.math.Vec2()
 
         # Setup input handling.
+        self.__controls_enabled = True
         self.__input = PlayerInput(input_controller = input_controller)
         self.__move_input = pyglet.math.Vec2()
         self.__look_input = pyglet.math.Vec2()
@@ -245,24 +246,34 @@ class PlayerNode(PositionNode):
         if self.__main_atk_ing:
             self.__main_atk_ing = False
 
+    def disable_controls(self):
+        """
+        Disables user controls over the player and stops all existing inputs.
+        """
+
+        self.__look_input = pm.Vec2()
+        self.__move_input = pm.Vec2()
+        self.__controls_enabled = False
+
     def __fetch_input(self):
-        # Allow the player to look around even if they're rolling.
-        self.__look_input = self.__input.get_look_input().limit(1.0)
+        if self.__controls_enabled:
+            # Allow the player to look around even if they're rolling.
+            self.__look_input = self.__input.get_look_input().limit(1.0)
 
-        # All other input should be fetched if not rolling.
-        if self.__sprint_ing or self.__main_atk_ing:
-            return
+            # All other input should be fetched if not rolling.
+            if self.__sprint_ing or self.__main_atk_ing:
+                return
 
-        self.__move_input = self.__input.get_move_input().limit(1.0)
-        self.__slow = self.__input.get_modifier()
+            self.__move_input = self.__input.get_move_input().limit(1.0)
+            self.__slow = self.__input.get_modifier()
 
-        self.__sprint_ing = self.__input.get_sprint()
-        if self.__sprint_ing:
-            self.__sprint_ed = True
+            self.__sprint_ing = self.__input.get_sprint()
+            if self.__sprint_ing:
+                self.__sprint_ed = True
 
-        self.__main_atk_ing = self.__input.get_main_atk()
-        if self.__main_atk_ing:
-            self.__main_atk_ed = True
+            self.__main_atk_ing = self.__input.get_main_atk()
+            if self.__main_atk_ing:
+                self.__main_atk_ed = True
 
     def __update_dir(self):
         if self.__move_input.mag > 0.0:

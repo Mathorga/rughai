@@ -52,7 +52,7 @@ class RugHaiHub(Node):
 
         # Player.
         cam_target = PositionNode()
-        iryo = PlayerNode(
+        self.__player = PlayerNode(
             input_controller = input_controller,
             collision_manager = collision_manager,
             cam_target = cam_target,
@@ -131,7 +131,7 @@ class RugHaiHub(Node):
         self.__scene.add_child(bg)
         self.__scene.add_children(tilemaps)
         self.__scene.add_child(cam_target, cam_target = True)
-        self.__scene.add_child(iryo, sorted = True)
+        self.__scene.add_child(self.__player, sorted = True)
         self.__scene.add_child(duk, sorted = True)
         self.__scene.add_child(tree, sorted = True)
         self.__scene.add_child(bottom_door)
@@ -141,6 +141,7 @@ class RugHaiHub(Node):
     def on_bottom_door_triggered(self, value: bool):
         if value:
             self.__scene.end()
+            self.__player.disable_controls()
 
     def __on_scene_end(self) -> None:
         if self.__on_ended:
@@ -148,11 +149,11 @@ class RugHaiHub(Node):
             self.__on_ended(
                 {
                     "event": events.CHANGE_ROOM,
-                    "next_room": scenes.RUGHAI_BOTTOM,
-                    "iryo_position": {
-                        "top": 0.0,
-                        "left": 100.0
-                    }
+                    "next_scene": scenes.RUGHAI_BOTTOM,
+                    "player_position": [
+                        100.0,
+                        100.0
+                    ]
                 }
             )
 
