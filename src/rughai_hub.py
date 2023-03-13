@@ -1,5 +1,5 @@
 from types import FunctionType
-from typing import Optional
+from typing import Callable, Optional
 import pyglet
 from engine.collision_manager import CollisionManager
 
@@ -23,7 +23,7 @@ class RugHaiHub(Node):
         view_height: int,
         input_controller: InputController,
         scaling: int = 1,
-        on_bottom_door_entered: Optional[FunctionType] = None
+        on_bottom_door_entered: Optional[Callable[[], None]] = None
     ):
         super().__init__()
 
@@ -136,7 +136,7 @@ class RugHaiHub(Node):
         self.__scene.add_child(bottom_door)
 
     def on_bottom_door_triggered(self, value: bool):
-        if value:
+        if self.__on_bottom_door_entered and value:
             # Pass a package containing all useful information for the next room.
             self.__on_bottom_door_entered()
 
