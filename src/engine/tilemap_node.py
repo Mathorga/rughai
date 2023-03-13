@@ -199,3 +199,6 @@ class TilemapNode(PositionNode):
             self.map_width * self.__tileset.tile_width * self.__scaling,
             self.map_height * self.__tileset.tile_height * self.__scaling
         )
+
+    def get_tile_size(self):
+        return (self.__tileset.tile_width, self.__tileset.tile_height)

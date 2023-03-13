@@ -1,5 +1,5 @@
 from types import FunctionType
-from typing import Optional
+from typing import Callable, Optional
 import pyglet
 import pyglet.math as pm
 
@@ -29,10 +29,10 @@ class SceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        on_scene_end: Optional[FunctionType] = None,
+        on_scene_end: Optional[Callable[[], None]] = None,
         scaling: int = 1,
         cam_speed: float = 10.0,
-        curtain_speed: int = 100,
+        curtain_speed: int = 200,
         cam_bounds: Bounds = Bounds()
     ):
         self.__window = window

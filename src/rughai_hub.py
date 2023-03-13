@@ -13,6 +13,8 @@ from engine.tilemap_node import TilemapNode, Tileset
 
 from player_node import PlayerNode
 from duk_node import DukNode
+import constants.events as events
+import constants.scenes as scenes
 
 class RugHaiHub(Node):
     def __init__(
@@ -23,18 +25,18 @@ class RugHaiHub(Node):
         view_height: int,
         input_controller: InputController,
         scaling: int = 1,
-        on_scene_end: Optional[Callable[[dict], None]] = None
+        on_ended: Optional[Callable[[dict], None]] = None
     ):
         super().__init__()
 
-        self.__on_scene_end = on_scene_end
+        self.__on_ended = on_ended
 
         # Define a tilemap.
-        tile_size = 8
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/main_hub.tmx",
             scaling = scaling
         )
+        tile_size = tilemaps[0].get_tile_size()[0]
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
@@ -122,7 +124,8 @@ class RugHaiHub(Node):
                 bottom = 0,
                 right = 50 * tile_size,
                 scaling = scaling
-            )
+            ),
+            on_scene_end = self.__on_scene_end
         )
 
         self.__scene.add_child(bg)
@@ -131,16 +134,21 @@ class RugHaiHub(Node):
         self.__scene.add_child(iryo, sorted = True)
         self.__scene.add_child(duk, sorted = True)
         self.__scene.add_child(tree, sorted = True)
+        self.__scene.add_child(bottom_door)
         self.__scene.add_child(energy_bar, ui = True)
         self.__scene.add_child(health_bar, ui = True)
-        self.__scene.add_child(bottom_door)
 
     def on_bottom_door_triggered(self, value: bool):
-        if self.__on_scene_end and value:
+        if value:
+            self.__scene.end()
+
+    def __on_scene_end(self) -> None:
+        if self.__on_ended:
             # Pass a package containing all useful information for the next room.
-            self.__on_scene_end(
+            self.__on_ended(
                 {
-                    "next_room": "rughai_bottom",
+                    "event": events.CHANGE_ROOM,
+                    "next_room": scenes.RUGHAI_BOTTOM,
                     "iryo_position": {
                         "top": 0.0,
                         "left": 100.0

@@ -51,14 +51,14 @@ class RugHai:
         self._input = InputController(window = self._window)
 
         # Create a scene.
-        self._scene = RugHaiHub(
+        self._active_scene = RugHaiHub(
             window = self._window,
             collision_manager = self._collision_manager,
             view_width = settings.VIEW_WIDTH,
             view_height = settings.VIEW_HEIGHT,
             input_controller = self._input,
             scaling = self._scaling,
-            on_scene_end = lambda bundle : print("scene_ended", bundle)
+            on_ended = self.__on_scene_end
         )
 
     def __create_window(self) -> pyglet.window.Window:
@@ -77,6 +77,9 @@ class RugHai:
 
         return window
 
+    def __on_scene_end(self, bundle: dict):
+        print("scene_ended", bundle)
+
     def on_draw(self) -> None:
         # Benchmark measures render time.
         with self._render_bench:
@@ -84,7 +87,7 @@ class RugHai:
 
             # Upscaler handles maintaining the wanted output resolution.
             with self._upscaler:
-                self._scene.draw()
+                self._active_scene.draw()
 
             if settings.DEBUG:
                 self._update_bench.draw()
@@ -98,7 +101,7 @@ class RugHai:
         with self._update_bench:
             # InputController makes sure every input is handled correctly.
             with self._input:
-                self._scene.update(dt)
+                self._active_scene.update(dt)
 
     def run(self) -> None:
         # Enable depth testing in order to allow for depth sorting.
