@@ -30,6 +30,7 @@ class RugHaiHub(Node):
         super().__init__()
 
         self.__on_ended = on_ended
+        self.__collision_manager = collision_manager
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(

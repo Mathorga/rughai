@@ -18,3 +18,6 @@ class CollisionManager:
 
     def update(self, dt):
         self.__check_collisions()
+
+    def clear(self):
+        self.__colliders.clear()

@@ -5,11 +5,12 @@ from engine.collision_manager import CollisionManager
 
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
-from fixed_resolution import Upscaler
-from rughai_lower import RugHaiLower
 
 import settings
 from rughai_hub import RugHaiHub
+from fixed_resolution import Upscaler
+from rughai_lower import RugHaiLower
+import constants.scenes as scenes
 
 class RugHai:
     def __init__(self) -> None:
@@ -80,18 +81,31 @@ class RugHai:
 
     def __on_scene_end(self, bundle: dict):
         print("scene_ended", bundle)
-
         if bundle["next_scene"]:
-            self._active_scene = RugHaiLower(
-                bundle = bundle,
-                window = self._window,
-                collision_manager = self._collision_manager,
-                view_width = settings.VIEW_WIDTH,
-                view_height = settings.VIEW_HEIGHT,
-                input_controller = self._input,
-                scaling = self._scaling,
-                on_ended = self.__on_scene_end
-            )
+            del self._active_scene
+            self._collision_manager.clear()
+
+            if bundle["next_scene"] == scenes.RUGHAI_BOTTOM:
+                self._active_scene = RugHaiLower(
+                    bundle = bundle,
+                    window = self._window,
+                    collision_manager = self._collision_manager,
+                    view_width = settings.VIEW_WIDTH,
+                    view_height = settings.VIEW_HEIGHT,
+                    input_controller = self._input,
+                    scaling = self._scaling,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.RUGHAI_HUB:
+                self._active_scene = RugHaiHub(
+                    window = self._window,
+                    collision_manager = self._collision_manager,
+                    view_width = settings.VIEW_WIDTH,
+                    view_height = settings.VIEW_HEIGHT,
+                    input_controller = self._input,
+                    scaling = self._scaling,
+                    on_ended = self.__on_scene_end
+                )
 
     def on_draw(self) -> None:
         # Benchmark measures render time.
