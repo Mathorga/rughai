@@ -1,5 +1,5 @@
 from types import FunctionType
-from typing import Optional
+from typing import Callable, Optional
 from engine.node import PositionNode
 from engine.rect_node import RectNode
 import engine.utils as utils
@@ -18,7 +18,7 @@ class SensorNode(PositionNode):
         batch = None,
         group = None,
         tag: str = "",
-        on_triggered: Optional[FunctionType] = None
+        on_triggered: Optional[Callable[[bool], None]] = None
     ) -> None:
         PositionNode.__init__(
             self,
