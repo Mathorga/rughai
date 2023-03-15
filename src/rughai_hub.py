@@ -160,7 +160,7 @@ class RugHaiHub(SceneManagerNode):
                     "next_scene": scenes.RUGHAI_BOTTOM,
                     "player_position": [
                         self.__player.x,
-                        24 * self.__tile_size
+                        25 * self.__tile_size
                     ]
                 }
             )
