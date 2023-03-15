@@ -242,6 +242,13 @@ class SceneNode(Node):
                 ui = ui
             )
 
+    def clear_children(self):
+        self.__ui_children.clear()
+        self.__fixed_children.clear()
+        self.__sorted_children.clear()
+        self.__visible_fixed_children.clear()
+        self.__visible_sorted_children.clear()
+
     def end(self):
         self.__curtain_opening = False
         self.__curtain_closing = True

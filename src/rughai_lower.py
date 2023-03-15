@@ -1,10 +1,9 @@
-from types import FunctionType
 from typing import Callable, Optional
 import pyglet
 from engine.collision_manager import CollisionManager
 
-from engine.node import Node
 from engine.node import PositionNode
+from engine.scene_manager_node import SceneManagerNode
 from engine.scene_node import Bounds, SceneNode
 from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
@@ -16,19 +15,28 @@ from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
 
-class RugHaiLower(Node):
+class RugHaiLower(SceneManagerNode):
     def __init__(
         self,
         window: pyglet.window.Window,
-        bundle: Optional[dict],
         collision_manager: CollisionManager,
+        input_controller: InputController,
         view_width: int,
         view_height: int,
-        input_controller: InputController,
         scaling: int = 1,
+        bundle: Optional[dict] = None,
         on_ended: Optional[Callable[[dict], None]] = None
     ):
-        super().__init__()
+        super().__init__(
+            window = window,
+            collision_manager = collision_manager,
+            input_controller = input_controller,
+            view_width = view_width,
+            view_height = view_height,
+            scaling = scaling,
+            bundle = bundle,
+            on_ended = on_ended
+        )
 
         self.__on_ended = on_ended
 
@@ -77,19 +85,19 @@ class RugHaiLower(Node):
         )
 
         # Place doors.
-        bottom_door = SensorNode(
+        top_door = SensorNode(
             x = 25 * tile_size,
-            y = 0,
+            y = 26 * tile_size,
             width = 50 * tile_size,
             height = 2 * tile_size,
             anchor_x = 25 * tile_size,
-            anchor_y = 2 * tile_size,
+            anchor_y = 0,
             scaling = scaling,
             visible = True,
             tag = "player",
-            on_triggered = self.on_bottom_door_triggered
+            on_triggered = self.on_top_door_triggered
         )
-        collision_manager.add_collider(bottom_door)
+        collision_manager.add_collider(top_door)
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
@@ -108,33 +116,34 @@ class RugHaiLower(Node):
             scaling = scaling
         )
 
-        self.__scene = SceneNode(
+        self._scene = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
             cam_speed = 5.0,
             cam_bounds = Bounds(
-                top = 50 * tile_size,
+                top = 26 * tile_size,
                 bottom = 0,
-                right = 50 * tile_size,
+                right = 100 * tile_size,
                 scaling = scaling
             ),
             on_scene_end = self.__on_scene_end
         )
 
-        self.__scene.add_children(tilemaps)
-        self.__scene.add_child(cam_target, cam_target = True)
-        self.__scene.add_child(self.__player, sorted = True)
-        self.__scene.add_child(duk, sorted = True)
-        self.__scene.add_child(tree, sorted = True)
-        self.__scene.add_child(bottom_door)
-        self.__scene.add_child(energy_bar, ui = True)
-        self.__scene.add_child(health_bar, ui = True)
+        self._scene.add_children(tilemaps)
+        self._scene.add_child(cam_target, cam_target = True)
+        self._scene.add_child(self.__player, sorted = True)
+        self._scene.add_child(duk, sorted = True)
+        self._scene.add_child(tree, sorted = True)
+        self._scene.add_child(top_door)
+        self._scene.add_child(energy_bar, ui = True)
+        self._scene.add_child(health_bar, ui = True)
 
-    def on_bottom_door_triggered(self, value: bool):
+    def on_top_door_triggered(self, value: bool):
         if value:
-            self.__scene.end()
+            if self._scene is not None:
+                self._scene.end()
             self.__player.disable_controls()
 
     def __on_scene_end(self) -> None:
@@ -150,9 +159,3 @@ class RugHaiLower(Node):
                     ]
                 }
             )
-
-    def draw(self) -> None:
-        self.__scene.draw()
-
-    def update(self, dt) -> None:
-        self.__scene.update(dt)
