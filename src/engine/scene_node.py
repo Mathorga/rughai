@@ -101,7 +101,7 @@ class SceneNode(Node):
 
     def __update_curtain(self, dt):
         if self.__curtain_opening:
-            self.__curtain_opacity -= self.__curtain_speed * dt
+            self.__curtain_opacity -= self.__curtain_speed * 0.5 * dt
 
             if self.__curtain_opacity <= 0x00:
                 self.__curtain_opening = False
@@ -110,7 +110,7 @@ class SceneNode(Node):
             self.__curtain.set_opacity(int(self.__curtain_opacity))
 
         if self.__curtain_closing:
-            self.__curtain_opacity += self.__curtain_speed * dt
+            self.__curtain_opacity += self.__curtain_speed * 2 * dt
 
             if self.__curtain_opacity >= 0xFF:
                 self.__curtain_closing = False

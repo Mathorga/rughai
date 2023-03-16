@@ -58,13 +58,17 @@ class RugHaiHub(SceneManagerNode):
         )
 
         # Player.
+        player_position = (
+            bundle["player_position"][0] if bundle else 10 * self.__tile_size,
+            bundle["player_position"][1] if bundle else 10 * self.__tile_size,
+        )
         cam_target = PositionNode()
         self.__player = PlayerNode(
             input_controller = input_controller,
             collision_manager = collision_manager,
             cam_target = cam_target,
-            x = 10 * self.__tile_size,
-            y = 10 * self.__tile_size,
+            x = player_position[0],
+            y = player_position[1],
             scaling = scaling,
             collision_tag = "player"
         )

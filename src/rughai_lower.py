@@ -45,14 +45,14 @@ class RugHaiLower(SceneManagerNode):
             source = "tilemaps/rughai/lower_rughai.tmx",
             scaling = scaling
         )
-        tile_size = tilemaps[0].get_tile_size()[0]
-        tilemap_width = tilemaps[0].map_width * tile_size
-        tilemap_height = tilemaps[0].map_height * tile_size
+        self.__tile_size = tilemaps[0].get_tile_size()[0]
+        tilemap_width = tilemaps[0].map_width * self.__tile_size
+        tilemap_height = tilemaps[0].map_height * self.__tile_size
 
         # Player.
         player_position = (
-            bundle["player_position"][0] if bundle else 10 * tile_size,
-            bundle["player_position"][1] if bundle else 10 * tile_size,
+            bundle["player_position"][0] if bundle else 10 * self.__tile_size,
+            bundle["player_position"][1] if bundle else 10 * self.__tile_size,
         )
         cam_target = PositionNode()
         self.__player = PlayerNode(
@@ -67,8 +67,8 @@ class RugHaiLower(SceneManagerNode):
 
         # Duk.
         duk = DukNode(
-            x = 10 * tile_size,
-            y = 8 * tile_size,
+            x = 10 * self.__tile_size,
+            y = 8 * self.__tile_size,
             scaling = scaling
         )
 
@@ -79,18 +79,18 @@ class RugHaiLower(SceneManagerNode):
         tree_img.anchor_y = 3
         tree = SpriteNode(
             resource = tree_img,
-            x = 5 * tile_size,
-            y = 5 * tile_size,
+            x = 5 * self.__tile_size,
+            y = 5 * self.__tile_size,
             scaling = scaling
         )
 
         # Place doors.
         top_door = SensorNode(
-            x = 25 * tile_size,
-            y = 26 * tile_size,
-            width = 50 * tile_size,
-            height = 2 * tile_size,
-            anchor_x = 25 * tile_size,
+            x = 20 * self.__tile_size,
+            y = 26 * self.__tile_size,
+            width = 12 * self.__tile_size,
+            height = 2 * self.__tile_size,
+            anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
             visible = True,
@@ -122,12 +122,12 @@ class RugHaiLower(SceneManagerNode):
             view_height = view_height,
             scaling = scaling,
             cam_speed = 5.0,
-            cam_bounds = Bounds(
-                top = 26 * tile_size,
-                bottom = 0,
-                right = 100 * tile_size,
-                scaling = scaling
-            ),
+            # cam_bounds = Bounds(
+            #     top = 26 * self.__tile_size,
+            #     bottom = 0,
+            #     right = 100 * self.__tile_size,
+            #     scaling = scaling
+            # ),
             on_scene_end = self.__on_scene_end
         )
 
@@ -154,8 +154,8 @@ class RugHaiLower(SceneManagerNode):
                     "event": events.CHANGE_ROOM,
                     "next_scene": scenes.RUGHAI_HUB,
                     "player_position": [
-                        1000.0,
-                        1000.0
+                        self.__player.x,
+                        self.__tile_size
                     ]
                 }
             )

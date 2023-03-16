@@ -88,12 +88,12 @@ class RugHai:
 
             if bundle["next_scene"] == scenes.RUGHAI_BOTTOM:
                 self._active_scene = RugHaiLower(
-                    bundle = bundle,
                     window = self._window,
                     collision_manager = self._collision_manager,
+                    input_controller = self._input,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
-                    input_controller = self._input,
+                    bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
@@ -101,9 +101,10 @@ class RugHai:
                 self._active_scene = RugHaiHub(
                     window = self._window,
                     collision_manager = self._collision_manager,
+                    input_controller = self._input,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
-                    input_controller = self._input,
+                    bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
