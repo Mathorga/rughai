@@ -122,12 +122,12 @@ class RugHaiLower(SceneManagerNode):
             view_height = view_height,
             scaling = scaling,
             cam_speed = 5.0,
-            # cam_bounds = Bounds(
-            #     top = 26 * self.__tile_size,
-            #     bottom = 0,
-            #     right = 100 * self.__tile_size,
-            #     scaling = scaling
-            # ),
+            cam_bounds = Bounds(
+                top = 26 * self.__tile_size,
+                bottom = 0,
+                right = 100 * self.__tile_size,
+                scaling = scaling
+            ),
             on_scene_end = self.__on_scene_end
         )
 
