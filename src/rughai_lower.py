@@ -1,7 +1,7 @@
 from typing import Callable, Optional
 import pyglet
-from engine.collision_manager import CollisionManager
 
+from engine.collision_manager import CollisionManager
 from engine.node import PositionNode
 from engine.scene_manager_node import SceneManagerNode
 from engine.scene_node import Bounds, SceneNode
@@ -122,12 +122,12 @@ class RugHaiLower(SceneManagerNode):
             view_height = view_height,
             scaling = scaling,
             cam_speed = 5.0,
-            # cam_bounds = Bounds(
-            #     top = 26 * self.__tile_size,
-            #     bottom = 0,
-            #     right = 100 * self.__tile_size,
-            #     scaling = scaling
-            # ),
+            cam_bounds = Bounds(
+                top = 26 * self.__tile_size,
+                bottom = 0,
+                right = 100 * self.__tile_size,
+                scaling = scaling
+            ),
             on_scene_end = self.__on_scene_end
         )
 
