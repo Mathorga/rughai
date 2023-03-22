@@ -6,11 +6,12 @@ from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.scene_manager_node import SceneManagerNode
+from r_0_2 import R_0_2
 
 import settings
-from rughai_hub import RugHaiHub
+from r_0_0 import R_0_0
 from fixed_resolution import Upscaler
-from rughai_lower import RugHaiLower
+from r_0_1 import R_0_1
 import constants.scenes as scenes
 
 class RugHai:
@@ -54,7 +55,7 @@ class RugHai:
         self._input = InputController(window = self._window)
 
         # Create a scene.
-        self._active_scene = RugHaiHub(
+        self._active_scene = R_0_2(
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
@@ -86,8 +87,8 @@ class RugHai:
             self._active_scene.clear_scene()
             self._collision_manager.clear()
 
-            if bundle["next_scene"] == scenes.RUGHAI_BOTTOM:
-                self._active_scene = RugHaiLower(
+            if bundle["next_scene"] == scenes.R_0_1:
+                self._active_scene = R_0_1(
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
@@ -97,8 +98,8 @@ class RugHai:
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
-            elif bundle["next_scene"] == scenes.RUGHAI_HUB:
-                self._active_scene = RugHaiHub(
+            elif bundle["next_scene"] == scenes.R_0_0:
+                self._active_scene = R_0_0(
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,

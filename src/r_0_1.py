@@ -15,7 +15,7 @@ from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
 
-class RugHaiLower(SceneManagerNode):
+class R_0_1(SceneManagerNode):
     def __init__(
         self,
         window: pyglet.window.Window,
@@ -42,7 +42,7 @@ class RugHaiLower(SceneManagerNode):
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
-            source = "tilemaps/rughai/lower_rughai.tmx",
+            source = "tilemaps/rughai/r_0_1.tmx",
             scaling = scaling
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -152,7 +152,7 @@ class RugHaiLower(SceneManagerNode):
             self.__on_ended(
                 {
                     "event": events.CHANGE_ROOM,
-                    "next_scene": scenes.RUGHAI_HUB,
+                    "next_scene": scenes.R_0_0,
                     "player_position": [
                         self.__player.x,
                         self.__tile_size
