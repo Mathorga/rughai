@@ -87,7 +87,7 @@ class R_0_1(SceneManagerNode):
         # Place doors.
         top_door = SensorNode(
             x = 20 * self.__tile_size,
-            y = 26 * self.__tile_size,
+            y = 30 * self.__tile_size,
             width = 12 * self.__tile_size,
             height = 2 * self.__tile_size,
             anchor_x = 0,
@@ -122,12 +122,12 @@ class R_0_1(SceneManagerNode):
             view_height = view_height,
             scaling = scaling,
             cam_speed = 5.0,
-            cam_bounds = Bounds(
-                top = 26 * self.__tile_size,
-                bottom = 0,
-                right = 100 * self.__tile_size,
-                scaling = scaling
-            ),
+            # cam_bounds = Bounds(
+            #     top = 26 * self.__tile_size,
+            #     bottom = 0,
+            #     right = 100 * self.__tile_size,
+            #     scaling = scaling
+            # ),
             on_scene_end = self.__on_scene_end
         )
 

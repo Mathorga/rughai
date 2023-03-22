@@ -93,18 +93,6 @@ class R_0_0(SceneManagerNode):
         )
 
         # Place doors.
-        top_door = SensorNode(
-            x = 32 * self.__tile_size,
-            y = 50 * self.__tile_size,
-            width = 18 * self.__tile_size,
-            height = 2 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
-            scaling = scaling,
-            visible = True,
-            tag = "player",
-            on_triggered = self.on_top_door_triggered
-        )
         bottom_door = SensorNode(
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
@@ -117,7 +105,6 @@ class R_0_0(SceneManagerNode):
             tag = "player",
             on_triggered = self.on_bottom_door_triggered
         )
-        collision_manager.add_collider(top_door)
         collision_manager.add_collider(bottom_door)
 
         # Define energy bars.
@@ -161,7 +148,6 @@ class R_0_0(SceneManagerNode):
         self._scene.add_child(self.__player, sorted = True)
         self._scene.add_child(duk, sorted = True)
         self._scene.add_child(tree, sorted = True)
-        self._scene.add_child(top_door)
         self._scene.add_child(bottom_door)
         self._scene.add_child(energy_bar, ui = True)
         self._scene.add_child(health_bar, ui = True)
@@ -172,19 +158,6 @@ class R_0_0(SceneManagerNode):
                 self._scene.end()
                 self.__bundle = bundle
             self.__player.disable_controls()
-
-    def on_top_door_triggered(self, entered: bool):
-        self.on_door_triggered(
-            entered = entered,
-            bundle = {
-                "event": events.CHANGE_ROOM,
-                "next_scene": scenes.R_0_1,
-                "player_position": [
-                    self.__player.x,
-                    25 * self.__tile_size
-                ]
-            }
-        )
 
     def on_bottom_door_triggered(self, entered: bool):
         self.on_door_triggered(
