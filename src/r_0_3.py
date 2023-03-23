@@ -85,7 +85,7 @@ class R_0_3(SceneManagerNode):
         )
 
         # Place doors.
-        top_door = SensorNode(
+        north_west_door = SensorNode(
             x = 20 * self.__tile_size,
             y = 26 * self.__tile_size,
             width = 12 * self.__tile_size,
@@ -97,7 +97,7 @@ class R_0_3(SceneManagerNode):
             tag = "player",
             on_triggered = self.on_top_door_triggered
         )
-        collision_manager.add_collider(top_door)
+        collision_manager.add_collider(north_west_door)
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
@@ -136,7 +136,7 @@ class R_0_3(SceneManagerNode):
         self._scene.add_child(self.__player, sorted = True)
         self._scene.add_child(duk, sorted = True)
         self._scene.add_child(tree, sorted = True)
-        self._scene.add_child(top_door)
+        self._scene.add_child(north_west_door)
         self._scene.add_child(energy_bar, ui = True)
         self._scene.add_child(health_bar, ui = True)
 

@@ -44,6 +44,8 @@ class R_0_2(SceneManagerNode):
             scaling = scaling
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
+        tilemap_width = tilemaps[0].map_width * self.__tile_size
+        tilemap_height = tilemaps[0].map_height * self.__tile_size
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
@@ -93,7 +95,7 @@ class R_0_2(SceneManagerNode):
         )
 
         # Place doors.
-        top_door = SensorNode(
+        north_door = SensorNode(
             x = 32 * self.__tile_size,
             y = 50 * self.__tile_size,
             width = 18 * self.__tile_size,
@@ -103,9 +105,9 @@ class R_0_2(SceneManagerNode):
             scaling = scaling,
             visible = True,
             tag = "player",
-            on_triggered = self.on_top_door_triggered
+            on_triggered = self.on_north_door_triggered
         )
-        bottom_door = SensorNode(
+        south_door = SensorNode(
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
@@ -115,10 +117,10 @@ class R_0_2(SceneManagerNode):
             scaling = scaling,
             visible = True,
             tag = "player",
-            on_triggered = self.on_bottom_door_triggered
+            on_triggered = self.on_south_door_triggered
         )
-        collision_manager.add_collider(top_door)
-        collision_manager.add_collider(bottom_door)
+        collision_manager.add_collider(north_door)
+        collision_manager.add_collider(south_door)
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
@@ -144,9 +146,9 @@ class R_0_2(SceneManagerNode):
             scaling = scaling,
             cam_speed = 5.0,
             # cam_bounds = Bounds(
-            #     top = 50 * self.__tile_size,
+            #     top = tilemap_height * self.__tile_size,
             #     bottom = 0,
-            #     right = 50 * self.__tile_size,
+            #     right = tilemap_width * self.__tile_size,
             #     scaling = scaling
             # ),
             on_scene_end = self.__on_scene_end
@@ -161,8 +163,8 @@ class R_0_2(SceneManagerNode):
         self._scene.add_child(self.__player, sorted = True)
         self._scene.add_child(duk, sorted = True)
         self._scene.add_child(tree, sorted = True)
-        self._scene.add_child(top_door)
-        self._scene.add_child(bottom_door)
+        self._scene.add_child(north_door)
+        self._scene.add_child(south_door)
         self._scene.add_child(energy_bar, ui = True)
         self._scene.add_child(health_bar, ui = True)
 
@@ -173,7 +175,7 @@ class R_0_2(SceneManagerNode):
                 self.__bundle = bundle
             self.__player.disable_controls()
 
-    def on_top_door_triggered(self, entered: bool):
+    def on_north_door_triggered(self, entered: bool):
         self.on_door_triggered(
             entered = entered,
             bundle = {
@@ -186,7 +188,7 @@ class R_0_2(SceneManagerNode):
             }
         )
 
-    def on_bottom_door_triggered(self, entered: bool):
+    def on_south_door_triggered(self, entered: bool):
         self.on_door_triggered(
             entered = entered,
             bundle = {
