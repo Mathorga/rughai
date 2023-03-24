@@ -55,7 +55,7 @@ class RugHai:
         self._input = InputController(window = self._window)
 
         # Create a scene.
-        self._active_scene = R_0_1(
+        self._active_scene = R_0_0(
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
@@ -87,7 +87,18 @@ class RugHai:
             self._active_scene.clear_scene()
             self._collision_manager.clear()
 
-            if bundle["next_scene"] == scenes.R_0_1:
+            if bundle["next_scene"] == scenes.R_0_0:
+                self._active_scene = R_0_0(
+                    window = self._window,
+                    collision_manager = self._collision_manager,
+                    input_controller = self._input,
+                    view_width = settings.VIEW_WIDTH,
+                    view_height = settings.VIEW_HEIGHT,
+                    bundle = bundle,
+                    scaling = self._scaling,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.R_0_1:
                 self._active_scene = R_0_1(
                     window = self._window,
                     collision_manager = self._collision_manager,
@@ -98,8 +109,8 @@ class RugHai:
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
-            elif bundle["next_scene"] == scenes.R_0_0:
-                self._active_scene = R_0_0(
+            elif bundle["next_scene"] == scenes.R_0_2:
+                self._active_scene = R_0_2(
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,

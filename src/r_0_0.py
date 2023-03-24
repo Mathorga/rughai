@@ -44,6 +44,8 @@ class R_0_0(SceneManagerNode):
             scaling = scaling
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
+        tilemap_width = tilemaps[0].map_width
+        tilemap_height = tilemaps[0].map_height
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
@@ -130,12 +132,11 @@ class R_0_0(SceneManagerNode):
             view_height = view_height,
             scaling = scaling,
             cam_speed = 5.0,
-            # cam_bounds = Bounds(
-            #     top = 50 * self.__tile_size,
-            #     bottom = 0,
-            #     right = 50 * self.__tile_size,
-            #     scaling = scaling
-            # ),
+            cam_bounds = Bounds(
+                bottom = 0,
+                right = tilemap_width * self.__tile_size,
+                scaling = scaling
+            ),
             on_scene_end = self.__on_scene_end
         )
 

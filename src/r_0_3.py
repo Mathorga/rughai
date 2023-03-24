@@ -46,8 +46,8 @@ class R_0_3(SceneManagerNode):
             scaling = scaling
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
-        tilemap_width = tilemaps[0].map_width * self.__tile_size
-        tilemap_height = tilemaps[0].map_height * self.__tile_size
+        tilemap_width = tilemaps[0].map_width
+        tilemap_height = tilemaps[0].map_height
 
         # Player.
         player_position = (
