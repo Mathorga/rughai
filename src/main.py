@@ -6,13 +6,15 @@ from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.scene_manager_node import SceneManagerNode
-from r_0_2 import R_0_2
+from r_0_4 import R_0_4
 
 import settings
-from r_0_0 import R_0_0
-from fixed_resolution import Upscaler
-from r_0_1 import R_0_1
 import constants.scenes as scenes
+from fixed_resolution import Upscaler
+from r_0_0 import R_0_0
+from r_0_1 import R_0_1
+from r_0_2 import R_0_2
+from r_0_3 import R_0_3
 
 class RugHai:
     def __init__(self) -> None:
@@ -55,7 +57,7 @@ class RugHai:
         self._input = InputController(window = self._window)
 
         # Create a scene.
-        self._active_scene = R_0_0(
+        self._active_scene = R_0_3(
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
@@ -111,6 +113,28 @@ class RugHai:
                 )
             elif bundle["next_scene"] == scenes.R_0_2:
                 self._active_scene = R_0_2(
+                    window = self._window,
+                    collision_manager = self._collision_manager,
+                    input_controller = self._input,
+                    view_width = settings.VIEW_WIDTH,
+                    view_height = settings.VIEW_HEIGHT,
+                    bundle = bundle,
+                    scaling = self._scaling,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.R_0_3:
+                self._active_scene = R_0_3(
+                    window = self._window,
+                    collision_manager = self._collision_manager,
+                    input_controller = self._input,
+                    view_width = settings.VIEW_WIDTH,
+                    view_height = settings.VIEW_HEIGHT,
+                    bundle = bundle,
+                    scaling = self._scaling,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.R_0_4:
+                self._active_scene = R_0_4(
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,

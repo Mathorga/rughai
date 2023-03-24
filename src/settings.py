@@ -3,7 +3,7 @@ import os
 # Working directory.
 WORKING_DIR = os.path.dirname(os.path.realpath(__file__)) + "/.."
 
-DEBUG = True
+DEBUG = False
 
 # Display settings.
 TITLE = "RUG-HAI"
