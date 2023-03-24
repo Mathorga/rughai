@@ -57,7 +57,7 @@ class RugHai:
         self._input = InputController(window = self._window)
 
         # Create a scene.
-        self._active_scene = R_0_3(
+        self._active_scene = R_0_0(
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
