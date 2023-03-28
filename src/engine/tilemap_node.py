@@ -111,7 +111,7 @@ class TilemapNode(PositionNode):
 
         # Extract a tileset from all the given file.
         tileset = Tileset(
-            sources = [f"tilemaps/tilesets/rughai/{ts.attrib['source'].split('.')[0]}.png" for ts in tilemap_tilesets],
+            sources = [f"tilemaps/tilesets/rughai/{ts.attrib['source'].split('/')[-1].split('.')[0]}.png" for ts in tilemap_tilesets],
             tile_width = tile_width,
             tile_height = tile_height
         )
