@@ -3,7 +3,7 @@ import pyglet
 
 from engine.collision_manager import CollisionManager
 from engine.node import PositionNode
-from engine.scene_manager_node import SceneManagerNode
+from engine.playable_scene_node import PlayableSceneNode
 from engine.scene_node import Bounds, SceneNode
 from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
@@ -15,7 +15,7 @@ from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
 
-class R_0_1(SceneManagerNode):
+class R_0_1(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
@@ -55,7 +55,7 @@ class R_0_1(SceneManagerNode):
             bundle["player_position"][1] if bundle else 10 * self.__tile_size,
         )
         cam_target = PositionNode()
-        self.__player = PlayerNode(
+        self._player = PlayerNode(
             input_controller = input_controller,
             collision_manager = collision_manager,
             cam_target = cam_target,
@@ -95,7 +95,18 @@ class R_0_1(SceneManagerNode):
             scaling = scaling,
             visible = True,
             tag = "player",
-            on_triggered = self.on_north_door_triggered
+            on_triggered = lambda entered:
+                self.on_door_triggered(
+                    entered = entered,
+                    bundle = {
+                        "event": events.CHANGE_ROOM,
+                        "next_scene": scenes.R_0_0,
+                        "player_position": [
+                            self._player.x,
+                            self.__tile_size
+                        ]
+                    }
+                )
         )
         south_west_door = SensorNode(
             x = 5 * self.__tile_size,
@@ -107,7 +118,18 @@ class R_0_1(SceneManagerNode):
             scaling = scaling,
             visible = True,
             tag = "player",
-            on_triggered = self.on_south_west_door_triggered
+            on_triggered = lambda entered:
+                self.on_door_triggered(
+                    entered = entered,
+                    bundle = {
+                        "event": events.CHANGE_ROOM,
+                        "next_scene": scenes.R_0_2,
+                        "player_position": [
+                            self._player.x,
+                            49 * self.__tile_size
+                        ]
+                    }
+                )
         )
         south_east_door = SensorNode(
             x = 34 * self.__tile_size,
@@ -119,7 +141,18 @@ class R_0_1(SceneManagerNode):
             scaling = scaling,
             visible = True,
             tag = "player",
-            on_triggered = self.on_south_east_door_triggered
+            on_triggered = lambda entered:
+                self.on_door_triggered(
+                    entered = entered,
+                    bundle = {
+                        "event": events.CHANGE_ROOM,
+                        "next_scene": scenes.R_0_2,
+                        "player_position": [
+                            self._player.x,
+                            49 * self.__tile_size
+                        ]
+                    }
+                )
         )
         collision_manager.add_collider(north_door)
         collision_manager.add_collider(south_west_door)
@@ -154,12 +187,12 @@ class R_0_1(SceneManagerNode):
                 right = tilemap_width * self.__tile_size,
                 scaling = scaling
             ),
-            on_scene_end = self.__on_scene_end
+            on_scene_end = self._on_scene_end
         )
 
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(self.__player, sorted = True)
+        self._scene.add_child(self._player, sorted = True)
         self._scene.add_child(duk, sorted = True)
         self._scene.add_child(tree, sorted = True)
         self._scene.add_child(north_door)
@@ -167,54 +200,3 @@ class R_0_1(SceneManagerNode):
         self._scene.add_child(south_east_door)
         self._scene.add_child(energy_bar, ui = True)
         self._scene.add_child(health_bar, ui = True)
-
-    def on_door_triggered(self, entered: bool, bundle: dict):
-        if entered:
-            if self._scene is not None:
-                self._scene.end()
-                self.__bundle = bundle
-            self.__player.disable_controls()
-
-    def on_north_door_triggered(self, entered: bool):
-        self.on_door_triggered(
-            entered = entered,
-            bundle = {
-                "event": events.CHANGE_ROOM,
-                "next_scene": scenes.R_0_0,
-                "player_position": [
-                    self.__player.x,
-                    self.__tile_size
-                ]
-            }
-        )
-
-    def on_south_west_door_triggered(self, entered: bool):
-        self.on_door_triggered(
-            entered = entered,
-            bundle = {
-                "event": events.CHANGE_ROOM,
-                "next_scene": scenes.R_0_2,
-                "player_position": [
-                    self.__player.x,
-                    49 * self.__tile_size
-                ]
-            }
-        )
-
-    def on_south_east_door_triggered(self, entered: bool):
-        self.on_door_triggered(
-            entered = entered,
-            bundle = {
-                "event": events.CHANGE_ROOM,
-                "next_scene": scenes.R_0_2,
-                "player_position": [
-                    self.__player.x,
-                    49 * self.__tile_size
-                ]
-            }
-        )
-
-    def __on_scene_end(self) -> None:
-        if self._on_ended:
-            # Pass a package containing all useful information for the next room.
-            self._on_ended(self.__bundle)

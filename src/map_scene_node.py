@@ -3,10 +3,10 @@ import pyglet
 
 from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
-from engine.scene_manager_node import SceneManagerNode
+from engine.playable_scene_node import PlayableSceneNode
 
 
-class MapSceneNode(SceneManagerNode):
+class MapSceneNode(PlayableSceneNode):
     """
     Class defining a generic playable scene. It contains a player and accepts a prop placement file as input for placing props.
     """

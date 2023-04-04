@@ -3,10 +3,12 @@ import pyglet
 
 from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
-from engine.node import Node
+from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
+from player_node import PlayerNode
 
-class SceneManagerNode(Node):
+
+class PlayableSceneNode(Node):
     def __init__(
         self,
         window: pyglet.window.Window,
@@ -23,10 +25,29 @@ class SceneManagerNode(Node):
         self._window = window
         self._on_ended = on_ended
         self._collision_manager = collision_manager
-        self._bundle = bundle
+        self._input_controller = input_controller
+
+        # The bundle containing instructions for the next scene.
+        self._bundle: dict
 
         self._scene: Optional[SceneNode]
 
+        # Player.
+        self._player: PlayerNode
+
+    def on_door_triggered(self, entered: bool, bundle: dict):
+        if entered:
+            if self._scene is not None:
+                self._scene.end()
+                self._bundle = bundle
+
+            if self._player is not None:
+                self._player.disable_controls()
+
+    def _on_scene_end(self) -> None:
+        if self._on_ended:
+            # Pass a package containing all useful information for the next room.
+            self._on_ended(self._bundle)
 
     def clear_scene(self) -> None:
         if self._scene is not None:

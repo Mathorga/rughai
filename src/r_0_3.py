@@ -3,7 +3,7 @@ import pyglet
 
 from engine.collision_manager import CollisionManager
 from engine.node import PositionNode
-from engine.scene_manager_node import SceneManagerNode
+from engine.playable_scene_node import PlayableSceneNode
 from engine.scene_node import Bounds, SceneNode
 from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
@@ -15,7 +15,7 @@ from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
 
-class R_0_3(SceneManagerNode):
+class R_0_3(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
@@ -158,7 +158,7 @@ class R_0_3(SceneManagerNode):
         if entered:
             if self._scene is not None:
                 self._scene.end()
-                self.__bundle = bundle
+                self._bundle = bundle
             self.__player.disable_controls()
 
     def on_north_west_door_triggered(self, entered: bool):
@@ -190,4 +190,4 @@ class R_0_3(SceneManagerNode):
     def __on_scene_end(self) -> None:
         if self._on_ended:
             # Pass a package containing all useful information for the next room.
-            self._on_ended(self.__bundle)
+            self._on_ended(self._bundle)

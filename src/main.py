@@ -5,7 +5,7 @@ from engine.collision_manager import CollisionManager
 
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
-from engine.scene_manager_node import SceneManagerNode
+from engine.scene_manager_node import PlayableSceneNode
 from r_0_4 import R_0_4
 
 import settings
