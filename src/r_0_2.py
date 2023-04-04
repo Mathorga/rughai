@@ -65,7 +65,7 @@ class R_0_2(PlayableSceneNode):
             bundle["player_position"][1] if bundle else 10 * self.__tile_size,
         )
         cam_target = PositionNode()
-        self.__player = PlayerNode(
+        self._player = PlayerNode(
             input_controller = input_controller,
             collision_manager = collision_manager,
             cam_target = cam_target,
@@ -112,7 +112,7 @@ class R_0_2(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_1,
                         "player_position": [
-                            self.__player.x,
+                            self._player.x,
                             self.__tile_size
                         ]
                     }
@@ -135,7 +135,7 @@ class R_0_2(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_1,
                         "player_position": [
-                            self.__player.x,
+                            self._player.x,
                             self.__tile_size
                         ]
                     }
@@ -158,7 +158,7 @@ class R_0_2(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_3,
                         "player_position": [
-                            self.__player.x,
+                            self._player.x,
                             25 * self.__tile_size
                         ]
                     }
@@ -203,7 +203,7 @@ class R_0_2(PlayableSceneNode):
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(self.__player, sorted = True)
+        self._scene.add_child(self._player, sorted = True)
         self._scene.add_child(duk, sorted = True)
         self._scene.add_child(tree, sorted = True)
         self._scene.add_child(north_west_door)
