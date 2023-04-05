@@ -11,10 +11,10 @@ class CollisionManager:
         self.__colliders.append(collider)
 
     def __check_collisions(self):
-        for child in self.__colliders:
+        for collider in self.__colliders:
             for other in self.__colliders:
-                if child != other:
-                    child.overlap(other)
+                if collider != other:
+                    collider.overlap(other)
 
     def update(self, dt):
         self.__check_collisions()

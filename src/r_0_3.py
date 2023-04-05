@@ -49,6 +49,18 @@ class R_0_3(PlayableSceneNode):
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
 
+        # Define a background.
+        bg_image = pyglet.resource.image("bg.png")
+        bg_image.anchor_x = bg_image.width / 2
+        bg_image.anchor_y = bg_image.height / 2
+        bg = SpriteNode(
+            resource = pyglet.resource.image("bg.png"),
+            on_animation_end = lambda : None,
+            x = (tilemaps[0].map_width * self.__tile_size) // 2,
+            y = (tilemaps[0].map_height * self.__tile_size) // 2,
+            scaling = scaling
+        )
+
         # Player.
         player_position = (
             bundle["player_position"][0] if bundle else 10 * self.__tile_size,
@@ -166,6 +178,7 @@ class R_0_3(PlayableSceneNode):
             on_scene_end = self._on_scene_end
         )
 
+        self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(self._player, sorted = True)

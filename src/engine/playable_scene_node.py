@@ -35,6 +35,10 @@ class PlayableSceneNode(Node):
         # Player.
         self._player: PlayerNode
 
+    def delete(self) -> None:
+        if self._scene is not None:
+            self._scene.delete()
+
     def on_door_triggered(self, entered: bool, bundle: dict):
         if entered:
             if self._scene is not None:
@@ -48,10 +52,6 @@ class PlayableSceneNode(Node):
         if self._on_ended:
             # Pass a package containing all useful information for the next room.
             self._on_ended(self._bundle)
-
-    def clear_scene(self) -> None:
-        if self._scene is not None:
-            self._scene.clear_children()
 
     def draw(self) -> None:
         if self._scene is not None:

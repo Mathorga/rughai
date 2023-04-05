@@ -33,6 +33,9 @@ class SpriteNode(PositionNode):
 
         self.__on_animation_end = on_animation_end
 
+    def delete(self) -> None:
+        self.__sprite.delete()
+
     def get_image(self):
         return self.__sprite.image
 

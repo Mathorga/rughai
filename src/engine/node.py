@@ -23,6 +23,9 @@ class Node:
 
         pass
 
+    def delete(self) -> None:
+        pass
+
 class PositionNode(Node):
     def __init__(
         self,

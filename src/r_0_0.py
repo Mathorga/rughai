@@ -52,7 +52,7 @@ class R_0_0(PlayableSceneNode):
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
         bg = SpriteNode(
-            resource = pyglet.resource.image("bg.png"),
+            resource = bg_image,
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
@@ -73,25 +73,6 @@ class R_0_0(PlayableSceneNode):
             y = player_position[1],
             scaling = scaling,
             collision_tag = "player"
-        )
-
-        # Duk.
-        duk = DukNode(
-            x = 10 * self.__tile_size,
-            y = 8 * self.__tile_size,
-            scaling = scaling
-        )
-
-        # Define tree prop.
-        # TODO Use dedicated class.
-        tree_img = pyglet.resource.image("sprites/rughai/prop/tree_l.png")
-        tree_img.anchor_x = tree_img.width / 2
-        tree_img.anchor_y = 3
-        tree = SpriteNode(
-            resource = tree_img,
-            x = 5 * self.__tile_size,
-            y = 5 * self.__tile_size,
-            scaling = scaling
         )
 
         # Place doors.
@@ -155,8 +136,6 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(self._player, sorted = True)
-        self._scene.add_child(duk, sorted = True)
-        self._scene.add_child(tree, sorted = True)
         self._scene.add_child(bottom_door)
         self._scene.add_child(energy_bar, ui = True)
         self._scene.add_child(health_bar, ui = True)

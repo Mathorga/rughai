@@ -35,6 +35,7 @@ class RugHai:
             self._window.width // settings.VIEW_WIDTH,
             self._window.height // settings.VIEW_HEIGHT
         )
+        # self._scaling = 10
 
         self._upscaler = Upscaler(
             window = self._window,
@@ -86,8 +87,8 @@ class RugHai:
     def __on_scene_end(self, bundle: dict):
         print("scene_ended", bundle)
         if bundle["next_scene"]:
-            self._active_scene.clear_scene()
             self._collision_manager.clear()
+            self._active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
                 self._active_scene = R_0_0(
@@ -179,6 +180,7 @@ class RugHai:
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
         pyglet.clock.schedule_interval(self.update, 1.0 / settings.TARGET_FPS)
+        # pyglet.clock.schedule(self.update)
         pyglet.app.run()
 
 app = RugHai()

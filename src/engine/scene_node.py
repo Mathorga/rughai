@@ -82,21 +82,22 @@ class SceneNode(Node):
         )
 
     def draw(self):
-        with self.__camera:
-            # Draw fixed objects.
-            for child in self.__visible_fixed_children:
-                child.draw()
+        if self.__camera is not None:
+            with self.__camera:
+                # Draw fixed objects.
+                for child in self.__visible_fixed_children:
+                    child.draw()
 
-            # Draw sorted objects.
-            for child in self.__visible_sorted_children:
-                child.draw()
+                # Draw sorted objects.
+                for child in self.__visible_sorted_children:
+                    child.draw()
 
         # Draw UI elements.
         for child in self.__ui_children:
             child.draw()
 
         # Draw curtain as last element.
-        if self.__curtain_opacity >= 0x00:
+        if self.__curtain is not None and self.__curtain_opacity >= 0x00:
             self.__curtain.draw()
 
     def __update_curtain(self, dt):
@@ -107,7 +108,8 @@ class SceneNode(Node):
                 self.__curtain_opening = False
                 self.__curtain_opacity = 0x00
 
-            self.__curtain.set_opacity(int(self.__curtain_opacity))
+            if self.__curtain is not None:
+                self.__curtain.set_opacity(int(self.__curtain_opacity))
 
         if self.__curtain_closing:
             self.__curtain_opacity += self.__curtain_speed * 2 * dt
@@ -119,10 +121,11 @@ class SceneNode(Node):
                 if self.__on_scene_end:
                     self.__on_scene_end()
 
-            self.__curtain.set_opacity(int(self.__curtain_opacity))
+            if self.__curtain is not None:
+                self.__curtain.set_opacity(int(self.__curtain_opacity))
 
     def __update_camera(self, dt):
-        if self.__cam_target != None:
+        if self.__camera is not None and self.__cam_target is not None:
             # Compute camera movement from camera target.
             camera_movement = pm.Vec2(
                 (self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
@@ -145,8 +148,10 @@ class SceneNode(Node):
             # Actually update camera position.
             # Values are rounded in order not to cause subpixel movements and therefore texture bleeding.
             self.__camera.position = (
-                round(updated_x),
-                round(updated_y)
+                # updated_x,
+                # updated_y
+                round(updated_x * 10) / 10,
+                round(updated_y * 10) / 10
             )
 
     # def __check_collisions(self):
@@ -201,7 +206,7 @@ class SceneNode(Node):
             self.__camera.position[1],
             self.__view_width * self.__scaling,
             self.__view_height * self.__scaling,
-        )
+        ) if self.__camera is not None else None
 
     def add_child(
         self,
@@ -216,10 +221,11 @@ class SceneNode(Node):
         else:
             if cam_target:
                 self.__cam_target = child
-                self.__camera.position = (
-                    self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2,
-                    self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2,
-                )
+                if self.__camera is not None:
+                    self.__camera.position = (
+                        self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2,
+                        self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2,
+                    )
 
             if sorted:
                 self.__sorted_children.append(child)
@@ -242,12 +248,21 @@ class SceneNode(Node):
                 ui = ui
             )
 
-    def clear_children(self):
+    def delete(self):
+        for child in self.__ui_children + self.__fixed_children + self.__sorted_children:
+            child.delete()
+
         self.__ui_children.clear()
         self.__fixed_children.clear()
         self.__sorted_children.clear()
         self.__visible_fixed_children.clear()
         self.__visible_sorted_children.clear()
+
+        if self.__curtain is not None:
+            self.__curtain.delete()
+
+        self.__curtain = None
+        self.__camera = None
 
     def end(self):
         self.__curtain_opening = False

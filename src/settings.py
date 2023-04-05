@@ -3,7 +3,7 @@ import os
 # Working directory.
 WORKING_DIR = os.path.dirname(os.path.realpath(__file__)) + "/.."
 
-DEBUG = False
+DEBUG = True
 
 # Display settings.
 TITLE = "RUG-HAI"
@@ -18,7 +18,9 @@ PIXEL_PERFECT = False
 # GBA resolution x3:
 WINDOW_WIDTH = 720
 WINDOW_HEIGHT = 480
-FULLSCREEN = False
-TARGET_FPS = 60
+FULLSCREEN = True
+
+# Keep target fps high, as low values could cause unwanted lags.
+TARGET_FPS = 480
 
 BACKGROUND_COLOR = "#222222"

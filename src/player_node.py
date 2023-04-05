@@ -220,6 +220,12 @@ class PlayerNode(PositionNode):
         self.__cam_target.x = x + cam_target_offset[0]
         self.__cam_target.y = y + cam_target_offset[1]
 
+    def delete(self) -> None:
+        self.__sprite.delete()
+        self.__aim_sprite.delete()
+        self.__shadow_sprite.delete()
+        self.__collider.delete()
+
     def draw(self):
         # Draw collider out of batch.
         self.__collider.draw()

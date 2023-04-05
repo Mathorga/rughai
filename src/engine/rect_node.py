@@ -39,6 +39,9 @@ class RectNode(PositionNode):
         )
         self.__shape.anchor_position = (anchor_x * scaling, anchor_y * scaling)
 
+    def delete(self) -> None:
+        self.__shape.delete()
+
     def set_position(
         self,
         x = None,

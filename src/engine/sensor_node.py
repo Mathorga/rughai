@@ -20,11 +20,7 @@ class SensorNode(PositionNode):
         tag: str = "",
         on_triggered: Optional[Callable[[bool], None]] = None
     ) -> None:
-        PositionNode.__init__(
-            self,
-            x = x,
-            y = y
-        )
+        super().__init__(x, y)
 
         self.width = width
         self.height = height
@@ -51,6 +47,9 @@ class SensorNode(PositionNode):
         )
 
         self.collisions = set()
+
+    def delete(self) -> None:
+        self.__shape.delete
 
     def set_position(
         self,

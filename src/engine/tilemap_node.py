@@ -90,6 +90,12 @@ class TilemapNode(PositionNode):
         for spr in self.__sprites:
             spr.scale = scaling
 
+    def delete(self) -> None:
+        for sprite in self.__sprites:
+            sprite.delete()
+
+        self.__sprites.clear()
+
     @staticmethod
     def from_tmx_file(
         source: str,
@@ -141,7 +147,8 @@ class TilemapNode(PositionNode):
                 map_height = map_height,
                 x = x,
                 y = y,
-                scaling = scaling
+                scaling = scaling,
+                batch = batch
             ) for layer in layers
         ]
 
