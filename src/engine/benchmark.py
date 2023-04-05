@@ -11,7 +11,7 @@ class Benchmark:
         y = None,
         text: str = "FPS: ",
         samples: int = 240,
-        update_period: float = 0.25
+        update_period: float = 0.5
     ) -> None:
         self._window = window
 
