@@ -4,6 +4,7 @@ import pyglet
 from PIL import Image
 
 from engine.node import PositionNode
+from props.rughai.r_grass_0 import RGrass0
 from props.rughai.r_veg_0 import RVeg0
 from props.rughai.r_veg_1 import RVeg1
 
@@ -11,19 +12,29 @@ def map_prop(
     prop_name: str,
     x: int,
     y: int,
-    scaling: int = 1
+    scaling: int = 1,
+    batch: Optional[pyglet.graphics.Batch] = None
 ) -> Optional[PositionNode]:
     if prop_name == "veg_0":
         return RVeg0(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
     elif prop_name == "veg_1":
         return RVeg1(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
+        )
+    elif prop_name == "grass_0":
+        return RGrass0(
+            x = x,
+            y = y,
+            scaling = scaling,
+            batch = batch
         )
 
 class PropLoader:
@@ -33,10 +44,12 @@ class PropLoader:
         tile_width: int = 8,
         tile_height: int = 8,
         scaling: int = 1
-    ) -> list:
+    ) -> tuple:
         prop_set = []
 
         abs_path = os.path.join(pyglet.resource.path[0], source)
+
+        # batch = pyglet.graphics.Batch()
 
         # Iterate over files in the source dir.
         for file_name in os.listdir(abs_path):
@@ -57,7 +70,8 @@ class PropLoader:
                                 file_name.split(".")[0],
                                 x = x * tile_width,
                                 y = (propmap.height - y) * tile_height,
-                                scaling = scaling
+                                scaling = scaling,
+                                # batch = batch
                             )
 
                             if prop is not None:

@@ -1,3 +1,4 @@
+from typing import Optional
 import pyglet
 
 from engine.node import PositionNode
@@ -10,7 +11,8 @@ class RVeg1(PositionNode):
         x: int = 0,
         y: int = 0,
         z: float = 0,
-        scaling: int = 1
+        scaling: int = 1,
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
 
@@ -28,7 +30,8 @@ class RVeg1(PositionNode):
             x = x,
             y = y,
             scaling = scaling,
-            on_animation_end = lambda : None
+            on_animation_end = lambda : None,
+            batch = batch
         )
 
     def draw(self) -> None:

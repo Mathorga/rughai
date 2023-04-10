@@ -5,7 +5,7 @@ from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.utils import animation_set_anchor
 
-class RVeg0(PositionNode):
+class RGrass0(PositionNode):
     def __init__(
         self,
         x: int = 0,
@@ -18,7 +18,7 @@ class RVeg0(PositionNode):
 
         self.__scaling = scaling
 
-        self.__idle_animation = pyglet.resource.animation("sprites/rughai/prop/veg_0/veg_0_idle.gif")
+        self.__idle_animation = pyglet.resource.animation("sprites/rughai/prop/grass_0/grass_0_idle_1.gif")
         animation_set_anchor(
             animation = self.__idle_animation,
             x = self.__idle_animation.get_max_width() / 2,
