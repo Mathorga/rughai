@@ -7,6 +7,7 @@ DEBUG = True
 
 # Display settings.
 TITLE = "RUG-HAI"
+FONT_NAME = "I pixel u"
 # VIEW_WIDTH = 300
 # VIEW_HEIGHT = 200
 # GBA resolution:
@@ -24,3 +25,4 @@ FULLSCREEN = True
 TARGET_FPS = 480
 
 BACKGROUND_COLOR = "#222222"
+CAM_SPEED = 5.0

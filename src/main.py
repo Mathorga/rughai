@@ -6,21 +6,22 @@ from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.playable_scene_node import PlayableSceneNode
-from r_0_4 import R_0_4
+from scenes.rughai.r_0_4 import R_0_4
 
 import settings
 import constants.scenes as scenes
 from fixed_resolution import Upscaler
-from r_0_0 import R_0_0
-from r_0_1 import R_0_1
-from r_0_2 import R_0_2
-from r_0_3 import R_0_3
+from scenes.rughai.r_0_0 import R_0_0
+from scenes.rughai.r_0_1 import R_0_1
+from scenes.rughai.r_0_2 import R_0_2
+from scenes.rughai.r_0_3 import R_0_3
 
 class RugHai:
     def __init__(self) -> None:
         # Set resources path.
         pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
         pyglet.resource.reindex()
+        pyglet.font.add_file(f"{os.path.dirname(__file__)}/../assets/fonts/I-pixel-u.ttf")
 
         # Create a window.
         self._window = self.__create_window()

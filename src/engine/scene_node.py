@@ -6,6 +6,7 @@ import pyglet.math as pm
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
+from engine.text_node import TextNode
 from engine.utils import *
 
 class Bounds:
@@ -29,6 +30,8 @@ class SceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
+        title: Optional[str] = None,
+        debug: bool = False,
         on_scene_end: Optional[Callable[[], None]] = None,
         scaling: int = 1,
         cam_speed: float = 10.0,
@@ -59,8 +62,15 @@ class SceneNode(Node):
         self.__visible_sorted_children = []
         self.__ui_children = []
 
-        # Colliding children.
-        # self.__colliders = []
+        # Scene title.
+        if (title is not None):
+            title = TextNode(
+                x = view_width / 2,
+                y = view_height - 5,
+                scaling = scaling,
+                text = title
+            )
+            self.add_child(title, ui = True)
 
         self.__curtain = RectNode(
             x = 0,

@@ -10,12 +10,13 @@ from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
 
+import settings
 from player_node import PlayerNode
 from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
 
-class R_0_2(PlayableSceneNode):
+class R_0_4(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
@@ -40,7 +41,7 @@ class R_0_2(PlayableSceneNode):
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
-            source = "tilemaps/rughai/r_0_2.tmx",
+            source = "tilemaps/rughai/r_0_4.tmx",
             scaling = scaling
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -95,53 +96,7 @@ class R_0_2(PlayableSceneNode):
         )
 
         # Place doors.
-        north_west_door = SensorNode(
-            x = 5 * self.__tile_size,
-            y = 50 * self.__tile_size,
-            width = 10 * self.__tile_size,
-            height = 2 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
-            scaling = scaling,
-            visible = True,
-            tag = "player",
-            on_triggered = lambda entered:
-                self.on_door_triggered(
-                    entered = entered,
-                    bundle = {
-                        "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_1,
-                        "player_position": [
-                            self._player.x,
-                            self.__tile_size
-                        ]
-                    }
-                )
-        )
-        north_east_door = SensorNode(
-            x = 32 * self.__tile_size,
-            y = 50 * self.__tile_size,
-            width = 18 * self.__tile_size,
-            height = 2 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
-            scaling = scaling,
-            visible = True,
-            tag = "player",
-            on_triggered = lambda entered:
-                self.on_door_triggered(
-                    entered = entered,
-                    bundle = {
-                        "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_1,
-                        "player_position": [
-                            self._player.x,
-                            self.__tile_size
-                        ]
-                    }
-                )
-        )
-        south_door = SensorNode(
+        bottom_door = SensorNode(
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
@@ -158,15 +113,13 @@ class R_0_2(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_3,
                         "player_position": [
-                            self._player.x,
+                            self._player.x + 45 * self.__tile_size,
                             25 * self.__tile_size
                         ]
                     }
                 )
         )
-        collision_manager.add_collider(north_west_door)
-        collision_manager.add_collider(north_east_door)
-        collision_manager.add_collider(south_door)
+        collision_manager.add_collider(bottom_door)
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
@@ -190,10 +143,13 @@ class R_0_2(PlayableSceneNode):
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
-            cam_speed = 5.0,
+            cam_speed = settings.CAM_SPEED,
+            title = "R_0_4",
+            debug = settings.DEBUG,
             cam_bounds = Bounds(
                 top = tilemap_height * self.__tile_size,
                 bottom = 0,
+                left = 0,
                 right = tilemap_width * self.__tile_size,
                 scaling = scaling
             ),
@@ -206,8 +162,6 @@ class R_0_2(PlayableSceneNode):
         self._scene.add_child(self._player, sorted = True)
         self._scene.add_child(duk, sorted = True)
         self._scene.add_child(tree, sorted = True)
-        self._scene.add_child(north_west_door)
-        self._scene.add_child(north_east_door)
-        self._scene.add_child(south_door)
+        self._scene.add_child(bottom_door)
         self._scene.add_child(energy_bar, ui = True)
         self._scene.add_child(health_bar, ui = True)
