@@ -31,6 +31,7 @@ class PlayableSceneNode(Node):
         self._bundle: dict
 
         self._scene: Optional[SceneNode]
+        self._batch = pyglet.graphics.Batch()
 
         # Player.
         self._player: PlayerNode

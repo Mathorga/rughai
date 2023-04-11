@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 import pyglet
 import pyglet.math as pm
@@ -93,6 +94,7 @@ class PlayerNode(PositionNode):
         y: int = 0,
         run_threshold: float = 0.75,
         scaling: int = 1,
+        batch: Optional[pyglet.graphics.Batch] = None,
         collision_tag: str = ""
     ) -> None:
         PositionNode.__init__(
@@ -102,6 +104,7 @@ class PlayerNode(PositionNode):
         )
 
         self.__scaling = scaling
+        self.__batch = batch
 
         # IDLE state animations.
         self.__idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_idle.gif")
@@ -154,8 +157,6 @@ class PlayerNode(PositionNode):
         )
 
         self.__hor_facing: int = 1
-
-        self.__batch = pyglet.graphics.Batch()
 
         self.__sprite = SpriteNode(
             resource = self.__idle_anim,
@@ -348,6 +349,7 @@ class PlayerNode(PositionNode):
 
         # Update sprite position.
         self.__sprite.set_position(self.x, self.y)
+        print(self.__sprite.z)
 
         # Flip sprite if moving to the left.
         self.__sprite.set_scale(x_scale = self.__hor_facing)

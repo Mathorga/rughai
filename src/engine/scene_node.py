@@ -34,6 +34,7 @@ class SceneNode(Node):
         debug: bool = False,
         on_scene_end: Optional[Callable[[], None]] = None,
         scaling: int = 1,
+        batch: pyglet.graphics.Batch = pyglet.graphics.Batch(),
         cam_speed: float = 10.0,
         curtain_speed: int = 200,
         cam_bounds: Bounds = Bounds()
@@ -42,6 +43,7 @@ class SceneNode(Node):
         self.__view_width = view_width
         self.__view_height = view_height
         self.__scaling = scaling
+        self.__batch = batch
 
         self.__on_scene_end = on_scene_end
 
@@ -64,13 +66,13 @@ class SceneNode(Node):
 
         # Scene title.
         if (title is not None):
-            title = TextNode(
-                x = view_width / 2,
+            label = TextNode(
+                x = view_width // 2,
                 y = view_height - 5,
                 scaling = scaling,
                 text = title
             )
-            self.add_child(title, ui = True)
+            self.add_child(label, ui = True)
 
         self.__curtain = RectNode(
             x = 0,
@@ -94,13 +96,14 @@ class SceneNode(Node):
     def draw(self):
         if self.__camera is not None:
             with self.__camera:
-                # Draw fixed objects.
-                for child in self.__visible_fixed_children:
-                    child.draw()
+                self.__batch.draw()
+                # # Draw fixed objects.
+                # for child in self.__visible_fixed_children:
+                #     child.draw()
 
-                # Draw sorted objects.
-                for child in self.__visible_sorted_children:
-                    child.draw()
+                # # Draw sorted objects.
+                # for child in self.__visible_sorted_children:
+                #     child.draw()
 
         # Draw UI elements.
         for child in self.__ui_children:
@@ -208,7 +211,7 @@ class SceneNode(Node):
         self.__visible_sorted_children = self.__sorted_children
 
         # Sort objects by y coord in order to get depth.
-        self.__visible_sorted_children.sort(key = lambda child : -child.y)
+        # self.__visible_sorted_children.sort(key = lambda child : -child.y)
 
     def __get_cam_bounding_box(self):
         return (

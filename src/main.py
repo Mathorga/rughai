@@ -83,6 +83,12 @@ class RugHai:
         if not settings.DEBUG:
             window.set_mouse_visible(False)
 
+        # Enable depth testing.
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glDepthFunc(gl.GL_LESS)
+        gl.glEnable(gl.GL_BLEND)
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+
         return window
 
     def __on_scene_end(self, bundle: dict):
@@ -148,6 +154,16 @@ class RugHai:
                 )
 
     def on_draw(self) -> None:
+        # Update window matrix.
+        self._window.projection = pyglet.math.Mat4.orthogonal_projection(
+            left = 0,
+            right = self._window.width,
+            bottom = 0,
+            top = self._window.height,
+            z_near = -200,
+            z_far = 200
+        )
+
         # Benchmark measures render time.
         with self._render_bench:
             self._window.clear()

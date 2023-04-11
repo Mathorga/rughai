@@ -43,7 +43,8 @@ class R_0_0(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_0.tmx",
-            scaling = scaling
+            scaling = scaling,
+            batch = self._batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -58,7 +59,8 @@ class R_0_0(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._batch
         )
 
         # Player.
@@ -74,6 +76,7 @@ class R_0_0(PlayableSceneNode):
             x = player_position[0],
             y = player_position[1],
             scaling = scaling,
+            batch = self._batch,
             collision_tag = "player"
         )
 
@@ -111,13 +114,15 @@ class R_0_0(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 4,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._batch
         )
 
         self._scene = SceneNode(
@@ -125,6 +130,7 @@ class R_0_0(PlayableSceneNode):
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
+            batch = self._batch,
             cam_speed = settings.CAM_SPEED,
             title = "R_0_0",
             debug = settings.DEBUG,

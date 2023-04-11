@@ -29,13 +29,13 @@ def map_prop(
             scaling = scaling,
             batch = batch
         )
-    elif prop_name == "grass_0":
-        return RGrass0(
-            x = x,
-            y = y,
-            scaling = scaling,
-            batch = batch
-        )
+    # elif prop_name == "grass_0":
+    #     return RGrass0(
+    #         x = x,
+    #         y = y,
+    #         scaling = scaling,
+    #         batch = batch
+    #     )
 
 class PropLoader:
     @staticmethod
@@ -44,7 +44,7 @@ class PropLoader:
         tile_width: int = 8,
         tile_height: int = 8,
         scaling: int = 1
-    ) -> tuple:
+    ) -> list:
         prop_set = []
 
         abs_path = os.path.join(pyglet.resource.path[0], source)
@@ -64,7 +64,7 @@ class PropLoader:
                 for y in range(propmap.height):
                     for x in range(propmap.width):
 
-                        # Only keep pixels with alpha greater than 50%.
+                        # Only keep pixels with alpha greater than 50% (0x7F = 127).
                         if propmap_data[x, y][3] > 0x7F:
                             prop = map_prop(
                                 file_name.split(".")[0],

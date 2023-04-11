@@ -60,7 +60,7 @@ class TilemapNode(PositionNode):
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
-        batch: pyglet.graphics.Batch = pyglet.graphics.Batch(),
+        batch: Optional[pyglet.graphics.Batch] = pyglet.graphics.Batch(),
         group: Optional[pyglet.graphics.Group] = None
     ):
         super().__init__(
@@ -82,6 +82,7 @@ class TilemapNode(PositionNode):
                 img = self.__tileset.tiles[tex_index],
                 x = (index % self.map_width) * self.__tileset.tile_width * scaling,
                 y = height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
+                z = (self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height),
                 batch = batch,
                 group = group
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
@@ -99,6 +100,7 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmx_file(
         source: str,
+        batch: Optional[pyglet.graphics.Batch],
         x: int = 0,
         y: int = 0,
         scaling: int = 1
@@ -135,9 +137,6 @@ class TilemapNode(PositionNode):
             layer_content = layer_data.text.replace("\n", "").split(",")
 
             layers.append(layer_content)
-
-        # Create a single batch for all layers.
-        batch = pyglet.graphics.Batch()
 
         return [
             TilemapNode(
@@ -200,7 +199,8 @@ class TilemapNode(PositionNode):
     #             sprite.batch = None
 
     def draw(self):
-        self.__batch.draw()
+        if self.__batch is not None:
+            self.__batch.draw()
 
     def get_bounding_box(self):
         return (
