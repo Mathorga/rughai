@@ -63,7 +63,7 @@ class R_0_0(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            z = 500,
+            z = 400,
             scaling = scaling
         )
         print(bg.sprite.z)

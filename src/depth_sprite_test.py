@@ -9,15 +9,15 @@ import math
 # You will have to change window projection if you wish to go beyond this.
 window = pyglet.window.Window(height=250)
 
-fragment_source = """#version 150 core
+fragment_source = """
+    #version 150 core
     in vec4 vertex_colors;
     in vec3 texture_coords;
     out vec4 final_colors;
 
     uniform sampler2D sprite_texture;
 
-    void main()
-    {
+    void main() {
         final_colors = texture(sprite_texture, texture_coords.xy) * vertex_colors;
         
         // No GL_ALPHA_TEST in core, use shader to discard.
@@ -65,7 +65,7 @@ vertex_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vert
 fragment_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
 depth_shader = pyglet.graphics.shader.ShaderProgram(vertex_shader, fragment_shader)
 
-sprite_count = 12
+sprite_count = 120
 for i in range(sprite_count):
     sprite = DepthSprite(image, x=0, y=0, z=i, batch=batch, program=depth_shader)
 

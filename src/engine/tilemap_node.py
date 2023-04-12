@@ -3,8 +3,10 @@ from typing import Optional
 import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
+from engine.depth_sprite import DepthSprite, depth_shader_program
 
 from engine.node import PositionNode
+from engine.sprite_node import SpriteNode
 from engine.sprites_manager import SpritesManager
 
 class Tileset:
@@ -36,8 +38,7 @@ class Tileset:
             for y in range(self.margin, texture.height - self.spacing, self.tile_height + self.spacing):
                 for x in range(self.margin, texture.width - self.spacing, self.tile_width + self.spacing):
                     # Cut the needed region from the given texture and save it.
-                    tile = texture.get_region(x, texture.height - y - self.tile_height, self.tile_width, self.tile_height)
-                    self.tiles.append(tile)
+                    tile: pyglet.image.TextureRegion = texture.get_region(x, texture.height - y - self.tile_height, self.tile_width, self.tile_height)
 
                     gl.glBindTexture(tile.target, tile.id)
 
@@ -50,6 +51,8 @@ class Tileset:
                     gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
 
                     gl.glBindTexture(tile.target, 0)
+
+                    self.tiles.append(tile)
 
 class TilemapNode(PositionNode):
     def __init__(
@@ -78,12 +81,19 @@ class TilemapNode(PositionNode):
         width = self.map_width * tileset.tile_width * scaling
         height = (self.map_height - 1) * tileset.tile_height * scaling
         self.__sprites = [
-            pyglet.sprite.Sprite(
+            DepthSprite(
                 img = self.__tileset.tiles[tex_index],
                 x = (index % self.map_width) * self.__tileset.tile_width * scaling,
                 y = height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
                 z = -((self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height)),
                 group = group
+            # SpriteNode(
+            #     resource = self.__tileset.tiles[tex_index],
+            #     sprites_manager = sprites_manager,
+            #     x = (index % self.map_width) * self.__tileset.tile_width,
+            #     y = (self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height),
+            #     z = -((self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height)),
+            #     scaling = scaling
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
@@ -101,7 +111,7 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmx_file(
         source: str,
-        sprites_manager: Optional[SpritesManager],
+        sprites_manager: Optional[SpritesManager] = None,
         x: int = 0,
         y: int = 0,
         scaling: int = 1
@@ -190,17 +200,6 @@ class TilemapNode(PositionNode):
                 scaling = scaling
             ) for layer in tilemap_layers
         ]
-
-    # def update(self, dt) -> None:
-    #     # Implements culling, but is very inefficient. TODO Study.
-    #     for sprite in self.__sprites:
-    #         if not overlap(0, 0, self.map_width, self.map_height, sprite.x, sprite.y, sprite.width, sprite.height) and sprite.batch != self.__batch:
-    #             sprite.batch = self.__batch
-    #         elif sprite.batch != None:
-    #             sprite.batch = None
-
-    def draw(self):
-        pass
 
     def get_bounding_box(self):
         return (

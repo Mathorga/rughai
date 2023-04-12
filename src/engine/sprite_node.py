@@ -1,49 +1,10 @@
 from typing import Optional, Union
 import pyglet
 import pyglet.gl as gl
+from engine.depth_sprite import DepthSprite
 
 from engine.node import PositionNode
 from engine.sprites_manager import SpritesManager
-
-class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
-    def set_state(self):
-        self.program.use()
-
-        gl.glActiveTexture(gl.GL_TEXTURE0)
-        gl.glBindTexture(self.texture.target, self.texture.id)
-
-        gl.glEnable(gl.GL_BLEND)
-        gl.glBlendFunc(self.blend_src, self.blend_dest)
-
-        gl.glEnable(gl.GL_DEPTH_TEST)
-        gl.glDepthFunc(gl.GL_LESS)
-
-    def unset_state(self):
-        gl.glDisable(gl.GL_BLEND)
-        gl.glDisable(gl.GL_DEPTH_TEST)
-        self.program.stop()
-
-
-class DepthSprite(pyglet.sprite.AdvancedSprite):
-    group_class = DepthSpriteGroup
-
-fragment_source = """#version 150 core
-    in vec4 vertex_colors;
-    in vec3 texture_coords;
-    out vec4 final_colors;
-
-    uniform sampler2D sprite_texture;
-
-    void main()
-    {
-        final_colors = texture(sprite_texture, texture_coords.xy) * vertex_colors;
-        
-        // No GL_ALPHA_TEST in core, use shader to discard.
-        if(final_colors.a < 0.01){
-            discard;
-        }
-    }
-"""
 
 class SpriteNode(PositionNode):
     def __init__(
@@ -65,44 +26,13 @@ class SpriteNode(PositionNode):
 
         self.__sprites_manager = sprites_manager
         self.__scaling = scaling
-        # vertex_source = """
-        #     #version 150 core
-        #     in vec2 position;
-        #     in vec4 color;
-        #     out vec4 vertex_color;
-
-        #     uniform mat4 projection;
-
-        #     void main() {
-        #         gl_Position = projection * vec4(position, 0.0, 1.0);
-        #         vertex_color = color;
-        #     }
-        # """
-
-        # fragment_source = """
-        #     #version 150 core
-        #     in vec4 vertex_color;
-        #     in vec3 texture_coords;
-        #     out vec4 final_color;
-
-        #     uniform sampler2D sprite_texture;
-
-        #     void main() {
-        #         final_color = texture(sprite_texture, texture_coords.xy) * vertex_color;
-        #         if (final_color.a == 0) discard;
-        #     }
-        # """
-        vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
-        frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
-        shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
         self.sprite = DepthSprite(
             img = resource,
             x = x * scaling,
             y = y * scaling,
             z = int(-z if z is not None else -y),
-            group = group,
-            program = shader_program
+            group = group
         )
         self.sprite.scale = scaling
         self.sprite.push_handlers(self)

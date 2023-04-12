@@ -167,8 +167,8 @@ class RugHai:
             right = self._window.width,
             bottom = 0,
             top = self._window.height,
-            z_near = -2000,
-            z_far = 2000
+            z_near = -500,
+            z_far = 500
         )
 
         # Benchmark measures render time.
