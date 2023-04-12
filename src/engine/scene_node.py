@@ -6,6 +6,7 @@ import pyglet.math as pm
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
+from engine.sprites_manager import SpritesManager
 from engine.text_node import TextNode
 from engine.utils import *
 
@@ -30,11 +31,11 @@ class SceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
+        sprites_manager: SpritesManager,
         title: Optional[str] = None,
         debug: bool = False,
         on_scene_end: Optional[Callable[[], None]] = None,
         scaling: int = 1,
-        batch: pyglet.graphics.Batch = pyglet.graphics.Batch(),
         cam_speed: float = 10.0,
         curtain_speed: int = 200,
         cam_bounds: Bounds = Bounds()
@@ -43,7 +44,7 @@ class SceneNode(Node):
         self.__view_width = view_width
         self.__view_height = view_height
         self.__scaling = scaling
-        self.__batch = batch
+        self.__sprites_manager = sprites_manager
 
         self.__on_scene_end = on_scene_end
 
@@ -96,7 +97,7 @@ class SceneNode(Node):
     def draw(self):
         if self.__camera is not None:
             with self.__camera:
-                self.__batch.draw()
+                self.__sprites_manager.draw()
                 # # Draw fixed objects.
                 # for child in self.__visible_fixed_children:
                 #     child.draw()
@@ -161,10 +162,10 @@ class SceneNode(Node):
             # Actually update camera position.
             # Values are rounded in order not to cause subpixel movements and therefore texture bleeding.
             self.__camera.position = (
-                # updated_x,
-                # updated_y
-                round(updated_x * 10) / 10,
-                round(updated_y * 10) / 10
+                updated_x,
+                updated_y
+                # round(updated_x * 10) / 10,
+                # round(updated_y * 10) / 10
             )
 
     # def __check_collisions(self):

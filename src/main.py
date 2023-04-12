@@ -6,6 +6,7 @@ from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.playable_scene_node import PlayableSceneNode
+from engine.sprites_manager import SpritesManager
 from scenes.rughai.r_0_4 import R_0_4
 
 import settings
@@ -26,8 +27,15 @@ class RugHai:
         # Create a window.
         self._window = self.__create_window()
 
+        # Handlers.
         # Create a collision manager.
         self._collision_manager = CollisionManager()
+
+        # Create an input handler.
+        self._input = InputController(window = self._window)
+
+        # Create a sprites manager.
+        self._sprites_manager = SpritesManager()
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
@@ -55,14 +63,12 @@ class RugHai:
             y = self._window.height - 30
         )
 
-        # Create an input handler.
-        self._input = InputController(window = self._window)
-
         # Create a scene.
         self._active_scene = R_0_0(
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
+            sprites_manager = self._sprites_manager,
             view_width = settings.VIEW_WIDTH,
             view_height = settings.VIEW_HEIGHT,
             scaling = self._scaling,
@@ -102,6 +108,7 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
+                    sprites_manager = self._sprites_manager,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
                     bundle = bundle,
@@ -160,8 +167,8 @@ class RugHai:
             right = self._window.width,
             bottom = 0,
             top = self._window.height,
-            z_near = -200,
-            z_far = 200
+            z_near = -2000,
+            z_far = 2000
         )
 
         # Benchmark measures render time.
@@ -169,8 +176,8 @@ class RugHai:
             self._window.clear()
 
             # Upscaler handles maintaining the wanted output resolution.
-            with self._upscaler:
-                self._active_scene.draw()
+            # with self._upscaler:
+            self._active_scene.draw()
 
             if settings.DEBUG:
                 self._update_bench.draw()

@@ -5,6 +5,7 @@ import pyglet
 import pyglet.gl as gl
 
 from engine.node import PositionNode
+from engine.sprites_manager import SpritesManager
 
 class Tileset:
     def __init__(
@@ -44,9 +45,9 @@ class Tileset:
                     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
                     # # Set texture clamping to avoid mis-rendering subpixel edges.
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
 
                     gl.glBindTexture(tile.target, 0)
 
@@ -60,7 +61,7 @@ class TilemapNode(PositionNode):
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
-        batch: Optional[pyglet.graphics.Batch] = pyglet.graphics.Batch(),
+        sprites_manager: Optional[SpritesManager] = None,
         group: Optional[pyglet.graphics.Group] = None
     ):
         super().__init__(
@@ -68,7 +69,6 @@ class TilemapNode(PositionNode):
             y = y
         )
         self.__scaling = scaling
-        self.__batch = batch
         self.__group = group
         self.__tileset = tileset
         self.__map = map
@@ -82,13 +82,14 @@ class TilemapNode(PositionNode):
                 img = self.__tileset.tiles[tex_index],
                 x = (index % self.map_width) * self.__tileset.tile_width * scaling,
                 y = height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
-                z = (self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height),
-                batch = batch,
+                z = -((self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height)),
                 group = group
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
         for spr in self.__sprites:
+            if sprites_manager is not None:
+                sprites_manager.add_sprite(spr)
             spr.scale = scaling
 
     def delete(self) -> None:
@@ -100,7 +101,7 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmx_file(
         source: str,
-        batch: Optional[pyglet.graphics.Batch],
+        sprites_manager: Optional[SpritesManager],
         x: int = 0,
         y: int = 0,
         scaling: int = 1
@@ -147,7 +148,7 @@ class TilemapNode(PositionNode):
                 x = x,
                 y = y,
                 scaling = scaling,
-                batch = batch
+                sprites_manager = sprites_manager
             ) for layer in layers
         ]
 
@@ -199,8 +200,7 @@ class TilemapNode(PositionNode):
     #             sprite.batch = None
 
     def draw(self):
-        if self.__batch is not None:
-            self.__batch.draw()
+        pass
 
     def get_bounding_box(self):
         return (
