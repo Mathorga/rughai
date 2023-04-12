@@ -65,14 +65,13 @@ class TilemapNode(PositionNode):
         y: int = 0,
         scaling: int = 1,
         sprites_manager: Optional[SpritesManager] = None,
-        group: Optional[pyglet.graphics.Group] = None
+        order: int = 0
     ):
         super().__init__(
             x = x,
             y = y
         )
         self.__scaling = scaling
-        self.__group = group
         self.__tileset = tileset
         self.__map = map
         self.map_width = map_width
@@ -83,23 +82,15 @@ class TilemapNode(PositionNode):
         self.__sprites = [
             DepthSprite(
                 img = self.__tileset.tiles[tex_index],
-                x = (index % self.map_width) * self.__tileset.tile_width * scaling,
-                y = height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
-                z = -((self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height)),
-                group = group
-            # SpriteNode(
-            #     resource = self.__tileset.tiles[tex_index],
-            #     sprites_manager = sprites_manager,
-            #     x = (index % self.map_width) * self.__tileset.tile_width,
-            #     y = (self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height),
-            #     z = -((self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height)),
-            #     scaling = scaling
+                x = x + (index % self.map_width) * self.__tileset.tile_width * scaling,
+                y = y + height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
+                z = -(y + (self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height))
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
         for spr in self.__sprites:
             if sprites_manager is not None:
-                sprites_manager.add_sprite(spr)
+                sprites_manager.add_sprite(spr, order = order)
             spr.scale = scaling
 
     def delete(self) -> None:
@@ -138,6 +129,9 @@ class TilemapNode(PositionNode):
         tilemap_layers = root.findall("layer")
         layers = []
         for layer in tilemap_layers:
+            # TODO Check layer name in order to know whether to z-sort tiles or not.
+            layer_name = layer.attrib["name"]
+
             layer_data = layer.find("data")
 
             if layer_data == None or layer_data.text == None:
@@ -158,8 +152,9 @@ class TilemapNode(PositionNode):
                 x = x,
                 y = y,
                 scaling = scaling,
-                sprites_manager = sprites_manager
-            ) for layer in layers
+                sprites_manager = sprites_manager,
+                order = -layer_index
+            ) for layer_index, layer in enumerate(layers)
         ]
 
     @staticmethod
