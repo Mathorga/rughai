@@ -8,6 +8,7 @@ from engine.scene_node import Bounds, SceneNode
 from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
+from engine.sprites_manager import SpritesManager
 from engine.tilemap_node import TilemapNode, Tileset
 
 import settings
@@ -22,6 +23,7 @@ class R_0_1(PlayableSceneNode):
         window: pyglet.window.Window,
         collision_manager: CollisionManager,
         input_controller: InputController,
+        sprites_manager: SpritesManager,
         view_width: int,
         view_height: int,
         scaling: int = 1,
@@ -32,6 +34,7 @@ class R_0_1(PlayableSceneNode):
             window = window,
             collision_manager = collision_manager,
             input_controller = input_controller,
+            sprites_manager = sprites_manager,
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
@@ -44,7 +47,8 @@ class R_0_1(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_1.tmx",
-            scaling = scaling
+            scaling = scaling,
+            sprites_manager = sprites_manager
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -55,10 +59,12 @@ class R_0_1(PlayableSceneNode):
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
         bg = SpriteNode(
+            sprites_manager = sprites_manager,
             resource = bg_image,
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
+            z = 500,
             scaling = scaling
         )
 
@@ -71,6 +77,7 @@ class R_0_1(PlayableSceneNode):
         self._player = PlayerNode(
             input_controller = input_controller,
             collision_manager = collision_manager,
+            sprites_manager = sprites_manager,
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
@@ -173,6 +180,7 @@ class R_0_1(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
+            sprites_manager = sprites_manager,
             scaling = scaling,
             cam_speed = settings.CAM_SPEED,
             title = "R_0_1",
