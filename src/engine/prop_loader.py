@@ -51,8 +51,6 @@ class PropLoader:
 
         abs_path = os.path.join(pyglet.resource.path[0], source)
 
-        # batch = pyglet.graphics.Batch()
-
         # Iterate over files in the source dir.
         for file_name in os.listdir(abs_path):
             file_path = os.path.join(abs_path, file_name)

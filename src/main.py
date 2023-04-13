@@ -11,7 +11,7 @@ from scenes.rughai.r_0_4 import R_0_4
 
 import settings
 import constants.scenes as scenes
-from fixed_resolution import Upscaler
+from upscaler import Upscaler
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
 from scenes.rughai.r_0_2 import R_0_2
@@ -173,7 +173,10 @@ class RugHai:
 
             # Upscaler handles maintaining the wanted output resolution.
             # with self._upscaler:
+            
+            self._upscaler.begin()
             self._active_scene.draw()
+            self._upscaler.end()
 
             if settings.DEBUG:
                 self._update_bench.draw()
