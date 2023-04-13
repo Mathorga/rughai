@@ -96,7 +96,8 @@ class PlayerNode(PositionNode):
         y: int = 0,
         run_threshold: float = 0.75,
         scaling: int = 1,
-        collision_tag: str = ""
+        collision_tag: str = "",
+        order: int = 0
     ) -> None:
         PositionNode.__init__(
             self,
@@ -164,8 +165,7 @@ class PlayerNode(PositionNode):
             on_animation_end = self.on_sprite_animation_end,
             x = x,
             y = y,
-            scaling = scaling,
-            group = pyglet.graphics.Group(order = 1)
+            scaling = scaling
         )
 
         # Aim sprite image.
@@ -183,8 +183,7 @@ class PlayerNode(PositionNode):
             resource = target_image,
             x = x,
             y = y,
-            scaling = scaling,
-            group = pyglet.graphics.Group(order = 2)
+            scaling = scaling
         )
 
         # Shadow sprite image.
@@ -197,8 +196,7 @@ class PlayerNode(PositionNode):
             resource = shadow_image,
             x = x,
             y = y,
-            scaling = scaling,
-            group = pyglet.graphics.Group(order = 0)
+            scaling = scaling
         )
 
         # Collider.

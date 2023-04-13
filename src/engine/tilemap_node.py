@@ -77,20 +77,29 @@ class TilemapNode(PositionNode):
         self.map_width = map_width
         self.map_height = map_height
 
-        width = self.map_width * tileset.tile_width * scaling
-        height = (self.map_height - 1) * tileset.tile_height * scaling
+        width = self.map_width * tileset.tile_width
+        height = (self.map_height - 1) * tileset.tile_height
+        scaled_width = width * scaling
+        scaled_height = height * scaling
         self.__sprites = [
             DepthSprite(
                 img = self.__tileset.tiles[tex_index],
                 x = x + (index % self.map_width) * self.__tileset.tile_width * scaling,
-                y = y + height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
-                z = -(y + (self.map_height - 1) * tileset.tile_height - ((index // self.map_width) * self.__tileset.tile_height))
+                y = y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
+                z = -((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + order)
+            # SpriteNode(
+            #     x = x + (index % self.map_width) * self.__tileset.tile_width,
+            #     y = y + height - ((index // self.map_width) * self.__tileset.tile_height),
+            #     z = ((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + order),
+            #     sprites_manager = sprites_manager,
+            #     resource = self.__tileset.tiles[tex_index],
+            #     scaling = scaling
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
         for spr in self.__sprites:
             if sprites_manager is not None:
-                sprites_manager.add_sprite(spr, order = order)
+                sprites_manager.add_sprite(spr)
             spr.scale = scaling
 
     def delete(self) -> None:
@@ -105,7 +114,9 @@ class TilemapNode(PositionNode):
         sprites_manager: Optional[SpritesManager] = None,
         x: int = 0,
         y: int = 0,
-        scaling: int = 1
+        scaling: int = 1,
+        # Distance (z-axis) between tilemap layers.
+        layer_spacing: int = 8
     ):
         """Constructs a new TileMap from the given TMX (XML) file."""
 
@@ -153,7 +164,7 @@ class TilemapNode(PositionNode):
                 y = y,
                 scaling = scaling,
                 sprites_manager = sprites_manager,
-                order = -layer_index
+                order = 64 + layer_spacing * (len(layers) - 1 - layer_index)
             ) for layer_index, layer in enumerate(layers)
         ]
 

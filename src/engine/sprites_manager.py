@@ -8,25 +8,15 @@ class SpritesManager:
     ) -> None:
         self.__sprites = []
         self.__batch = batch
-        self.__groups = []
 
     def add_sprite(
         self,
-        sprite: Union[pyglet.sprite.Sprite, pyglet.text.Label],
-        order: int = 0
+        sprite: Union[pyglet.sprite.Sprite, pyglet.text.Label]
     ) -> None:
         group = None
 
-        filteredGroups = list(filter(lambda group : group.order == order, self.__groups))
-        if len(filteredGroups) > 0:
-            group = filteredGroups[0]
-        else:
-            group = pyglet.graphics.Group(order = order)
-
-        if group is not None:
-            self.__sprites.append(sprite)
-            sprite.batch = self.__batch
-            sprite.group = group
+        self.__sprites.append(sprite)
+        sprite.batch = self.__batch
 
     def draw(self) -> None:
         self.__batch.draw()

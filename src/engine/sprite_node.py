@@ -15,8 +15,7 @@ class SpriteNode(PositionNode):
         x: int = 0,
         y: int = 0,
         z: Optional[int] = None,
-        scaling: int = 1,
-        group: Optional[pyglet.graphics.Group] = None
+        scaling: int = 1
     ) -> None:
         super().__init__(
             x = x,
@@ -31,14 +30,13 @@ class SpriteNode(PositionNode):
             img = resource,
             x = x * scaling,
             y = y * scaling,
-            z = int(-z if z is not None else -y),
-            group = group
+            z = int(-z if z is not None else -y)
         )
         self.sprite.scale = scaling
         self.sprite.push_handlers(self)
 
         self.__z_label = pyglet.text.Label(
-            text = str(self.z),
+            text = str(self.sprite.z),
             color = (0x00, 0x00, 0x00, 0xFF),
             x = x * scaling + 5,
             y = y * scaling + 5

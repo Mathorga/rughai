@@ -82,7 +82,8 @@ class R_0_0(PlayableSceneNode):
             x = player_position[0],
             y = player_position[1],
             scaling = scaling,
-            collision_tag = "player"
+            collision_tag = "player",
+            order = 100
         )
 
         # Place doors.

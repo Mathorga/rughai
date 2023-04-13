@@ -89,12 +89,6 @@ class RugHai:
         if not settings.DEBUG:
             window.set_mouse_visible(False)
 
-        # Enable depth testing.
-        gl.glEnable(gl.GL_DEPTH_TEST)
-        gl.glDepthFunc(gl.GL_LESS)
-        gl.glEnable(gl.GL_BLEND)
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-
         return window
 
     def __on_scene_end(self, bundle: dict):
@@ -167,8 +161,8 @@ class RugHai:
             right = self._window.width,
             bottom = 0,
             top = self._window.height,
-            z_near = -500,
-            z_far = 500
+            z_near = -1000,
+            z_far = 1000
         )
 
         # Benchmark measures render time.
