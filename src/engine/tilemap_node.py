@@ -46,9 +46,9 @@ class Tileset:
                     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
                     # # Set texture clamping to avoid mis-rendering subpixel edges.
-                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_MIRRORED_REPEAT)
-                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_MIRRORED_REPEAT)
-                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_MIRRORED_REPEAT)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
 
                     gl.glBindTexture(tile.target, 0)
 
@@ -65,7 +65,7 @@ class TilemapNode(PositionNode):
         y: int = 0,
         scaling: int = 1,
         sprites_manager: Optional[SpritesManager] = None,
-        order: int = 0
+        z_offset: int = 0
     ):
         super().__init__(
             x = x,
@@ -86,7 +86,7 @@ class TilemapNode(PositionNode):
                 img = self.__tileset.tiles[tex_index],
                 x = x + (index % self.map_width) * self.__tileset.tile_width * scaling,
                 y = y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
-                z = -((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + order)
+                z = -((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset)
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
@@ -109,7 +109,9 @@ class TilemapNode(PositionNode):
         y: int = 0,
         scaling: int = 1,
         # Distance (z-axis) between tilemap layers.
-        layer_spacing: int = 8
+        layers_spacing: int = 8,
+        # Starting z-offset for all layers in the file.
+        z_offset: int = 64
     ):
         """Constructs a new TileMap from the given TMX (XML) file."""
 
@@ -157,7 +159,7 @@ class TilemapNode(PositionNode):
                 y = y,
                 scaling = scaling,
                 sprites_manager = sprites_manager,
-                order = 64 + layer_spacing * (len(layers) - 1 - layer_index)
+                z_offset = z_offset + layers_spacing * (len(layers) - 1 - layer_index)
             ) for layer_index, layer in enumerate(layers)
         ]
 

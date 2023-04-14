@@ -6,6 +6,10 @@ from PIL import Image
 from engine.node import PositionNode
 from engine.sprites_manager import SpritesManager
 from props.rughai.r_grass_0 import RGrass0
+from props.rughai.r_grass_1 import RGrass1
+from props.rughai.r_tree_l import RTreeL
+from props.rughai.r_tree_m import RTreeM
+from props.rughai.r_tree_s import RTreeS
 from props.rughai.r_veg_0 import RVeg0
 from props.rughai.r_veg_1 import RVeg1
 
@@ -32,6 +36,34 @@ def map_prop(
         )
     elif prop_name == "grass_0":
         return RGrass0(
+            x = x,
+            y = y,
+            scaling = scaling,
+            sprites_manager = sprites_manager
+        )
+    elif prop_name == "grass_1":
+        return RGrass1(
+            x = x,
+            y = y,
+            scaling = scaling,
+            sprites_manager = sprites_manager
+        )
+    elif prop_name == "tree_l":
+        return RTreeL(
+            x = x,
+            y = y,
+            scaling = scaling,
+            sprites_manager = sprites_manager
+        )
+    elif prop_name == "tree_m":
+        return RTreeM(
+            x = x,
+            y = y,
+            scaling = scaling,
+            sprites_manager = sprites_manager
+        )
+    elif prop_name == "tree_s":
+        return RTreeS(
             x = x,
             y = y,
             scaling = scaling,

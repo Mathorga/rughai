@@ -44,7 +44,7 @@ class SpriteNode(PositionNode):
 
         if self.__sprites_manager is not None:
             self.__sprites_manager.add_sprite(self.sprite)
-            self.__sprites_manager.add_sprite(self.__z_label)
+            # self.__sprites_manager.add_sprite(self.__z_label)
 
         self.__on_animation_end = on_animation_end
 
