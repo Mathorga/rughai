@@ -3,17 +3,17 @@ import pyglet
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.sprites_manager import SpritesManager
+from engine.sprites_manager import Renderer
 from engine.utils import animation_set_anchor
 
 class RVeg1(PositionNode):
     def __init__(
         self,
-        sprites_manager: SpritesManager,
         x: int = 0,
         y: int = 0,
         z: float = 0,
         scaling: int = 1,
+        ui: bool = False
     ) -> None:
         super().__init__(x, y, z)
 
@@ -28,7 +28,7 @@ class RVeg1(PositionNode):
 
         self.__sprite = SpriteNode(
             resource = self.__idle_animation,
-            sprites_manager = sprites_manager,
+            ui = ui,
             x = x,
             y = y,
             scaling = scaling,

@@ -3,11 +3,10 @@ from typing import Optional
 import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
-from engine.depth_sprite import DepthSprite, depth_shader_program
+from engine.depth_sprite import DepthSprite
 
 from engine.node import PositionNode
-from engine.sprite_node import SpriteNode
-from engine.sprites_manager import SpritesManager
+from engine.sprites_manager import world_renderer
 
 class Tileset:
     def __init__(
@@ -64,7 +63,7 @@ class TilemapNode(PositionNode):
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
-        sprites_manager: Optional[SpritesManager] = None,
+        visible: bool = True,
         z_offset: int = 0
     ):
         super().__init__(
@@ -91,8 +90,8 @@ class TilemapNode(PositionNode):
         ]
 
         for spr in self.__sprites:
-            if sprites_manager is not None:
-                sprites_manager.add_sprite(spr)
+            if visible:
+                world_renderer.add_child(spr)
             spr.scale = scaling
 
     def delete(self) -> None:
@@ -104,7 +103,7 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmx_file(
         source: str,
-        sprites_manager: Optional[SpritesManager] = None,
+        visible: bool = True,
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
@@ -158,7 +157,7 @@ class TilemapNode(PositionNode):
                 x = x,
                 y = y,
                 scaling = scaling,
-                sprites_manager = sprites_manager,
+                visible = visible,
                 z_offset = z_offset + layers_spacing * (len(layers) - 1 - layer_index)
             ) for layer_index, layer in enumerate(layers)
         ]

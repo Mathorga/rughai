@@ -5,8 +5,7 @@ from engine.collision_manager import CollisionManager
 
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
-from engine.playable_scene_node import PlayableSceneNode
-from engine.sprites_manager import SpritesManager
+from engine.sprites_manager import world_renderer, ui_renderer
 from scenes.rughai.r_0_4 import R_0_4
 
 import settings
@@ -34,9 +33,6 @@ class RugHai:
         # Create an input handler.
         self._input = InputController(window = self._window)
 
-        # Create a sprites manager.
-        self._sprites_manager = SpritesManager()
-
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
@@ -55,13 +51,13 @@ class RugHai:
         self._update_bench = Benchmark(
             window = self._window,
             text = "UT: ",
-            sprites_manager = self._sprites_manager if not settings.DEBUG else None
+            y = 30,
+            visible = settings.DEBUG
         )
         self._render_bench = Benchmark(
             window = self._window,
             text = "RT: ",
-            y = self._window.height - 30,
-            sprites_manager = self._sprites_manager if not settings.DEBUG else None
+            visible = settings.DEBUG
         )
 
         # Create a scene.
@@ -69,7 +65,6 @@ class RugHai:
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
-            sprites_manager = self._sprites_manager,
             view_width = settings.VIEW_WIDTH,
             view_height = settings.VIEW_HEIGHT,
             scaling = self._scaling,
@@ -96,7 +91,8 @@ class RugHai:
         print("scene_ended", bundle)
         if bundle["next_scene"]:
             self._collision_manager.clear()
-            self._sprites_manager.clear()
+            world_renderer.clear()
+            ui_renderer.clear()
             self._active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
@@ -104,7 +100,6 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    sprites_manager = self._sprites_manager,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
                     bundle = bundle,
@@ -116,7 +111,6 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    sprites_manager = self._sprites_manager,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
                     bundle = bundle,
@@ -128,7 +122,6 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    sprites_manager = self._sprites_manager,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
                     bundle = bundle,

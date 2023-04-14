@@ -1,6 +1,7 @@
 from typing import Optional
 import pyglet
 
+from engine.sprites_manager import world_renderer, ui_renderer
 from engine.node import PositionNode
 
 class TextNode(PositionNode):
@@ -14,8 +15,7 @@ class TextNode(PositionNode):
         text: str = "_content_",
         scaling: int = 1,
         font_name: Optional[str] = None,
-        batch = None,
-        group = None
+        ui: bool = False,
     ) -> None:
         super().__init__(
             x = x,
@@ -38,10 +38,13 @@ class TextNode(PositionNode):
             font_size = 32,
             anchor_x = "center",
             anchor_y = "center",
-            color = color,
-            batch = batch,
-            group = group
+            color = color
         )
+
+        if ui:
+            ui_renderer.add_child(self.__label)
+        else:
+            world_renderer.add_child(self.__label)
 
     def delete(self) -> None:
         self.__label.delete()

@@ -6,7 +6,7 @@ import pyglet.math as pm
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
-from engine.sprites_manager import SpritesManager
+from engine.sprites_manager import world_renderer, ui_renderer
 from engine.text_node import TextNode
 from engine.utils import *
 
@@ -31,7 +31,6 @@ class SceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        sprites_manager: SpritesManager,
         title: Optional[str] = None,
         debug: bool = False,
         on_scene_end: Optional[Callable[[], None]] = None,
@@ -44,7 +43,6 @@ class SceneNode(Node):
         self.__view_width = view_width
         self.__view_height = view_height
         self.__scaling = scaling
-        self.__sprites_manager = sprites_manager
 
         self.__on_scene_end = on_scene_end
 
@@ -56,19 +54,20 @@ class SceneNode(Node):
         self.__cam_target = None
         self.__cam_bounds = cam_bounds
 
-        # Lists of all children.
-        self.__fixed_children = []
-        self.__ui_children = []
+        # List of all children.
+        self.__children = []
 
         # Scene title.
         if (title is not None):
             label = TextNode(
+                ui = True,
                 x = view_width // 2,
                 y = view_height - 5,
+                color = (0xFF, 0xFF, 0xFF, 0xFF),
                 scaling = scaling,
                 text = title
             )
-            self.add_child(label, ui = True)
+            self.add_child(label)
 
         self.__curtain = RectNode(
             x = 0,
@@ -92,11 +91,12 @@ class SceneNode(Node):
     def draw(self):
         if self.__camera is not None:
             with self.__camera:
-                self.__sprites_manager.draw()
+                world_renderer.draw()
 
         # Draw UI elements.
-        for child in self.__ui_children:
-            child.draw()
+        # for child in self.__ui_children:
+        #     child.draw()
+        ui_renderer.draw()
 
         # Draw curtain as last element.
         if self.__curtain is not None and self.__curtain_opacity >= 0x00:
@@ -161,7 +161,7 @@ class SceneNode(Node):
         self.__update_curtain(dt)
 
         # Update all fixed children.
-        for object in self.__fixed_children:
+        for object in self.__children:
             object.update(dt)
 
         # Update camera.
@@ -178,40 +178,32 @@ class SceneNode(Node):
     def add_child(
         self,
         child: PositionNode,
-        cam_target: bool = False,
-        ui: bool = False
+        cam_target: bool = False
     ):
-        if ui:
-            # Store UI children.
-            self.__ui_children.append(child)
-        else:
-            if cam_target:
-                self.__cam_target = child
-                if self.__camera is not None:
-                    self.__camera.position = (
-                        self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2,
-                        self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2,
-                    )
+        if cam_target:
+            self.__cam_target = child
+            if self.__camera is not None:
+                self.__camera.position = (
+                    self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2,
+                    self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2,
+                )
 
-            self.__fixed_children.append(child)
+        self.__children.append(child)
 
     def add_children(
         self,
-        children: list,
-        ui: bool = False
+        children: list
     ):
         for child in children:
             self.add_child(
-                child = child,
-                ui = ui
+                child = child
             )
 
     def delete(self):
-        for child in self.__ui_children + self.__fixed_children:
+        for child in self.__children:
             child.delete()
 
-        self.__ui_children.clear()
-        self.__fixed_children.clear()
+        self.__children.clear()
 
         if self.__curtain is not None:
             self.__curtain.delete()

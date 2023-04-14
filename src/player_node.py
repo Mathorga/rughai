@@ -11,7 +11,6 @@ from engine.input_controller import InputController
 from engine.sensor_node import SensorNode
 from engine.rect_node import RectNode
 from engine.sprite_node import SpriteNode
-from engine.sprites_manager import SpritesManager
 import engine.utils as utils
 
 from player_stats import PlayerStats
@@ -88,7 +87,6 @@ class PlayerNode(PositionNode):
         self,
         input_controller: InputController,
         collision_manager: CollisionManager,
-        sprites_manager: SpritesManager,
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
@@ -160,7 +158,6 @@ class PlayerNode(PositionNode):
         self.__hor_facing: int = 1
 
         self.__sprite = SpriteNode(
-            sprites_manager = sprites_manager,
             resource = self.__idle_anim,
             on_animation_end = self.on_sprite_animation_end,
             x = x,
@@ -179,7 +176,6 @@ class PlayerNode(PositionNode):
         # Aim sprite distance, defines the distance at which the sprite floats.
         self.__aim_sprite_distance = 10.0
         self.__aim_sprite = SpriteNode(
-            sprites_manager = sprites_manager,
             resource = target_image,
             x = x,
             y = y,
@@ -192,7 +188,6 @@ class PlayerNode(PositionNode):
         shadow_image.anchor_y = shadow_image.height / 2
 
         self.__shadow_sprite = SpriteNode(
-            sprites_manager = sprites_manager,
             resource = shadow_image,
             x = x,
             y = y,

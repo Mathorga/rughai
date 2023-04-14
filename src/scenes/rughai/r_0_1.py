@@ -8,12 +8,10 @@ from engine.scene_node import Bounds, SceneNode
 from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
-from engine.sprites_manager import SpritesManager
-from engine.tilemap_node import TilemapNode, Tileset
+from engine.tilemap_node import TilemapNode
 
 import settings
 from player_node import PlayerNode
-from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
 
@@ -23,7 +21,6 @@ class R_0_1(PlayableSceneNode):
         window: pyglet.window.Window,
         collision_manager: CollisionManager,
         input_controller: InputController,
-        sprites_manager: SpritesManager,
         view_width: int,
         view_height: int,
         scaling: int = 1,
@@ -34,7 +31,6 @@ class R_0_1(PlayableSceneNode):
             window = window,
             collision_manager = collision_manager,
             input_controller = input_controller,
-            sprites_manager = sprites_manager,
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
@@ -47,8 +43,7 @@ class R_0_1(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_1.tmx",
-            scaling = scaling,
-            sprites_manager = sprites_manager
+            scaling = scaling
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -59,7 +54,6 @@ class R_0_1(PlayableSceneNode):
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
         bg = SpriteNode(
-            sprites_manager = sprites_manager,
             resource = bg_image,
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
@@ -77,7 +71,6 @@ class R_0_1(PlayableSceneNode):
         self._player = PlayerNode(
             input_controller = input_controller,
             collision_manager = collision_manager,
-            sprites_manager = sprites_manager,
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
@@ -164,12 +157,14 @@ class R_0_1(PlayableSceneNode):
         bar_img.anchor_x = 0
         bar_img.anchor_y = bar_img.height
         energy_bar = SpriteNode(
+            ui = True,
             resource = bar_img,
             x = 4,
             y = view_height - 4,
             scaling = scaling
         )
         health_bar = SpriteNode(
+            ui = True,
             resource = bar_img,
             x = 4,
             y = view_height - 12,
@@ -180,7 +175,6 @@ class R_0_1(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            sprites_manager = sprites_manager,
             scaling = scaling,
             cam_speed = settings.CAM_SPEED,
             title = "R_0_1",
@@ -201,5 +195,5 @@ class R_0_1(PlayableSceneNode):
         self._scene.add_child(north_door)
         self._scene.add_child(south_west_door)
         self._scene.add_child(south_east_door)
-        self._scene.add_child(energy_bar, ui = True)
-        self._scene.add_child(health_bar, ui = True)
+        self._scene.add_child(energy_bar)
+        self._scene.add_child(health_bar)

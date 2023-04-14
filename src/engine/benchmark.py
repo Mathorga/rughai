@@ -4,7 +4,7 @@ from statistics import mean
 from typing import Optional
 import pyglet
 
-from engine.sprites_manager import SpritesManager
+from engine.sprites_manager import ui_renderer
 
 class Benchmark:
     def __init__(
@@ -12,7 +12,7 @@ class Benchmark:
         window: pyglet.window.Window,
         x = None,
         y = None,
-        sprites_manager: Optional[SpritesManager] = None,
+        visible: bool = True,
         text: str = "FPS: ",
         samples: int = 240,
         update_period: float = 0.5
@@ -24,14 +24,14 @@ class Benchmark:
         self._label = pyglet.text.Label(
             text = text,
             anchor_x = "left",
-            anchor_y = "top",
+            anchor_y = "bottom",
             x = x if x != None else 10,
-            y = y if y != None else window.height - 10,
+            y = y if y != None else 10,
             bold = True
         )
 
-        if sprites_manager is not None:
-            sprites_manager.add_sprite(self._label)
+        if visible:
+            ui_renderer.add_child(self._label)
 
         self._update_period = update_period
         self._elapsed = 0.0

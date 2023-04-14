@@ -4,7 +4,7 @@ import pyglet
 from PIL import Image
 
 from engine.node import PositionNode
-from engine.sprites_manager import SpritesManager
+from engine.sprites_manager import world_renderer
 from props.rughai.r_grass_0 import RGrass0
 from props.rughai.r_grass_1 import RGrass1
 from props.rughai.r_tree_l import RTreeL
@@ -17,64 +17,55 @@ def map_prop(
     prop_name: str,
     x: int,
     y: int,
-    sprites_manager: SpritesManager,
     scaling: int = 1
 ) -> Optional[PositionNode]:
-    if prop_name == "veg_0":
+    if prop_name == "r_veg_0":
         return RVeg0(
             x = x,
             y = y,
-            scaling = scaling,
-            sprites_manager = sprites_manager
+            scaling = scaling
         )
-    elif prop_name == "veg_1":
+    elif prop_name == "r_veg_1":
         return RVeg1(
             x = x,
             y = y,
-            scaling = scaling,
-            sprites_manager = sprites_manager
+            scaling = scaling
         )
-    elif prop_name == "grass_0":
+    elif prop_name == "r_grass_0":
         return RGrass0(
             x = x,
             y = y,
-            scaling = scaling,
-            sprites_manager = sprites_manager
+            scaling = scaling
         )
-    elif prop_name == "grass_1":
+    elif prop_name == "r_grass_1":
         return RGrass1(
             x = x,
             y = y,
-            scaling = scaling,
-            sprites_manager = sprites_manager
+            scaling = scaling
         )
-    elif prop_name == "tree_l":
+    elif prop_name == "r_tree_l":
         return RTreeL(
             x = x,
             y = y,
-            scaling = scaling,
-            sprites_manager = sprites_manager
+            scaling = scaling
         )
-    elif prop_name == "tree_m":
+    elif prop_name == "r_tree_m":
         return RTreeM(
             x = x,
             y = y,
-            scaling = scaling,
-            sprites_manager = sprites_manager
+            scaling = scaling
         )
-    elif prop_name == "tree_s":
+    elif prop_name == "r_tree_s":
         return RTreeS(
             x = x,
             y = y,
-            scaling = scaling,
-            sprites_manager = sprites_manager
+            scaling = scaling
         )
 
 class PropLoader:
     @staticmethod
     def fetch_props(
         source: str,
-        sprites_manager: SpritesManager,
         tile_width: int = 8,
         tile_height: int = 8,
         scaling: int = 1
@@ -102,8 +93,7 @@ class PropLoader:
                                 file_name.split(".")[0],
                                 x = x * tile_width,
                                 y = (propmap.height - y) * tile_height,
-                                scaling = scaling,
-                                sprites_manager = sprites_manager
+                                scaling = scaling
                             )
 
                             if prop is not None:

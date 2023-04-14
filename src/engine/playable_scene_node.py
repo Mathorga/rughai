@@ -5,7 +5,7 @@ from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
-from engine.sprites_manager import SpritesManager
+from engine.sprites_manager import Renderer
 from player_node import PlayerNode
 
 
@@ -15,7 +15,6 @@ class PlayableSceneNode(Node):
         window: pyglet.window.Window,
         collision_manager: CollisionManager,
         input_controller: InputController,
-        sprites_manager: SpritesManager,
         view_width: int,
         view_height: int,
         scaling: int = 1,
@@ -28,7 +27,6 @@ class PlayableSceneNode(Node):
         self._on_ended = on_ended
         self._collision_manager = collision_manager
         self._input_controller = input_controller
-        self._sprites_manager = sprites_manager
 
         # The bundle containing instructions for the next scene.
         self._bundle: dict
