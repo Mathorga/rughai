@@ -46,9 +46,9 @@ class Tileset:
                     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
                     # # Set texture clamping to avoid mis-rendering subpixel edges.
-                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_MIRRORED_REPEAT)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_MIRRORED_REPEAT)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_MIRRORED_REPEAT)
 
                     gl.glBindTexture(tile.target, 0)
 
@@ -87,13 +87,6 @@ class TilemapNode(PositionNode):
                 x = x + (index % self.map_width) * self.__tileset.tile_width * scaling,
                 y = y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
                 z = -((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + order)
-            # SpriteNode(
-            #     x = x + (index % self.map_width) * self.__tileset.tile_width,
-            #     y = y + height - ((index // self.map_width) * self.__tileset.tile_height),
-            #     z = ((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + order),
-            #     sprites_manager = sprites_manager,
-            #     resource = self.__tileset.tiles[tex_index],
-            #     scaling = scaling
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 

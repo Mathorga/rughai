@@ -44,7 +44,6 @@ class RugHai:
             self._window.width // settings.VIEW_WIDTH,
             self._window.height // settings.VIEW_HEIGHT
         )
-        # self._scaling = 10
 
         self._upscaler = Upscaler(
             window = self._window,
@@ -167,16 +166,24 @@ class RugHai:
             z_far = 1000
         )
 
+        # TODO Dig deeper, this may be the solution to limiting the view!
+        # self._window.view = pyglet.math.Mat4.from_scale(pyglet.math.Vec3(2.0, 2.0, 2.0))
+        # view_width = settings.VIEW_WIDTH * self._scaling
+        # view_height = settings.VIEW_HEIGHT * self._scaling
+        # self._window.viewport = (
+        #     settings.VIEW_WIDTH / 2,
+        #     settings.VIEW_HEIGHT / 2,
+        #     self._window.width - settings.VIEW_WIDTH / 2,
+        #     self._window.height - settings.VIEW_HEIGHT / 2
+        # )
+
         # Benchmark measures render time.
         with self._render_bench:
             self._window.clear()
 
             # Upscaler handles maintaining the wanted output resolution.
-            # with self._upscaler:
-            
-            self._upscaler.begin()
-            self._active_scene.draw()
-            self._upscaler.end()
+            with self._upscaler:
+                self._active_scene.draw()
 
             if settings.DEBUG:
                 self._update_bench.draw()
