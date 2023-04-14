@@ -66,7 +66,6 @@ class R_0_0(PlayableSceneNode):
             z = 400,
             scaling = scaling
         )
-        print(bg.sprite.z)
 
         # Player.
         player_position = (
