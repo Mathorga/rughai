@@ -6,7 +6,7 @@ from engine.sprite_node import SpriteNode
 from engine.sprites_manager import SpritesManager
 from engine.utils import animation_set_anchor
 
-class RVeg1(PositionNode):
+class RTreeL(PositionNode):
     def __init__(
         self,
         sprites_manager: SpritesManager,
@@ -14,12 +14,13 @@ class RVeg1(PositionNode):
         y: int = 0,
         z: float = 0,
         scaling: int = 1,
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
 
         self.__scaling = scaling
 
-        self.__idle_animation = pyglet.resource.animation("sprites/rughai/prop/veg_1/veg_1_idle.gif")
+        self.__idle_animation = pyglet.resource.animation("sprites/rughai/prop/tree_l/tree_l_idle_1.gif")
         animation_set_anchor(
             animation = self.__idle_animation,
             x = self.__idle_animation.get_max_width() / 2,

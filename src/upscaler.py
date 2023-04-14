@@ -61,22 +61,15 @@ class Upscaler:
         self.height = height
 
         self._target_area = (0, 0, 0, 0, 0)
-
-        self.framebuffer = pyglet.image.Framebuffer()
-        self.texture = pyglet.image.Texture.create(
-            width,
-            height,
-            min_filter = gl.GL_NEAREST,
-            mag_filter = gl.GL_NEAREST
-        )
-        self.framebuffer.attach_texture(self.texture)
+        self._aspect = (0, 0)
 
         self.window.push_handlers(self)
 
     def on_resize(self, width, height):
+        self._aspect = self._calculate_aspect(*self.window.get_framebuffer_size())
         self._target_area = self._calculate_area(*self.window.get_framebuffer_size())
 
-    def _calculate_area(self, new_screen_width, new_screen_height):
+    def _calculate_aspect(self, new_screen_width, new_screen_height):
         aspect_ratio = self.width / self.height
         aspect_width = new_screen_width
         aspect_height = (aspect_width / aspect_ratio) + 0.5
@@ -85,26 +78,31 @@ class Upscaler:
             aspect_height = new_screen_height
             aspect_width = (aspect_height * aspect_ratio) + 0.5
 
+        return (aspect_width, aspect_height)
+
+    def _calculate_area(self, new_screen_width, new_screen_height):
         return (
             # X.
-            int((new_screen_width / 2) - (aspect_width / 2)),
+            int((new_screen_width / 2) - (self._aspect[0] / 2)),
             # Y.
-            int((new_screen_height / 2) - (aspect_height / 2)),
-            # Z.
-            0,
+            int((new_screen_height / 2) - (self._aspect[1] / 2)),
             # Width.
-            int(aspect_width),
+            int(self._aspect[0]),
             # Height.
-            int(aspect_height)
+            int(self._aspect[1])
         )
 
     def __enter__(self):
-        self.framebuffer.bind()
-        self.window.clear()
+        framebuffer_size = self.window.get_framebuffer_size()
+        self.window.view = pyglet.math.Mat4.from_scale(pyglet.math.Vec3(
+            framebuffer_size[0] / self.width,
+            framebuffer_size[1] / self.height,
+            1.0
+        ))
+        self.window.viewport = self._target_area
 
     def __exit__(self, *params):
-        self.framebuffer.unbind()
-        self.texture.blit(*self._target_area)
+        pass
 
     def begin(self):
         self.__enter__()

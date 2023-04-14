@@ -3,8 +3,11 @@ from typing import Optional
 import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
+from engine.depth_sprite import DepthSprite, depth_shader_program
 
 from engine.node import PositionNode
+from engine.sprite_node import SpriteNode
+from engine.sprites_manager import SpritesManager
 
 class Tileset:
     def __init__(
@@ -35,8 +38,7 @@ class Tileset:
             for y in range(self.margin, texture.height - self.spacing, self.tile_height + self.spacing):
                 for x in range(self.margin, texture.width - self.spacing, self.tile_width + self.spacing):
                     # Cut the needed region from the given texture and save it.
-                    tile = texture.get_region(x, texture.height - y - self.tile_height, self.tile_width, self.tile_height)
-                    self.tiles.append(tile)
+                    tile: pyglet.image.TextureRegion = texture.get_region(x, texture.height - y - self.tile_height, self.tile_width, self.tile_height)
 
                     gl.glBindTexture(tile.target, tile.id)
 
@@ -44,11 +46,13 @@ class Tileset:
                     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
                     # # Set texture clamping to avoid mis-rendering subpixel edges.
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-                    # gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
 
                     gl.glBindTexture(tile.target, 0)
+
+                    self.tiles.append(tile)
 
 class TilemapNode(PositionNode):
     def __init__(
@@ -60,34 +64,35 @@ class TilemapNode(PositionNode):
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
-        batch: pyglet.graphics.Batch = pyglet.graphics.Batch(),
-        group: Optional[pyglet.graphics.Group] = None
+        sprites_manager: Optional[SpritesManager] = None,
+        z_offset: int = 0
     ):
         super().__init__(
             x = x,
             y = y
         )
         self.__scaling = scaling
-        self.__batch = batch
-        self.__group = group
         self.__tileset = tileset
         self.__map = map
         self.map_width = map_width
         self.map_height = map_height
 
-        width = self.map_width * tileset.tile_width * scaling
-        height = (self.map_height - 1) * tileset.tile_height * scaling
+        width = self.map_width * tileset.tile_width
+        height = (self.map_height - 1) * tileset.tile_height
+        scaled_width = width * scaling
+        scaled_height = height * scaling
         self.__sprites = [
-            pyglet.sprite.Sprite(
+            DepthSprite(
                 img = self.__tileset.tiles[tex_index],
-                x = (index % self.map_width) * self.__tileset.tile_width * scaling,
-                y = height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
-                batch = batch,
-                group = group
+                x = x + (index % self.map_width) * self.__tileset.tile_width * scaling,
+                y = y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
+                z = -((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset)
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
         for spr in self.__sprites:
+            if sprites_manager is not None:
+                sprites_manager.add_sprite(spr)
             spr.scale = scaling
 
     def delete(self) -> None:
@@ -99,9 +104,14 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmx_file(
         source: str,
+        sprites_manager: Optional[SpritesManager] = None,
         x: int = 0,
         y: int = 0,
-        scaling: int = 1
+        scaling: int = 1,
+        # Distance (z-axis) between tilemap layers.
+        layers_spacing: int = 8,
+        # Starting z-offset for all layers in the file.
+        z_offset: int = 64
     ):
         """Constructs a new TileMap from the given TMX (XML) file."""
 
@@ -125,6 +135,9 @@ class TilemapNode(PositionNode):
         tilemap_layers = root.findall("layer")
         layers = []
         for layer in tilemap_layers:
+            # TODO Check layer name in order to know whether to z-sort tiles or not.
+            layer_name = layer.attrib["name"]
+
             layer_data = layer.find("data")
 
             if layer_data == None or layer_data.text == None:
@@ -136,9 +149,6 @@ class TilemapNode(PositionNode):
 
             layers.append(layer_content)
 
-        # Create a single batch for all layers.
-        batch = pyglet.graphics.Batch()
-
         return [
             TilemapNode(
                 tileset = tileset,
@@ -148,8 +158,9 @@ class TilemapNode(PositionNode):
                 x = x,
                 y = y,
                 scaling = scaling,
-                batch = batch
-            ) for layer in layers
+                sprites_manager = sprites_manager,
+                z_offset = z_offset + layers_spacing * (len(layers) - 1 - layer_index)
+            ) for layer_index, layer in enumerate(layers)
         ]
 
     @staticmethod
@@ -190,17 +201,6 @@ class TilemapNode(PositionNode):
                 scaling = scaling
             ) for layer in tilemap_layers
         ]
-
-    # def update(self, dt) -> None:
-    #     # Implements culling, but is very inefficient. TODO Study.
-    #     for sprite in self.__sprites:
-    #         if not overlap(0, 0, self.map_width, self.map_height, sprite.x, sprite.y, sprite.width, sprite.height) and sprite.batch != self.__batch:
-    #             sprite.batch = self.__batch
-    #         elif sprite.batch != None:
-    #             sprite.batch = None
-
-    def draw(self):
-        self.__batch.draw()
 
     def get_bounding_box(self):
         return (

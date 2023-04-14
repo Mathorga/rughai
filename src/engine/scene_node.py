@@ -6,6 +6,7 @@ import pyglet.math as pm
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
+from engine.sprites_manager import SpritesManager
 from engine.text_node import TextNode
 from engine.utils import *
 
@@ -30,6 +31,7 @@ class SceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
+        sprites_manager: SpritesManager,
         title: Optional[str] = None,
         debug: bool = False,
         on_scene_end: Optional[Callable[[], None]] = None,
@@ -42,6 +44,7 @@ class SceneNode(Node):
         self.__view_width = view_width
         self.__view_height = view_height
         self.__scaling = scaling
+        self.__sprites_manager = sprites_manager
 
         self.__on_scene_end = on_scene_end
 
@@ -55,22 +58,17 @@ class SceneNode(Node):
 
         # Lists of all children.
         self.__fixed_children = []
-        self.__sorted_children = []
-
-        # Lists of visible children.
-        self.__visible_fixed_children = []
-        self.__visible_sorted_children = []
         self.__ui_children = []
 
         # Scene title.
         if (title is not None):
-            title = TextNode(
-                x = view_width / 2,
+            label = TextNode(
+                x = view_width // 2,
                 y = view_height - 5,
                 scaling = scaling,
                 text = title
             )
-            self.add_child(title, ui = True)
+            self.add_child(label, ui = True)
 
         self.__curtain = RectNode(
             x = 0,
@@ -94,13 +92,7 @@ class SceneNode(Node):
     def draw(self):
         if self.__camera is not None:
             with self.__camera:
-                # Draw fixed objects.
-                for child in self.__visible_fixed_children:
-                    child.draw()
-
-                # Draw sorted objects.
-                for child in self.__visible_sorted_children:
-                    child.draw()
+                self.__sprites_manager.draw()
 
         # Draw UI elements.
         for child in self.__ui_children:
@@ -158,17 +150,11 @@ class SceneNode(Node):
             # Actually update camera position.
             # Values are rounded in order not to cause subpixel movements and therefore texture bleeding.
             self.__camera.position = (
-                # updated_x,
-                # updated_y
-                round(updated_x * 10) / 10,
-                round(updated_y * 10) / 10
+                updated_x,
+                updated_y
+                # round(updated_x * 10) / 10,
+                # round(updated_y * 10) / 10
             )
-
-    # def __check_collisions(self):
-    #     for child in self.__colliders:
-    #         for other in self.__colliders:
-    #             if child != other:
-    #                 child.overlap(other)
 
     def update(self, dt):
         # Update curtain.
@@ -178,37 +164,8 @@ class SceneNode(Node):
         for object in self.__fixed_children:
             object.update(dt)
 
-        # Update all sorted children.
-        for object in self.__sorted_children:
-            object.update(dt)
-
         # Update camera.
         self.__update_camera(dt)
-
-        # TODO Cull away children outside of the map.
-        # self.__visible_fixed_children = list(
-        #     filter(
-        #         lambda child : isinstance(child, PositionNode) and overlap(
-        #             *self.__get_cam_bounding_box(),
-        #             *child.get_bounding_box()
-        #         ),
-        #         self.__fixed_children
-        #     )
-        # )
-        # self.__visible_sorted_children = list(
-        #     filter(
-        #         lambda child : isinstance(child, PositionNode) and overlap(
-        #             *self.__get_cam_bounding_box(),
-        #             *child.get_bounding_box()
-        #         ),
-        #         self.__sorted_children
-        #     )
-        # )
-        self.__visible_fixed_children = self.__fixed_children
-        self.__visible_sorted_children = self.__sorted_children
-
-        # Sort objects by y coord in order to get depth.
-        self.__visible_sorted_children.sort(key = lambda child : -child.y)
 
     def __get_cam_bounding_box(self):
         return (
@@ -222,7 +179,6 @@ class SceneNode(Node):
         self,
         child: PositionNode,
         cam_target: bool = False,
-        sorted: bool = False,
         ui: bool = False
     ):
         if ui:
@@ -237,36 +193,25 @@ class SceneNode(Node):
                         self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2,
                     )
 
-            if sorted:
-                self.__sorted_children.append(child)
-            else:
-                self.__fixed_children.append(child)
-
-            # if issubclass(type(child), CollisionMixin):
-            #     self.__colliders.append(child)
+            self.__fixed_children.append(child)
 
     def add_children(
         self,
         children: list,
-        sorted: bool = False,
         ui: bool = False
     ):
         for child in children:
             self.add_child(
                 child = child,
-                sorted = sorted,
                 ui = ui
             )
 
     def delete(self):
-        for child in self.__ui_children + self.__fixed_children + self.__sorted_children:
+        for child in self.__ui_children + self.__fixed_children:
             child.delete()
 
         self.__ui_children.clear()
         self.__fixed_children.clear()
-        self.__sorted_children.clear()
-        self.__visible_fixed_children.clear()
-        self.__visible_sorted_children.clear()
 
         if self.__curtain is not None:
             self.__curtain.delete()

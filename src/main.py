@@ -6,11 +6,12 @@ from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.playable_scene_node import PlayableSceneNode
+from engine.sprites_manager import SpritesManager
 from scenes.rughai.r_0_4 import R_0_4
 
 import settings
 import constants.scenes as scenes
-from fixed_resolution import Upscaler
+from upscaler import Upscaler
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
 from scenes.rughai.r_0_2 import R_0_2
@@ -26,8 +27,15 @@ class RugHai:
         # Create a window.
         self._window = self.__create_window()
 
+        # Handlers.
         # Create a collision manager.
         self._collision_manager = CollisionManager()
+
+        # Create an input handler.
+        self._input = InputController(window = self._window)
+
+        # Create a sprites manager.
+        self._sprites_manager = SpritesManager()
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
@@ -36,7 +44,6 @@ class RugHai:
             self._window.width // settings.VIEW_WIDTH,
             self._window.height // settings.VIEW_HEIGHT
         )
-        # self._scaling = 10
 
         self._upscaler = Upscaler(
             window = self._window,
@@ -47,22 +54,22 @@ class RugHai:
         # Create benchmarks.
         self._update_bench = Benchmark(
             window = self._window,
-            text = "UT: "
+            text = "UT: ",
+            sprites_manager = self._sprites_manager if not settings.DEBUG else None
         )
         self._render_bench = Benchmark(
             window = self._window,
             text = "RT: ",
-            y = self._window.height - 30
+            y = self._window.height - 30,
+            sprites_manager = self._sprites_manager if not settings.DEBUG else None
         )
-
-        # Create an input handler.
-        self._input = InputController(window = self._window)
 
         # Create a scene.
         self._active_scene = R_0_0(
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
+            sprites_manager = self._sprites_manager,
             view_width = settings.VIEW_WIDTH,
             view_height = settings.VIEW_HEIGHT,
             scaling = self._scaling,
@@ -89,6 +96,7 @@ class RugHai:
         print("scene_ended", bundle)
         if bundle["next_scene"]:
             self._collision_manager.clear()
+            self._sprites_manager.clear()
             self._active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
@@ -96,6 +104,7 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
+                    sprites_manager = self._sprites_manager,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
                     bundle = bundle,
@@ -107,6 +116,7 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
+                    sprites_manager = self._sprites_manager,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
                     bundle = bundle,
@@ -118,6 +128,7 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
+                    sprites_manager = self._sprites_manager,
                     view_width = settings.VIEW_WIDTH,
                     view_height = settings.VIEW_HEIGHT,
                     bundle = bundle,
@@ -148,6 +159,16 @@ class RugHai:
                 )
 
     def on_draw(self) -> None:
+        # Update window matrix.
+        self._window.projection = pyglet.math.Mat4.orthogonal_projection(
+            left = 0,
+            right = self._window.width,
+            bottom = 0,
+            top = self._window.height,
+            z_near = -1000,
+            z_far = 1000
+        )
+
         # Benchmark measures render time.
         with self._render_bench:
             self._window.clear()
@@ -156,9 +177,9 @@ class RugHai:
             with self._upscaler:
                 self._active_scene.draw()
 
-            if settings.DEBUG:
-                self._update_bench.draw()
-                self._render_bench.draw()
+            # if settings.DEBUG:
+            #     self._update_bench.draw()
+            #     self._render_bench.draw()
 
     def update(self, dt) -> None:
         # Compute collisions through collision manager.
@@ -171,11 +192,6 @@ class RugHai:
                 self._active_scene.update(dt)
 
     def run(self) -> None:
-        # Enable depth testing in order to allow for depth sorting.
-        # TODO Try this out! Use the z coordinate as depth!
-        # gl.glDepthFunc(gl.GL_LESS)
-        # gl.glEnable(gl.GL_DEPTH_TEST)
-
         # Scale textures using nearest neighbor filtering.
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)

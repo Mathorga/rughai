@@ -9,6 +9,7 @@ from engine.scene_node import Bounds, SceneNode
 from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
+from engine.sprites_manager import SpritesManager
 from engine.tilemap_node import TilemapNode
 
 import settings
@@ -23,6 +24,7 @@ class R_0_2(PlayableSceneNode):
         window: pyglet.window.Window,
         collision_manager: CollisionManager,
         input_controller: InputController,
+        sprites_manager: SpritesManager,
         view_width: int,
         view_height: int,
         scaling: int = 1,
@@ -33,6 +35,7 @@ class R_0_2(PlayableSceneNode):
             window = window,
             collision_manager = collision_manager,
             input_controller = input_controller,
+            sprites_manager = sprites_manager,
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
@@ -43,7 +46,8 @@ class R_0_2(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_2.tmx",
-            scaling = scaling
+            scaling = scaling,
+            sprites_manager = sprites_manager
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -54,10 +58,12 @@ class R_0_2(PlayableSceneNode):
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
         bg = SpriteNode(
+            sprites_manager = sprites_manager,
             resource = pyglet.resource.image("bg.png"),
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
+            z = 500,
             scaling = scaling
         )
 
@@ -70,6 +76,7 @@ class R_0_2(PlayableSceneNode):
         self._player = PlayerNode(
             input_controller = input_controller,
             collision_manager = collision_manager,
+            sprites_manager = sprites_manager,
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
@@ -190,13 +197,15 @@ class R_0_2(PlayableSceneNode):
         # Props.
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_2",
-            scaling = scaling
+            scaling = scaling,
+            sprites_manager = sprites_manager
         )
 
         self._scene = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
+            sprites_manager = sprites_manager,
             scaling = scaling,
             cam_speed = settings.CAM_SPEED,
             title = "R_0_2",
@@ -213,10 +222,10 @@ class R_0_2(PlayableSceneNode):
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(self._player, sorted = True)
-        self._scene.add_child(duk, sorted = True)
-        self._scene.add_child(tree, sorted = True)
-        self._scene.add_children(props, sorted = True)
+        self._scene.add_child(self._player)
+        self._scene.add_child(duk)
+        self._scene.add_child(tree)
+        self._scene.add_children(props)
         self._scene.add_child(north_west_door)
         self._scene.add_child(north_east_door)
         self._scene.add_child(south_door)

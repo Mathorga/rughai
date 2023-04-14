@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 import pyglet
 import pyglet.math as pm
@@ -10,6 +11,7 @@ from engine.input_controller import InputController
 from engine.sensor_node import SensorNode
 from engine.rect_node import RectNode
 from engine.sprite_node import SpriteNode
+from engine.sprites_manager import SpritesManager
 import engine.utils as utils
 
 from player_stats import PlayerStats
@@ -86,6 +88,7 @@ class PlayerNode(PositionNode):
         self,
         input_controller: InputController,
         collision_manager: CollisionManager,
+        sprites_manager: SpritesManager,
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
@@ -93,7 +96,8 @@ class PlayerNode(PositionNode):
         y: int = 0,
         run_threshold: float = 0.75,
         scaling: int = 1,
-        collision_tag: str = ""
+        collision_tag: str = "",
+        order: int = 0
     ) -> None:
         PositionNode.__init__(
             self,
@@ -155,16 +159,13 @@ class PlayerNode(PositionNode):
 
         self.__hor_facing: int = 1
 
-        self.__batch = pyglet.graphics.Batch()
-
         self.__sprite = SpriteNode(
+            sprites_manager = sprites_manager,
             resource = self.__idle_anim,
             on_animation_end = self.on_sprite_animation_end,
             x = x,
             y = y,
-            scaling = scaling,
-            group = pyglet.graphics.Group(order = 1),
-            batch = self.__batch
+            scaling = scaling
         )
 
         # Aim sprite image.
@@ -178,12 +179,11 @@ class PlayerNode(PositionNode):
         # Aim sprite distance, defines the distance at which the sprite floats.
         self.__aim_sprite_distance = 10.0
         self.__aim_sprite = SpriteNode(
+            sprites_manager = sprites_manager,
             resource = target_image,
             x = x,
             y = y,
-            scaling = scaling,
-            group = pyglet.graphics.Group(order = 2),
-            batch = self.__batch
+            scaling = scaling
         )
 
         # Shadow sprite image.
@@ -192,12 +192,11 @@ class PlayerNode(PositionNode):
         shadow_image.anchor_y = shadow_image.height / 2
 
         self.__shadow_sprite = SpriteNode(
+            sprites_manager = sprites_manager,
             resource = shadow_image,
             x = x,
             y = y,
-            scaling = scaling,
-            group = pyglet.graphics.Group(order = 0),
-            batch = self.__batch
+            scaling = scaling
         )
 
         # Collider.
@@ -230,7 +229,7 @@ class PlayerNode(PositionNode):
         # Draw collider out of batch.
         self.__collider.draw()
 
-        self.__batch.draw()
+        self.__sprite.draw()
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -243,7 +242,7 @@ class PlayerNode(PositionNode):
         self.__move(dt)
 
         # Update sprites accordingly.
-        self.__update_sprites()
+        self.__update_sprites(dt)
 
     def on_sprite_animation_end(self):
         if self.__sprint_ing:
@@ -339,7 +338,7 @@ class PlayerNode(PositionNode):
         self.x += self.__movement.x
         self.y += self.__movement.y
 
-    def __update_sprites(self):
+    def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
         dir_cos = math.cos(self.__stats._dir)
         dir_len = abs(dir_cos)
@@ -368,36 +367,42 @@ class PlayerNode(PositionNode):
         
         # if image_to_show != None and self.__sprite.get_image() != image_to_show:
         self.__sprite.set_image(image_to_show)
+        self.__sprite.update(dt = dt)
 
         # Update aim sprite.
-        self.__update_aim()
+        self.__update_aim(dt)
 
         # Update camera target.
-        self.__update_cam_target()
+        self.__update_cam_target(dt)
 
         # Update shadow sprite.
-        self.__update_shadow()
+        self.__update_shadow(dt)
 
         # Update collider.
-        self.__update_collider()
+        self.__update_collider(dt)
 
-    def __update_aim(self):
+    def __update_aim(self, dt):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
         self.__aim_sprite.set_position(
             self.x + self.__aim_sprite_offset[0] + aim_vec.x,
             self.y + self.__aim_sprite_offset[1] + aim_vec.y
         )
+        self.__aim_sprite.update(dt)
 
-    def __update_cam_target(self):
+
+    def __update_cam_target(self, dt):
         cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
+        self.__cam_target.update(dt)
 
-    def __update_shadow(self):
+    def __update_shadow(self, dt):
         self.__shadow_sprite.set_position(self.x, self.y)
+        self.__shadow_sprite.update(dt)
 
-    def __update_collider(self):
+    def __update_collider(self, dt):
         self.__collider.set_position(self.x, self.y)
+        self.__collider.update(dt)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()
