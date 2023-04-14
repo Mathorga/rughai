@@ -38,3 +38,6 @@ class RGrass0(PositionNode):
 
     def draw(self) -> None:
         self.__sprite.draw()
+
+    def delete(self) -> None:
+        self.__sprite.delete()

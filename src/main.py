@@ -54,12 +54,14 @@ class RugHai:
         # Create benchmarks.
         self._update_bench = Benchmark(
             window = self._window,
-            text = "UT: "
+            text = "UT: ",
+            sprites_manager = self._sprites_manager if not settings.DEBUG else None
         )
         self._render_bench = Benchmark(
             window = self._window,
             text = "RT: ",
-            y = self._window.height - 30
+            y = self._window.height - 30,
+            sprites_manager = self._sprites_manager if not settings.DEBUG else None
         )
 
         # Create a scene.
@@ -94,6 +96,7 @@ class RugHai:
         print("scene_ended", bundle)
         if bundle["next_scene"]:
             self._collision_manager.clear()
+            self._sprites_manager.clear()
             self._active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
@@ -166,17 +169,6 @@ class RugHai:
             z_far = 1000
         )
 
-        # TODO Dig deeper, this may be the solution to limiting the view!
-        # self._window.view = pyglet.math.Mat4.from_scale(pyglet.math.Vec3(2.0, 2.0, 2.0))
-        # view_width = settings.VIEW_WIDTH * self._scaling
-        # view_height = settings.VIEW_HEIGHT * self._scaling
-        # self._window.viewport = (
-        #     settings.VIEW_WIDTH / 2,
-        #     settings.VIEW_HEIGHT / 2,
-        #     self._window.width - settings.VIEW_WIDTH / 2,
-        #     self._window.height - settings.VIEW_HEIGHT / 2
-        # )
-
         # Benchmark measures render time.
         with self._render_bench:
             self._window.clear()
@@ -185,9 +177,9 @@ class RugHai:
             with self._upscaler:
                 self._active_scene.draw()
 
-            if settings.DEBUG:
-                self._update_bench.draw()
-                self._render_bench.draw()
+            # if settings.DEBUG:
+            #     self._update_bench.draw()
+            #     self._render_bench.draw()
 
     def update(self, dt) -> None:
         # Compute collisions through collision manager.
@@ -200,11 +192,6 @@ class RugHai:
                 self._active_scene.update(dt)
 
     def run(self) -> None:
-        # Enable depth testing in order to allow for depth sorting.
-        # TODO Try this out! Use the z coordinate as depth!
-        # gl.glDepthFunc(gl.GL_LESS)
-        # gl.glEnable(gl.GL_DEPTH_TEST)
-
         # Scale textures using nearest neighbor filtering.
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)

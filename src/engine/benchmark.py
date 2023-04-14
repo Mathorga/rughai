@@ -1,7 +1,10 @@
 import time
 from collections import deque
 from statistics import mean
+from typing import Optional
 import pyglet
+
+from engine.sprites_manager import SpritesManager
 
 class Benchmark:
     def __init__(
@@ -9,6 +12,7 @@ class Benchmark:
         window: pyglet.window.Window,
         x = None,
         y = None,
+        sprites_manager: Optional[SpritesManager] = None,
         text: str = "FPS: ",
         samples: int = 240,
         update_period: float = 0.5
@@ -25,6 +29,9 @@ class Benchmark:
             y = y if y != None else window.height - 10,
             bold = True
         )
+
+        if sprites_manager is not None:
+            sprites_manager.add_sprite(self._label)
 
         self._update_period = update_period
         self._elapsed = 0.0
@@ -47,6 +54,3 @@ class Benchmark:
         if self._elapsed >= self._update_period:
             self._elapsed = 0.0
             self._label.text = f"{self._text}{mean(self._delta_times) * 1000:.3f}ms"
-
-    def draw(self) -> None:
-        self._label.draw()

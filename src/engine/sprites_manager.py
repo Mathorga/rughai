@@ -6,7 +6,7 @@ class SpritesManager:
         self,
         batch: pyglet.graphics.Batch = pyglet.graphics.Batch()
     ) -> None:
-        self.__sprites = []
+        self.sprites = []
         self.__batch = batch
 
     def add_sprite(
@@ -15,11 +15,11 @@ class SpritesManager:
     ) -> None:
         group = None
 
-        self.__sprites.append(sprite)
+        self.sprites.append(sprite)
         sprite.batch = self.__batch
 
     def draw(self) -> None:
         self.__batch.draw()
 
     def clear(self):
-        self.__sprites.clear()
+        self.sprites.clear()

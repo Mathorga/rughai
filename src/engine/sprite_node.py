@@ -98,7 +98,7 @@ class SpriteNode(PositionNode):
 
     def draw(self) -> None:
         self.sprite.draw()
-        self.__z_label.draw()
+        # self.__z_label.draw()
 
     def update(self, dt) -> None:
         self.__z_label.text = f"{self.sprite.z}"

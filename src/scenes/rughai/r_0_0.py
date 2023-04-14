@@ -162,7 +162,7 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(tree)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(self._player, sorted = True)
+        self._scene.add_child(self._player)
         self._scene.add_child(bottom_door)
         self._scene.add_child(energy_bar, ui = True)
         self._scene.add_child(health_bar, ui = True)

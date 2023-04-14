@@ -197,7 +197,7 @@ class R_0_1(PlayableSceneNode):
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(self._player, sorted = True)
+        self._scene.add_child(self._player)
         self._scene.add_child(north_door)
         self._scene.add_child(south_west_door)
         self._scene.add_child(south_east_door)
