@@ -4,7 +4,7 @@ import pyglet
 from PIL import Image
 
 from engine.node import PositionNode
-from engine.sprites_manager import world_renderer
+from engine.renderer import world_renderer
 from props.rughai.r_grass_0 import RGrass0
 from props.rughai.r_grass_1 import RGrass1
 from props.rughai.r_tree_l import RTreeL

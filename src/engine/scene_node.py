@@ -94,8 +94,6 @@ class SceneNode(Node):
                 world_renderer.draw()
 
         # Draw UI elements.
-        # for child in self.__ui_children:
-        #     child.draw()
         ui_renderer.draw()
 
         # Draw curtain as last element.

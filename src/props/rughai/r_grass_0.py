@@ -3,7 +3,6 @@ import pyglet
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.sprites_manager import Renderer
 from engine.utils import animation_set_anchor
 
 class RGrass0(PositionNode):

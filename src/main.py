@@ -5,7 +5,7 @@ from engine.collision_manager import CollisionManager
 
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
-from engine.sprites_manager import world_renderer, ui_renderer
+from engine.renderer import world_renderer, ui_renderer
 from scenes.rughai.r_0_4 import R_0_4
 
 import settings
