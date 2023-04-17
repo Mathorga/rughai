@@ -11,7 +11,12 @@ fragment_source = """
 
     void main() {
         final_color = texture(sprite_texture, texture_coords.xy) * vertex_colors;
+
+        // Inverted colors.
         //final_color = vec4(1.0 - final_color.r, 1.0 - final_color.g, 1.0 - final_color.b, final_color.a);
+
+        // Rotated channels.
+        //final_color = vec4(final_color.g, final_color.b, final_color.r, final_color.a);
 
         // No GL_ALPHA_TEST in core, use shader to discard.
         if (final_color.a < 0.01) {
