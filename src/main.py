@@ -5,15 +5,17 @@ import pyglet.gl as gl
 from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
-
-import settings
-import constants.scenes as scenes
-from upscaler import Upscaler
+from engine.upscaler import Upscaler
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
 from scenes.rughai.r_0_2 import R_0_2
 from scenes.rughai.r_0_3 import R_0_3
 from scenes.rughai.r_0_4 import R_0_4
+from scenes.rughai.r_0_5 import R_0_5
+from scenes.rughai.r_0_6 import R_0_6
+
+import settings
+import constants.scenes as scenes
 
 class RugHai:
     def __init__(self) -> None:
@@ -138,6 +140,28 @@ class RugHai:
                 )
             elif bundle["next_scene"] == scenes.R_0_4:
                 self._active_scene = R_0_4(
+                    window = self._window,
+                    collision_manager = self._collision_manager,
+                    input_controller = self._input,
+                    view_width = settings.VIEW_WIDTH,
+                    view_height = settings.VIEW_HEIGHT,
+                    bundle = bundle,
+                    scaling = self._scaling,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.R_0_5:
+                self._active_scene = R_0_5(
+                    window = self._window,
+                    collision_manager = self._collision_manager,
+                    input_controller = self._input,
+                    view_width = settings.VIEW_WIDTH,
+                    view_height = settings.VIEW_HEIGHT,
+                    bundle = bundle,
+                    scaling = self._scaling,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.R_0_6:
+                self._active_scene = R_0_6(
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,

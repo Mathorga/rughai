@@ -5,7 +5,7 @@ from pyglet.gl import *
 import random
 import math
 
-from upscaler import FixedResolution
+from engine.upscaler import FixedResolution
 
 # Standard projection Z is 0 to 255. Keep window within that.
 # You will have to change window projection if you wish to go beyond this.

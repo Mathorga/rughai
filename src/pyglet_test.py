@@ -6,7 +6,7 @@ import pyglet.math as pm
 
 import settings
 from engine.camera import Camera
-from upscaler import FixedResolution
+from engine.upscaler import FixedResolution
 
 pyglet.resource.path = ["../assets"]
 pyglet.resource.reindex()

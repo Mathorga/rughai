@@ -92,29 +92,8 @@ class R_0_4(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        # Duk.
-        duk = DukNode(
-            x = 10 * self.__tile_size,
-            y = 8 * self.__tile_size,
-            scaling = scaling,
-            batch = self._scene.world_batch
-        )
-
-        # Define tree prop.
-        # TODO Use dedicated class.
-        tree_img = pyglet.resource.image("sprites/rughai/prop/tree_l.png")
-        tree_img.anchor_x = tree_img.width / 2
-        tree_img.anchor_y = 3
-        tree = SpriteNode(
-            resource = tree_img,
-            x = 5 * self.__tile_size,
-            y = 5 * self.__tile_size,
-            scaling = scaling,
-            batch = self._scene.world_batch
-        )
-
         # Place doors.
-        bottom_door = SensorNode(
+        south_door = SensorNode(
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
@@ -138,7 +117,32 @@ class R_0_4(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        collision_manager.add_collider(bottom_door)
+        north_door = SensorNode(
+            x = 20 * self.__tile_size,
+            y = 50 * self.__tile_size,
+            width = 7 * self.__tile_size,
+            height = 2 * self.__tile_size,
+            anchor_x = 0,
+            anchor_y = 0,
+            scaling = scaling,
+            visible = True,
+            tag = "player",
+            on_triggered = lambda entered:
+                self.on_door_triggered(
+                    entered = entered,
+                    bundle = {
+                        "event": events.CHANGE_ROOM,
+                        "next_scene": scenes.R_0_5,
+                        "player_position": [
+                            self._player.x,
+                            self.__tile_size
+                        ]
+                    }
+                ),
+            batch = self._scene.world_batch
+        )
+        collision_manager.add_collider(south_door)
+        collision_manager.add_collider(north_door)
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
@@ -173,8 +177,7 @@ class R_0_4(PlayableSceneNode):
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(self._player)
-        self._scene.add_child(duk)
-        self._scene.add_child(tree)
-        self._scene.add_child(bottom_door)
+        self._scene.add_child(south_door)
+        self._scene.add_child(north_door)
         self._scene.add_child(energy_bar)
         self._scene.add_child(health_bar)

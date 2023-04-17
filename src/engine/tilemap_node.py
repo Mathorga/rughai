@@ -100,6 +100,7 @@ class TilemapNode(PositionNode):
 
     @staticmethod
     def from_tmx_file(
+        # Path to the tmx file.
         source: str,
         x: int = 0,
         y: int = 0,
@@ -112,6 +113,10 @@ class TilemapNode(PositionNode):
     ) -> list:
         """
         Constructs a new TileMap from the given TMX (XML) file.
+        Layers naming in the supplied file is critical:
+        dig_x -> layer below the playing level (meaning tiles will always be behind actors on the map).
+        rat_x -> layer on the playing level (meaning tiles will be sorted z-sorted along with actors on the map).
+        pid_x -> layer above the playing level (meaning tiles will always be in front of actors on the map).
         """
 
         root = xml.parse(f"{pyglet.resource.path[0]}/{source}").getroot()
