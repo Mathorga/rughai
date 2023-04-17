@@ -12,7 +12,7 @@ class RVeg1(PositionNode):
         y: int = 0,
         z: float = 0,
         scaling: int = 1,
-        ui: bool = False
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
 
@@ -27,7 +27,7 @@ class RVeg1(PositionNode):
 
         self.__sprite = SpriteNode(
             resource = self.__idle_animation,
-            ui = ui,
+            batch = batch,
             x = x,
             y = y,
             scaling = scaling,

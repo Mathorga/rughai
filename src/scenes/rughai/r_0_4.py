@@ -39,10 +39,23 @@ class R_0_4(PlayableSceneNode):
             on_ended = on_ended
         )
 
+        # Define the scene.
+        self._scene = SceneNode(
+            window = window,
+            view_width = view_width,
+            view_height = view_height,
+            scaling = scaling,
+            cam_speed = settings.CAM_SPEED,
+            title = "R_0_4",
+            debug = settings.DEBUG,
+            on_scene_end = self._on_scene_end
+        )
+
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_4.tmx",
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -57,7 +70,9 @@ class R_0_4(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            scaling = scaling
+            z = 500,
+            scaling = scaling,
+            batch = self._scene.world_batch
         )
 
         # Player.
@@ -73,14 +88,16 @@ class R_0_4(PlayableSceneNode):
             x = player_position[0],
             y = player_position[1],
             scaling = scaling,
-            collision_tag = "player"
+            collision_tag = "player",
+            batch = self._scene.world_batch
         )
 
         # Duk.
         duk = DukNode(
             x = 10 * self.__tile_size,
             y = 8 * self.__tile_size,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.world_batch
         )
 
         # Define tree prop.
@@ -92,7 +109,8 @@ class R_0_4(PlayableSceneNode):
             resource = tree_img,
             x = 5 * self.__tile_size,
             y = 5 * self.__tile_size,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.world_batch
         )
 
         # Place doors.
@@ -117,7 +135,8 @@ class R_0_4(PlayableSceneNode):
                             25 * self.__tile_size
                         ]
                     }
-                )
+                ),
+            batch = self._scene.world_batch
         )
         collision_manager.add_collider(bottom_door)
 
@@ -129,31 +148,25 @@ class R_0_4(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 4,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.ui_batch
         )
 
-        self._scene = SceneNode(
-            window = window,
-            view_width = view_width,
-            view_height = view_height,
-            scaling = scaling,
-            cam_speed = settings.CAM_SPEED,
-            title = "R_0_4",
-            debug = settings.DEBUG,
-            cam_bounds = Bounds(
+        self._scene.set_cam_bounds(
+            Bounds(
                 top = tilemap_height * self.__tile_size,
                 bottom = 0,
                 left = 0,
                 right = tilemap_width * self.__tile_size,
                 scaling = scaling
-            ),
-            on_scene_end = self._on_scene_end
+            )
         )
 
         self._scene.add_child(bg)
@@ -163,5 +176,5 @@ class R_0_4(PlayableSceneNode):
         self._scene.add_child(duk)
         self._scene.add_child(tree)
         self._scene.add_child(bottom_door)
-        self._scene.add_child(energy_bar, ui = True)
-        self._scene.add_child(health_bar, ui = True)
+        self._scene.add_child(energy_bar)
+        self._scene.add_child(health_bar)
