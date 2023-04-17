@@ -38,7 +38,23 @@ class R_0_1(PlayableSceneNode):
             on_ended = on_ended
         )
 
-        self.__on_ended = on_ended
+        # Define the scene.
+        self._scene = SceneNode(
+            window = window,
+            view_width = view_width,
+            view_height = view_height,
+            scaling = scaling,
+            cam_speed = settings.CAM_SPEED,
+            title = "R_0_1",
+            debug = settings.DEBUG,
+            cam_bounds = Bounds(
+                top = tilemap_height * self.__tile_size,
+                bottom = 0,
+                right = tilemap_width * self.__tile_size,
+                scaling = scaling
+            ),
+            on_scene_end = self._on_scene_end
+        )
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
@@ -169,23 +185,6 @@ class R_0_1(PlayableSceneNode):
             x = 4,
             y = view_height - 12,
             scaling = scaling
-        )
-
-        self._scene = SceneNode(
-            window = window,
-            view_width = view_width,
-            view_height = view_height,
-            scaling = scaling,
-            cam_speed = settings.CAM_SPEED,
-            title = "R_0_1",
-            debug = settings.DEBUG,
-            cam_bounds = Bounds(
-                top = tilemap_height * self.__tile_size,
-                bottom = 0,
-                right = tilemap_width * self.__tile_size,
-                scaling = scaling
-            ),
-            on_scene_end = self._on_scene_end
         )
 
         self._scene.add_child(bg)
