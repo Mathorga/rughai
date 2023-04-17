@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="8" tileheight="8" infinite="0" nextlayerid="2" nextobjectid="1">
- <tileset firstgid="1" source="main_tileset.tsx"/>
- <layer id="1" name="Livello tile 1" width="50" height="50">
+ <tileset firstgid="1" source="../main_tileset.tsx"/>
+ <layer id="1" name="dig_0" width="50" height="50">
   <data encoding="csv">
 16,16,16,16,16,16,16,16,16,16,16,16,16,16,57,76,72,72,72,72,72,72,72,61,101,102,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
 16,16,16,16,16,16,16,16,30,16,16,16,247,16,85,72,72,72,72,72,72,72,72,74,16,16,16,16,16,248,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,31,16,

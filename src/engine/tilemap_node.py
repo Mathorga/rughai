@@ -146,18 +146,19 @@ class TilemapNode(PositionNode):
             # Remove all newline characters and split by comma.
             layer_content = layer_data.text.replace("\n", "").split(",")
 
-            layers.append(layer_content)
+            layers.append((layer_name, layer_content))
 
         return [
             TilemapNode(
                 tileset = tileset,
-                map = [int(i) - 1 for i in layer],
+                map = [int(i) - 1 for i in layer[1]],
                 map_width = map_width,
                 map_height = map_height,
                 x = x,
                 y = y,
                 scaling = scaling,
-                z_offset = z_offset + layers_spacing * (len(layers) - 1 - layer_index),
+                # Only apply layers offset if not a rat layer.
+                z_offset = 0 if "rat" in layer[0] else z_offset + layers_spacing * (len(layers) - 1 - layer_index),
                 batch = batch
             ) for layer_index, layer in enumerate(layers)
         ]
