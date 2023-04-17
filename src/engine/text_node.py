@@ -1,7 +1,7 @@
 from typing import Optional
 import pyglet
 
-from engine.sprites_manager import world_renderer, ui_renderer
+from engine.renderer import world_renderer, ui_renderer
 from engine.node import PositionNode
 
 class TextNode(PositionNode):

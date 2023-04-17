@@ -6,7 +6,7 @@ import pyglet.math as pm
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
-from engine.sprites_manager import world_renderer, ui_renderer
+from engine.renderer import world_renderer, ui_renderer
 from engine.text_node import TextNode
 from engine.utils import *
 

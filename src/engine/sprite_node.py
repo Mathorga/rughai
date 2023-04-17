@@ -4,7 +4,7 @@ import pyglet.gl as gl
 from engine.depth_sprite import DepthSprite
 
 from engine.node import PositionNode
-from engine.sprites_manager import world_renderer, ui_renderer
+from engine.renderer import world_renderer, ui_renderer
 
 class SpriteNode(PositionNode):
     def __init__(

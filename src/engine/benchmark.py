@@ -4,7 +4,7 @@ from statistics import mean
 from typing import Optional
 import pyglet
 
-from engine.sprites_manager import ui_renderer
+from engine.renderer import ui_renderer
 
 class Benchmark:
     def __init__(
