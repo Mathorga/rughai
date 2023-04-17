@@ -12,7 +12,7 @@ class RTreeM(PositionNode):
         y: int = 0,
         z: float = 0,
         scaling: int = 1,
-        ui: bool = False
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
 
@@ -27,11 +27,11 @@ class RTreeM(PositionNode):
 
         self.__sprite = SpriteNode(
             resource = self.__idle_animation,
-            ui = ui,
             x = x,
             y = y,
             scaling = scaling,
-            on_animation_end = lambda : None
+            on_animation_end = lambda : None,
+            batch = batch
         )
 
     def draw(self) -> None:

@@ -4,14 +4,13 @@ from statistics import mean
 from typing import Optional
 import pyglet
 
-from engine.renderer import ui_renderer
-
 class Benchmark:
     def __init__(
         self,
         window: pyglet.window.Window,
-        x = None,
-        y = None,
+        batch: Optional[pyglet.graphics.Batch] = None,
+        x: Optional[int] = None,
+        y: Optional[int] = None,
         visible: bool = True,
         text: str = "FPS: ",
         samples: int = 240,
@@ -27,11 +26,9 @@ class Benchmark:
             anchor_y = "bottom",
             x = x if x != None else 10,
             y = y if y != None else 10,
-            bold = True
+            bold = True,
+            batch = batch
         )
-
-        if visible:
-            ui_renderer.add_child(self._label)
 
         self._update_period = update_period
         self._elapsed = 0.0
@@ -40,6 +37,9 @@ class Benchmark:
         self._start_time = 0.0
 
         self._last_time = 0.0
+
+    def draw(self) -> None:
+        self._label.draw()
 
     def __enter__(self) -> None:
         self._start_time = time.time()

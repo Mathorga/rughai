@@ -4,14 +4,13 @@ import pyglet.gl as gl
 from engine.depth_sprite import DepthSprite
 
 from engine.node import PositionNode
-from engine.renderer import world_renderer, ui_renderer
 
 class SpriteNode(PositionNode):
     def __init__(
         self,
         resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
+        batch: Optional[pyglet.graphics.Batch] = None,
         on_animation_end = None,
-        ui: bool = False,
         x: int = 0,
         y: int = 0,
         z: Optional[int] = None,
@@ -31,7 +30,8 @@ class SpriteNode(PositionNode):
             x = x * scaling,
             y = y * scaling,
             z = int(-z if z is not None else -y),
-            program = shader
+            program = shader,
+            batch = batch
         )
         self.sprite.scale = scaling
         self.sprite.push_handlers(self)
@@ -42,11 +42,6 @@ class SpriteNode(PositionNode):
             x = x * scaling + 5,
             y = y * scaling + 5
         )
-
-        if ui:
-            ui_renderer.add_child(self.sprite)
-        else:
-            world_renderer.add_child(self.sprite)
 
         self.__on_animation_end = on_animation_end
 

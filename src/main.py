@@ -5,7 +5,6 @@ from engine.collision_manager import CollisionManager
 
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
-from engine.renderer import world_renderer, ui_renderer
 from scenes.rughai.r_0_4 import R_0_4
 
 import settings
@@ -91,8 +90,6 @@ class RugHai:
         print("scene_ended", bundle)
         if bundle["next_scene"]:
             self._collision_manager.clear()
-            world_renderer.clear()
-            ui_renderer.clear()
             self._active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
@@ -169,10 +166,6 @@ class RugHai:
             # Upscaler handles maintaining the wanted output resolution.
             with self._upscaler:
                 self._active_scene.draw()
-
-            # if settings.DEBUG:
-            #     self._update_bench.draw()
-            #     self._render_bench.draw()
 
     def update(self, dt) -> None:
         # Compute collisions through collision manager.

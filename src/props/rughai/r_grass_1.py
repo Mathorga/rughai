@@ -3,7 +3,6 @@ import pyglet
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.renderer import Renderer
 from engine.utils import animation_set_anchor
 
 class RGrass1(PositionNode):
@@ -13,7 +12,7 @@ class RGrass1(PositionNode):
         y: int = 0,
         z: float = 0,
         scaling: int = 1,
-        ui: bool = False
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
 
@@ -28,11 +27,11 @@ class RGrass1(PositionNode):
 
         self.__sprite = SpriteNode(
             resource = self.__idle_animation,
-            ui = ui,
             x = x,
             y = y,
             scaling = scaling,
-            on_animation_end = lambda : None
+            on_animation_end = lambda : None,
+            batch = batch
         )
 
     def draw(self) -> None:

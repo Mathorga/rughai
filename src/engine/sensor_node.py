@@ -1,5 +1,7 @@
 from types import FunctionType
 from typing import Callable, Optional
+import pyglet
+
 from engine.node import PositionNode
 from engine.rect_node import RectNode
 import engine.utils as utils
@@ -15,10 +17,9 @@ class SensorNode(PositionNode):
         anchor_y: int = 0,
         scaling: int = 1,
         visible: bool = False,
-        batch = None,
-        group = None,
         tag: str = "",
-        on_triggered: Optional[Callable[[bool], None]] = None
+        on_triggered: Optional[Callable[[bool], None]] = None,
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
 
@@ -42,8 +43,7 @@ class SensorNode(PositionNode):
             anchor_x = anchor_x,
             anchor_y = anchor_y,
             color = (0xFF, 0xFF, 0x7F, 0x7F),
-            batch = batch,
-            group = group
+            batch = batch
         )
 
         self.collisions = set()

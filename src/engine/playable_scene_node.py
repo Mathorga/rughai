@@ -5,7 +5,6 @@ from engine.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
-from engine.renderer import Renderer
 from player_node import PlayerNode
 
 

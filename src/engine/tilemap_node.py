@@ -6,7 +6,6 @@ import pyglet.gl as gl
 from engine.depth_sprite import DepthSprite
 
 from engine.node import PositionNode
-from engine.renderer import world_renderer
 
 class Tileset:
     def __init__(
@@ -63,8 +62,8 @@ class TilemapNode(PositionNode):
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
-        visible: bool = True,
-        z_offset: int = 0
+        z_offset: int = 0,
+        batch: Optional[pyglet.graphics.Batch] = None
     ):
         super().__init__(
             x = x,
@@ -85,13 +84,12 @@ class TilemapNode(PositionNode):
                 img = self.__tileset.tiles[tex_index],
                 x = x + (index % self.map_width) * self.__tileset.tile_width * scaling,
                 y = y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
-                z = -((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset)
+                z = -((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset),
+                batch = batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
         for spr in self.__sprites:
-            if visible:
-                world_renderer.add_child(spr)
             spr.scale = scaling
 
     def delete(self) -> None:
@@ -103,16 +101,18 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmx_file(
         source: str,
-        visible: bool = True,
         x: int = 0,
         y: int = 0,
         scaling: int = 1,
         # Distance (z-axis) between tilemap layers.
         layers_spacing: int = 8,
         # Starting z-offset for all layers in the file.
-        z_offset: int = 64
-    ):
-        """Constructs a new TileMap from the given TMX (XML) file."""
+        z_offset: int = 64,
+        batch: Optional[pyglet.graphics.Batch] = None
+    ) -> list:
+        """
+        Constructs a new TileMap from the given TMX (XML) file.
+        """
 
         root = xml.parse(f"{pyglet.resource.path[0]}/{source}").getroot()
 
@@ -157,8 +157,8 @@ class TilemapNode(PositionNode):
                 x = x,
                 y = y,
                 scaling = scaling,
-                visible = visible,
-                z_offset = z_offset + layers_spacing * (len(layers) - 1 - layer_index)
+                z_offset = z_offset + layers_spacing * (len(layers) - 1 - layer_index),
+                batch = batch
             ) for layer_index, layer in enumerate(layers)
         ]
 
@@ -168,7 +168,7 @@ class TilemapNode(PositionNode):
         x: int = 0,
         y: int = 0,
         scaling: int = 1
-    ):
+    ) -> list:
         """
         Constructs a new tilemaps list from the given TMJ (JSON) file.
         Returns a tilemap for each layer.

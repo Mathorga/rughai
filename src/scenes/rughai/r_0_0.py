@@ -39,10 +39,23 @@ class R_0_0(PlayableSceneNode):
             on_ended = on_ended
         )
 
+        # Define the scene.
+        self._scene = SceneNode(
+            window = window,
+            view_width = view_width,
+            view_height = view_height,
+            scaling = scaling,
+            cam_speed = settings.CAM_SPEED,
+            title = "R_0_0",
+            debug = settings.DEBUG,
+            on_scene_end = self._on_scene_end
+        )
+
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_0.tmx",
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -58,7 +71,8 @@ class R_0_0(PlayableSceneNode):
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
             z = 500,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.world_batch
         )
 
         # Player.
@@ -75,7 +89,8 @@ class R_0_0(PlayableSceneNode):
             y = player_position[1],
             scaling = scaling,
             collision_tag = "player",
-            order = 100
+            order = 100,
+            batch = self._scene.world_batch
         )
 
         # Place doors.
@@ -100,7 +115,8 @@ class R_0_0(PlayableSceneNode):
                             25 * self.__tile_size
                         ]
                     }
-                )
+                ),
+            batch = self._scene.world_batch
         )
         collision_manager.add_collider(bottom_door)
 
@@ -121,40 +137,35 @@ class R_0_0(PlayableSceneNode):
         bar_img.anchor_x = 0
         bar_img.anchor_y = bar_img.height
         energy_bar = SpriteNode(
-            ui = True,
             resource = bar_img,
             x = 4,
             y = view_height - 4,
-            scaling = scaling
+            z = -500,
+            scaling = scaling,
+            batch = self._scene.ui_batch
         )
         health_bar = SpriteNode(
-            ui = True,
             resource = bar_img,
             x = 4,
+            z = -500,
             y = view_height - 12,
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.ui_batch
         )
 
         # Props.
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_0",
-            scaling = scaling
+            scaling = scaling,
+            batch = self._scene.world_batch
         )
 
-        self._scene = SceneNode(
-            window = window,
-            view_width = view_width,
-            view_height = view_height,
-            scaling = scaling,
-            cam_speed = settings.CAM_SPEED,
-            title = "R_0_0",
-            debug = settings.DEBUG,
-            cam_bounds = Bounds(
+        self._scene.set_cam_bounds(
+            Bounds(
                 bottom = 0,
                 right = tilemap_width * self.__tile_size,
                 scaling = scaling
-            ),
-            on_scene_end = self._on_scene_end
+            )
         )
 
         self._scene.add_child(bg)

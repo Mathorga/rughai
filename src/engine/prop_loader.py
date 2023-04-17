@@ -4,7 +4,6 @@ import pyglet
 from PIL import Image
 
 from engine.node import PositionNode
-from engine.renderer import world_renderer
 from props.rughai.r_grass_0 import RGrass0
 from props.rughai.r_grass_1 import RGrass1
 from props.rughai.r_tree_l import RTreeL
@@ -17,49 +16,57 @@ def map_prop(
     prop_name: str,
     x: int,
     y: int,
-    scaling: int = 1
+    scaling: int = 1,
+    batch: Optional[pyglet.graphics.Batch] = None
 ) -> Optional[PositionNode]:
     if prop_name == "r_veg_0":
         return RVeg0(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
     elif prop_name == "r_veg_1":
         return RVeg1(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
     elif prop_name == "r_grass_0":
         return RGrass0(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
     elif prop_name == "r_grass_1":
         return RGrass1(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
     elif prop_name == "r_tree_l":
         return RTreeL(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
     elif prop_name == "r_tree_m":
         return RTreeM(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
     elif prop_name == "r_tree_s":
         return RTreeS(
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
 
 class PropLoader:
@@ -68,7 +75,8 @@ class PropLoader:
         source: str,
         tile_width: int = 8,
         tile_height: int = 8,
-        scaling: int = 1
+        scaling: int = 1,
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> list:
         prop_set = []
 
@@ -93,7 +101,8 @@ class PropLoader:
                                 file_name.split(".")[0],
                                 x = x * tile_width,
                                 y = (propmap.height - y) * tile_height,
-                                scaling = scaling
+                                scaling = scaling,
+                                batch = batch
                             )
 
                             if prop is not None:

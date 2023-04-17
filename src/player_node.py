@@ -95,7 +95,8 @@ class PlayerNode(PositionNode):
         run_threshold: float = 0.75,
         scaling: int = 1,
         collision_tag: str = "",
-        order: int = 0
+        order: int = 0,
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         PositionNode.__init__(
             self,
@@ -162,7 +163,8 @@ class PlayerNode(PositionNode):
             on_animation_end = self.on_sprite_animation_end,
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
 
         # Aim sprite image.
@@ -179,7 +181,8 @@ class PlayerNode(PositionNode):
             resource = target_image,
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
 
         # Shadow sprite image.
@@ -191,7 +194,8 @@ class PlayerNode(PositionNode):
             resource = shadow_image,
             x = x,
             y = y,
-            scaling = scaling
+            scaling = scaling,
+            batch = batch
         )
 
         # Collider.
@@ -204,7 +208,8 @@ class PlayerNode(PositionNode):
             anchor_y = 3,
             scaling = scaling,
             visible = True,
-            tag = collision_tag
+            tag = collision_tag,
+            batch = batch
         )
         collision_manager.add_collider(self.__collider)
 
@@ -224,7 +229,9 @@ class PlayerNode(PositionNode):
         # Draw collider out of batch.
         self.__collider.draw()
 
+        self.__shadow_sprite.draw()
         self.__sprite.draw()
+        self.__aim_sprite.draw()
 
     def update(self, dt) -> None:
         # Fetch input.

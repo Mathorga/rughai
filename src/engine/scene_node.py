@@ -6,7 +6,6 @@ import pyglet.math as pm
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
-from engine.renderer import world_renderer, ui_renderer
 from engine.text_node import TextNode
 from engine.utils import *
 
@@ -19,7 +18,7 @@ class Bounds:
         right: Optional[int] = None,
         scaling: int = 1
     ) -> None:
-        self.__scaling = scaling
+        self.scaling = scaling
         self.top = top * scaling if top != None else None
         self.bottom = bottom * scaling if bottom != None else None
         self.left = left * scaling if left != None else None
@@ -37,7 +36,7 @@ class SceneNode(Node):
         scaling: int = 1,
         cam_speed: float = 10.0,
         curtain_speed: int = 200,
-        cam_bounds: Bounds = Bounds()
+        cam_bounds: Optional[Bounds] = Bounds()
     ):
         self.__window = window
         self.__view_width = view_width
@@ -45,6 +44,8 @@ class SceneNode(Node):
         self.__scaling = scaling
 
         self.__on_scene_end = on_scene_end
+        self.world_batch = pyglet.graphics.Batch()
+        self.ui_batch = pyglet.graphics.Batch()
 
         # Create a new camera.
         self.__camera = Camera(
@@ -91,10 +92,10 @@ class SceneNode(Node):
     def draw(self):
         if self.__camera is not None:
             with self.__camera:
-                world_renderer.draw()
+                self.world_batch.draw()
 
         # Draw UI elements.
-        ui_renderer.draw()
+        self.ui_batch.draw()
 
         # Draw curtain as last element.
         if self.__curtain is not None and self.__curtain_opacity >= 0x00:
@@ -208,6 +209,13 @@ class SceneNode(Node):
 
         self.__curtain = None
         self.__camera = None
+
+    def set_cam_bounds(
+        self,
+        bounds: Bounds
+    ):
+        self.__cam_bounds = bounds
+
 
     def end(self):
         self.__curtain_opening = False
