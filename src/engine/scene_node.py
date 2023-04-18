@@ -36,7 +36,7 @@ class SceneNode(Node):
         scaling: int = 1,
         cam_speed: float = 10.0,
         curtain_speed: int = 200,
-        cam_bounds: Optional[Bounds] = Bounds()
+        cam_bounds: Optional[Bounds] = None
     ):
         self.__window = window
         self.__view_width = view_width
@@ -136,15 +136,16 @@ class SceneNode(Node):
             updated_x = self.__camera.position[0] + camera_movement.x
             updated_y = self.__camera.position[1] + camera_movement.y
 
-            # Apply bounds to camera movement by limiting updated position.
-            if self.__cam_bounds.top != None and self.__cam_bounds.top < updated_y + self.__view_height * self.__scaling:
-                updated_y = self.__cam_bounds.top - self.__view_height * self.__scaling
-            if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom > updated_y:
-                updated_y = self.__cam_bounds.bottom
-            if self.__cam_bounds.left != None and self.__cam_bounds.left > updated_x:
-                updated_x = self.__cam_bounds.left
-            if self.__cam_bounds.right != None and self.__cam_bounds.right < updated_x + self.__view_width * self.__scaling:
-                updated_x = self.__cam_bounds.right - self.__view_width * self.__scaling
+            if self.__cam_bounds is not None:
+                # Apply bounds to camera movement by limiting updated position.
+                if self.__cam_bounds.top != None and self.__cam_bounds.top < updated_y + self.__view_height * self.__scaling:
+                    updated_y = self.__cam_bounds.top - self.__view_height * self.__scaling
+                if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom > updated_y:
+                    updated_y = self.__cam_bounds.bottom
+                if self.__cam_bounds.left != None and self.__cam_bounds.left > updated_x:
+                    updated_x = self.__cam_bounds.left
+                if self.__cam_bounds.right != None and self.__cam_bounds.right < updated_x + self.__view_width * self.__scaling:
+                    updated_x = self.__cam_bounds.right - self.__view_width * self.__scaling
 
             # Actually update camera position.
             # Values are rounded in order not to cause subpixel movements and therefore texture bleeding.
