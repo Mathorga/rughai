@@ -9,7 +9,7 @@ from engine.collision_manager import CollisionManager
 from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sensor_node import SensorNode
-from engine.rect_node import RectNode
+from engine.circle_node import CircleNode
 from engine.sprite_node import SpriteNode
 import engine.utils as utils
 

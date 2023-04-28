@@ -99,8 +99,8 @@ class PropLoader:
                         if propmap_data[x, y][3] > 0x7F:
                             prop = map_prop(
                                 file_name.split(".")[0],
-                                x = x * tile_width,
-                                y = (propmap.height - y) * tile_height,
+                                x = x * tile_width + tile_width / 2,
+                                y = (propmap.height - 1 - y) * tile_height,
                                 scaling = scaling,
                                 batch = batch
                             )

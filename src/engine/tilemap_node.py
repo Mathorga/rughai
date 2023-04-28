@@ -92,6 +92,30 @@ class TilemapNode(PositionNode):
         for spr in self.__sprites:
             spr.scale = scaling
 
+        # self.lines = []
+        # for i in range(map_height):
+        #     self.lines.append(
+        #         pyglet.shapes.Line(
+        #             x = -1000 * scaling,
+        #             y = i * self.__tileset.tile_height * scaling,
+        #             x2 = 1000 * scaling,
+        #             y2 = i * self.__tileset.tile_height * scaling,
+        #             width = 1,
+        #             batch = batch
+        #         )
+        #     )
+        # for i in range(map_width):
+        #     self.lines.append(
+        #         pyglet.shapes.Line(
+        #             y = -1000 * scaling,
+        #             x = i * self.__tileset.tile_width * scaling,
+        #             y2 = 1000 * scaling,
+        #             x2 = i * self.__tileset.tile_width * scaling,
+        #             width = 1,
+        #             batch = batch
+        #         )
+        #     )
+
     def delete(self) -> None:
         for sprite in self.__sprites:
             sprite.delete()

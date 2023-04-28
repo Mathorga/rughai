@@ -4,6 +4,7 @@ import pyglet
 from engine.collision_manager import CollisionManager
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
+from engine.prop_loader import PropLoader
 from engine.scene_node import Bounds, SceneNode
 from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
@@ -187,6 +188,13 @@ class R_0_1(PlayableSceneNode):
             batch = self._scene.ui_batch
         )
 
+        # Props.
+        props = PropLoader.fetch_props(
+            "propmaps/rughai/r_0_1",
+            scaling = scaling,
+            batch = self._scene.world_batch
+        )
+
         self._scene.set_cam_bounds(
             Bounds(
                 top = tilemap_height * self.__tile_size,
@@ -199,6 +207,7 @@ class R_0_1(PlayableSceneNode):
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
+        self._scene.add_children(props)
         self._scene.add_child(self._player)
         self._scene.add_child(north_door)
         self._scene.add_child(south_west_door)
