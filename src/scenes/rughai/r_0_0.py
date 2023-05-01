@@ -97,7 +97,6 @@ class R_0_0(PlayableSceneNode):
         south_door = CollisionNode(
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
-            scaling = scaling,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -126,7 +125,6 @@ class R_0_0(PlayableSceneNode):
         east_door = CollisionNode(
             x = tilemap_width * self.__tile_size,
             y = 25 * self.__tile_size,
-            scaling = scaling,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(

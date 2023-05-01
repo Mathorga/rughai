@@ -90,7 +90,6 @@ class CollisionNode(PositionNode):
         self,
         x: int = 0,
         y: int = 0,
-        scaling: int = 1,
         tag: str = "",
         type: CollisionType = CollisionType.STATIC,
         shapes: List[CollisionShape] = [],
@@ -98,8 +97,6 @@ class CollisionNode(PositionNode):
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
-
-        self.__scaling = scaling
 
         self.tag = tag
         self.type = type

@@ -201,7 +201,6 @@ class PlayerNode(PositionNode):
         self.__collider = CollisionNode(
             x = x,
             y = y,
-            scaling = scaling,
             type = CollisionType.DYNAMIC,
             tag = collision_tag,
             shapes = [
