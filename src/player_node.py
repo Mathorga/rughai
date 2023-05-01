@@ -5,10 +5,10 @@ import pyglet
 import pyglet.math as pm
 from pyglet.window import key
 
-from engine.collision_manager import CollisionManager
+from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_node import CollisionNode
 from engine.node import PositionNode
 from engine.input_controller import InputController
-from engine.sensor_node import SensorNode
 from engine.circle_node import CircleNode
 from engine.sprite_node import SpriteNode
 import engine.utils as utils
@@ -199,7 +199,7 @@ class PlayerNode(PositionNode):
         )
 
         # Collider.
-        self.__collider = SensorNode(
+        self.__collider = CollisionNode(
             x = x,
             y = y,
             width = 8,

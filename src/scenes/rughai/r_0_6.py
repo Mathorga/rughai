@@ -1,11 +1,11 @@
 from typing import Callable, Optional
 import pyglet
-from engine.collision_manager import CollisionManager
+from engine.collision_manager.collision_manager import CollisionManager
 
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.scene_node import Bounds, SceneNode
-from engine.sensor_node import SensorNode
+from engine.collision.collision_node import CollisionNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
@@ -93,7 +93,7 @@ class R_0_6(PlayableSceneNode):
         )
 
         # Place doors.
-        south_door = SensorNode(
+        south_door = CollisionNode(
             x = 16 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 18 * self.__tile_size,
@@ -117,7 +117,7 @@ class R_0_6(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        west_door = SensorNode(
+        west_door = CollisionNode(
             x = -2 * self.__tile_size,
             y = 24 * self.__tile_size,
             width = 2 * self.__tile_size,
@@ -141,7 +141,7 @@ class R_0_6(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        east_door = SensorNode(
+        east_door = CollisionNode(
             x = tilemap_width * self.__tile_size,
             y = 15 * self.__tile_size,
             width = 2 * self.__tile_size,

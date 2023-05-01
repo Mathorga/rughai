@@ -2,10 +2,11 @@ import os.path
 import pyglet
 import pyglet.gl as gl
 
-from engine.collision_manager import CollisionManager
+from engine.collision.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.upscaler import Upscaler
+
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
 from scenes.rughai.r_0_2 import R_0_2

@@ -1,12 +1,37 @@
 from types import FunctionType
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 import pyglet
 
 from engine.node import PositionNode
 from engine.rect_node import RectNode
 import engine.utils as utils
 
-class SensorNode(PositionNode):
+class ShapeCollision(PositionNode):
+    def __init__(
+        self,
+        x: int = 0,
+        y: int = 0,
+        z: float = 0.0
+    ) -> None:
+        super().__init__(x, y, z)
+
+    def collide(self, other) -> bool:
+        return False
+
+class RectCollision(ShapeCollision):
+    def __init__(
+        self,
+        x: int = 0,
+        y: int = 0,
+        z: float = 0.0
+    ) -> None:
+        super().__init__(x, y, z)
+
+    def collide(self, other) -> bool:
+        # TODO
+        return super().collide(other)
+
+class CollisionNode(PositionNode):
     def __init__(
         self,
         x: int = 0,
@@ -18,6 +43,7 @@ class SensorNode(PositionNode):
         scaling: int = 1,
         visible: bool = False,
         tag: str = "",
+        shapes: List[ShapeCollision] = [],
         on_triggered: Optional[Callable[[bool], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
@@ -77,9 +103,7 @@ class SensorNode(PositionNode):
         )
 
     def overlap(self, other):
-        if (issubclass(type(other), SensorNode) and
-            other.tag == self.tag
-        ):
+        if issubclass(type(other), CollisionNode) and other.tag == self.tag:
             if other not in self.collisions and utils.overlap(
                 *self.get_collision_bounds(),
                 *other.get_collision_bounds()
