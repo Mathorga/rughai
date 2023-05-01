@@ -77,10 +77,15 @@ class CollisionRect(CollisionShape):
     def collide(self, other) -> bool:
         if isinstance(other, CollisionRect):
             # Rect/rect collision.
-            return utils.rect_rect_collide(
+            print(utils.rect_rect_min_distance(
                 *self.get_collision_bounds(),
                 *other.get_collision_bounds()
-            )
+            ))
+            return False
+            # return utils.rect_rect_collide(
+            #     *self.get_collision_bounds(),
+            #     *other.get_collision_bounds()
+            # )
         else:
             # Other.
             return False

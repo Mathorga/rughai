@@ -117,28 +117,28 @@ class R_0_0(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        east_door = DoorNode(
-            collision_manager = collision_manager,
-            x = tilemap_width * self.__tile_size,
-            y = 25 * self.__tile_size,
-            width = 2 * self.__tile_size,
-            height = 19 * self.__tile_size,
-            scaling = scaling,
-            tag = "player",
-            on_triggered = lambda entered:
-                self.on_door_triggered(
-                    entered = entered,
-                    bundle = {
-                        "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_6,
-                        "player_position": [
-                            self.__tile_size,
-                            self._player.y
-                        ]
-                    }
-                ),
-            batch = self._scene.world_batch
-        )
+        # east_door = DoorNode(
+        #     collision_manager = collision_manager,
+        #     x = tilemap_width * self.__tile_size,
+        #     y = 25 * self.__tile_size,
+        #     width = 2 * self.__tile_size,
+        #     height = 19 * self.__tile_size,
+        #     scaling = scaling,
+        #     tag = "player",
+        #     on_triggered = lambda entered:
+        #         self.on_door_triggered(
+        #             entered = entered,
+        #             bundle = {
+        #                 "event": events.CHANGE_ROOM,
+        #                 "next_scene": scenes.R_0_6,
+        #                 "player_position": [
+        #                     self.__tile_size,
+        #                     self._player.y
+        #                 ]
+        #             }
+        #         ),
+        #     batch = self._scene.world_batch
+        # )
 
         # Define tree prop.
         # TODO Use dedicated class.
@@ -195,6 +195,6 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_children(props)
         self._scene.add_child(self._player)
         self._scene.add_child(south_door)
-        self._scene.add_child(east_door)
+        # self._scene.add_child(east_door)
         self._scene.add_child(energy_bar)
         self._scene.add_child(health_bar)
