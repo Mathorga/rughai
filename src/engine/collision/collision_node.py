@@ -1,6 +1,6 @@
 from enum import Enum
 from types import FunctionType
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 import pyglet
 
 from engine.node import PositionNode
@@ -105,6 +105,7 @@ class CollisionNode(PositionNode):
         self.shapes: List[CollisionShape] = shapes
         self.on_triggered = on_triggered
 
+        self.velocity = (0.0, 0.0)
         self.collisions = set()
 
     def delete(self) -> None:
@@ -113,17 +114,23 @@ class CollisionNode(PositionNode):
 
     def set_position(
         self,
-        x = None,
-        y = None
+        x: Optional[int] = None,
+        y: Optional[int] = None
     ) -> None:
-        if x != None:
+        if x is not None:
             self.x = x
 
-        if y != None:
+        if y is not None:
             self.y = y
 
         for shape in self.shapes:
             shape.set_position(x, y)
+
+    def set_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        self.velocity = velocity
 
     def collide(self, other) -> None:
         assert isinstance(other, CollisionNode)

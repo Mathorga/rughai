@@ -9,13 +9,13 @@ class CollisionManager:
     def add_collider(
         self,
         collider: CollisionNode
-    ):
+    ) -> None:
         if collider.type in self.__colliders.keys():
             self.__colliders[collider.type].append(collider)
         else:
             self.__colliders[collider.type] = [collider]
 
-    def __check_collisions(self):
+    def __check_collisions(self) -> None:
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
         if CollisionType.DYNAMIC in self.__colliders.keys():
             for collider in self.__colliders[CollisionType.DYNAMIC]:
@@ -23,8 +23,8 @@ class CollisionManager:
                     if collider != other:
                         collider.collide(other)
 
-    def update(self, dt):
+    def update(self, dt) -> None:
         self.__check_collisions()
 
-    def clear(self):
+    def clear(self) -> None:
         self.__colliders.clear()
