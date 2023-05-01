@@ -26,6 +26,7 @@ class DoorNode(PositionNode):
             x = x,
             y = y,
             tag = tag,
+            sensor = True,
             on_triggered = on_triggered,
             shapes = [
                 CollisionRect(

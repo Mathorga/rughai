@@ -92,6 +92,7 @@ class CollisionNode(PositionNode):
         y: int = 0,
         tag: str = "",
         type: CollisionType = CollisionType.STATIC,
+        sensor: bool = False,
         shapes: List[CollisionShape] = [],
         on_triggered: Optional[Callable[[bool], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
@@ -100,20 +101,9 @@ class CollisionNode(PositionNode):
 
         self.tag = tag
         self.type = type
+        self.sensor = sensor
         self.shapes: List[CollisionShape] = shapes
         self.on_triggered = on_triggered
-
-        # self.__shape = RectNode(
-        #     x = x,
-        #     y = y,
-        #     width = width,
-        #     height = height,
-        #     scaling = scaling,
-        #     anchor_x = anchor_x,
-        #     anchor_y = anchor_y,
-        #     color = (0xFF, 0xFF, 0x7F, 0x7F),
-        #     batch = batch
-        # )
 
         self.collisions = set()
 
@@ -135,25 +125,8 @@ class CollisionNode(PositionNode):
         for shape in self.shapes:
             shape.set_position(x, y)
 
-    # def get_collision_bounds(self):
-    #     return (
-    #         self.__shape.x - self.anchor_x,
-    #         self.__shape.y - self.anchor_y,
-    #         self.width,
-    #         self.height
-    #     )
-
     def collide(self, other) -> None:
         assert isinstance(other, CollisionNode)
-
-        # Check collision for every shape.
-        # for shape in self.shapes:
-        #     for other_shape in other.shapes:
-        #         if shape.collide(other_shape):
-        #             print("COLLISION")
-        #             return True
-                
-        # return False
 
         if other.tag == self.tag:
             collision: bool = False
