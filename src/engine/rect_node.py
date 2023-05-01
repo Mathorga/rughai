@@ -1,3 +1,4 @@
+from typing import Optional
 import pyglet
 
 from engine.node import PositionNode
@@ -44,8 +45,8 @@ class RectNode(PositionNode):
 
     def set_position(
         self,
-        x: int | None = None,
-        y: int | None = None
+        x: Optional[int] = None,
+        y: Optional[int] = None
     ) -> None:
         if x is not None:
             self.x = x

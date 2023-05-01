@@ -1,4 +1,5 @@
 from typing import Tuple
+import math
 import pyglet
 import numpy as np
 
@@ -38,6 +39,27 @@ def rect_rect_min_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float
     dist = np.linalg.norm(np.concatenate([u, v]))
     # dist = np.linalg.norm(np.concatenate([delta1, delta2]))
     return dist
+
+def rect_rect_dist(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
+    rect_outer = (
+        min(x1, x2),
+        min(y1, y2),
+        max(x1 + w1, x2 + w2),
+        max(y1 + h1, y2 + h2)
+    )
+    inner_width = rect_outer[2] - rect_outer[0] - w1 - w2
+    inner_height = rect_outer[3] - rect_outer[1] - h1 - h2
+    return (inner_width, inner_height)
+    return math.sqrt(inner_width ** 2 + inner_height ** 2)
+
+def center_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
+    """
+    Computes the distance between the centers of the given rectangles.
+    """
+    return (
+        abs(x1 - x2) - ((w1 + w2) / 2),
+        abs(y1 - y2) - ((h1 + h2) / 2)
+    )
 
 def distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
     """

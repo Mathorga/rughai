@@ -60,7 +60,7 @@ class CollisionRect(CollisionShape):
         self,
         x: int,
         y: int,
-        z: float | None = None
+        z: Optional[float] = None
     ):
         self.x = x
         self.y = y
@@ -77,7 +77,7 @@ class CollisionRect(CollisionShape):
     def collide(self, other) -> bool:
         if isinstance(other, CollisionRect):
             # Rect/rect collision.
-            print(utils.rect_rect_min_distance(
+            print(utils.rect_rect_dist(
                 *self.get_collision_bounds(),
                 *other.get_collision_bounds()
             ))
@@ -119,14 +119,11 @@ class CollisionNode(PositionNode):
 
     def set_position(
         self,
-        x: Optional[int] = None,
-        y: Optional[int] = None
+        x: int,
+        y: int
     ) -> None:
-        if x is not None:
-            self.x = x
-
-        if y is not None:
-            self.y = y
+        self.x = x
+        self.y = y
 
         for shape in self.shapes:
             shape.set_position(x, y)
