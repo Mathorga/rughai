@@ -191,6 +191,8 @@ class RugHai:
             # Upscaler handles maintaining the wanted output resolution.
             with self._upscaler:
                 self._active_scene.draw()
+                self._render_bench.draw()
+                self._update_bench.draw()
 
     def update(self, dt) -> None:
         # Compute collisions through collision manager.

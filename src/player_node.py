@@ -6,7 +6,7 @@ import pyglet.math as pm
 from pyglet.window import key
 
 from engine.collision.collision_manager import CollisionManager
-from engine.collision.collision_node import CollisionNode, CollisionRect
+from engine.collision.collision_node import CollisionNode, CollisionRect, CollisionType
 from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sprite_node import SpriteNode
@@ -202,6 +202,7 @@ class PlayerNode(PositionNode):
             x = x,
             y = y,
             scaling = scaling,
+            type = CollisionType.DYNAMIC,
             tag = collision_tag,
             shapes = [
                 CollisionRect(

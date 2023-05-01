@@ -104,7 +104,7 @@ class CollisionNode(PositionNode):
         self.tag = tag
         self.type = type
         self.shapes: List[CollisionShape] = shapes
-        self.__on_triggered = on_triggered
+        self.on_triggered = on_triggered
 
         # self.__shape = RectNode(
         #     x = x,
@@ -146,35 +146,46 @@ class CollisionNode(PositionNode):
     #         self.height
     #     )
 
-    def collide(self, other):
+    def collide(self, other) -> None:
         assert isinstance(other, CollisionNode)
 
         # Check collision for every shape.
-        for shape in self.shapes:
-            for other_shape in other.shapes:
-                if shape.collide(other_shape):
-                    return True
+        # for shape in self.shapes:
+        #     for other_shape in other.shapes:
+        #         if shape.collide(other_shape):
+        #             print("COLLISION")
+        #             return True
                 
-        return False
+        # return False
 
-        # if other.tag == self.tag:
-        #     if other not in self.collisions and utils.rect_rect_collide(
-        #         *self.get_collision_bounds(),
-        #         *other.get_collision_bounds()
-        #     ):
-        #         # Store the colliding sensor.
-        #         self.collisions.add(other)
+        if other.tag == self.tag:
+            collision: bool = False
+            for shape in self.shapes:
+                for other_shape in other.shapes:
+                    if shape.collide(other_shape):
+                        collision = True
+                        break
+                else:
+                    continue
+                break
 
-        #         # Collision enter callback.
-        #         if self.__on_triggered:
-        #             self.__on_triggered(True)
-        #     elif other in self.collisions and not utils.rect_rect_collide(
-        #         *self.get_collision_bounds(),
-        #         *other.get_collision_bounds()
-        #     ):
-        #         # Remove if not colliding anymore.
-        #         self.collisions.remove(other)
+            if other not in self.collisions and collision:
+                # Store the colliding sensor.
+                self.collisions.add(other)
+                other.collisions.add(self)
 
-        #         # Collision exit callback.
-        #         if self.__on_triggered:
-        #             self.__on_triggered(False)
+                # Collision enter callback.
+                if self.on_triggered is not None:
+                    self.on_triggered(True)
+                if other.on_triggered is not None:
+                    other.on_triggered(True)
+            elif other in self.collisions and not collision:
+                # Remove if not colliding anymore.
+                self.collisions.remove(other)
+                other.collisions.remove(self)
+
+                # Collision exit callback.
+                if self.on_triggered is not None:
+                    self.on_triggered(False)
+                if other.on_triggered is not None:
+                    other.on_triggered(False)
