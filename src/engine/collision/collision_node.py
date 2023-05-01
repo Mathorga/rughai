@@ -23,6 +23,12 @@ class CollisionShape(PositionNode):
     def collide(self, other) -> bool:
         return False
 
+    def set_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        pass
+
 class CollisionRect(CollisionShape):
     def __init__(
         self,
@@ -44,6 +50,7 @@ class CollisionRect(CollisionShape):
         self.anchor_y = anchor_y
         self.scaling = scaling
 
+        self.velocity = (0.0, 0.0)
         self.render_shape = RectNode(
             x = x,
             y = y,
@@ -61,10 +68,16 @@ class CollisionRect(CollisionShape):
         x: int,
         y: int,
         z: Optional[float] = None
-    ):
+    ) -> None:
         self.x = x
         self.y = y
         self.render_shape.set_position(x, y)
+
+    def set_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        self.velocity = velocity
 
     def get_collision_bounds(self):
         return (
@@ -77,10 +90,11 @@ class CollisionRect(CollisionShape):
     def collide(self, other) -> bool:
         if isinstance(other, CollisionRect):
             # Rect/rect collision.
-            print(utils.rect_rect_dist(
+            utils.collision_dynamic_rect_rect(
                 *self.get_collision_bounds(),
+                *self.velocity,
                 *other.get_collision_bounds()
-            ))
+            )
             return False
             # return utils.rect_rect_collide(
             #     *self.get_collision_bounds(),
@@ -133,6 +147,9 @@ class CollisionNode(PositionNode):
         velocity: Tuple[float, float]
     ) -> None:
         self.velocity = velocity
+
+        for shape in self.shapes:
+            shape.set_velocity(velocity)
 
     def collide(self, other) -> None:
         assert isinstance(other, CollisionNode)

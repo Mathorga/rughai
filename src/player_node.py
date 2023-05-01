@@ -127,8 +127,6 @@ class PlayerNode(PositionNode):
         utils.set_anim_duration(self.__sprint_anim, 0.08)
         self.__sprint_anim.frames[-1].duration = None
 
-        self.__movement = pyglet.math.Vec2()
-
         # Setup input handling.
         self.__controls_enabled = True
         self.__input = PlayerInput(input_controller = input_controller)
@@ -331,20 +329,22 @@ class PlayerNode(PositionNode):
             # Clamp speed between 0 and max speed.
             self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed)
 
-    def __compute_movement(self, dt):
+    def __compute_velocity(self, dt) -> pm.Vec2:
         # Define a vector direction.
-        movement_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
+        velocity_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
 
         # Scale movement to current speed.
-        self.__movement = movement_base.from_magnitude(self.__stats._speed * dt)
+        return velocity_base.from_magnitude(self.__stats._speed * dt)
 
     def __move(self, dt):
         # Compute movement.
-        self.__compute_movement(dt)
+        velocity = self.__compute_velocity(dt)
+
+        self.__collider.set_velocity((velocity.x, velocity.y))
 
         # Apply movement.
-        self.x += self.__movement.x
-        self.y += self.__movement.y
+        self.x += velocity.x
+        self.y += velocity.y
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
