@@ -1,6 +1,7 @@
 from typing import Callable, Optional
 import pyglet
 from engine.collision.collision_manager import CollisionManager
+from engine.door_node import DoorNode
 
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
@@ -94,9 +95,13 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Place doors.
-        south_door = CollisionNode(
+        south_door = DoorNode(
+            collision_manager = collision_manager,
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
+            width = 31 * self.__tile_size,
+            height = 2 * self.__tile_size,
+            scaling = scaling,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -110,21 +115,15 @@ class R_0_0(PlayableSceneNode):
                         ]
                     }
                 ),
-            shapes = [
-                CollisionRect(
-                    x = 19 * self.__tile_size,
-                    y = -2 * self.__tile_size,
-                    width = 31 * self.__tile_size,
-                    height = 2 * self.__tile_size,
-                    scaling = scaling,
-                    batch = self._scene.world_batch
-                )
-            ],
             batch = self._scene.world_batch
         )
-        east_door = CollisionNode(
+        east_door = DoorNode(
+            collision_manager = collision_manager,
             x = tilemap_width * self.__tile_size,
             y = 25 * self.__tile_size,
+            width = 2 * self.__tile_size,
+            height = 19 * self.__tile_size,
+            scaling = scaling,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -138,20 +137,8 @@ class R_0_0(PlayableSceneNode):
                         ]
                     }
                 ),
-            shapes = [
-                CollisionRect(
-                    x = tilemap_width * self.__tile_size,
-                    y = 25 * self.__tile_size,
-                    width = 2 * self.__tile_size,
-                    height = 19 * self.__tile_size,
-                    scaling = scaling,
-                    batch = self._scene.world_batch
-                )
-            ],
             batch = self._scene.world_batch
         )
-        collision_manager.add_collider(south_door)
-        collision_manager.add_collider(east_door)
 
         # Define tree prop.
         # TODO Use dedicated class.
