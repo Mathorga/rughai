@@ -1,3 +1,4 @@
+from enum import Enum
 from types import FunctionType
 from typing import Callable, List, Optional
 import pyglet
@@ -6,7 +7,11 @@ from engine.node import PositionNode
 from engine.rect_node import RectNode
 import engine.utils as utils
 
-class ShapeCollision(PositionNode):
+class CollisionType(Enum):
+    STATIC = 0
+    DYNAMIC = 1
+
+class CollisionShape(PositionNode):
     def __init__(
         self,
         x: int = 0,
@@ -18,18 +23,67 @@ class ShapeCollision(PositionNode):
     def collide(self, other) -> bool:
         return False
 
-class RectCollision(ShapeCollision):
+class RectCollision(CollisionShape):
     def __init__(
         self,
         x: int = 0,
         y: int = 0,
-        z: float = 0.0
+        z: float = 0.0,
+        width: int = 0,
+        height: int = 0,
+        anchor_x: int = 0,
+        anchor_y: int = 0,
+        scaling: int = 1,
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
 
+        self.width = width
+        self.height = height
+        self.anchor_x = anchor_x
+        self.anchor_y = anchor_y
+        self.scaling = scaling
+
+        self.render_shape = RectNode(
+            x = x,
+            y = y,
+            width = width,
+            height = height,
+            scaling = scaling,
+            anchor_x = anchor_x,
+            anchor_y = anchor_y,
+            color = (0xFF, 0xFF, 0x7F, 0x7F),
+            batch = batch
+        )
+
+    def set_position(
+        self,
+        x: int,
+        y: int,
+        z: float | None = None
+    ):
+        self.x = x
+        self.y = y
+        self.render_shape.set_position(x, y)
+
+    def get_collision_bounds(self):
+        return (
+            self.x - self.anchor_x,
+            self.y - self.anchor_y,
+            self.width,
+            self.height
+        )
+
     def collide(self, other) -> bool:
-        # TODO
-        return super().collide(other)
+        if isinstance(other, RectCollision):
+            # Rect/rect collision.
+            return utils.rect_rect_collide(
+                *self.get_collision_bounds(),
+                *other.get_collision_bounds()
+            )
+        else:
+            # Other.
+            return False
 
 class CollisionNode(PositionNode):
     def __init__(
@@ -43,7 +97,8 @@ class CollisionNode(PositionNode):
         scaling: int = 1,
         visible: bool = False,
         tag: str = "",
-        shapes: List[ShapeCollision] = [],
+        type: CollisionType = CollisionType.STATIC,
+        shapes: List[CollisionShape] = [],
         on_triggered: Optional[Callable[[bool], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
@@ -58,6 +113,8 @@ class CollisionNode(PositionNode):
         self.__visible = visible
 
         self.tag = tag
+        self.type = type
+        self.shapes: List[CollisionShape] = shapes
         self.__on_triggered = on_triggered
 
         self.__shape = RectNode(
@@ -102,25 +159,35 @@ class CollisionNode(PositionNode):
             self.height
         )
 
-    def overlap(self, other):
-        if issubclass(type(other), CollisionNode) and other.tag == self.tag:
-            if other not in self.collisions and utils.overlap(
-                *self.get_collision_bounds(),
-                *other.get_collision_bounds()
-            ):
-                # Store the colliding sensor.
-                self.collisions.add(other)
+    def collide(self, other):
+        assert isinstance(other, CollisionNode)
 
-                # Collision enter callback.
-                if self.__on_triggered:
-                    self.__on_triggered(True)
-            elif other in self.collisions and not utils.overlap(
-                *self.get_collision_bounds(),
-                *other.get_collision_bounds()
-            ):
-                # Remove if not colliding anymore.
-                self.collisions.remove(other)
+        # Check collision for every shape.
+        for shape in self.shapes:
+            for other_shape in other.shapes:
+                if shape.collide(other_shape):
+                    return True
+                
+        return False
 
-                # Collision exit callback.
-                if self.__on_triggered:
-                    self.__on_triggered(False)
+        # if other.tag == self.tag:
+        #     if other not in self.collisions and utils.rect_rect_collide(
+        #         *self.get_collision_bounds(),
+        #         *other.get_collision_bounds()
+        #     ):
+        #         # Store the colliding sensor.
+        #         self.collisions.add(other)
+
+        #         # Collision enter callback.
+        #         if self.__on_triggered:
+        #             self.__on_triggered(True)
+        #     elif other in self.collisions and not utils.rect_rect_collide(
+        #         *self.get_collision_bounds(),
+        #         *other.get_collision_bounds()
+        #     ):
+        #         # Remove if not colliding anymore.
+        #         self.collisions.remove(other)
+
+        #         # Collision exit callback.
+        #         if self.__on_triggered:
+        #             self.__on_triggered(False)

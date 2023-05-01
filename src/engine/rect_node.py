@@ -44,8 +44,8 @@ class RectNode(PositionNode):
 
     def set_position(
         self,
-        x = None,
-        y = None
+        x: int | None = None,
+        y: int | None = None
     ) -> None:
         if x is not None:
             self.x = x

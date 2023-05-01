@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Node:
     def __init__(self) -> None:
         pass
@@ -36,6 +39,17 @@ class PositionNode(Node):
         self.x = x
         self.y = y
         self.z = z
+
+    def set_position(
+        self,
+        x: int,
+        y: int,
+        z: Optional[float] = None
+    ):
+        self.x = x
+        self.y = y
+        if z is not None:
+            self.z = z
 
     def get_bounding_box(self):
         return (self.x, self.y, self.x, self.y)

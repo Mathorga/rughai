@@ -1,8 +1,5 @@
 from typing import Dict, List
-from engine.collision.collision_node import CollisionNode
-
-COLLISION_STATIC = 0
-COLLISION_DYNAMIC = 1
+from engine.collision.collision_node import CollisionNode, CollisionType
 
 class CollisionManager:
     def __init__(self) -> None:
@@ -18,10 +15,10 @@ class CollisionManager:
 
     def __check_collisions(self):
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
-        for collider in self.__colliders[COLLISION_DYNAMIC]:
-            for other in self.__colliders[COLLISION_STATIC]:
+        for collider in self.__colliders[CollisionType.DYNAMIC]:
+            for other in self.__colliders[CollisionType.STATIC]:
                 if collider != other:
-                    collider.overlap(other)
+                    collider.collide(other)
 
     def update(self, dt):
         self.__check_collisions()
