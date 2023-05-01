@@ -6,10 +6,9 @@ import pyglet.math as pm
 from pyglet.window import key
 
 from engine.collision.collision_manager import CollisionManager
-from engine.collision.collision_node import CollisionNode
+from engine.collision.collision_node import CollisionNode, CollisionRect
 from engine.node import PositionNode
 from engine.input_controller import InputController
-from engine.circle_node import CircleNode
 from engine.sprite_node import SpriteNode
 import engine.utils as utils
 
@@ -202,13 +201,20 @@ class PlayerNode(PositionNode):
         self.__collider = CollisionNode(
             x = x,
             y = y,
-            width = 8,
-            height = 6,
-            anchor_x = 4,
-            anchor_y = 3,
             scaling = scaling,
-            visible = True,
             tag = collision_tag,
+            shapes = [
+                CollisionRect(
+                    x = x,
+                    y = y,
+                    width = 8,
+                    height = 6,
+                    anchor_x = 4,
+                    anchor_y = 3,
+                    scaling = scaling,
+                    batch = batch
+                )
+            ],
             batch = batch
         )
         collision_manager.add_collider(self.__collider)

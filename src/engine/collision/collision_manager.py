@@ -4,21 +4,24 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 class CollisionManager:
     def __init__(self) -> None:
         # self.__colliders: List[SensorNode] = []
-        self.__colliders: Dict[int, List[CollisionNode]] = {}
+        self.__colliders: Dict[CollisionType, List[CollisionNode]] = {}
 
     def add_collider(
         self,
-        collider: CollisionNode,
-        collider_type: int,
+        collider: CollisionNode
     ):
-        self.__colliders[collider_type].append(collider)
+        if collider.type in self.__colliders.keys():
+            self.__colliders[collider.type].append(collider)
+        else:
+            self.__colliders[collider.type] = [collider]
 
     def __check_collisions(self):
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
-        for collider in self.__colliders[CollisionType.DYNAMIC]:
-            for other in self.__colliders[CollisionType.STATIC]:
-                if collider != other:
-                    collider.collide(other)
+        if CollisionType.DYNAMIC in self.__colliders.keys():
+            for collider in self.__colliders[CollisionType.DYNAMIC]:
+                for other in self.__colliders[CollisionType.STATIC]:
+                    if collider != other:
+                        collider.collide(other)
 
     def update(self, dt):
         self.__check_collisions()

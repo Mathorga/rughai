@@ -6,7 +6,7 @@ from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.prop_loader import PropLoader
 from engine.scene_node import Bounds, SceneNode
-from engine.collision.collision_node import CollisionNode
+from engine.collision.collision_node import CollisionNode, CollisionRect
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
@@ -97,12 +97,7 @@ class R_0_0(PlayableSceneNode):
         south_door = CollisionNode(
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
-            width = 31 * self.__tile_size,
-            height = 2 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -116,17 +111,22 @@ class R_0_0(PlayableSceneNode):
                         ]
                     }
                 ),
+            shapes = [
+                CollisionRect(
+                    x = 19 * self.__tile_size,
+                    y = -2 * self.__tile_size,
+                    width = 31 * self.__tile_size,
+                    height = 2 * self.__tile_size,
+                    scaling = scaling,
+                    batch = self._scene.world_batch
+                )
+            ],
             batch = self._scene.world_batch
         )
         east_door = CollisionNode(
             x = tilemap_width * self.__tile_size,
             y = 25 * self.__tile_size,
-            width = 2 * self.__tile_size,
-            height = 19 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -140,6 +140,16 @@ class R_0_0(PlayableSceneNode):
                         ]
                     }
                 ),
+            shapes = [
+                CollisionRect(
+                    x = tilemap_width * self.__tile_size,
+                    y = 25 * self.__tile_size,
+                    width = 2 * self.__tile_size,
+                    height = 19 * self.__tile_size,
+                    scaling = scaling,
+                    batch = self._scene.world_batch
+                )
+            ],
             batch = self._scene.world_batch
         )
         collision_manager.add_collider(south_door)

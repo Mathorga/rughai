@@ -23,7 +23,7 @@ class CollisionShape(PositionNode):
     def collide(self, other) -> bool:
         return False
 
-class RectCollision(CollisionShape):
+class CollisionRect(CollisionShape):
     def __init__(
         self,
         x: int = 0,
@@ -52,7 +52,7 @@ class RectCollision(CollisionShape):
             scaling = scaling,
             anchor_x = anchor_x,
             anchor_y = anchor_y,
-            color = (0xFF, 0xFF, 0x7F, 0x7F),
+            color = (0x7F, 0xFF, 0xFF, 0x7F),
             batch = batch
         )
 
@@ -75,7 +75,7 @@ class RectCollision(CollisionShape):
         )
 
     def collide(self, other) -> bool:
-        if isinstance(other, RectCollision):
+        if isinstance(other, CollisionRect):
             # Rect/rect collision.
             return utils.rect_rect_collide(
                 *self.get_collision_bounds(),
@@ -90,12 +90,7 @@ class CollisionNode(PositionNode):
         self,
         x: int = 0,
         y: int = 0,
-        width: int = 0,
-        height: int = 0,
-        anchor_x: int = 0,
-        anchor_y: int = 0,
         scaling: int = 1,
-        visible: bool = False,
         tag: str = "",
         type: CollisionType = CollisionType.STATIC,
         shapes: List[CollisionShape] = [],
@@ -104,35 +99,30 @@ class CollisionNode(PositionNode):
     ) -> None:
         super().__init__(x, y)
 
-        self.width = width
-        self.height = height
-        self.anchor_x = anchor_x
-        self.anchor_y = anchor_y
-
         self.__scaling = scaling
-        self.__visible = visible
 
         self.tag = tag
         self.type = type
         self.shapes: List[CollisionShape] = shapes
         self.__on_triggered = on_triggered
 
-        self.__shape = RectNode(
-            x = x,
-            y = y,
-            width = width,
-            height = height,
-            scaling = scaling,
-            anchor_x = anchor_x,
-            anchor_y = anchor_y,
-            color = (0xFF, 0xFF, 0x7F, 0x7F),
-            batch = batch
-        )
+        # self.__shape = RectNode(
+        #     x = x,
+        #     y = y,
+        #     width = width,
+        #     height = height,
+        #     scaling = scaling,
+        #     anchor_x = anchor_x,
+        #     anchor_y = anchor_y,
+        #     color = (0xFF, 0xFF, 0x7F, 0x7F),
+        #     batch = batch
+        # )
 
         self.collisions = set()
 
     def delete(self) -> None:
-        self.__shape.delete
+        for shape in self.shapes:
+            shape.delete()
 
     def set_position(
         self,
@@ -145,19 +135,16 @@ class CollisionNode(PositionNode):
         if y != None:
             self.y = y
 
-        self.__shape.set_position(x, y)
+        for shape in self.shapes:
+            shape.set_position(x, y)
 
-    def draw(self) -> None:
-        if self.__visible:
-            self.__shape.draw()
-
-    def get_collision_bounds(self):
-        return (
-            self.__shape.x - self.anchor_x,
-            self.__shape.y - self.anchor_y,
-            self.width,
-            self.height
-        )
+    # def get_collision_bounds(self):
+    #     return (
+    #         self.__shape.x - self.anchor_x,
+    #         self.__shape.y - self.anchor_y,
+    #         self.width,
+    #         self.height
+    #     )
 
     def collide(self, other):
         assert isinstance(other, CollisionNode)
