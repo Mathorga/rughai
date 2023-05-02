@@ -1,7 +1,6 @@
 from typing import Optional, Tuple
 import math
 import pyglet
-import numpy as np
 
 def animation_set_anchor(
     animation: pyglet.image.animation.Animation,
