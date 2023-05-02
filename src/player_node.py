@@ -212,8 +212,7 @@ class PlayerNode(PositionNode):
                     scaling = scaling,
                     batch = batch
                 )
-            ],
-            batch = batch
+            ]
         )
         collision_manager.add_collider(self.__collider)
 
@@ -344,11 +343,13 @@ class PlayerNode(PositionNode):
         displacement = self.__compute_displacement(dt)
 
         # self.__collider.set_velocity((displacement.x, displacement.y))
-        # collider_position = self.__collider.get_position()
+        collider_position = self.__collider.get_position()
+
+        self.__collider.set_position((collider_position[0] + displacement.x, collider_position[1] + displacement.y))
 
         # Apply movement.
-        self.x += displacement.x
-        self.y += displacement.y
+        # self.x += displacement.x
+        # self.y += displacement.y
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
@@ -391,7 +392,7 @@ class PlayerNode(PositionNode):
         self.__update_shadow(dt)
 
         # Update collider.
-        self.__update_collider(dt)
+        # self.__update_collider(dt)
 
     def __update_aim(self, dt):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)

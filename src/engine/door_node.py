@@ -26,7 +26,7 @@ class DoorNode(PositionNode):
             x = x,
             y = y,
             tag = tag,
-            sensor = False,
+            sensor = True,
             on_triggered = on_triggered,
             shapes = [
                 CollisionRect(
@@ -39,8 +39,7 @@ class DoorNode(PositionNode):
                     scaling = scaling,
                     batch = batch
                 )
-            ],
-            batch = batch
+            ]
         )
 
         collision_manager.add_collider(self.collider)

@@ -120,8 +120,7 @@ class CollisionNode(PositionNode):
         type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
         shapes: List[CollisionShape] = [],
-        on_triggered: Optional[Callable[[bool], None]] = None,
-        batch: Optional[pyglet.graphics.Batch] = None
+        on_triggered: Optional[Callable[[bool], None]] = None
     ) -> None:
         super().__init__(x, y)
 

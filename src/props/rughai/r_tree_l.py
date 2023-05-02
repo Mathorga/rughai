@@ -1,6 +1,8 @@
 from typing import Optional
 import pyglet
 
+from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_node import CollisionNode, CollisionRect, CollisionType
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.utils import animation_set_anchor
@@ -8,6 +10,7 @@ from engine.utils import animation_set_anchor
 class RTreeL(PositionNode):
     def __init__(
         self,
+        collision_manager: CollisionManager,
         x: float = 0,
         y: float = 0,
         z: float = 0,
@@ -33,6 +36,27 @@ class RTreeL(PositionNode):
             on_animation_end = lambda : None,
             batch = batch
         )
+
+        # Collider.
+        self.__collider = CollisionNode(
+            x = x,
+            y = y,
+            type = CollisionType.STATIC,
+            tag = "player",
+            shapes = [
+                CollisionRect(
+                    x = x,
+                    y = y,
+                    width = 8,
+                    height = 8,
+                    anchor_x = 4,
+                    anchor_y = 0,
+                    scaling = scaling,
+                    batch = batch
+                )
+            ]
+        )
+        collision_manager.add_collider(self.__collider)
 
     def draw(self) -> None:
         self.__sprite.draw()

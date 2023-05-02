@@ -195,14 +195,14 @@ class RugHai:
                 self._update_bench.draw()
 
     def update(self, dt) -> None:
-        # Compute collisions through collision manager.
-        self._collision_manager.update(dt)
-
         # Benchmark measures update time.
         with self._update_bench:
             # InputController makes sure every input is handled correctly.
             with self._input:
                 self._active_scene.update(dt)
+
+        # Compute collisions through collision manager.
+        self._collision_manager.update(dt)
 
     def run(self) -> None:
         # Scale textures using nearest neighbor filtering.

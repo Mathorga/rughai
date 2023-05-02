@@ -1,9 +1,9 @@
 from typing import Dict, List
-from engine.collision.collision_node import CollisionNode, CollisionType
+
+from engine.collision.collision_node import CollisionType, CollisionNode
 
 class CollisionManager:
     def __init__(self) -> None:
-        # self.__colliders: List[SensorNode] = []
         self.__colliders: Dict[CollisionType, List[CollisionNode]] = {}
 
     def add_collider(
