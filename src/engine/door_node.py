@@ -9,12 +9,12 @@ class DoorNode(PositionNode):
     def __init__(
         self,
         collision_manager: CollisionManager,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         width: int = 0,
         height: int = 0,
-        anchor_x: int = 0,
-        anchor_y: int = 0,
+        anchor_x: float = 0,
+        anchor_y: float = 0,
         scaling: int = 1,
         tag: str = "",
         on_triggered: Optional[Callable[[bool], None]] = None,
@@ -26,7 +26,7 @@ class DoorNode(PositionNode):
             x = x,
             y = y,
             tag = tag,
-            sensor = True,
+            sensor = False,
             on_triggered = on_triggered,
             shapes = [
                 CollisionRect(

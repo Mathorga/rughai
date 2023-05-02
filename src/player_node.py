@@ -89,8 +89,8 @@ class PlayerNode(PositionNode):
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         run_threshold: float = 0.75,
         scaling: int = 1,
         collision_tag: str = "",
@@ -329,22 +329,26 @@ class PlayerNode(PositionNode):
             # Clamp speed between 0 and max speed.
             self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed)
 
-    def __compute_velocity(self, dt) -> pm.Vec2:
+    def __compute_displacement(self, dt) -> pm.Vec2:
         # Define a vector direction.
-        velocity_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
+        displacement_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
 
         # Scale movement to current speed.
-        return velocity_base.from_magnitude(self.__stats._speed * dt)
+        return displacement_base.from_magnitude(self.__stats._speed * dt)
 
     def __move(self, dt):
-        # Compute movement.
-        velocity = self.__compute_velocity(dt)
+        self.x = self.__collider.x
+        self.y = self.__collider.y
 
-        self.__collider.set_velocity((velocity.x, velocity.y))
+        # Compute movement.
+        displacement = self.__compute_displacement(dt)
+
+        # self.__collider.set_velocity((displacement.x, displacement.y))
+        # collider_position = self.__collider.get_position()
 
         # Apply movement.
-        self.x += velocity.x
-        self.y += velocity.y
+        self.x += displacement.x
+        self.y += displacement.y
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
@@ -409,7 +413,7 @@ class PlayerNode(PositionNode):
         self.__shadow_sprite.update(dt)
 
     def __update_collider(self, dt):
-        self.__collider.set_position(self.x, self.y)
+        self.__collider.set_position(self.get_position())
         self.__collider.update(dt)
 
     def get_bounding_box(self):

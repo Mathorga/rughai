@@ -59,8 +59,8 @@ class TilemapNode(PositionNode):
         map,
         map_width: int,
         map_height: int,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         scaling: int = 1,
         z_offset: int = 0,
         batch: Optional[pyglet.graphics.Batch] = None
@@ -126,8 +126,8 @@ class TilemapNode(PositionNode):
     def from_tmx_file(
         # Path to the tmx file.
         source: str,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         scaling: int = 1,
         # Distance (z-axis) between tilemap layers.
         layers_spacing: int = 8,
@@ -195,8 +195,8 @@ class TilemapNode(PositionNode):
     @staticmethod
     def from_tmj_file(
         source: str,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         scaling: int = 1
     ) -> list:
         """

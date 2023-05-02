@@ -19,7 +19,7 @@ PIXEL_PERFECT = False
 # GBA resolution x3:
 WINDOW_WIDTH = 720
 WINDOW_HEIGHT = 480
-FULLSCREEN = False
+FULLSCREEN = True
 
 # Keep target fps high, as low values could cause unwanted lags.
 TARGET_FPS = 480

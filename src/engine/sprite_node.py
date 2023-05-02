@@ -11,8 +11,8 @@ class SpriteNode(PositionNode):
         resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
         batch: Optional[pyglet.graphics.Batch] = None,
         on_animation_end = None,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         z: Optional[int] = None,
         scaling: int = 1,
         shader: Optional[pyglet.graphics.shader.ShaderProgram] = None
@@ -27,8 +27,8 @@ class SpriteNode(PositionNode):
 
         self.sprite = DepthSprite(
             img = resource,
-            x = x * scaling,
-            y = y * scaling,
+            x = int(x * scaling),
+            y = int(y * scaling),
             z = int(-z if z is not None else -y),
             program = shader,
             batch = batch
@@ -39,8 +39,8 @@ class SpriteNode(PositionNode):
         self.__z_label = pyglet.text.Label(
             text = str(self.sprite.z),
             color = (0x00, 0x00, 0x00, 0xFF),
-            x = x * scaling + 5,
-            y = y * scaling + 5
+            x = int(x * scaling + 5),
+            y = int(y * scaling + 5)
         )
 
         self.__on_animation_end = on_animation_end

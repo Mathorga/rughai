@@ -14,8 +14,8 @@ from props.rughai.r_veg_1 import RVeg1
 
 def map_prop(
     prop_name: str,
-    x: int,
-    y: int,
+    x: float,
+    y: float,
     scaling: int = 1,
     batch: Optional[pyglet.graphics.Batch] = None
 ) -> Optional[PositionNode]:

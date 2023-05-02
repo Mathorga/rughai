@@ -14,14 +14,17 @@ class CollisionType(Enum):
 class CollisionShape(PositionNode):
     def __init__(
         self,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         z: float = 0.0
     ) -> None:
         super().__init__(x, y, z)
 
-    def collide(self, other) -> bool:
+    def overlap(self, other) -> bool:
         return False
+
+    def collide(self, other) -> Tuple[float, float]:
+        return (0.0, 0.0)
 
     def set_velocity(
         self,
@@ -32,13 +35,13 @@ class CollisionShape(PositionNode):
 class CollisionRect(CollisionShape):
     def __init__(
         self,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         z: float = 0.0,
         width: int = 0,
         height: int = 0,
-        anchor_x: int = 0,
-        anchor_y: int = 0,
+        anchor_x: float = 0,
+        anchor_y: float = 0,
         scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
@@ -65,13 +68,12 @@ class CollisionRect(CollisionShape):
 
     def set_position(
         self,
-        x: int,
-        y: int,
+        position: Tuple[int, int],
         z: Optional[float] = None
     ) -> None:
-        self.x = x
-        self.y = y
-        self.render_shape.set_position(x, y)
+        self.x = position[0]
+        self.y = position[1]
+        self.render_shape.set_position(position)
 
     def set_velocity(
         self,
@@ -87,28 +89,33 @@ class CollisionRect(CollisionShape):
             self.height
         )
 
-    def collide(self, other) -> bool:
+    def overlap(self, other) -> bool:
         if isinstance(other, CollisionRect):
-            # Rect/rect collision.
-            utils.collision_dynamic_rect_rect(
+            # Rect/rect overlap.
+            return utils.rect_rect_collision(
                 *self.get_collision_bounds(),
-                *self.velocity,
                 *other.get_collision_bounds()
             )
-            return False
-            # return utils.rect_rect_collide(
-            #     *self.get_collision_bounds(),
-            #     *other.get_collision_bounds()
-            # )
         else:
             # Other.
             return False
 
+    def collide(self, other) -> Tuple[float, float]:
+        if isinstance(other, CollisionRect):
+            # Rect/rect collision.
+            return utils.resolve_collision(
+                *self.get_collision_bounds(),
+                *other.get_collision_bounds()
+            )
+        else:
+            # Other.
+            return (0, 0)
+
 class CollisionNode(PositionNode):
     def __init__(
         self,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         tag: str = "",
         type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
@@ -133,14 +140,13 @@ class CollisionNode(PositionNode):
 
     def set_position(
         self,
-        x: int,
-        y: int
+        position: Tuple[float, float]
     ) -> None:
-        self.x = x
-        self.y = y
+        self.x = position[0]
+        self.y = position[1]
 
         for shape in self.shapes:
-            shape.set_position(x, y)
+            shape.set_position(position)
 
     def set_velocity(
         self,
@@ -154,18 +160,24 @@ class CollisionNode(PositionNode):
     def collide(self, other) -> None:
         assert isinstance(other, CollisionNode)
 
+        collision: Tuple[float, float] = (0.0, 0.0)
+
         if other.tag == self.tag:
-            collision: bool = False
+            overlap: bool = False
             for shape in self.shapes:
                 for other_shape in other.shapes:
-                    if shape.collide(other_shape):
-                        collision = True
+                    overlap = shape.overlap(other_shape)
+                    if overlap:
+                        collision = shape.collide(other_shape)
                         break
                 else:
                     continue
                 break
 
-            if other not in self.collisions and collision:
+            if not other.sensor:
+                self.set_position((self.x + collision[0], self.y + collision[1]))
+
+            if other not in self.collisions and overlap:
                 # Store the colliding sensor.
                 self.collisions.add(other)
                 other.collisions.add(self)
@@ -175,7 +187,7 @@ class CollisionNode(PositionNode):
                     self.on_triggered(True)
                 if other.on_triggered is not None:
                     other.on_triggered(True)
-            elif other in self.collisions and not collision:
+            elif other in self.collisions and not overlap:
                 # Remove if not colliding anymore.
                 self.collisions.remove(other)
                 other.collisions.remove(self)

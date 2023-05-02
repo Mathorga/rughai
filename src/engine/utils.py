@@ -5,8 +5,8 @@ import numpy as np
 
 def animation_set_anchor(
     animation: pyglet.image.animation.Animation,
-    x: int,
-    y: int
+    x: float,
+    y: float
 ):
     for frame in animation.frames:
         frame.image.anchor_x = x
@@ -124,7 +124,6 @@ def collision_dynamic_rect_rect(
 ) -> Optional[Tuple[float, float, float, float, float]]:
         # if the dynamic rectangle is not moving, there is no collision
         if velocity_x == 0.0 and velocity_y == 0.0:
-            print("NONE", velocity_x, velocity_y)
             return None
 
         # expand the target rectangle to make the borders of the dynamic rectangle match with the borders of the stationary rectangle
@@ -147,20 +146,23 @@ def collision_dynamic_rect_rect(
         )
 
         # if there was a collision
-        if not collision_result is None and not collision_result == False:
+        if collision_result is not None:
             # return it
             return collision_result
 
-def rect_rect_min_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
-    delta1 = np.array((x1, y1)) - np.array((x2 + w2, y2 + h2))
-    delta2 = np.array((x2, y2)) - np.array((x1 + w1, y1 + h1))
-    u = np.max(np.array([np.zeros(len(delta1)), delta1]), axis=0)
-    v = np.max(np.array([np.zeros(len(delta2)), delta2]), axis=0)
-    dist = np.linalg.norm(np.concatenate([u, v]))
-    # dist = np.linalg.norm(np.concatenate([delta1, delta2]))
-    return dist
-
-def rect_rect_dist(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
+def rect_rect_min_dist(
+    x1: float,
+    y1: float,
+    w1: float,
+    h1: float,
+    x2: float,
+    y2: float,
+    w2: float,
+    h2: float
+) -> float:
+    """
+    Computes the minimum distance between two AABBs.
+    """
     rect_outer = (
         min(x1, x2),
         min(y1, y2),
@@ -169,31 +171,67 @@ def rect_rect_dist(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
     )
     inner_width = rect_outer[2] - rect_outer[0] - w1 - w2
     inner_height = rect_outer[3] - rect_outer[1] - h1 - h2
-    return (inner_width, inner_height)
+
     return math.sqrt(inner_width ** 2 + inner_height ** 2)
 
-def full_rect_dist(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
-    rect_outer = (
-        min(x1, x2),
-        min(y1, y2),
-        max(x1 + w1, x2 + w2),
-        max(y1 + h1, y2 + h2)
-    )
-    inner_width = rect_outer[2] - rect_outer[0] - w1 - w2
-    inner_height = rect_outer[3] - rect_outer[1] - h1 - h2
-    return (inner_width, inner_height)
-    return math.sqrt(inner_width ** 2 + inner_height ** 2)
+
+def rect_rect_collision(
+    x1: float,
+    y1: float,
+    w1: float,
+    h1: float,
+    x2: float,
+    y2: float,
+    w2: float,
+    h2: float
+) -> bool:
+    """
+    Checks whether two AABBs are overlapping or not.
+    """
+
+    return x1 < x2 + w2 and x1 + w1 > x2 and y1 < y2 + h2 and h1 + y1 > y2
+
+def resolve_collision(
+    x1: float,
+    y1: float,
+    w1: float,
+    h1: float,
+    x2: float,
+    y2: float,
+    w2: float,
+    h2: float
+) -> Tuple[float, float]:
+    """
+    Computes the reaction vector for collisions between two AABBs.
+
+    This function should be only called when a collision occurs, since it always returns a valid vector,
+    even if there's no collision at all
+    """
+
+    # X component.
+    delta1_x = (x2 + w2) - x1
+    delta2_x = x2 - (x1 + w1)
+    delta_x = 0
+    if abs(delta1_x) <= abs(delta2_x):
+        delta_x = delta1_x
+    else:
+        delta_x = delta2_x
+
+    # Y component.
+    delta1_y = (y2 + h2) - y1
+    delta2_y = y2 - (y1 + h1)
+    delta_y = 0
+    if abs(delta1_y) <= abs(delta2_y):
+        delta_y = delta1_y
+    else:
+        delta_y = delta2_y
+
+    if abs(delta_x) <= abs(delta_y):
+        return (delta_x, 0)
+    else:
+        return (0, delta_y)
 
 def center_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
-    """
-    Computes the distance between the centers of the given rectangles.
-    """
-    return (
-        abs(x1 - x2) - ((w1 + w2) / 2),
-        abs(y1 - y2) - ((h1 + h2) / 2)
-    )
-
-def distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
     """
     Computes the distance between the centers of the given rectangles.
     """

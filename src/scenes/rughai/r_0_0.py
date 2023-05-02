@@ -103,18 +103,18 @@ class R_0_0(PlayableSceneNode):
             height = 2 * self.__tile_size,
             scaling = scaling,
             tag = "player",
-            on_triggered = lambda entered:
-                self.on_door_triggered(
-                    entered = entered,
-                    bundle = {
-                        "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_1,
-                        "player_position": [
-                            self._player.x,
-                            25 * self.__tile_size
-                        ]
-                    }
-                ),
+            # on_triggered = lambda entered:
+            #     self.on_door_triggered(
+            #         entered = entered,
+            #         bundle = {
+            #             "event": events.CHANGE_ROOM,
+            #             "next_scene": scenes.R_0_1,
+            #             "player_position": [
+            #                 self._player.x,
+            #                 25 * self.__tile_size
+            #             ]
+            #         }
+            #     ),
             batch = self._scene.world_batch
         )
         # east_door = DoorNode(
