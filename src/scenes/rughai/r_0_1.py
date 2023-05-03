@@ -183,6 +183,7 @@ class R_0_1(PlayableSceneNode):
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_1",
             scaling = scaling,
+            collision_manager = collision_manager,
             batch = self._scene.world_batch
         )
 
