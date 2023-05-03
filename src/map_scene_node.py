@@ -1,7 +1,7 @@
 from typing import Callable, Optional
 import pyglet
 
-from engine.collision_manager import CollisionManager
+from engine.collision.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.playable_scene_node import PlayableSceneNode
 

@@ -1,15 +1,16 @@
 from typing import Callable, Optional
 import pyglet
-from engine.collision_manager import CollisionManager
+from engine.collision.collision_manager import CollisionManager
+from engine.door_node import DoorNode
 
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.prop_loader import PropLoader
 from engine.scene_node import Bounds, SceneNode
-from engine.sensor_node import SensorNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
+from engine.wall_node import ColumnNode, WallNode
 
 import settings
 from player_node import PlayerNode
@@ -61,6 +62,130 @@ class R_0_0(PlayableSceneNode):
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
 
+        # Solid walls.
+        walls = [
+            # House.
+            WallNode(
+                x = self.__tile_size * 23,
+                y = self.__tile_size * 30,
+                width = self.__tile_size,
+                height = self.__tile_size * 6,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 24,
+                y = self.__tile_size * 30,
+                width = self.__tile_size,
+                height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 23,
+                y = self.__tile_size * 36,
+                width = self.__tile_size * 5,
+                height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 28,
+                y = self.__tile_size * 36,
+                width = self.__tile_size,
+                height = self.__tile_size * 3,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 29,
+                y = self.__tile_size * 38,
+                width = self.__tile_size * 4,
+                height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 33,
+                y = self.__tile_size * 32,
+                width = self.__tile_size,
+                height = self.__tile_size * 7,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 29,
+                y = self.__tile_size * 32,
+                width = self.__tile_size * 4,
+                height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 29,
+                y = self.__tile_size * 30,
+                width = self.__tile_size,
+                height = self.__tile_size * 2,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 27,
+                y = self.__tile_size * 30,
+                width = self.__tile_size * 2,
+                height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+
+            # Slopes.
+            WallNode(
+                x = self.__tile_size * 42,
+                y = self.__tile_size * 27,
+                width = self.__tile_size,
+                height = self.__tile_size * 17,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 43,
+                y = self.__tile_size * 27,
+                width = self.__tile_size * 4,
+                height = self.__tile_size * 2,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 46,
+                y = self.__tile_size * 25,
+                width = self.__tile_size,
+                height = self.__tile_size * 2,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 46,
+                y = self.__tile_size * 23,
+                width = self.__tile_size * 4,
+                height = self.__tile_size * 2,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            )
+        ]
+
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
         bg_image.anchor_x = bg_image.width / 2
@@ -68,8 +193,8 @@ class R_0_0(PlayableSceneNode):
         bg = SpriteNode(
             resource = bg_image,
             on_animation_end = lambda : None,
-            x = (tilemaps[0].map_width * self.__tile_size) // 2,
-            y = (tilemaps[0].map_height * self.__tile_size) // 2,
+            x = (tilemap_width * self.__tile_size) // 2,
+            y = (tilemap_height * self.__tile_size) // 2,
             z = 500,
             scaling = scaling,
             batch = self._scene.world_batch
@@ -94,15 +219,13 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Place doors.
-        south_door = SensorNode(
+        south_door = DoorNode(
+            collision_manager = collision_manager,
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
             height = 2 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -118,15 +241,13 @@ class R_0_0(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        east_door = SensorNode(
+        east_door = DoorNode(
+            collision_manager = collision_manager,
             x = tilemap_width * self.__tile_size,
             y = 25 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -142,8 +263,6 @@ class R_0_0(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        collision_manager.add_collider(south_door)
-        collision_manager.add_collider(east_door)
 
         # Define tree prop.
         # TODO Use dedicated class.
@@ -182,6 +301,7 @@ class R_0_0(PlayableSceneNode):
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_0",
             scaling = scaling,
+            collision_manager = collision_manager,
             batch = self._scene.world_batch
         )
 
@@ -196,6 +316,7 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(bg)
         self._scene.add_child(tree)
         self._scene.add_children(tilemaps)
+        self._scene.add_children(walls)
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_children(props)
         self._scene.add_child(self._player)

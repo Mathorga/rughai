@@ -1,18 +1,18 @@
 from typing import Callable, Optional
 import pyglet
-from engine.collision_manager import CollisionManager
 
+from engine.collision.collision_manager import CollisionManager
+from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.scene_node import Bounds, SceneNode
-from engine.sensor_node import SensorNode
+from engine.collision.collision_node import CollisionNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
 
 import settings
 from player_node import PlayerNode
-from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
 
@@ -93,7 +93,8 @@ class R_0_6(PlayableSceneNode):
         )
 
         # Place doors.
-        south_door = SensorNode(
+        south_door = DoorNode(
+            collision_manager = collision_manager,
             x = 16 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 18 * self.__tile_size,
@@ -101,7 +102,6 @@ class R_0_6(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -117,7 +117,8 @@ class R_0_6(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        west_door = SensorNode(
+        west_door = DoorNode(
+            collision_manager = collision_manager,
             x = -2 * self.__tile_size,
             y = 24 * self.__tile_size,
             width = 2 * self.__tile_size,
@@ -125,7 +126,6 @@ class R_0_6(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -141,7 +141,8 @@ class R_0_6(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        east_door = SensorNode(
+        east_door = DoorNode(
+            collision_manager = collision_manager,
             x = tilemap_width * self.__tile_size,
             y = 15 * self.__tile_size,
             width = 2 * self.__tile_size,
@@ -149,7 +150,6 @@ class R_0_6(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -165,9 +165,6 @@ class R_0_6(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        collision_manager.add_collider(south_door)
-        collision_manager.add_collider(west_door)
-        collision_manager.add_collider(east_door)
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")

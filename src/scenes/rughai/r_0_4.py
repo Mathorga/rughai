@@ -1,11 +1,12 @@
 from typing import Callable, Optional
 import pyglet
-from engine.collision_manager import CollisionManager
+from engine.collision.collision_manager import CollisionManager
+from engine.door_node import DoorNode
 
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.scene_node import Bounds, SceneNode
-from engine.sensor_node import SensorNode
+from engine.collision.collision_node import CollisionNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
@@ -93,7 +94,8 @@ class R_0_4(PlayableSceneNode):
         )
 
         # Place doors.
-        south_door = SensorNode(
+        south_door = DoorNode(
+            collision_manager = collision_manager,
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
@@ -101,7 +103,6 @@ class R_0_4(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -117,7 +118,8 @@ class R_0_4(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        north_door = SensorNode(
+        north_door = DoorNode(
+            collision_manager = collision_manager,
             x = 20 * self.__tile_size,
             y = 50 * self.__tile_size,
             width = 7 * self.__tile_size,
@@ -125,7 +127,6 @@ class R_0_4(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
-            visible = True,
             tag = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -141,8 +142,6 @@ class R_0_4(PlayableSceneNode):
                 ),
             batch = self._scene.world_batch
         )
-        collision_manager.add_collider(south_door)
-        collision_manager.add_collider(north_door)
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")

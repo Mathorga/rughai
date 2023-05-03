@@ -6,8 +6,8 @@ from engine.node import PositionNode
 class CircleNode(PositionNode):
     def __init__(
         self,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         z: float = 0.0,
         radius: int = 0,
         color: tuple = (0x00, 0x00, 0x00, 0xFF),
@@ -42,5 +42,5 @@ class CircleNode(PositionNode):
         self.y = position[1]
         self.__shape.y = self.y * self.__scaling
 
-    def set_opacity(self, opacity: int):
+    def set_opacity(self, opacity: float):
         self.__shape.opacity = opacity

@@ -6,8 +6,8 @@ from engine.node import PositionNode
 class TextNode(PositionNode):
     def __init__(
         self,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         width: int = 0,
         height: int = 0,
         color: tuple = (0x00, 0x00, 0x00, 0xFF),
@@ -58,7 +58,7 @@ class TextNode(PositionNode):
             self.y = y
             self.__label.y = y * self.__scaling
 
-    def set_opacity(self, opacity: int):
+    def set_opacity(self, opacity: float):
         self.__label.opacity = opacity
 
     def draw(self) -> None:

@@ -8,8 +8,8 @@ from engine.utils import *
 class DukNode(PositionNode):
     def __init__(
         self,
-        x: int = 0,
-        y: int = 0,
+        x: float = 0,
+        y: float = 0,
         scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:

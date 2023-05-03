@@ -2,10 +2,11 @@ import os.path
 import pyglet
 import pyglet.gl as gl
 
-from engine.collision_manager import CollisionManager
+from engine.collision.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.upscaler import Upscaler
+
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
 from scenes.rughai.r_0_2 import R_0_2
@@ -190,16 +191,18 @@ class RugHai:
             # Upscaler handles maintaining the wanted output resolution.
             with self._upscaler:
                 self._active_scene.draw()
+                self._render_bench.draw()
+                self._update_bench.draw()
 
     def update(self, dt) -> None:
-        # Compute collisions through collision manager.
-        self._collision_manager.update(dt)
-
         # Benchmark measures update time.
         with self._update_bench:
             # InputController makes sure every input is handled correctly.
             with self._input:
                 self._active_scene.update(dt)
+
+        # Compute collisions through collision manager.
+        self._collision_manager.update(dt)
 
     def run(self) -> None:
         # Scale textures using nearest neighbor filtering.

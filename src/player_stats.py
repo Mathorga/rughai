@@ -9,7 +9,7 @@ DEFAULT_MAX = 20.0
 class PlayerStats(Stats):
     def __init__(
         self,
-        vitality: int = 0,
+        vitality: float = 0,
         resistance: int = 0,
         odds: int = 0,
         variation: float = 0.0
