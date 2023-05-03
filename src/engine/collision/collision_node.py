@@ -18,7 +18,7 @@ class CollisionNode(PositionNode):
         self,
         x: float = 0,
         y: float = 0,
-        tag: str = "",
+        tags: List[str] = [],
         type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
         shapes: List[CollisionShape] = [],
@@ -26,7 +26,7 @@ class CollisionNode(PositionNode):
     ) -> None:
         super().__init__(x, y)
 
-        self.tag = tag
+        self.tags = tags
         self.type = type
         self.sensor = sensor
         self.shapes: List[CollisionShape] = shapes
@@ -54,7 +54,9 @@ class CollisionNode(PositionNode):
         collision: Tuple[float, float] = (0.0, 0.0)
         collisions: List[pm.Vec2] = []
 
-        if other.tag == self.tag:
+        # Make sure there's at least one matching tag.
+        # if other.tags == self.tags:
+        if bool(set(self.tags) & set(other.tags)):
             overlap: bool = False
             for shape in self.shapes:
                 for other_shape in other.shapes:
@@ -62,10 +64,6 @@ class CollisionNode(PositionNode):
                     if overlap:
                         collision = shape.collide(other_shape)
                         collisions.append(pm.Vec2(*collision))
-                #         break
-                # else:
-                #     continue
-                # break
 
             if not other.sensor:
                 self.set_position((self.x + collision[0], self.y + collision[1]))

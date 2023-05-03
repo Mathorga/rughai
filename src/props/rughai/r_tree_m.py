@@ -43,7 +43,7 @@ class RTreeM(PositionNode):
             x = x,
             y = y,
             type = CollisionType.STATIC,
-            tag = "player",
+            tags = ["player"],
             shapes = [
                 CollisionRect(
                     x = x,
