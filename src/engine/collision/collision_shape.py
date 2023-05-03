@@ -131,12 +131,22 @@ class CollisionCircle(CollisionShape):
 
     def overlap(self, other) -> bool:
         if isinstance(other, CollisionRect):
-            # Rect/rect overlap.
+            # Circle/rect overlap.
             return utils.circle_rect_check(
                 self.x,
                 self.y,
                 self.radius,
                 *other.get_collision_bounds()
+            )
+        elif isinstance(other, CollisionCircle):
+            # Circle/circle overlap.
+            return utils.circle_circle_check(
+                self.x,
+                self.y,
+                self.radius,
+                other.x,
+                other.y,
+                other.radius
             )
         else:
             # Other.
@@ -144,12 +154,22 @@ class CollisionCircle(CollisionShape):
 
     def collide(self, other) -> Tuple[float, float]:
         if isinstance(other, CollisionRect):
-            # Rect/rect collision.
+            # Circle/rect collision.
             return utils.circle_rect_solve(
                 self.x,
                 self.y,
                 self.radius,
                 *other.get_collision_bounds()
+            )
+        elif isinstance(other, CollisionCircle):
+            # Circle/circla collision.
+            return utils.circle_circle_solve(
+                self.x,
+                self.y,
+                self.radius,
+                other.x,
+                other.y,
+                other.radius
             )
         else:
             # Other.

@@ -336,27 +336,25 @@ class PlayerNode(PositionNode):
             # Clamp speed between 0 and max speed.
             self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed)
 
-    def __compute_displacement(self, dt) -> pm.Vec2:
+    def __compute_movement(self, dt) -> pm.Vec2:
         # Define a vector direction.
-        displacement_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
+        movement_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
 
         # Scale movement to current speed.
-        return displacement_base.from_magnitude(self.__stats._speed * dt)
+        return movement_base.from_magnitude(self.__stats._speed * dt)
 
     def __move(self, dt):
+        # Apply movement after collision.
         self.x = self.__collider.x
         self.y = self.__collider.y
 
         # Compute movement.
-        displacement = self.__compute_displacement(dt)
+        movement = self.__compute_movement(dt)
 
         collider_position = self.__collider.get_position()
 
-        self.__collider.set_position((collider_position[0] + displacement.x, collider_position[1] + displacement.y))
-
         # Apply movement.
-        # self.x += displacement.x
-        # self.y += displacement.y
+        self.__collider.set_position((collider_position[0] + movement.x, collider_position[1] + movement.y))
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.

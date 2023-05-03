@@ -198,6 +198,21 @@ def rect_rect_check(
 
     return x1 < x2 + w2 and x1 + w1 > x2 and y1 < y2 + h2 and h1 + y1 > y2
 
+def circle_circle_check(
+    x1: float,
+    y1: float,
+    r1: float,
+    x2: float,
+    y2: float,
+    r2: float
+) -> bool:
+    """
+    Checks whether two circles are overlapping or not.
+    """
+
+    # Compare the square distance with the sum of the radii.
+    return ((x1 - x2) ** 2 + (y1 - y2) ** 2) < (r1 + r2) ** 2
+
 def circle_rect_check(
     x1: float,
     y1: float,
@@ -207,11 +222,11 @@ def circle_rect_check(
     w2: float,
     h2: float
 ) -> bool:
-    nearestX = clamp(x1, x2, x2 + w2)
-    nearestY = clamp(y1, y2, y2 + h2)
+    nearest_x = clamp(x1, x2, x2 + w2)
+    nearest_y = clamp(y1, y2, y2 + h2)
 
-    dx = x1 - nearestX
-    dy = y1 - nearestY
+    dx = x1 - nearest_x
+    dy = y1 - nearest_y
 
     return (dx ** 2 + dy ** 2) < r1 ** 2
 
@@ -280,3 +295,17 @@ def center_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
         abs(x1 - x2) - ((w1 + w2) / 2),
         abs(y1 - y2) - ((h1 + h2) / 2)
     )
+
+def circle_circle_solve(
+    x1: float,
+    y1: float,
+    r1: float,
+    x2: float,
+    y2: float,
+    r2: float
+) -> Tuple[float, float]:
+    angle = math.atan2(y1 - y2, x1 - x2)
+    distanceBetweenCircles = math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+    distanceToMove = r2 + r1 - distanceBetweenCircles
+
+    return (math.cos(angle) * distanceToMove, math.sin(angle) * distanceToMove)

@@ -10,7 +10,7 @@ from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
-from engine.wall_node import WallNode
+from engine.wall_node import ColumnNode, WallNode
 
 import settings
 from player_node import PlayerNode
@@ -65,7 +65,7 @@ class R_0_0(PlayableSceneNode):
         walls = [
             WallNode(
                 x = self.__tile_size * 23,
-                y = self.__tile_size * 30.5,
+                y = self.__tile_size * 30,
                 width = self.__tile_size,
                 height = self.__tile_size * 6,
                 scaling = scaling,
@@ -73,9 +73,9 @@ class R_0_0(PlayableSceneNode):
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 23.5,
+                x = self.__tile_size * 24,
                 y = self.__tile_size * 30,
-                width = self.__tile_size * 1.5,
+                width = self.__tile_size,
                 height = self.__tile_size,
                 scaling = scaling,
                 collision_manager = collision_manager,
