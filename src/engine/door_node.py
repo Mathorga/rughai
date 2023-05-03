@@ -2,7 +2,8 @@ from typing import Callable, Optional
 import pyglet
 from engine.collision.collision_manager import CollisionManager
 
-from engine.collision.collision_node import CollisionNode, CollisionRect
+from engine.collision.collision_node import CollisionNode
+from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 
 class DoorNode(PositionNode):

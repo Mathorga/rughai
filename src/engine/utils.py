@@ -1,6 +1,7 @@
 from typing import Optional, Tuple
 import math
 import pyglet
+import pyglet.math as pm
 
 def animation_set_anchor(
     animation: pyglet.image.animation.Animation,
@@ -173,8 +174,15 @@ def rect_rect_min_dist(
 
     return math.sqrt(inner_width ** 2 + inner_height ** 2)
 
+def clamp(src, min, max):
+    if src < min:
+        return min
+    elif src > max:
+        return max
+    else:
+        return src
 
-def rect_rect_collision(
+def rect_rect_check(
     x1: float,
     y1: float,
     w1: float,
@@ -190,7 +198,24 @@ def rect_rect_collision(
 
     return x1 < x2 + w2 and x1 + w1 > x2 and y1 < y2 + h2 and h1 + y1 > y2
 
-def resolve_collision(
+def circle_rect_check(
+    x1: float,
+    y1: float,
+    r1: float,
+    x2: float,
+    y2: float,
+    w2: float,
+    h2: float
+) -> bool:
+    nearestX = clamp(x1, x2, x2 + w2)
+    nearestY = clamp(y1, y2, y2 + h2)
+
+    dx = x1 - nearestX
+    dy = y1 - nearestY
+
+    return (dx ** 2 + dy ** 2) < r1 ** 2
+
+def rect_rect_solve(
     x1: float,
     y1: float,
     w1: float,
@@ -229,6 +254,23 @@ def resolve_collision(
         return (delta_x, 0)
     else:
         return (0, delta_y)
+
+def circle_rect_solve(
+    x1: float,
+    y1: float,
+    r1: float,
+    x2: float,
+    y2: float,
+    w2: float,
+    h2: float
+) -> Tuple[float, float]:
+    nearest_x = max(x2, min(x1, x2 + w2))
+    nearest_y = max(y2, min(y1, y2 + h2))    
+    dist = pm.Vec2(x1 - nearest_x, y1 - nearest_y)
+
+    penetrationDepth = r1 - dist.mag
+    penetrationVector = dist.from_magnitude(penetrationDepth)
+    return (penetrationVector.x, penetrationVector.y)
 
 def center_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
     """

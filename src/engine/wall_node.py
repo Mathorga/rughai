@@ -2,7 +2,8 @@ from typing import Optional
 import pyglet
 
 from engine.collision.collision_manager import CollisionManager
-from engine.collision.collision_node import CollisionNode, CollisionRect, CollisionType
+from engine.collision.collision_node import CollisionNode, CollisionType
+from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 
 class WallNode(PositionNode):
