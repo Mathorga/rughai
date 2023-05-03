@@ -62,7 +62,9 @@ class R_0_0(PlayableSceneNode):
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
 
+        # Solid walls.
         walls = [
+            # House.
             WallNode(
                 x = self.__tile_size * 23,
                 y = self.__tile_size * 30,
@@ -86,6 +88,98 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 36,
                 width = self.__tile_size * 5,
                 height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 28,
+                y = self.__tile_size * 36,
+                width = self.__tile_size,
+                height = self.__tile_size * 3,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 29,
+                y = self.__tile_size * 38,
+                width = self.__tile_size * 4,
+                height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 33,
+                y = self.__tile_size * 32,
+                width = self.__tile_size,
+                height = self.__tile_size * 7,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 29,
+                y = self.__tile_size * 32,
+                width = self.__tile_size * 4,
+                height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 29,
+                y = self.__tile_size * 30,
+                width = self.__tile_size,
+                height = self.__tile_size * 2,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 27,
+                y = self.__tile_size * 30,
+                width = self.__tile_size * 2,
+                height = self.__tile_size,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+
+            # Slopes.
+            WallNode(
+                x = self.__tile_size * 42,
+                y = self.__tile_size * 27,
+                width = self.__tile_size,
+                height = self.__tile_size * 17,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 43,
+                y = self.__tile_size * 27,
+                width = self.__tile_size * 4,
+                height = self.__tile_size * 2,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 46,
+                y = self.__tile_size * 25,
+                width = self.__tile_size,
+                height = self.__tile_size * 2,
+                scaling = scaling,
+                collision_manager = collision_manager,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 46,
+                y = self.__tile_size * 23,
+                width = self.__tile_size * 4,
+                height = self.__tile_size * 2,
                 scaling = scaling,
                 collision_manager = collision_manager,
                 batch = self._scene.world_batch

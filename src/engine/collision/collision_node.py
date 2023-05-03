@@ -2,6 +2,7 @@ from enum import Enum
 from types import FunctionType
 from typing import Callable, List, Optional, Tuple
 import pyglet
+import pyglet.math as pm
 
 from engine.collision.collision_shape import CollisionShape
 from engine.node import PositionNode
@@ -51,6 +52,7 @@ class CollisionNode(PositionNode):
         assert isinstance(other, CollisionNode)
 
         collision: Tuple[float, float] = (0.0, 0.0)
+        collisions: List[pm.Vec2] = []
 
         if other.tag == self.tag:
             overlap: bool = False
@@ -59,10 +61,11 @@ class CollisionNode(PositionNode):
                     overlap = shape.overlap(other_shape)
                     if overlap:
                         collision = shape.collide(other_shape)
-                        break
-                else:
-                    continue
-                break
+                        collisions.append(pm.Vec2(*collision))
+                #         break
+                # else:
+                #     continue
+                # break
 
             if not other.sensor:
                 self.set_position((self.x + collision[0], self.y + collision[1]))
