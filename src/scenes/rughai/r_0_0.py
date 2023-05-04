@@ -10,9 +10,9 @@ from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
-from engine.wall_node import ColumnNode, WallNode
+from engine.wall_node import WallNode
+from engine.settings import settings, Builtins
 
-import old_settings
 from player_node import PlayerNode
 import constants.events as events
 import constants.scenes as scenes
@@ -46,9 +46,9 @@ class R_0_0(PlayableSceneNode):
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
-            cam_speed = old_settings.CAM_SPEED,
+            cam_speed = settings[Builtins.CAMERA_SPEED],
             title = "R_0_0",
-            debug = old_settings.DEBUG,
+            debug = settings[Builtins.DEBUG],
             on_scene_end = self._on_scene_end
         )
 

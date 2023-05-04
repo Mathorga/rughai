@@ -6,7 +6,7 @@ from engine.collision.collision_manager import CollisionManager
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.upscaler import Upscaler
-from engine.settings import settings, load_settings
+from engine.settings import settings, Builtins, load_settings
 
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
@@ -16,7 +16,6 @@ from scenes.rughai.r_0_4 import R_0_4
 from scenes.rughai.r_0_5 import R_0_5
 from scenes.rughai.r_0_6 import R_0_6
 
-import old_settings
 import constants.scenes as scenes
 
 class RugHai:
@@ -42,15 +41,15 @@ class RugHai:
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
-        self._scaling = 1 if old_settings.PIXEL_PERFECT else min(
-            self._window.width // old_settings.VIEW_WIDTH,
-            self._window.height // old_settings.VIEW_HEIGHT
+        self._scaling = 1 if settings[Builtins.PIXEL_PERFECT] else min(
+            self._window.width // settings[Builtins.VIEW_WIDTH],
+            self._window.height // settings[Builtins.VIEW_HEIGHT]
         )
 
         self._upscaler = Upscaler(
             window = self._window,
-            width = old_settings.VIEW_WIDTH * self._scaling,
-            height = old_settings.VIEW_HEIGHT * self._scaling
+            width = settings[Builtins.VIEW_WIDTH] * self._scaling,
+            height = settings[Builtins.VIEW_HEIGHT] * self._scaling
         )
 
         # Create benchmarks.
@@ -58,12 +57,12 @@ class RugHai:
             window = self._window,
             text = "UT: ",
             y = 30,
-            visible = old_settings.DEBUG
+            visible = settings[Builtins.DEBUG]
         )
         self._render_bench = Benchmark(
             window = self._window,
             text = "RT: ",
-            visible = old_settings.DEBUG
+            visible = settings[Builtins.DEBUG]
         )
 
         # Create a scene.
@@ -71,24 +70,24 @@ class RugHai:
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
-            view_width = old_settings.VIEW_WIDTH,
-            view_height = old_settings.VIEW_HEIGHT,
+            view_width = settings[Builtins.VIEW_WIDTH],
+            view_height = settings[Builtins.VIEW_HEIGHT],
             scaling = self._scaling,
             on_ended = self.__on_scene_end
         )
 
     def __create_window(self) -> pyglet.window.Window:
         window = pyglet.window.Window(
-            old_settings.WINDOW_WIDTH if not old_settings.FULLSCREEN else None,
-            old_settings.WINDOW_HEIGHT if not old_settings.FULLSCREEN else None,
-            old_settings.TITLE,
-            fullscreen = old_settings.FULLSCREEN,
+            settings[Builtins.WINDOW_WIDTH] if not settings[Builtins.FULLSCREEN] else None,
+            settings[Builtins.WINDOW_HEIGHT] if not settings[Builtins.FULLSCREEN] else None,
+            settings[Builtins.TITLE],
+            fullscreen = settings[Builtins.FULLSCREEN],
             vsync = True,
             resizable = False
         )
 
         window.push_handlers(self)
-        if not old_settings.DEBUG:
+        if not settings[Builtins.DEBUG]:
             window.set_mouse_visible(False)
 
         return window
@@ -104,8 +103,8 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    view_width = old_settings.VIEW_WIDTH,
-                    view_height = old_settings.VIEW_HEIGHT,
+                    view_width = settings[Builtins.VIEW_WIDTH],
+                    view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
@@ -115,8 +114,8 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    view_width = old_settings.VIEW_WIDTH,
-                    view_height = old_settings.VIEW_HEIGHT,
+                    view_width = settings[Builtins.VIEW_WIDTH],
+                    view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
@@ -126,8 +125,8 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    view_width = old_settings.VIEW_WIDTH,
-                    view_height = old_settings.VIEW_HEIGHT,
+                    view_width = settings[Builtins.VIEW_WIDTH],
+                    view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
@@ -137,8 +136,8 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    view_width = old_settings.VIEW_WIDTH,
-                    view_height = old_settings.VIEW_HEIGHT,
+                    view_width = settings[Builtins.VIEW_WIDTH],
+                    view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
@@ -148,8 +147,8 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    view_width = old_settings.VIEW_WIDTH,
-                    view_height = old_settings.VIEW_HEIGHT,
+                    view_width = settings[Builtins.VIEW_WIDTH],
+                    view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
@@ -159,8 +158,8 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    view_width = old_settings.VIEW_WIDTH,
-                    view_height = old_settings.VIEW_HEIGHT,
+                    view_width = settings[Builtins.VIEW_WIDTH],
+                    view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
@@ -170,8 +169,8 @@ class RugHai:
                     window = self._window,
                     collision_manager = self._collision_manager,
                     input_controller = self._input,
-                    view_width = old_settings.VIEW_WIDTH,
-                    view_height = old_settings.VIEW_HEIGHT,
+                    view_width = settings[Builtins.VIEW_WIDTH],
+                    view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
                     scaling = self._scaling,
                     on_ended = self.__on_scene_end
@@ -213,7 +212,7 @@ class RugHai:
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
-        pyglet.clock.schedule_interval(self.update, 1.0 / old_settings.TARGET_FPS)
+        pyglet.clock.schedule_interval(self.update, 1.0 / settings[Builtins.TARGET_FPS])
         # pyglet.clock.schedule(self.update)
         pyglet.app.run()
 

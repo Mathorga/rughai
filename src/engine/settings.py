@@ -1,28 +1,43 @@
+from enum import Enum
 import json
-import pyglet
+
+
+class Builtins(str, Enum):
+    DEBUG = "debug"
+    TITLE = "title"
+    FONT_NAME = "font_name"
+    VIEW_WIDTH = "view_width"
+    VIEW_HEIGHT = "view_height"
+    WINDOW_WIDTH = "window_width"
+    WINDOW_HEIGHT = "window_height"
+    PIXEL_PERFECT = "pixel_perfect"
+    FULLSCREEN = "fullscreen"
+    TARGET_FPS = "target_fps"
+    BACKGROUND_COLOR = "background_color"
+    CAMERA_SPEED = "camera_speed"
 
 settings = {
-    "DEBUG": True,
+    "debug": True,
 
     # Text settings.
-    "TITLE": "",
-    "FONT_NAME":  "",
+    "title": "",
+    "font_name":  "",
 
     # Display settings.
     # GBA resolution:
-    "VIEW_WIDTH": 240,
-    "VIEW_HEIGHT": 160,
+    "view_width": 240,
+    "view_height": 160,
     # GBA resolution x3:
-    "WINDOW_WIDTH": 720,
-    "WINDOW_HEIGHT": 480,
-    "PIXEL_PERFECT": False,
-    "FULLSCREEN": True,
+    "window_width": 720,
+    "window_height": 480,
+    "pixel_perfect": False,
+    "fullscreen": True,
 
     # Keep target fps high, as low values could cause unwanted lags.
-    "TARGET_FPS": 480,
+    "target_fps": 480,
 
-    "BACKGROUND_COLOR": "#222222",
-    "CAM_SPEED": 5.0
+    "background_color": "#222222",
+    "camera_speed": 5.0
 }
 
 def load_settings(source: str):

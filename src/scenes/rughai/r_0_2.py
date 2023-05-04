@@ -11,8 +11,8 @@ from engine.collision.collision_node import CollisionNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
+from engine.settings import settings, Builtins
 
-import old_settings
 from player_node import PlayerNode
 from duk_node import DukNode
 import constants.events as events
@@ -47,9 +47,9 @@ class R_0_2(PlayableSceneNode):
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
-            cam_speed = old_settings.CAM_SPEED,
+            cam_speed = settings[Builtins.CAMERA_SPEED],
             title = "R_0_2",
-            debug = old_settings.DEBUG,
+            debug = settings[Builtins.DEBUG],
             on_scene_end = self._on_scene_end
         )
 
