@@ -4,7 +4,7 @@ from pyglet.graphics.shader import Shader, ShaderProgram
 import pyglet.gl as gl
 import pyglet.math as pm
 
-import settings
+import old_settings
 from engine.camera import Camera
 from engine.upscaler import FixedResolution
 
@@ -15,18 +15,18 @@ config = gl.Config()
 
 # Create a new window.
 window = pyglet.window.Window(
-    settings.VIEW_WIDTH * 3 if not settings.FULLSCREEN else None,
-    settings.VIEW_HEIGHT * 3 if not settings.FULLSCREEN else None,
-    settings.TITLE,
-    fullscreen = settings.FULLSCREEN,
+    old_settings.VIEW_WIDTH * 3 if not old_settings.FULLSCREEN else None,
+    old_settings.VIEW_HEIGHT * 3 if not old_settings.FULLSCREEN else None,
+    old_settings.TITLE,
+    fullscreen = old_settings.FULLSCREEN,
     resizable = True
 )
-window.set_minimum_size(settings.VIEW_WIDTH, settings.VIEW_HEIGHT)
+window.set_minimum_size(old_settings.VIEW_WIDTH, old_settings.VIEW_HEIGHT)
 
 fr = FixedResolution(
     window,
-    width = settings.VIEW_WIDTH,
-    height = settings.VIEW_HEIGHT
+    width = old_settings.VIEW_WIDTH,
+    height = old_settings.VIEW_HEIGHT
 )
 
 fps_display = pyglet.window.FPSDisplay(window)
@@ -181,8 +181,8 @@ accel = 10
 dir = 0
 
 world_camera.position = (
-    sprite.x - settings.VIEW_WIDTH / 2,
-    sprite.y - settings.VIEW_HEIGHT / 2
+    sprite.x - old_settings.VIEW_WIDTH / 2,
+    sprite.y - old_settings.VIEW_HEIGHT / 2
 )
 cam_speed = 8
 
@@ -239,8 +239,8 @@ def update(dt):
     # sprite.y += movement.y
 
     camera_movement = pm.Vec2(
-        (sprite.x - settings.VIEW_WIDTH / 2 - world_camera.position[0]) * cam_speed * dt,
-        (sprite.y - settings.VIEW_HEIGHT / 2 - world_camera.position[1]) * cam_speed * dt
+        (sprite.x - old_settings.VIEW_WIDTH / 2 - world_camera.position[0]) * cam_speed * dt,
+        (sprite.y - old_settings.VIEW_HEIGHT / 2 - world_camera.position[1]) * cam_speed * dt
     )
     world_camera.position = (
         world_camera.position[0] + camera_movement.x,
@@ -274,5 +274,5 @@ if __name__ == '__main__':
     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
 
-    pyglet.clock.schedule_interval(update, 1.0 / settings.TARGET_FPS)
+    pyglet.clock.schedule_interval(update, 1.0 / old_settings.TARGET_FPS)
     pyglet.app.run()

@@ -3,7 +3,7 @@ import pyglet.gl as gl
 import pyglet.math as pm
 from engine.playable import Playable
 
-import settings
+import old_settings
 from engine.input_controller import InputController
 from engine.scene import Scene
 from engine.tile_map import TileMap, TileSet
@@ -18,13 +18,13 @@ class Application:
 
         # Create a new window.
         self._window = pyglet.window.Window(
-            settings.WINDOW_WIDTH if not settings.FULLSCREEN else None,
-            settings.WINDOW_HEIGHT if not settings.FULLSCREEN else None,
-            settings.TITLE,
-            fullscreen = settings.FULLSCREEN,
+            old_settings.WINDOW_WIDTH if not old_settings.FULLSCREEN else None,
+            old_settings.WINDOW_HEIGHT if not old_settings.FULLSCREEN else None,
+            old_settings.TITLE,
+            fullscreen = old_settings.FULLSCREEN,
             resizable = True
         )
-        self._window.set_minimum_size(settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT)
+        self._window.set_minimum_size(old_settings.WINDOW_WIDTH, old_settings.WINDOW_HEIGHT)
         self._window.push_handlers(self)
         self.__fps_display = pyglet.window.FPSDisplay(self._window) if debug else None
 
@@ -36,8 +36,8 @@ class Application:
         # Create the starting scene.
         self._scene = Scene(
             window = self._window,
-            view_width = settings.VIEW_WIDTH,
-            view_height = settings.VIEW_HEIGHT
+            view_width = old_settings.VIEW_WIDTH,
+            view_height = old_settings.VIEW_HEIGHT
         )
         # Add a tilemap to the app.
         rughai_ground_tile_map = TileMap.from_tmj_file(
@@ -79,6 +79,6 @@ class Application:
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
 
-        pyglet.clock.schedule_interval(self.update, 1.0 / settings.TARGET_FPS)
+        pyglet.clock.schedule_interval(self.update, 1.0 / old_settings.TARGET_FPS)
         pyglet.app.run()
         

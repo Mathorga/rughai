@@ -82,9 +82,9 @@ class TilemapNode(PositionNode):
         self.__sprites = [
             DepthSprite(
                 img = self.__tileset.tiles[tex_index],
-                x = x + (index % self.map_width) * self.__tileset.tile_width * scaling,
-                y = y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling,
-                z = -((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset),
+                x = int(x + (index % self.map_width) * self.__tileset.tile_width * scaling),
+                y = int(y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling),
+                z = int(-((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset)),
                 batch = batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]

@@ -1,0 +1,14 @@
+{
+    "DEBUG": true,
+    "TITLE": "RUGHAI",
+    "FONT_NAME": "I pixel u",
+    "VIEW_WIDTH": 240,
+    "VIEW_HEIGHT": 160,
+    "PIXEL_PERFECT": false,
+    "WINDOW_WIDTH": 720,
+    "WINDOW_HEIGHT": 480,
+    "FULLSCREEN": true,
+    "TARGET_FPS": 480,
+    "BACKGROUND_COLOR": "#222222",
+    "CAM_SPEED": 5.0
+}

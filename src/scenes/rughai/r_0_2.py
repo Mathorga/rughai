@@ -12,7 +12,7 @@ from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
 
-import settings
+import old_settings
 from player_node import PlayerNode
 from duk_node import DukNode
 import constants.events as events
@@ -47,9 +47,9 @@ class R_0_2(PlayableSceneNode):
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
-            cam_speed = settings.CAM_SPEED,
+            cam_speed = old_settings.CAM_SPEED,
             title = "R_0_2",
-            debug = settings.DEBUG,
+            debug = old_settings.DEBUG,
             on_scene_end = self._on_scene_end
         )
 

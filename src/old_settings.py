@@ -1,12 +1,7 @@
-import os
-
-# Working directory.
-WORKING_DIR = os.path.dirname(os.path.realpath(__file__)) + "/.."
-
 DEBUG = True
 
 # Display settings.
-TITLE = "RUG-HAI"
+TITLE = "RUGHAI"
 FONT_NAME = "I pixel u"
 # VIEW_WIDTH = 300
 # VIEW_HEIGHT = 200
