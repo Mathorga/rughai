@@ -1,3 +1,4 @@
+import random
 from typing import Optional
 import pyglet
 
@@ -19,6 +20,10 @@ class RTreeS(PositionNode):
         self.__scaling = scaling
 
         self.__idle_animation = pyglet.resource.animation("sprites/rughai/prop/tree_s/tree_s_idle_1.gif")
+        frames: list = self.__idle_animation.frames
+        rotation = random.randint(0, len(frames) - 1)
+        frames = frames[rotation:] + frames[:rotation]
+        self.__idle_animation = pyglet.image.Animation(frames = frames)
         animation_set_anchor(
             animation = self.__idle_animation,
             x = self.__idle_animation.get_max_width() / 2,

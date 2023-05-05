@@ -1,13 +1,9 @@
 from enum import Enum
-from types import FunctionType
 from typing import Callable, List, Optional, Tuple
-import pyglet
 import pyglet.math as pm
 
 from engine.collision.collision_shape import CollisionShape
 from engine.node import PositionNode
-from engine.rect_node import RectNode
-import engine.utils as utils
 
 class CollisionType(Enum):
     STATIC = 0
