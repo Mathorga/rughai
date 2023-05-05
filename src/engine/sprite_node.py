@@ -85,12 +85,20 @@ class SpriteNode(PositionNode):
         if y_scale is not None:
             self.sprite.scale_y = y_scale
 
-    def set_image(self, image) -> None:
-        if image != None and (self.sprite.image != image or (self.sprite.image != None and self.sprite.frame_index >= len(self.sprite.image.frames) - 1)):
-            self.sprite.image = image
+    def set_image(
+        self,
+        image: Union[pyglet.image.TextureRegion, pyglet.image.Animation]
+    ) -> None:
+        if isinstance(image, pyglet.image.Animation):
+            if image is not None and (self.sprite.image != image or (self.sprite.image != None and self.sprite.frame_index >= len(self.sprite.image.frames) - 1)):
+                self.sprite.image = image
+        else:
+            if image is not None and self.sprite.image != image:
+                self.sprite.image = image
+
 
     def on_animation_end(self):
-        if self.__on_animation_end:
+        if self.__on_animation_end is not None:
             self.__on_animation_end()
 
     def draw(self) -> None:
