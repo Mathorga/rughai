@@ -19,19 +19,18 @@ class RGrass0(PositionNode):
 
         self.__scaling = scaling
 
-        self.__idle_animation = pyglet.resource.animation("sprites/rughai/prop/grass_0/grass_0_idle_1.gif")
-        frames: list = self.__idle_animation.frames
-        rotation = random.randint(0, len(frames) - 1)
-        frames = frames[rotation:] + frames[:rotation]
-        self.__idle_animation = pyglet.image.Animation(frames = frames)
+        self.__idle_0_animation: pyglet.image.TextureRegion = pyglet.resource.image("sprites/rughai/prop/grass_0/grass_0_idle_0.png")
+        self.__idle_1_animation = pyglet.resource.animation("sprites/rughai/prop/grass_0/grass_0_idle_1.gif")
+        self.__idle_0_animation.anchor_x = self.__idle_0_animation.width / 2
+        self.__idle_0_animation.anchor_y = 0
         animation_set_anchor(
-            animation = self.__idle_animation,
-            x = self.__idle_animation.get_max_width() / 2,
+            animation = self.__idle_1_animation,
+            x = self.__idle_1_animation.get_max_width() / 2,
             y = 0
         )
 
         self.__sprite = SpriteNode(
-            resource = self.__idle_animation,
+            resource = self.__idle_1_animation,
             x = x,
             y = y,
             scaling = scaling,
