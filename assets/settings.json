@@ -7,7 +7,7 @@
     "pixel_perfect": false,
     "window_width": 720,
     "window_height": 480,
-    "fullscreen": false,
+    "fullscreen": true,
     "target_fps": 480,
     "background_color": "#222222",
     "camera_speed": 5.0
