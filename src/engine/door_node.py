@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 import pyglet
 from engine.collision.collision_manager import CollisionManager
 
@@ -17,7 +17,7 @@ class DoorNode(PositionNode):
         anchor_x: float = 0,
         anchor_y: float = 0,
         scaling: int = 1,
-        tag: str = "",
+        tags: List[str] = [],
         on_triggered: Optional[Callable[[bool], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
@@ -26,7 +26,7 @@ class DoorNode(PositionNode):
         self.collider = CollisionNode(
             x = x,
             y = y,
-            tags = tag,
+            tags = tags,
             sensor = True,
             on_triggered = on_triggered,
             shapes = [

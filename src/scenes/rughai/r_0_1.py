@@ -100,7 +100,7 @@ class R_0_1(PlayableSceneNode):
             width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
             scaling = scaling,
-            tag = "player",
+            tags = ["player"],
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -122,7 +122,7 @@ class R_0_1(PlayableSceneNode):
             width = 10 * self.__tile_size,
             height = 2 * self.__tile_size,
             scaling = scaling,
-            tag = "player",
+            tags = ["player"],
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -144,7 +144,7 @@ class R_0_1(PlayableSceneNode):
             width = 16 * self.__tile_size,
             height = 2 * self.__tile_size,
             scaling = scaling,
-            tag = "player",
+            tags = ["player"],
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,

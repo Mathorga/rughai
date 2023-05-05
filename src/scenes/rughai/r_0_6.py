@@ -101,7 +101,7 @@ class R_0_6(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
-            tag = "player",
+            tags = ["player"],
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -125,7 +125,7 @@ class R_0_6(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
-            tag = "player",
+            tags = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -149,7 +149,7 @@ class R_0_6(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             scaling = scaling,
-            tag = "player",
+            tags = "player",
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
