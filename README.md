@@ -10,7 +10,7 @@ Rughai is an action RPG game built entirely in Python.
 `python -O .\src\main.py`
 
 ## Settings
-You can change game settings by manually editing the assets/settings.json:</br>
+You can change game settings by manually editing the `assets/settings.json` file:</br>
 `"debug": false` -> General debug settings, shows some useful features such as update time, render time and collisions.</br>
 `"show_collisions": true` -> Specific debug setting, shows collisions, but only if debug is true</br>
 `"title": "RUGHAI"` -> Game title: defines the title of the game window.</br>
