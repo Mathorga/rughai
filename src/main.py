@@ -56,13 +56,11 @@ class RugHai:
         self._update_bench = Benchmark(
             window = self._window,
             text = "UT: ",
-            y = 30,
-            visible = settings[Builtins.DEBUG]
+            y = 30
         )
         self._render_bench = Benchmark(
             window = self._window,
-            text = "RT: ",
-            visible = settings[Builtins.DEBUG]
+            text = "RT: "
         )
 
         # Create a scene.
@@ -194,8 +192,10 @@ class RugHai:
             # Upscaler handles maintaining the wanted output resolution.
             with self._upscaler:
                 self._active_scene.draw()
-                self._render_bench.draw()
-                self._update_bench.draw()
+
+                if settings[Builtins.DEBUG]:
+                    self._render_bench.draw()
+                    self._update_bench.draw()
 
     def update(self, dt) -> None:
         # Benchmark measures update time.
