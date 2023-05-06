@@ -1,5 +1,6 @@
 {
-    "debug": true,
+    "debug": false,
+    "show_collisions": true,
     "title": "RUGHAI",
     "font_name": "I pixel u",
     "view_width": 240,

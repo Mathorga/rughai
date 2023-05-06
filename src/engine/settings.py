@@ -4,6 +4,7 @@ import json
 
 class Builtins(str, Enum):
     DEBUG = "debug"
+    SHOW_COLLISIONS = "show_collisions"
     TITLE = "title"
     FONT_NAME = "font_name"
     VIEW_WIDTH = "view_width"
@@ -13,31 +14,31 @@ class Builtins(str, Enum):
     PIXEL_PERFECT = "pixel_perfect"
     FULLSCREEN = "fullscreen"
     TARGET_FPS = "target_fps"
-    BACKGROUND_COLOR = "background_color"
     CAMERA_SPEED = "camera_speed"
 
 settings = {
-    "debug": True,
+    # Debug.
+    Builtins.DEBUG: True,
+    Builtins.SHOW_COLLISIONS: True,
 
     # Text settings.
-    "title": "",
-    "font_name":  "",
+    Builtins.TITLE: "",
+    Builtins.FONT_NAME:  "",
 
     # Display settings.
     # GBA resolution:
-    "view_width": 240,
-    "view_height": 160,
+    Builtins.VIEW_WIDTH: 240,
+    Builtins.VIEW_HEIGHT: 160,
     # GBA resolution x3:
-    "window_width": 720,
-    "window_height": 480,
-    "pixel_perfect": False,
-    "fullscreen": True,
+    Builtins.WINDOW_WIDTH: 720,
+    Builtins.WINDOW_HEIGHT: 480,
+    Builtins.PIXEL_PERFECT: False,
+    Builtins.FULLSCREEN: True,
 
     # Keep target fps high, as low values could cause unwanted lags.
-    "target_fps": 480,
+    Builtins.TARGET_FPS: 480,
 
-    "background_color": "#222222",
-    "camera_speed": 5.0
+    Builtins.CAMERA_SPEED: 5.0
 }
 
 def load_settings(source: str):

@@ -5,6 +5,7 @@ from engine.circle_node import CircleNode
 from engine.node import PositionNode
 from engine.rect_node import RectNode
 import engine.utils as utils
+from engine.settings import settings, Builtins
 
 class CollisionShape(PositionNode):
     def __init__(
@@ -14,6 +15,18 @@ class CollisionShape(PositionNode):
         z: float = 0.0
     ) -> None:
         super().__init__(x, y, z)
+
+        self.render_shape: Optional[PositionNode] = None
+
+    def set_position(
+        self,
+        position: Tuple[int, int],
+        z: Optional[float] = None
+    ) -> None:
+        self.x = position[0]
+        self.y = position[1]
+        if self.render_shape is not None:
+            self.render_shape.set_position(position)
 
     def overlap(self, other) -> bool:
         return False
@@ -42,26 +55,18 @@ class CollisionRect(CollisionShape):
         self.anchor_y = anchor_y
         self.scaling = scaling
 
-        self.render_shape = RectNode(
-            x = x,
-            y = y,
-            width = width,
-            height = height,
-            scaling = scaling,
-            anchor_x = anchor_x,
-            anchor_y = anchor_y,
-            color = (0x7F, 0xFF, 0xFF, 0x7F),
-            batch = batch
-        )
-
-    def set_position(
-        self,
-        position: Tuple[int, int],
-        z: Optional[float] = None
-    ) -> None:
-        self.x = position[0]
-        self.y = position[1]
-        self.render_shape.set_position(position)
+        if settings[Builtins.DEBUG] and settings[Builtins.SHOW_COLLISIONS]:
+            self.render_shape = RectNode(
+                x = x,
+                y = y,
+                width = width,
+                height = height,
+                scaling = scaling,
+                anchor_x = anchor_x,
+                anchor_y = anchor_y,
+                color = (0x7F, 0xFF, 0xFF, 0x7F),
+                batch = batch
+            )
 
     def get_collision_bounds(self):
         return (
@@ -110,24 +115,17 @@ class CollisionCircle(CollisionShape):
         self.height = radius * 2
         self.scaling = scaling
 
-        self.render_shape = CircleNode(
-            x = x,
-            y = y,
-            z = z,
-            radius = radius,
-            color = (0x7F, 0xFF, 0xFF, 0x7F),
-            scaling = scaling,
-            batch = batch
-        )
 
-    def set_position(
-        self,
-        position: Tuple[int, int],
-        z: Optional[float] = None
-    ) -> None:
-        self.x = position[0]
-        self.y = position[1]
-        self.render_shape.set_position(position)
+        if settings[Builtins.DEBUG] and settings[Builtins.SHOW_COLLISIONS]:
+            self.render_shape = CircleNode(
+                x = x,
+                y = y,
+                z = z,
+                radius = radius,
+                color = (0x7F, 0xFF, 0xFF, 0x7F),
+                scaling = scaling,
+                batch = batch
+            )
 
     def overlap(self, other) -> bool:
         if isinstance(other, CollisionRect):
