@@ -70,6 +70,7 @@ def map_prop(
             x = x,
             y = y,
             scaling = scaling,
+            collision_manager = collision_manager,
             batch = batch
         )
 

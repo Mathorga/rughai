@@ -23,23 +23,25 @@ class RTreeL(PositionNode):
 
         self.__scaling = scaling
 
-        self.__idle_animation: pyglet.image.Animation = pyglet.resource.animation("sprites/rughai/prop/tree_l/tree_l_idle_1.gif")
-        frames: list = self.__idle_animation.frames
-        rotation = random.randint(0, len(frames) - 1)
-        frames = frames[rotation:] + frames[:rotation]
-        self.__idle_animation = pyglet.image.Animation(frames = frames)
+        self.__idle_0_anim = pyglet.image.Animation.from_image_sequence([pyglet.resource.image("sprites/rughai/prop/tree_l/tree_l_idle_0.png")], 1.0)
+        self.__idle_1_anim = pyglet.resource.animation("sprites/rughai/prop/tree_l/tree_l_idle_1.gif")
         animation_set_anchor(
-            animation = self.__idle_animation,
-            x = self.__idle_animation.get_max_width() / 2,
+            animation = self.__idle_1_anim,
+            x = self.__idle_1_anim.get_max_width() / 2,
+            y = 0
+        )
+        animation_set_anchor(
+            animation = self.__idle_0_anim,
+            x = self.__idle_0_anim.get_max_width() / 2,
             y = 0
         )
 
         self.__sprite = SpriteNode(
-            resource = self.__idle_animation,
+            resource = self.__idle_0_anim,
             x = x,
             y = y,
             scaling = scaling,
-            on_animation_end = lambda : None,
+            on_animation_end = self.update_animation,
             batch = batch
         )
 
@@ -69,3 +71,9 @@ class RTreeL(PositionNode):
 
     def delete(self) -> None:
         self.__sprite.delete()
+
+    def update_animation(self):
+        if random.random() < 0.05:
+            self.__sprite.set_image(self.__idle_1_anim)
+        else:
+            self.__sprite.set_image(self.__idle_0_anim)

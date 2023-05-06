@@ -19,13 +19,16 @@ class RGrass0(PositionNode):
 
         self.__scaling = scaling
 
-        self.__idle_0_anim = pyglet.resource.image("sprites/rughai/prop/grass_0/grass_0_idle_0.png")
+        self.__idle_0_anim = pyglet.image.Animation.from_image_sequence([pyglet.resource.image("sprites/rughai/prop/grass_0/grass_0_idle_0.png")], 1.0)
         self.__idle_1_anim = pyglet.resource.animation("sprites/rughai/prop/grass_0/grass_0_idle_1.gif")
-        self.__idle_0_anim.anchor_x = self.__idle_0_anim.width / 2
-        self.__idle_0_anim.anchor_y = 0
         animation_set_anchor(
             animation = self.__idle_1_anim,
             x = self.__idle_1_anim.get_max_width() / 2,
+            y = 0
+        )
+        animation_set_anchor(
+            animation = self.__idle_0_anim,
+            x = self.__idle_0_anim.get_max_width() / 2,
             y = 0
         )
 
@@ -42,7 +45,7 @@ class RGrass0(PositionNode):
         self.__sprite.delete()
 
     def update_animation(self):
-        if random.random() < 0.1:
+        if random.random() < 0.05:
             self.__sprite.set_image(self.__idle_1_anim)
         else:
             self.__sprite.set_image(self.__idle_0_anim)
