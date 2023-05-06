@@ -87,13 +87,13 @@ class SpriteNode(PositionNode):
 
     def set_image(
         self,
-        image: Union[pyglet.image.TextureRegion, pyglet.image.Animation]
+        image: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation]
     ) -> None:
-        if isinstance(image, pyglet.image.Animation):
-            if image is not None and (self.sprite.image != image or (self.sprite.image != None and self.sprite.frame_index >= len(self.sprite.image.frames) - 1)):
+        if isinstance(self.sprite.image, pyglet.image.animation.Animation):
+            if self.sprite.image != image or (self.sprite.image is not None and self.sprite.frame_index >= len(self.sprite.image.frames) - 1):
                 self.sprite.image = image
         else:
-            if image is not None and self.sprite.image != image:
+            if self.sprite.image != image:
                 self.sprite.image = image
 
 
