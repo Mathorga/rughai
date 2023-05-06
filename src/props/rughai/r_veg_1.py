@@ -5,6 +5,7 @@ import pyglet
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.utils import animation_set_anchor
+from props.prop_node import PropNode
 
 class RVeg1(PositionNode):
     def __init__(
@@ -32,20 +33,17 @@ class RVeg1(PositionNode):
             y = 0
         )
 
-        self.__sprite = SpriteNode(
-            resource = self.__idle_0_anim,
+        self.prop_node = PropNode(
             x = x,
             y = y,
+            z = z,
             scaling = scaling,
-            on_animation_end = self.update_animation,
+            main_idle_anim = self.__idle_0_anim,
+            sec_idle_anims = [
+                self.__idle_1_anim
+            ],
             batch = batch
         )
 
     def delete(self) -> None:
-        self.__sprite.delete()
-
-    def update_animation(self):
-        if random.random() < 0.05:
-            self.__sprite.set_image(self.__idle_1_anim)
-        else:
-            self.__sprite.set_image(self.__idle_0_anim)
+        self.prop_node.delete()
