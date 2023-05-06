@@ -152,8 +152,8 @@ class SceneNode(Node):
             self.__camera.position = (
                 updated_x,
                 updated_y
-                # round(updated_x * 10) / 10,
-                # round(updated_y * 10) / 10
+                # round(updated_x),
+                # round(updated_y)
             )
 
     def update(self, dt):

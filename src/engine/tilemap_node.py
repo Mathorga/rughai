@@ -7,6 +7,29 @@ from engine.depth_sprite import DepthSprite
 
 from engine.node import PositionNode
 
+# Make sure you offset your texture coordinates with 1/2 pixel, because in OpenGL the texel origin are defined to be the bottom left corner of a texel.
+# That means that the exact center of a texel is located at [S'+0.5, T'+0.5] where S' and T' are the unnormalized texture coordinates.
+# https://www.reddit.com/r/opengl/comments/6h7rkl/comment/diwo35x/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+tile_fragment_source = """
+    #version 450
+    in vec4 vertex_colors;
+    in vec3 texture_coords;
+    uniform sampler2D tex;
+    out vec4 final_color;
+
+    void main(){
+        ivec2 texSize = textureSize(tex, 0);
+        float s_offset = (1.0 / (float(texSize.x))) * 0.5;
+        float t_offset = (1.0 / (float(texSize.y))) * 0.5;
+        vec2 tc_final = vec2(texture_coords.x + s_offset, texture_coords.y + t_offset);
+        final_color = texture(tex, tc_final);
+    }
+"""
+
+tile_vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
+tile_frag_shader = pyglet.graphics.shader.Shader(tile_fragment_source, "fragment")
+tile_shader_program = pyglet.graphics.shader.ShaderProgram(tile_vert_shader, tile_frag_shader)
+
 class Tileset:
     def __init__(
         self,
@@ -40,10 +63,10 @@ class Tileset:
 
                     gl.glBindTexture(tile.target, tile.id)
 
-                    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-                    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+                    gl.glTexParameteri(tile.target, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
-                    # # Set texture clamping to avoid mis-rendering subpixel edges.
+                    # Set texture clamping to avoid mis-rendering subpixel edges.
                     gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
                     gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
                     gl.glTexParameteri(tile.target, gl.GL_TEXTURE_WRAP_R, gl.GL_CLAMP_TO_EDGE)
