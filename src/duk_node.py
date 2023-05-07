@@ -27,7 +27,7 @@ class DukNode(PositionNode):
 
         # Load fragment source from file.
         fragment_source: str
-        with open(os.path.join(pyglet.resource.path[0], "../shaders/color_swap.frag", "r")) as file:
+        with open(os.path.join(pyglet.resource.path[0], "../shaders/color_swap.frag"), "r") as file:
             fragment_source = file.read()
 
         # Create shader program from vector and fragment.

@@ -1,11 +1,11 @@
 #version 450
 
-in vec4 vertex_colors;
+in vec4 vertex_color;
 in vec3 texture_coords;
 out vec4 final_color;
 
 // Lookup palette texture.
-uniform sampler2D palette : hint_normal;
+uniform sampler2D palette;
 
 // Tells how much the original and alternate colors should be mixed together.
 // Usually this depends on stats.
@@ -77,10 +77,11 @@ vec4 alt_color(vec4 source, sampler2D palette_texture, float tuner) {
 
 void main(){
     // Fetch original color.
-    vec4 source = texture(TEXTURE, UV);
+    vec4 source = vertex_color;
+    // vec4 source = texture(TEXTURE, UV);
 
     // Fetch alternate color from palette.
-    vec4 color;
+    vec4 color = source;
 
     // White color if hit.
     if (hit) {

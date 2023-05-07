@@ -44,6 +44,7 @@ class PropNode(PositionNode):
             batch = batch
         )
 
+        self.__collider: Optional[CollisionNode] = None
         if len(collision_shapes) > 0:
             assert collision_manager is not None
 
