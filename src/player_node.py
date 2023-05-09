@@ -12,6 +12,7 @@ from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sprite_node import SpriteNode
 import engine.utils as utils
+from engine.settings import settings, Builtins
 
 from player_stats import PlayerStats
 
@@ -406,7 +407,7 @@ class PlayerNode(PositionNode):
                 self.x + self.__aim_sprite_offset[0] + aim_vec.x,
                 self.y + self.__aim_sprite_offset[1] + aim_vec.y
             ),
-            z = self.y - 27.0
+            z = self.y - (settings[Builtins.LAYERS_Z_SPACING] / 2)
         )
         self.__aim_sprite.update(dt)
 
@@ -420,7 +421,7 @@ class PlayerNode(PositionNode):
     def __update_shadow(self, dt):
         self.__shadow_sprite.set_position(
             position = (self.x, self.y),
-            z = self.y + 27.0
+            z = self.y + (settings[Builtins.LAYERS_Z_SPACING] / 2)
         )
         self.__shadow_sprite.update(dt)
 

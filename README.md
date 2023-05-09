@@ -32,3 +32,4 @@ You can change game settings by manually editing the `assets/settings.json` file
 ### Misc
 `target_fps` -> Target FPS; keep this value high if you don't want any lags.</br>
 `camera_speed` -> The speed at which the camera follows the player, the higher the speed, the closer it will be to the player.</br>
+`layers_z_spacing` -> Distance between rendered layers on the Z axis.</br>

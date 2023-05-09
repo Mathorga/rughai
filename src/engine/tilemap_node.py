@@ -144,9 +144,9 @@ class TilemapNode(PositionNode):
         y: float = 0,
         scaling: int = 1,
         # Distance (z-axis) between tilemap layers.
-        layers_spacing: int = 8,
+        layers_spacing: int = settings[Builtins.LAYERS_Z_SPACING],
         # Starting z-offset for all layers in the file.
-        z_offset: int = 64,
+        z_offset: int = 0,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> list:
         """
