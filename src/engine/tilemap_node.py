@@ -1,12 +1,16 @@
 import json
-import os
 from typing import Optional
 import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
-from engine.depth_sprite import DepthSprite
 
+from engine.depth_sprite import DepthSprite
 from engine.node import PositionNode
+from engine.settings import settings, Builtins
+
+# Tile scaling factor, used to avoid texture bleeding.
+# If tiles are slightly bigger, then they slightly overlap with each other, effectively never causing texture bleeding.
+TILE_SCALING = 1.005
 
 class Tileset:
     def __init__(
@@ -93,35 +97,42 @@ class TilemapNode(PositionNode):
 
         for spr in self.__sprites:
             # Tile sprites are scaled up in order to avoid texture bleeding.
-            spr.scale = scaling * 1.005
+            spr.scale = scaling * TILE_SCALING
 
-        # self.lines = []
-        # for i in range(map_height):
-        #     self.lines.append(
-        #         pyglet.shapes.Line(
-        #             x = -1000 * scaling,
-        #             y = i * self.__tileset.tile_height * scaling,
-        #             x2 = 1000 * scaling,
-        #             y2 = i * self.__tileset.tile_height * scaling,
-        #             width = 1,
-        #             batch = batch
-        #         )
-        #     )
-        # for i in range(map_width):
-        #     self.lines.append(
-        #         pyglet.shapes.Line(
-        #             y = -1000 * scaling,
-        #             x = i * self.__tileset.tile_width * scaling,
-        #             y2 = 1000 * scaling,
-        #             x2 = i * self.__tileset.tile_width * scaling,
-        #             width = 1,
-        #             batch = batch
-        #         )
-        #     )
+        self.grid_lines = []
+        if settings[Builtins.DEBUG] and settings[Builtins.SHOW_TILES_GRID]:
+            # Horizontal lines.
+            for i in range(map_height):
+                self.grid_lines.append(
+                    pyglet.shapes.Line(
+                        x = -1000 * scaling,
+                        y = i * self.__tileset.tile_height * scaling,
+                        x2 = 1000 * scaling,
+                        y2 = i * self.__tileset.tile_height * scaling,
+                        width = 1,
+                        batch = batch
+                    )
+                )
+
+            # Vertical lines.
+            for i in range(map_width):
+                self.grid_lines.append(
+                    pyglet.shapes.Line(
+                        y = -1000 * scaling,
+                        x = i * self.__tileset.tile_width * scaling,
+                        y2 = 1000 * scaling,
+                        x2 = i * self.__tileset.tile_width * scaling,
+                        width = 1,
+                        batch = batch
+                    )
+                )
 
     def delete(self) -> None:
         for sprite in self.__sprites:
             sprite.delete()
+
+        for line in self.grid_lines:
+            line.delete()
 
         self.__sprites.clear()
 

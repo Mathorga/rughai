@@ -5,6 +5,7 @@ import json
 class Builtins(str, Enum):
     DEBUG = "debug"
     SHOW_COLLISIONS = "show_collisions"
+    SHOW_TILES_GRID = "show_tiles_grid"
     TITLE = "title"
     FONT_NAME = "font_name"
     VIEW_WIDTH = "view_width"
@@ -20,6 +21,7 @@ settings = {
     # Debug.
     Builtins.DEBUG: True,
     Builtins.SHOW_COLLISIONS: True,
+    Builtins.SHOW_TILES_GRID: True,
 
     # Text settings.
     Builtins.TITLE: "",
