@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 import pyglet
 import pyglet.gl as gl
 from engine.depth_sprite import DepthSprite
@@ -36,13 +36,6 @@ class SpriteNode(PositionNode):
         self.sprite.scale = scaling
         self.sprite.push_handlers(self)
 
-        self.__z_label = pyglet.text.Label(
-            text = str(self.sprite.z),
-            color = (0x00, 0x00, 0x00, 0xFF),
-            x = int(x * scaling + 5),
-            y = int(y * scaling + 5)
-        )
-
         self.__on_animation_end = on_animation_end
 
     def delete(self) -> None:
@@ -53,20 +46,12 @@ class SpriteNode(PositionNode):
 
     def set_position(
         self,
-        x: Optional[float] = None,
-        y: Optional[float] = None
+        position: Tuple[float, float],
+        z: Optional[float] = None
     ) -> None:
-        if x is not None:
-            self.x = x
-            # self.__sprite.x = x * self.__scaling
-            self.__z_label.x = x * self.__scaling + 5
-
-        if y is not None:
-            self.y = y
-            # self.__sprite.y = y * self.__scaling
-            self.z = y
-            # self.__sprite.z = y
-            self.__z_label.y = y * self.__scaling + 5
+        self.x = position[0]
+        self.y = position[1]
+        self.z = z if z is not None else position[1]
 
         self.sprite.position = (
             self.x * self.__scaling,
@@ -103,12 +88,6 @@ class SpriteNode(PositionNode):
 
     def draw(self) -> None:
         self.sprite.draw()
-        # self.__z_label.draw()
-
-    def update(self, dt) -> None:
-        self.__z_label.text = f"{self.sprite.z}"
-        self.__z_label.x = self.x * self.__scaling + 5
-        self.__z_label.y = self.y * self.__scaling + 5
 
     def get_bounding_box(self):
         if isinstance(self.sprite.image, pyglet.image.TextureRegion):

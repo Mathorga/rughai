@@ -28,7 +28,7 @@ You can change game settings by manually editing the `assets/settings.json` file
 `window_width` -> Actual window width in pixels (only used if not fullscreen).</br>
 `window_height` -> Actual window height in pixels (only used if not fullscreen).</br>
 `fullscreen` -> Fullscreen mode toggle.</br>
-`target_fps` -> Target FPS; keep this value high if you don't want any lags.</br>
 
 ### Misc
+`target_fps` -> Target FPS; keep this value high if you don't want any lags.</br>
 `camera_speed` -> The speed at which the camera follows the player, the higher the speed, the closer it will be to the player.</br>

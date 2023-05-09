@@ -364,7 +364,7 @@ class PlayerNode(PositionNode):
             self.__hor_facing = int(math.copysign(1.0, dir_cos))
 
         # Update sprite position.
-        self.__sprite.set_position(self.x, self.y)
+        self.__sprite.set_position((self.x, self.y))
 
         # Flip sprite if moving to the left.
         self.__sprite.set_scale(x_scale = self.__hor_facing)
@@ -402,8 +402,11 @@ class PlayerNode(PositionNode):
     def __update_aim(self, dt):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
         self.__aim_sprite.set_position(
-            self.x + self.__aim_sprite_offset[0] + aim_vec.x,
-            self.y + self.__aim_sprite_offset[1] + aim_vec.y
+            position = (
+                self.x + self.__aim_sprite_offset[0] + aim_vec.x,
+                self.y + self.__aim_sprite_offset[1] + aim_vec.y
+            ),
+            z = self.y - 27.0
         )
         self.__aim_sprite.update(dt)
 
@@ -415,12 +418,11 @@ class PlayerNode(PositionNode):
         self.__cam_target.update(dt)
 
     def __update_shadow(self, dt):
-        self.__shadow_sprite.set_position(self.x, self.y)
+        self.__shadow_sprite.set_position(
+            position = (self.x, self.y),
+            z = self.y + 27.0
+        )
         self.__shadow_sprite.update(dt)
-
-    def __update_collider(self, dt):
-        self.__collider.set_position(self.get_position())
-        self.__collider.update(dt)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()

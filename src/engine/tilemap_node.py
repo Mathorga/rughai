@@ -10,7 +10,7 @@ from engine.settings import settings, Builtins
 
 # Tile scaling factor, used to avoid texture bleeding.
 # If tiles are slightly bigger, then they slightly overlap with each other, effectively never causing texture bleeding.
-TILE_SCALING = 1.005
+TILE_SCALING = 1.01
 
 class Tileset:
     def __init__(
