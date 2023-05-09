@@ -80,31 +80,6 @@ class TilemapNode(PositionNode):
         height = (self.map_height - 1) * tileset.tile_height
         scaled_width = width * scaling
         scaled_height = height * scaling
-
-        # # Make sure you offset your texture coordinates with 1/2 pixel, because in OpenGL the texel origin are defined to be the bottom left corner of a texel.
-        # # That means that the exact center of a texel is located at [S'+0.5, T'+0.5] where S' and T' are the unnormalized texture coordinates.
-        # # https://www.reddit.com/r/opengl/comments/6h7rkl/comment/diwo35x/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-        # # Load fragment source from file.
-        # fragment_source: str
-        # with open(os.path.join(pyglet.resource.path[0], "../shaders/tile.frag"), "r") as file:
-        #     fragment_source = file.read()
-        # tile_vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
-        # tile_frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
-        # tile_shader_program = pyglet.graphics.shader.ShaderProgram(tile_vert_shader, tile_frag_shader)
-        # self.__sprites = []
-        # for (index, tex_index) in enumerate(self.__map):
-        #     if tex_index >= 0:
-        #         tile_shader_program["tex"] = self.__tileset.tiles[tex_index].id
-        #         self.__sprites.append(
-        #             DepthSprite(
-        #                 img = self.__tileset.tiles[tex_index],
-        #                 x = int(x + (index % self.map_width) * self.__tileset.tile_width * scaling),
-        #                 y = int(y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling),
-        #                 z = int(-((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset)),
-        #                 program = tile_shader_program,
-        #                 batch = batch
-        #             )
-        #         )
         self.__sprites = [
             DepthSprite(
                 img = self.__tileset.tiles[tex_index],
@@ -115,8 +90,10 @@ class TilemapNode(PositionNode):
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
+
         for spr in self.__sprites:
-            spr.scale = scaling
+            # Tile sprites are scaled up in order to avoid texture bleeding.
+            spr.scale = scaling * 1.005
 
         # self.lines = []
         # for i in range(map_height):

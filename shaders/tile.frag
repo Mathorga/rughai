@@ -1,5 +1,9 @@
 #version 150 core
 
+// Make sure you offset your texture coordinates with 1/2 pixel, because in OpenGL the texel origin are defined to be the bottom left corner of a texel.
+// That means that the exact center of a texel is located at [S'+0.5, T'+0.5] where S' and T' are the unnormalized texture coordinates.
+// https://www.reddit.com/r/opengl/comments/6h7rkl/comment/diwo35x/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+
 in vec4 vertex_colors;
 in vec3 texture_coords;
 uniform sampler2D tex;
