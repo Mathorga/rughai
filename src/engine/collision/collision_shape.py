@@ -20,7 +20,7 @@ class CollisionShape(PositionNode):
 
     def set_position(
         self,
-        position: Tuple[int, int],
+        position: Tuple[float, float],
         z: Optional[float] = None
     ) -> None:
         self.x = position[0]
