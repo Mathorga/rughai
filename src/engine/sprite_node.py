@@ -1,6 +1,5 @@
 from typing import Optional, Tuple, Union
 import pyglet
-import pyglet.gl as gl
 from engine.depth_sprite import DepthSprite
 
 from engine.node import PositionNode

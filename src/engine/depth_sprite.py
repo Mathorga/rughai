@@ -1,3 +1,4 @@
+from typing import Optional
 import pyglet
 import pyglet.gl as gl
 
@@ -55,12 +56,12 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
         x = 0,
         y = 0,
         z = 0,
-        blend_src = gl.GL_SRC_ALPHA,
-        blend_dest = gl.GL_ONE_MINUS_SRC_ALPHA,
-        batch = None,
-        group = None,
-        subpixel = False,
-        program = None
+        blend_src: int = gl.GL_SRC_ALPHA,
+        blend_dest: int = gl.GL_ONE_MINUS_SRC_ALPHA,
+        batch: Optional[pyglet.graphics.Batch] = None,
+        group: Optional[pyglet.graphics.Group] = None,
+        subpixel: bool = False,
+        program: Optional[pyglet.graphics.shader.ShaderProgram] = None
     ):
         super().__init__(
             img,

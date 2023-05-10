@@ -201,7 +201,7 @@ class TilemapNode(PositionNode):
                 y = y,
                 scaling = scaling,
                 # Only apply layers offset if not a rat layer.
-                z_offset = 0 if "rat" in layer[0] else z_offset + layers_spacing * (len(layers) - 1 - layer_index),
+                z_offset = 0 if "rat" in layer[0] else z_offset + layers_spacing * (len(layers) - layer_index),
                 batch = batch
             ) for layer_index, layer in enumerate(layers)
         ]

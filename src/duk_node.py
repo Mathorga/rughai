@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 import pyglet
+import pyglet.gl as gl
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
@@ -31,15 +32,27 @@ class DukNode(PositionNode):
             fragment_source = file.read()
 
         # Create shader program from vector and fragment.
-        tile_vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
-        tile_frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
-        shader_program = pyglet.graphics.shader.ShaderProgram(tile_vert_shader, tile_frag_shader)
+        vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
+        frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
+        shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
         # Load palette texture.
-        palette = pyglet.resource.image("sprites/rughai/wilds/duk/duk_palette.png")
+        shader_program.use()
+        palette: pyglet.image.TextureRegion = pyglet.resource.image("sprites/rughai/wilds/duk/duk_palette.png")
+        gl.glBindTexture(palette.target, palette.id)
+
+        # gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+        # gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+        # gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
+        # gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
 
         # Pass the palette as uniform.
-        shader_program["palette"] = palette.id
+        shader_program["palette"] = palette.target
+        gl.glBindTexture(palette.target, 0)
+        shader_program.stop()
+
+        # shader_program["mixer"] = 0.8
+        # shader_program["hit"] = False
 
         self.__sprite = SpriteNode(
             resource = self.__idle_animation,
