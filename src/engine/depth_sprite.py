@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, Optional
 import pyglet
 import pyglet.gl as gl
 
@@ -30,8 +30,35 @@ frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
 depth_shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
 class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
+    def __init__(
+        self,
+        texture,
+        blend_src,
+        blend_dest,
+        program,
+        samplers_2d: Dict[str, pyglet.image.TextureRegion] = {},
+        parent = None
+    ):
+        super().__init__(texture, blend_src, blend_dest, program, parent)
+        self.texture = texture
+        self.blend_src = blend_src
+        self.blend_dest = blend_dest
+        self.program = program
+        self.samplers_2d = samplers_2d
+
     def set_state(self):
         self.program.use()
+
+        for uniform_name in self.program.uniforms:
+            # Fetch current uniform.
+            uniform = self.program.uniforms[uniform_name]
+
+            # Only check for sampler2D uniforms.
+            if uniform.type == gl.GL_SAMPLER_2D and uniform.name in self.samplers_2d.keys():
+                gl.glActiveTexture(gl.GL_TEXTURE0 + uniform.location)
+                if uniform.name == "palette":
+                    print(self.samplers_2d[uniform.name])
+                gl.glBindTexture(self.samplers_2d[uniform.name].target, self.samplers_2d[uniform.name].id)
 
         gl.glActiveTexture(gl.GL_TEXTURE0)
         gl.glBindTexture(self.texture.target, self.texture.id)
@@ -53,6 +80,7 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
     def __init__(
         self,
         img,
+        samplers_2d: Dict[str, pyglet.image.TextureRegion] = {},
         x = 0,
         y = 0,
         z = 0,
@@ -76,3 +104,5 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
             # program
             program if program is not None else depth_shader_program
         )
+
+        self._group = self.group_class(self._texture, blend_src, blend_dest, self.program, samplers_2d, group)

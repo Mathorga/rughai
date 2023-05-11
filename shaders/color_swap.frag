@@ -102,6 +102,6 @@ void main(){
     }
 
     // Set the newly calculated color.
-    final_color = color;
+    final_color = color * mixer;
     // final_color = texture(palette, texture_coords.xy);
 }

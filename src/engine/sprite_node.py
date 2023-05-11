@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 import pyglet
 from engine.depth_sprite import DepthSprite
 
@@ -14,7 +14,8 @@ class SpriteNode(PositionNode):
         y: float = 0,
         z: Optional[int] = None,
         scaling: int = 1,
-        shader: Optional[pyglet.graphics.shader.ShaderProgram] = None
+        shader: Optional[pyglet.graphics.shader.ShaderProgram] = None,
+        samplers_2d: Dict[str, pyglet.image.TextureRegion] = {},
     ) -> None:
         super().__init__(
             x = x,
@@ -30,6 +31,7 @@ class SpriteNode(PositionNode):
             y = int(y * scaling),
             z = int(-z if z is not None else -y),
             program = shader,
+            samplers_2d = samplers_2d,
             batch = batch
         )
         self.sprite.scale = scaling
