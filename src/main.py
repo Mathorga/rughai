@@ -64,7 +64,7 @@ class RugHai:
         )
 
         # Create a scene.
-        self._active_scene = R_0_2(
+        self._active_scene = R_0_0(
             window = self._window,
             collision_manager = self._collision_manager,
             input_controller = self._input,
@@ -181,8 +181,8 @@ class RugHai:
             right = self._window.width,
             bottom = 0,
             top = self._window.height,
-            z_near = -1000,
-            z_far = 1000
+            z_near = -2000,
+            z_far = 2000
         )
 
         # Benchmark measures render time.

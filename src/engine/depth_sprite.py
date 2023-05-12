@@ -49,16 +49,17 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
     def set_state(self):
         self.program.use()
 
-        for uniform_name in self.program.uniforms:
-            # Fetch current uniform.
-            uniform = self.program.uniforms[uniform_name]
+        # TODO Set texture uniforms.
+        # for uniform_name in self.program.uniforms:
+        #     # Fetch current uniform.
+        #     uniform = self.program.uniforms[uniform_name]
 
-            # Only check for sampler2D uniforms.
-            if uniform.type == gl.GL_SAMPLER_2D and uniform.name in self.samplers_2d.keys():
-                gl.glActiveTexture(gl.GL_TEXTURE0 + uniform.location)
-                if uniform.name == "palette":
-                    print(self.samplers_2d[uniform.name])
-                gl.glBindTexture(self.samplers_2d[uniform.name].target, self.samplers_2d[uniform.name].id)
+        #     # Only check for sampler2D uniforms.
+        #     if uniform.type == gl.GL_SAMPLER_2D and uniform.name in self.samplers_2d.keys():
+        #         gl.glActiveTexture(gl.GL_TEXTURE0 + uniform.location)
+        #         if uniform.name == "palette":
+        #             print(self.samplers_2d[uniform.name])
+        #         gl.glBindTexture(self.samplers_2d[uniform.name].target, self.samplers_2d[uniform.name].id)
 
         gl.glActiveTexture(gl.GL_TEXTURE0)
         gl.glBindTexture(self.texture.target, self.texture.id)

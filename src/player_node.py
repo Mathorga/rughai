@@ -338,11 +338,8 @@ class PlayerNode(PositionNode):
             self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed)
 
     def __compute_movement(self, dt) -> pm.Vec2:
-        # Define a vector direction.
-        movement_base = pm.Vec2.from_polar(1.0, self.__stats._dir)
-
-        # Scale movement to current speed.
-        return movement_base.from_magnitude(self.__stats._speed * dt)
+        # Define a vector from speed and direction.
+        return pm.Vec2.from_polar(self.__stats._speed * dt, self.__stats._dir)
 
     def __move(self, dt):
         # Apply movement after collision.
@@ -396,9 +393,6 @@ class PlayerNode(PositionNode):
 
         # Update shadow sprite.
         self.__update_shadow(dt)
-
-        # Update collider.
-        # self.__update_collider(dt)
 
     def __update_aim(self, dt):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
