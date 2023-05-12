@@ -39,20 +39,19 @@ class DukNode(PositionNode):
         # Load palette texture.
         palette: pyglet.image.TextureRegion = pyglet.resource.image("sprites/rughai/wilds/duk/duk_palette.png")
 
-        gl.glActiveTexture(gl.GL_TEXTURE0)
-        gl.glBindTexture(palette.target, palette.id)
-        gl.glBindTextureUnit(gl.GL_TEXTURE0, palette.id)
+        # gl.glActiveTexture(gl.GL_TEXTURE0)
+        # gl.glBindTexture(palette.target, palette.id)
+        # gl.glBindTextureUnit(gl.GL_TEXTURE0, palette.id)
 
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
-        gl.GL_SAMPLER_2D
+        # gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+        # gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+        # gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
+        # gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
 
         # print(shader_program.uniforms["palette"].type)
 
         # Pass the palette as uniform.
-        shader_program["palette"] = gl.GL_TEXTURE0
+        # shader_program["palette"] = gl.GL_TEXTURE0
 
         shader_program["mixer"] = 0.8
         # shader_program["hit"] = False

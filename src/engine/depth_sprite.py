@@ -105,9 +105,9 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
             program if program is not None else depth_shader_program
         )
 
+        self.samplers_2d = samplers_2d
+
         # Replace group with a new one that has samplers.
-        if "palette" in samplers_2d.keys():
-            print(samplers_2d)
         self._group = self.group_class(
             texture = self._texture,
             blend_src = blend_src,
