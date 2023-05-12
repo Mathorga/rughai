@@ -314,13 +314,13 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        # self._scene.set_cam_bounds(
-        #     Bounds(
-        #         bottom = 0,
-        #         right = tilemap_width * self.__tile_size,
-        #         scaling = scaling
-        #     )
-        # )
+        self._scene.set_cam_bounds(
+            Bounds(
+                bottom = 0,
+                right = tilemap_width * self.__tile_size,
+                scaling = scaling
+            )
+        )
 
         self._scene.add_child(bg)
         self._scene.add_child(tree)
