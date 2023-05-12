@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, Optional
 import pyglet
 import pyglet.gl as gl
 
@@ -30,8 +30,35 @@ frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
 depth_shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
 class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
+    def __init__(
+        self,
+        texture,
+        blend_src,
+        blend_dest,
+        program,
+        parent = None,
+        samplers_2d: Dict[str, pyglet.image.TextureRegion] = {}
+    ):
+        super().__init__(texture, blend_src, blend_dest, program, parent)
+        self.texture = texture
+        self.blend_src = blend_src
+        self.blend_dest = blend_dest
+        self.program = program
+        self.samplers_2d = samplers_2d
+
     def set_state(self):
         self.program.use()
+
+        for uniform_name in self.program.uniforms:
+            # Fetch current uniform.
+            uniform = self.program.uniforms[uniform_name]
+
+            # Only check for sampler2D uniforms.
+            if uniform.type == gl.GL_SAMPLER_2D and uniform.name in self.samplers_2d.keys():
+                gl.glActiveTexture(gl.GL_TEXTURE0 + uniform.location)
+                if uniform.name == "palette":
+                    print(self.samplers_2d[uniform.name])
+                gl.glBindTexture(self.samplers_2d[uniform.name].target, self.samplers_2d[uniform.name].id)
 
         gl.glActiveTexture(gl.GL_TEXTURE0)
         gl.glBindTexture(self.texture.target, self.texture.id)
@@ -61,7 +88,8 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
         batch: Optional[pyglet.graphics.Batch] = None,
         group: Optional[pyglet.graphics.Group] = None,
         subpixel: bool = False,
-        program: Optional[pyglet.graphics.shader.ShaderProgram] = None
+        program: Optional[pyglet.graphics.shader.ShaderProgram] = None,
+        samplers_2d: Dict[str, pyglet.image.TextureRegion] = {}
     ):
         super().__init__(
             img,
@@ -75,4 +103,16 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
             subpixel,
             # program
             program if program is not None else depth_shader_program
+        )
+
+        self.samplers_2d = samplers_2d
+
+        # Replace group with a new one that has samplers.
+        self._group = self.group_class(
+            texture = self._texture,
+            blend_src = blend_src,
+            blend_dest = blend_dest,
+            program = self.program,
+            parent = group,
+            samplers_2d = samplers_2d
         )
