@@ -14,7 +14,7 @@ from engine.wall_node import WallNode
 from engine.settings import settings, Builtins
 
 from player_node import PlayerNode
-from cloud_node import CloudNode
+from clouds_node import CloudsNode
 import constants.events as events
 import constants.scenes as scenes
 
@@ -62,6 +62,12 @@ class R_0_0(PlayableSceneNode):
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
+        cam_bounds = Bounds(
+            bottom = 0,
+            right = tilemap_width * self.__tile_size,
+            left = (-20) * self.__tile_size,
+            top = (tilemap_height + 10) * self.__tile_size
+        )
 
         # Solid walls.
         walls = [
@@ -299,9 +305,8 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Clouds.
-        cloud = CloudNode(
-            x = 0.0,
-            y = 0.0,
+        clouds = CloudsNode(
+            bounds = cam_bounds,
             scaling = scaling,
             batch = self._scene.world_batch
         )
@@ -314,20 +319,14 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        self._scene.set_cam_bounds(
-            Bounds(
-                bottom = 0,
-                right = tilemap_width * self.__tile_size,
-                scaling = scaling
-            )
-        )
+        self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
         self._scene.add_child(tree)
         self._scene.add_children(tilemaps)
         self._scene.add_children(walls)
         self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(cloud)
+        self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(self._player)
         self._scene.add_child(south_door)

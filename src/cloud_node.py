@@ -1,5 +1,6 @@
 import os
-from typing import Optional
+import random
+from typing import Optional, Tuple
 import math
 import pyglet
 import pyglet.math as pm
@@ -21,8 +22,14 @@ class CloudNode(PositionNode):
             y = y
         )
 
-        self.speed = 10
+        self.speed = 5
         self.dir = 10
+
+        # Pick a random cloud sprite.
+        self.image = pyglet.resource.image(f"sprites/clouds/cloud_{random.randint(0, 7)}.png")
+        # Center sprite.
+        self.image.anchor_x = self.image.width / 2
+        self.image.anchor_y = self.image.height / 2
 
         # Load fragment source from file.
         fragment_source: str
@@ -38,13 +45,26 @@ class CloudNode(PositionNode):
             x = x,
             y = y,
             z = -(settings[Builtins.LAYERS_Z_SPACING] * 0.8),
-            resource = pyglet.resource.image("sprites/clouds/cloud_0.png"),
+            resource = self.image,
             scaling = scaling,
             shader = shader_program,
             batch = batch
         )
 
+    def get_bounding_box(self) -> Tuple[float, float, float, float]:
+        return (
+            self.x - self.image.anchor_x,
+            self.y - self.image.anchor_y,
+            self.image.width,
+            self.image.height
+        )
+
     def update(self, dt: int) -> None:
-        movement = pm.Vec2.from_polar(self.speed * dt, self.dir * (math.pi / 180.0))
+        # movement = pm.Vec2.from_polar(self.speed * dt, self.dir * (math.pi / 180.0))
+        movement = pm.Vec2(self.speed * dt, math.sin(self.x / 10) * 2 * dt)
         self.set_position((self.x + movement.x, self.y + movement.y))
         self.sprite.set_position((self.x + movement.x, self.y + movement.y), z = self.z)
+
+    def delete(self) -> None:
+        self.sprite.delete()
+        self.sprite = None

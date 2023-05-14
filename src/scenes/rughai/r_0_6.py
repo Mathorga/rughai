@@ -188,8 +188,7 @@ class R_0_6(PlayableSceneNode):
             Bounds(
                 bottom = 0,
                 left = 0,
-                right = tilemap_width * self.__tile_size,
-                scaling = scaling
+                right = tilemap_width * self.__tile_size
             )
         )
 

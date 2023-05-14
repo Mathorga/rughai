@@ -165,8 +165,7 @@ class R_0_5(PlayableSceneNode):
                 top = tilemap_height * self.__tile_size,
                 bottom = 0,
                 left = 0,
-                right = tilemap_width * self.__tile_size,
-                scaling = scaling
+                right = tilemap_width * self.__tile_size
             )
         )
 

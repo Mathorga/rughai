@@ -15,14 +15,20 @@ class Bounds:
         top: Optional[int] = None,
         bottom: Optional[int] = None,
         left: Optional[int] = None,
-        right: Optional[int] = None,
-        scaling: int = 1
+        right: Optional[int] = None
     ) -> None:
-        self.scaling = scaling
-        self.top = top * scaling if top != None else None
-        self.bottom = bottom * scaling if bottom != None else None
-        self.left = left * scaling if left != None else None
-        self.right = right * scaling if right != None else None
+        self.top = top if top != None else None
+        self.bottom = bottom if bottom != None else None
+        self.left = left if left != None else None
+        self.right = right if right != None else None
+
+    def get_bounding_box(self) -> Tuple[float, float, float, float]:
+        return (
+            self.left,
+            self.bottom,
+            self.right - self.left,
+            self.top - self.bottom
+        )
 
 class SceneNode(Node):
     def __init__(
@@ -138,14 +144,14 @@ class SceneNode(Node):
 
             if self.__cam_bounds is not None:
                 # Apply bounds to camera movement by limiting updated position.
-                if self.__cam_bounds.top != None and self.__cam_bounds.top < updated_y + self.__view_height * self.__scaling:
-                    updated_y = self.__cam_bounds.top - self.__view_height * self.__scaling
-                if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom > updated_y:
-                    updated_y = self.__cam_bounds.bottom
-                if self.__cam_bounds.left != None and self.__cam_bounds.left > updated_x:
-                    updated_x = self.__cam_bounds.left
-                if self.__cam_bounds.right != None and self.__cam_bounds.right < updated_x + self.__view_width * self.__scaling:
-                    updated_x = self.__cam_bounds.right - self.__view_width * self.__scaling
+                if self.__cam_bounds.top != None and self.__cam_bounds.top * self.__scaling < updated_y + self.__view_height * self.__scaling:
+                    updated_y = self.__cam_bounds.top * self.__scaling - self.__view_height * self.__scaling
+                if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom * self.__scaling > updated_y:
+                    updated_y = self.__cam_bounds.bottom * self.__scaling
+                if self.__cam_bounds.left != None and self.__cam_bounds.left * self.__scaling > updated_x:
+                    updated_x = self.__cam_bounds.left * self.__scaling
+                if self.__cam_bounds.right != None and self.__cam_bounds.right * self.__scaling < updated_x + self.__view_width * self.__scaling:
+                    updated_x = self.__cam_bounds.right * self.__scaling - self.__view_width * self.__scaling
 
             # Actually update camera position.
             # Values are rounded in order not to cause subpixel movements and therefore texture bleeding.

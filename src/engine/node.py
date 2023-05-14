@@ -53,5 +53,5 @@ class PositionNode(Node):
     def get_position(self) -> Tuple[float, float]:
         return (self.x, self.y)
 
-    def get_bounding_box(self):
-        return (self.x, self.y, self.x, self.y)
+    def get_bounding_box(self) -> Tuple[float, float, float, float]:
+        return (self.x, self.y, 0.0, 0.0)
