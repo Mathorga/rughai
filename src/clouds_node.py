@@ -17,7 +17,7 @@ class CloudsNode(Node):
     ) -> None:
         super().__init__()
 
-        self.clouds_num = 50
+        self.clouds_num = 25
 
         self.bounds = bounds
 
