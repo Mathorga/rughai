@@ -144,7 +144,7 @@ class TilemapNode(PositionNode):
         y: float = 0,
         scaling: int = 1,
         # Distance (z-axis) between tilemap layers.
-        layers_spacing: int = settings[Builtins.LAYERS_Z_SPACING],
+        layers_spacing: Optional[int] = None,
         # Starting z-offset for all layers in the file.
         z_offset: int = 0,
         batch: Optional[pyglet.graphics.Batch] = None
@@ -166,6 +166,10 @@ class TilemapNode(PositionNode):
         tile_height = int(root.attrib["tileheight"])
 
         tilemap_tilesets = root.findall("tileset")
+
+        # Read layers spacing from settings if not provided.
+        if layers_spacing is None:
+            layers_spacing = settings[Builtins.LAYERS_Z_SPACING]
 
         # Extract a tileset from all the given file.
         tileset = Tileset(

@@ -44,7 +44,7 @@ class CloudNode(PositionNode):
         self.sprite = SpriteNode(
             x = x,
             y = y,
-            z = -(settings[Builtins.LAYERS_Z_SPACING] * 0.8),
+            z = settings[Builtins.LAYERS_Z_SPACING] * 0.8,
             resource = self.image,
             scaling = scaling,
             shader = shader_program,
