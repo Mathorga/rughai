@@ -1,5 +1,6 @@
 from typing import Callable, Optional
 import pyglet
+from clouds_node import CloudsNode
 
 from engine.collision.collision_manager import CollisionManager
 from engine.door_node import DoorNode
@@ -60,6 +61,12 @@ class R_0_1(PlayableSceneNode):
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
+        cam_bounds = Bounds(
+            top = tilemap_height * self.__tile_size,
+            bottom = 0,
+            left = (-20) * self.__tile_size,
+            right = tilemap_width * self.__tile_size
+        )
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
@@ -179,6 +186,13 @@ class R_0_1(PlayableSceneNode):
             batch = self._scene.ui_batch
         )
 
+        # Clouds.
+        clouds = CloudsNode(
+            bounds = cam_bounds,
+            scaling = scaling,
+            batch = self._scene.world_batch
+        )
+
         # Props.
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_1",
@@ -187,17 +201,12 @@ class R_0_1(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        self._scene.set_cam_bounds(
-            Bounds(
-                top = tilemap_height * self.__tile_size,
-                bottom = 0,
-                right = tilemap_width * self.__tile_size
-            )
-        )
+        self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
+        self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(self._player)
         self._scene.add_child(north_door)

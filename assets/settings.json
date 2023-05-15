@@ -12,5 +12,5 @@
     "fullscreen": true,
     "target_fps": 120,
     "camera_speed": 5.0,
-    "layers_z_spacing": 64
+    "layers_z_spacing": 8
 }

@@ -35,7 +35,7 @@ class CloudsNode(Node):
         for cloud in self.clouds:
             cloud.update(dt)
 
-        # TODO If any cloud is out of bounds, then delete it and create a new one.
+        # If any cloud is out of bounds, then move it to the other side of the scene.
         for cloud in self.clouds:
             cloud_bb = cloud.get_bounding_box()
             if not rect_rect_check(*cloud_bb, *self.bounds.get_bounding_box()):
