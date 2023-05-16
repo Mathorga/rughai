@@ -42,7 +42,7 @@ settings = {
     Builtins.TARGET_FPS: 480,
 
     Builtins.CAMERA_SPEED: 5.0,
-    Builtins.LAYERS_Z_SPACING: 64.0
+    Builtins.LAYERS_Z_SPACING: 32.0
 }
 
 def load_settings(source: str):

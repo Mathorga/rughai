@@ -29,7 +29,7 @@ class SpriteNode(PositionNode):
             img = resource,
             x = int(x * scaling),
             y = int(y * scaling),
-            z = int(-z if z is not None else -y),
+            z = int(z if z is not None else -y),
             program = shader,
             samplers_2d = samplers_2d,
             batch = batch
@@ -52,12 +52,12 @@ class SpriteNode(PositionNode):
     ) -> None:
         self.x = position[0]
         self.y = position[1]
-        self.z = z if z is not None else position[1]
+        self.z = z if z is not None else -position[1]
 
         self.sprite.position = (
             self.x * self.__scaling,
             self.y * self.__scaling,
-            int(-self.z)
+            int(self.z)
         )
 
     def set_scale(

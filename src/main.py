@@ -30,6 +30,7 @@ class RugHai:
 
         # Create a window.
         self._window = self.__create_window()
+        self.fps_display = pyglet.window.FPSDisplay(window = self._window)
 
         # Handlers.
         # Create a collision manager.
@@ -196,6 +197,8 @@ class RugHai:
                 if settings[Builtins.DEBUG]:
                     self._render_bench.draw()
                     self._update_bench.draw()
+
+        self.fps_display.draw()
 
     def update(self, dt) -> None:
         # Benchmark measures update time.

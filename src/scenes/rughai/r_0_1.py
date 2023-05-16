@@ -77,7 +77,7 @@ class R_0_1(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            z = 500,
+            z = -500,
             scaling = scaling,
             batch = self._scene.world_batch
         )
@@ -175,6 +175,7 @@ class R_0_1(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 4,
+            z = 500,
             scaling = scaling,
             batch = self._scene.ui_batch
         )
@@ -182,6 +183,7 @@ class R_0_1(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 12,
+            z = 500,
             scaling = scaling,
             batch = self._scene.ui_batch
         )

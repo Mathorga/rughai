@@ -202,7 +202,7 @@ class R_0_0(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemap_width * self.__tile_size) // 2,
             y = (tilemap_height * self.__tile_size) // 2,
-            z = 500,
+            z = -500,
             scaling = scaling,
             batch = self._scene.world_batch
         )
@@ -291,15 +291,15 @@ class R_0_0(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 4,
-            z = -500,
+            z = 500,
             scaling = scaling,
             batch = self._scene.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
-            z = -500,
             y = view_height - 12,
+            z = 500,
             scaling = scaling,
             batch = self._scene.ui_batch
         )

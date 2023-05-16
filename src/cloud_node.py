@@ -20,7 +20,7 @@ class CloudNode(PositionNode):
         super().__init__(
             x = x,
             y = y,
-            z = settings[Builtins.LAYERS_Z_SPACING] * 0.8
+            z = settings[Builtins.LAYERS_Z_SPACING]
         )
 
         self.speed = 5
@@ -45,7 +45,7 @@ class CloudNode(PositionNode):
         self.sprite = SpriteNode(
             x = x,
             y = y,
-            z = -self.z,
+            z = self.z,
             resource = self.image,
             scaling = scaling,
             shader = shader_program,
@@ -63,8 +63,13 @@ class CloudNode(PositionNode):
     def update(self, dt: int) -> None:
         # movement = pm.Vec2.from_polar(self.speed * dt, self.dir * (math.pi / 180.0))
         movement = pm.Vec2(self.speed * dt, math.sin(self.x / 10) * 2 * dt)
-        self.set_position((self.x + movement.x, self.y + movement.y))
-        self.sprite.set_position((self.x + movement.x, self.y + movement.y), z = -self.z)
+        self.set_position(
+            position = (self.x + movement.x, self.y + movement.y),
+        )
+        self.sprite.set_position(
+            position = (self.x + movement.x, self.y + movement.y),
+            z = self.z
+        )
 
     def delete(self) -> None:
         self.sprite.delete()

@@ -1,5 +1,6 @@
 from typing import Callable, Optional
 import pyglet
+from clouds_node import CloudsNode
 from engine.collision.collision_manager import CollisionManager
 from engine.door_node import DoorNode
 
@@ -62,6 +63,12 @@ class R_0_2(PlayableSceneNode):
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
+        cam_bounds = Bounds(
+            top = tilemap_height * self.__tile_size,
+            bottom = 0,
+            right = tilemap_width * self.__tile_size,
+            left = -20 * self.__tile_size
+        )
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
@@ -72,7 +79,7 @@ class R_0_2(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            z = 500,
+            z = -500,
             scaling = scaling,
             batch = self._scene.world_batch
         )
@@ -197,6 +204,7 @@ class R_0_2(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 4,
+            z = 500,
             scaling = scaling,
             batch = self._scene.ui_batch
         )
@@ -204,8 +212,16 @@ class R_0_2(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 12,
+            z = 500,
             scaling = scaling,
             batch = self._scene.ui_batch
+        )
+
+        # Clouds.
+        clouds = CloudsNode(
+            bounds = cam_bounds,
+            scaling = scaling,
+            batch = self._scene.world_batch
         )
 
         # Props.
@@ -216,13 +232,7 @@ class R_0_2(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        self._scene.set_cam_bounds(
-            Bounds(
-                top = tilemap_height * self.__tile_size,
-                bottom = 0,
-                right = tilemap_width * self.__tile_size
-            )
-        )
+        self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
@@ -230,6 +240,7 @@ class R_0_2(PlayableSceneNode):
         self._scene.add_child(self._player)
         self._scene.add_child(duk)
         self._scene.add_child(tree)
+        self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(north_west_door)
         self._scene.add_child(north_east_door)
