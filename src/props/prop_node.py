@@ -12,6 +12,7 @@ class PropNode(PositionNode):
     def __init__(
         self,
         main_idle_anim: pyglet.image.animation.Animation,
+        # Proportion between main and secondary animations.
         main_to_sec: float = 0.95,
         sec_idle_anims: List[pyglet.image.animation.Animation] = [],
         collision_manager: Optional[CollisionManager] = None,
