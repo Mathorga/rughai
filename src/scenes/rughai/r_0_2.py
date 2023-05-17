@@ -109,19 +109,6 @@ class R_0_2(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        # Define tree prop.
-        # TODO Use dedicated class.
-        tree_img = pyglet.resource.image("sprites/rughai/prop/tree_l.png")
-        tree_img.anchor_x = tree_img.width / 2
-        tree_img.anchor_y = 3
-        tree = SpriteNode(
-            resource = tree_img,
-            x = 5 * self.__tile_size,
-            y = 5 * self.__tile_size,
-            scaling = scaling,
-            batch = self._scene.world_batch
-        )
-
         # Place doors.
         north_west_door = DoorNode(
             collision_manager = collision_manager,
@@ -239,7 +226,6 @@ class R_0_2(PlayableSceneNode):
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(self._player)
         self._scene.add_child(duk)
-        self._scene.add_child(tree)
         self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(north_west_door)

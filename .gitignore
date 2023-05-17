@@ -1,6 +1,7 @@
 *.vscode
 *__pycache__
 *.stackdump
+*.spec
 
 /build
 /dist

@@ -12,7 +12,7 @@ class SpriteNode(PositionNode):
         on_animation_end = None,
         x: float = 0,
         y: float = 0,
-        z: Optional[int] = None,
+        z: Optional[float] = None,
         scaling: int = 1,
         shader: Optional[pyglet.graphics.shader.ShaderProgram] = None,
         samplers_2d: Dict[str, pyglet.image.TextureRegion] = {},

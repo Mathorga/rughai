@@ -1,5 +1,5 @@
 from types import FunctionType
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 import pyglet
 import pyglet.math as pm
 
@@ -8,6 +8,7 @@ from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
 from engine.text_node import TextNode
 from engine.utils import *
+from engine.settings import settings, Builtins
 
 class Bounds:
     def __init__(
@@ -22,7 +23,20 @@ class Bounds:
         self.left = left if left != None else None
         self.right = right if right != None else None
 
-    def get_bounding_box(self) -> Tuple[float, float, float, float]:
+    def get_width(self) -> int:
+        assert self.right is not None and self.left is not None
+
+        return self.right - self.left
+
+    def get_height(self) -> int:
+        assert self.top is not None and self.bottom is not None
+
+        return self.top - self.bottom
+
+    def get_bounding_box(self) -> Tuple[int, int, int, int]:
+        assert self.top is not None and self.bottom is not None
+        assert self.right is not None and self.left is not None
+
         return (
             self.left,
             self.bottom,
@@ -198,7 +212,7 @@ class SceneNode(Node):
 
     def add_children(
         self,
-        children: list
+        children: List[PositionNode],
     ):
         for child in children:
             self.add_child(

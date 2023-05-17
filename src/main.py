@@ -30,7 +30,7 @@ class RugHai:
 
         # Create a window.
         self._window = self.__create_window()
-        self.fps_display = pyglet.window.FPSDisplay(window = self._window)
+        self.fps_display = pyglet.window.FPSDisplay(window = self._window, color = (0, 0, 0, 255), samples = 16)
 
         # Handlers.
         # Create a collision manager.

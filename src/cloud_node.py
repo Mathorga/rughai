@@ -73,4 +73,3 @@ class CloudNode(PositionNode):
 
     def delete(self) -> None:
         self.sprite.delete()
-        self.sprite = None
