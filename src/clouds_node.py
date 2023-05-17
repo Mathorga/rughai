@@ -32,12 +32,11 @@ class CloudsNode(Node):
         ]
 
     def update(self, dt: int) -> None:
-        # Update all clouds.
         for cloud in self.clouds:
+            # Update the cloud.
             cloud.update(dt)
 
-        # If any cloud is out of bounds, then move it to the other side of the scene.
-        for cloud in self.clouds:
+            # If a cloud is out of bounds, then move it to the other side of the scene.
             cloud_bb = cloud.get_bounding_box()
             if not rect_rect_check(*cloud_bb, *self.bounds.get_bounding_box()):
                 cloud.set_position(

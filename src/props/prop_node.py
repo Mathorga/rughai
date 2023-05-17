@@ -13,7 +13,7 @@ class PropNode(PositionNode):
         self,
         main_idle_anim: pyglet.image.animation.Animation,
         # Proportion between main and secondary animations.
-        main_to_sec: float = 0.95,
+        main_to_sec: float = 0.99,
         sec_idle_anims: List[pyglet.image.animation.Animation] = [],
         collision_manager: Optional[CollisionManager] = None,
         x: float = 0,
@@ -58,6 +58,10 @@ class PropNode(PositionNode):
                 shapes = collision_shapes
             )
             collision_manager.add_collider(self.__collider)
+
+    def update(self, dt: int) -> None:
+        
+        pass
 
     def delete(self) -> None:
         self.__sprite.delete()

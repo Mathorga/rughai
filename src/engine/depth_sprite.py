@@ -117,3 +117,10 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
             parent = group,
             samplers_2d = samplers_2d
         )
+
+    def get_frame_index(self) -> int:
+        """
+        Returns the current animation frame.
+        Always returns 0 if the sprite image is not an animation.
+        """
+        return self._frame_index

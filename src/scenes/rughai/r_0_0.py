@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 import pyglet
 from engine.collision.collision_manager import CollisionManager
 from engine.door_node import DoorNode
@@ -70,7 +70,7 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Solid walls.
-        walls = [
+        walls: List[PositionNode] = [
             # House.
             WallNode(
                 x = self.__tile_size * 23,
