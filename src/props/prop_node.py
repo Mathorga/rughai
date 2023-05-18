@@ -14,6 +14,8 @@ class PropNode(PositionNode):
         main_idle_anim: pyglet.image.animation.Animation,
         # Proportion between main and secondary animations.
         main_to_sec: float = 0.99,
+        # Animation duration.
+        anim_duration: float = 2.0,
         sec_idle_anims: List[pyglet.image.animation.Animation] = [],
         collision_manager: Optional[CollisionManager] = None,
         x: float = 0,
@@ -30,18 +32,19 @@ class PropNode(PositionNode):
 
         self.main_idle_anim = main_idle_anim
         self.main_to_sec = main_to_sec
+        self.__anim_duration = anim_duration
+        self.__elapsed_anim_time = 0.0
 
         self.__scaling = scaling
 
         self.sec_idle_anims = sec_idle_anims
 
         # Sprite.
-        self.__sprite = SpriteNode(
-            resource = sec_idle_anims[0],
+        self._sprite = SpriteNode(
+            resource = main_idle_anim,
             x = x,
             y = y,
             scaling = scaling,
-            on_animation_end = self.update_animation,
             batch = batch
         )
 
@@ -59,18 +62,20 @@ class PropNode(PositionNode):
             )
             collision_manager.add_collider(self.__collider)
 
-    def update(self, dt: int) -> None:
-        
-        pass
+    def update(self, dt: float) -> None:
+        self.__elapsed_anim_time += dt
+        if self.__elapsed_anim_time > self.__anim_duration and self._sprite.get_frame_index() <= 0:
+            self.update_animation()
+            self.__elapsed_anim_time = 0.0
 
     def delete(self) -> None:
-        self.__sprite.delete()
+        self._sprite.delete()
 
         if self.__collider is not None:
             self.__collider.delete()
 
     def update_animation(self):
         if random.random() < self.main_to_sec:
-            self.__sprite.set_image(self.main_idle_anim)
+            self._sprite.set_image(self.main_idle_anim)
         else:
-            self.__sprite.set_image(self.sec_idle_anims[random.randint(0, len(self.sec_idle_anims) - 1)])
+            self._sprite.set_image(self.sec_idle_anims[random.randint(0, len(self.sec_idle_anims) - 1)])

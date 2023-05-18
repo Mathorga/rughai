@@ -46,5 +46,8 @@ class RGrass0(PositionNode):
             batch = batch
         )
 
+    def update(self, dt: int) -> None:
+        self.prop_node.update(dt)
+
     def delete(self) -> None:
         self.prop_node.delete()

@@ -82,6 +82,20 @@ class SpriteNode(PositionNode):
             if self.sprite.image != image:
                 self.sprite.image = image
 
+    def get_frames_num(self) -> int:
+        """
+        Returns the amount of frames in the current animation.
+        Always returns 0 if the sprite image is not an animation.
+        """
+
+        return self.sprite.get_frames_num()
+
+    def get_frame_index(self) -> int:
+        """
+        Returns the current animation frame.
+        Always returns 0 if the sprite image is not an animation.
+        """
+        return self.sprite.get_frame_index()
 
     def on_animation_end(self):
         if self.__on_animation_end is not None:
