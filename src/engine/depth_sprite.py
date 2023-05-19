@@ -37,7 +37,7 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
         blend_dest,
         program,
         parent = None,
-        samplers_2d: Dict[str, pyglet.image.TextureRegion] = {}
+        samplers_2d: Optional[Dict[str, pyglet.image.TextureRegion]] = None
     ):
         super().__init__(texture, blend_src, blend_dest, program, parent)
         self.texture = texture
@@ -90,7 +90,7 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
         group: Optional[pyglet.graphics.Group] = None,
         subpixel: bool = False,
         program: Optional[pyglet.graphics.shader.ShaderProgram] = None,
-        samplers_2d: Dict[str, pyglet.image.TextureRegion] = {}
+        samplers_2d: Optional[Dict[str, pyglet.image.TextureRegion]] = None
     ):
         super().__init__(
             img,

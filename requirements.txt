@@ -1,0 +1,6 @@
+# All OpenGL rendering, sound and input management.
+pyglet==2.0.7
+
+# Pixel information retrieval from image file.
+# TODO try and use pyglet for this too.
+pillow==9.5.0

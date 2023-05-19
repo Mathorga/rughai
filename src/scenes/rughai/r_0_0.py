@@ -220,7 +220,6 @@ class R_0_0(PlayableSceneNode):
             y = player_position[1],
             scaling = scaling,
             collision_tag = "player",
-            order = 100,
             batch = self._scene.world_batch
         )
 
