@@ -4,9 +4,9 @@ import pyglet
 
 from engine.node import Node
 from engine.scene_node import Bounds
+from engine.utils import rect_rect_check
 
 from cloud_node import CloudNode
-from engine.utils import rect_rect_check
 
 class CloudsNode(Node):
     def __init__(
@@ -22,7 +22,7 @@ class CloudsNode(Node):
         self.bounds = bounds
 
         # Create clouds.
-        self.clouds = [
+        self.clouds: List[CloudNode] = [
             CloudNode(
                 x = bounds.left + random.random() * (bounds.right - bounds.left),
                 y = bounds.bottom + random.random() * (bounds.top - bounds.bottom),

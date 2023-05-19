@@ -48,7 +48,6 @@ class R_0_1(PlayableSceneNode):
             scaling = scaling,
             cam_speed = settings[Builtins.CAMERA_SPEED],
             title = "R_0_1",
-            debug = settings[Builtins.DEBUG],
             on_scene_end = self._on_scene_end
         )
 

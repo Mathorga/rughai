@@ -1,5 +1,4 @@
-from types import FunctionType
-from typing import Callable, List, Optional
+from typing import Callable, Optional, Sequence, Tuple, Union
 import pyglet
 import pyglet.math as pm
 
@@ -7,8 +6,6 @@ from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
 from engine.text_node import TextNode
-from engine.utils import *
-from engine.settings import settings, Builtins
 
 class Bounds:
     def __init__(
@@ -51,14 +48,12 @@ class SceneNode(Node):
         view_width: int,
         view_height: int,
         title: Optional[str] = None,
-        debug: bool = False,
         on_scene_end: Optional[Callable[[], None]] = None,
         scaling: int = 1,
         cam_speed: float = 10.0,
         curtain_speed: int = 200,
         cam_bounds: Optional[Bounds] = None
     ):
-        self.__window = window
         self.__view_width = view_width
         self.__view_height = view_height
         self.__scaling = scaling
@@ -181,26 +176,29 @@ class SceneNode(Node):
         self.__update_curtain(dt)
 
         # Update all fixed children.
-        for object in self.__children:
-            object.update(dt)
+        for child in self.__children:
+            child.update(dt)
 
         # Update camera.
         self.__update_camera(dt)
 
-    def __get_cam_bounding_box(self):
-        return (
-            self.__camera.position[0],
-            self.__camera.position[1],
-            self.__view_width * self.__scaling,
-            self.__view_height * self.__scaling,
-        ) if self.__camera is not None else None
+    # def __get_cam_bounding_box(self):
+    #     return (
+    #         self.__camera.position[0],
+    #         self.__camera.position[1],
+    #         self.__view_width * self.__scaling,
+    #         self.__view_height * self.__scaling,
+    #     ) if self.__camera is not None else None
 
     def add_child(
         self,
-        child: PositionNode,
+        child: Union[Node, PositionNode],
         cam_target: bool = False
     ):
         if cam_target:
+            # Make sure the given child is actually a position node, otherwise it can't be a cam_target.
+            assert isinstance(child, PositionNode)
+
             self.__cam_target = child
             if self.__camera is not None:
                 self.__camera.position = (
@@ -212,7 +210,7 @@ class SceneNode(Node):
 
     def add_children(
         self,
-        children: List[PositionNode],
+        children: Sequence[Union[Node, PositionNode]],
     ):
         for child in children:
             self.add_child(

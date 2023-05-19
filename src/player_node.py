@@ -388,11 +388,11 @@ class PlayerNode(PositionNode):
         # Update aim sprite.
         self.__update_aim(dt)
 
-        # Update camera target.
-        self.__update_cam_target(dt)
-
         # Update shadow sprite.
         self.__update_shadow(dt)
+
+        # Update camera target.
+        self.__update_cam_target(dt)
 
     def __update_aim(self, dt):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
@@ -405,13 +405,6 @@ class PlayerNode(PositionNode):
         )
         self.__aim_sprite.update(dt)
 
-
-    def __update_cam_target(self, dt):
-        cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
-        self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
-        self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
-        self.__cam_target.update(dt)
-
     def __update_shadow(self, dt):
         self.__shadow_sprite.set_position(
             position = (self.x, self.y),
@@ -419,6 +412,13 @@ class PlayerNode(PositionNode):
             z = -(self.y + (settings[Builtins.LAYERS_Z_SPACING] * 0.5))
         )
         self.__shadow_sprite.update(dt)
+
+
+    def __update_cam_target(self, dt):
+        cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
+        self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
+        self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
+        self.__cam_target.update(dt)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()

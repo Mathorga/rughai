@@ -1,8 +1,8 @@
 from typing import Callable, List, Optional
 import pyglet
+
 from engine.collision.collision_manager import CollisionManager
 from engine.door_node import DoorNode
-
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.prop_loader import PropLoader
@@ -49,7 +49,6 @@ class R_0_0(PlayableSceneNode):
             scaling = scaling,
             cam_speed = settings[Builtins.CAMERA_SPEED],
             title = "R_0_0",
-            debug = settings[Builtins.DEBUG],
             on_scene_end = self._on_scene_end
         )
 
@@ -271,18 +270,6 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        # Define tree prop.
-        # TODO Use dedicated class.
-        tree_img = pyglet.resource.image("sprites/rughai/prop/tree_l.png")
-        tree_img.anchor_x = tree_img.width / 2
-        tree_img.anchor_y = 3
-        tree = SpriteNode(
-            resource = tree_img,
-            x = 5 * self.__tile_size,
-            y = 5 * self.__tile_size,
-            scaling = scaling
-        )
-
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
         bar_img.anchor_x = 0
@@ -322,7 +309,6 @@ class R_0_0(PlayableSceneNode):
         self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
-        self._scene.add_child(tree)
         self._scene.add_children(tilemaps)
         self._scene.add_children(walls)
         self._scene.add_child(cam_target, cam_target = True)

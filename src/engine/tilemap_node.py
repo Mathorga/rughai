@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Optional, Sequence
 import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
@@ -22,7 +22,6 @@ class Tileset:
         spacing: int = 0
     ):
         # Load the provided texture.
-        self.__sources = sources
         self.__textures = [pyglet.resource.image(source) for source in sources]
         self.tile_width = tile_width
         self.tile_height = tile_height
@@ -61,7 +60,7 @@ class TilemapNode(PositionNode):
     def __init__(
         self,
         tileset: Tileset,
-        map,
+        data: Sequence[int],
         map_width: int,
         map_height: int,
         x: float = 0,
@@ -76,13 +75,11 @@ class TilemapNode(PositionNode):
         )
         self.__scaling = scaling
         self.__tileset = tileset
-        self.__map = map
+        self.__map = data
         self.map_width = map_width
         self.map_height = map_height
 
-        width = self.map_width * tileset.tile_width
         height = (self.map_height - 1) * tileset.tile_height
-        scaled_width = width * scaling
         scaled_height = height * scaling
         self.__sprites = [
             DepthSprite(
@@ -140,8 +137,8 @@ class TilemapNode(PositionNode):
     def from_tmx_file(
         # Path to the tmx file.
         source: str,
-        x: float = 0,
-        y: float = 0,
+        x: float = 0.0,
+        y: float = 0.0,
         scaling: int = 1,
         # Distance (z-axis) between tilemap layers.
         layers_spacing: Optional[int] = None,
@@ -168,8 +165,7 @@ class TilemapNode(PositionNode):
         tilemap_tilesets = root.findall("tileset")
 
         # Read layers spacing from settings if not provided.
-        if layers_spacing is None:
-            layers_spacing = settings[Builtins.LAYERS_Z_SPACING]
+        spacing = layers_spacing if layers_spacing is not None else settings[Builtins.LAYERS_Z_SPACING]
 
         # Extract a tileset from all the given file.
         tileset = Tileset(
@@ -181,12 +177,12 @@ class TilemapNode(PositionNode):
         tilemap_layers = root.findall("layer")
         layers = []
         for layer in tilemap_layers:
-            # TODO Check layer name in order to know whether to z-sort tiles or not.
+            # Check layer name in order to know whether to z-sort tiles or not.
             layer_name = layer.attrib["name"]
 
             layer_data = layer.find("data")
 
-            if layer_data == None or layer_data.text == None:
+            if layer_data is None or layer_data.text is None:
                 # The provided file does not contain valid information.
                 raise Exception
 
@@ -198,14 +194,14 @@ class TilemapNode(PositionNode):
         return [
             TilemapNode(
                 tileset = tileset,
-                map = [int(i) - 1 for i in layer[1]],
+                data = [int(i) - 1 for i in layer[1]],
                 map_width = map_width,
                 map_height = map_height,
                 x = x,
                 y = y,
                 scaling = scaling,
                 # Only apply layers offset if not a rat layer.
-                z_offset = 0 if "rat" in layer[0] else z_offset + layers_spacing * (len(layers) - layer_index),
+                z_offset = 0 if "rat" in layer[0] else z_offset + spacing * (len(layers) - layer_index),
                 batch = batch
             ) for layer_index, layer in enumerate(layers)
         ]
@@ -225,7 +221,7 @@ class TilemapNode(PositionNode):
         data: dict
 
         # Load TMJ file.
-        with open(f"{pyglet.resource.path[0]}/{source}", "r") as content:
+        with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF8") as content:
             data = json.load(content)
 
         # Extract a tileset from all the given file.
@@ -240,7 +236,7 @@ class TilemapNode(PositionNode):
         return [
             TilemapNode(
                 tileset = tileset,
-                map = [i - 1 for i in layer["data"]],
+                data = [i - 1 for i in layer["data"]],
                 map_width = data["width"],
                 map_height = data["height"],
                 x = x,

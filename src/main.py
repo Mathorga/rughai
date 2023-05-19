@@ -19,6 +19,10 @@ from scenes.rughai.r_0_6 import R_0_6
 import constants.scenes as scenes
 
 class RugHai:
+    """
+    Main class: this is where scene changing happens and everything is set up.
+    """
+
     def __init__(self) -> None:
         # Set resources path.
         pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
@@ -176,6 +180,10 @@ class RugHai:
                 )
 
     def on_draw(self) -> None:
+        """
+        Draws everything to the screen.
+        """
+
         # Update window matrix.
         self._window.projection = pyglet.math.Mat4.orthogonal_projection(
             left = 0,

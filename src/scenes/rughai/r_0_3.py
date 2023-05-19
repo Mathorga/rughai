@@ -47,7 +47,6 @@ class R_0_3(PlayableSceneNode):
             scaling = scaling,
             cam_speed = settings[Builtins.CAMERA_SPEED],
             title = "R_0_3",
-            debug = settings[Builtins.DEBUG],
             on_scene_end = self._on_scene_end
         )
 
@@ -96,19 +95,6 @@ class R_0_3(PlayableSceneNode):
         duk = DukNode(
             x = 10 * self.__tile_size,
             y = 8 * self.__tile_size,
-            scaling = scaling,
-            batch = self._scene.world_batch
-        )
-
-        # Define tree prop.
-        # TODO Use dedicated class.
-        tree_img = pyglet.resource.image("sprites/rughai/prop/tree_l.png")
-        tree_img.anchor_x = tree_img.width / 2
-        tree_img.anchor_y = 3
-        tree = SpriteNode(
-            resource = tree_img,
-            x = 5 * self.__tile_size,
-            y = 5 * self.__tile_size,
             scaling = scaling,
             batch = self._scene.world_batch
         )
@@ -197,7 +183,6 @@ class R_0_3(PlayableSceneNode):
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(self._player)
         self._scene.add_child(duk)
-        self._scene.add_child(tree)
         self._scene.add_child(north_west_door)
         self._scene.add_child(north_east_door)
         self._scene.add_child(energy_bar)
