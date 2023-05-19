@@ -1,3 +1,7 @@
+"""
+Module containing the main player class.
+"""
+
 import math
 from typing import Optional
 
@@ -7,7 +11,7 @@ from pyglet.window import key
 
 from engine.collision.collision_manager import CollisionManager
 from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionCircle, CollisionRect
+from engine.collision.collision_shape import CollisionCircle
 from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sprite_node import SpriteNode
@@ -17,6 +21,10 @@ from engine.settings import settings, Builtins
 from player_stats import PlayerStats
 
 class PlayerInput:
+    """
+    Main player class.
+    """
+
     def __init__(
         self,
         input_controller: InputController
@@ -77,6 +85,10 @@ class PlayerInput:
         )
 
     def get_look_input(self) -> pyglet.math.Vec2:
+        """
+        Returns the camera movement vector from keyboard and controller.
+        """
+
         stick = self.__controller.sticks.get("rightstick", (0.0, 0.0))
         return pyglet.math.Vec2(
             (self.__controller[key.RIGHT] - self.__controller[key.LEFT]) + stick[0],
@@ -96,7 +108,6 @@ class PlayerNode(PositionNode):
         run_threshold: float = 0.75,
         scaling: int = 1,
         collision_tag: str = "",
-        order: int = 0,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         PositionNode.__init__(
@@ -104,8 +115,6 @@ class PlayerNode(PositionNode):
             x = x,
             y = y
         )
-
-        self.__scaling = scaling
 
         # IDLE state animations.
         self.__idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_idle.gif")
@@ -296,12 +305,12 @@ class PlayerNode(PositionNode):
 
     def __update_dir(self):
         if self.__move_input.mag > 0.0:
-            self.__stats._dir = self.__move_input.heading
+            self.__stats.dir = self.__move_input.heading
 
     def __update_stats(self, dt):
-        walk_speed = self.__stats._max_speed * 0.5
-        roll_speed = self.__stats._max_speed * 2.0
-        roll_accel = self.__stats._accel * 0.5
+        walk_speed = self.__stats.max_speed * 0.5
+        roll_speed = self.__stats.max_speed * 2.0
+        roll_accel = self.__stats.accel * 0.5
 
         if self.__sprint_ing:
             # Sprinting.
@@ -309,37 +318,37 @@ class PlayerNode(PositionNode):
                 # Update direction in order to correctly orient sprints.
                 self.__update_dir()
 
-                self.__stats._speed = roll_speed
+                self.__stats.speed = roll_speed
                 self.__sprint_ed = False
             else:
-                self.__stats._speed -= roll_accel * dt
+                self.__stats.speed -= roll_accel * dt
         elif self.__main_atk_ing:
             # Main attacking.
             if self.__main_atk_ed:
                 self.__update_dir()
 
-                self.__stats._speed = 0.0
+                self.__stats.speed = 0.0
                 self.__main_atk_ed = False
         else:
             if self.__move_input.mag > 0.0:
-                self.__stats._dir = self.__move_input.heading
-                self.__stats._speed += self.__stats._accel * dt
+                self.__stats.dir = self.__move_input.heading
+                self.__stats.speed += self.__stats.accel * dt
             else:
-                self.__stats._speed -= self.__stats._accel * dt
+                self.__stats.speed -= self.__stats.accel * dt
 
         if self.__sprint_ing:
             # Clamp speed between 0 and roll speed.
-            self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, roll_speed)
+            self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, roll_speed)
         elif self.__slow:
             # Clamp speed between 0 and walk speed.
-            self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, walk_speed)
+            self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, walk_speed)
         else:
             # Clamp speed between 0 and max speed.
-            self.__stats._speed = pm.clamp(self.__stats._speed, 0.0, self.__stats._max_speed)
+            self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, self.__stats.max_speed)
 
     def __compute_movement(self, dt) -> pm.Vec2:
         # Define a vector from speed and direction.
-        return pm.Vec2.from_polar(self.__stats._speed * dt, self.__stats._dir)
+        return pm.Vec2.from_polar(self.__stats.speed * dt, self.__stats.dir)
 
     def __move(self, dt):
         # Apply movement after collision.
@@ -356,7 +365,7 @@ class PlayerNode(PositionNode):
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
-        dir_cos = math.cos(self.__stats._dir)
+        dir_cos = math.cos(self.__stats.dir)
         dir_len = abs(dir_cos)
         if dir_len > 0.1:
             self.__hor_facing = int(math.copysign(1.0, dir_cos))
@@ -374,9 +383,9 @@ class PlayerNode(PositionNode):
         elif self.__main_atk_ing:
             image_to_show = self.__atk_0_anim
         else:
-            if self.__stats._speed <= 0:
+            if self.__stats.speed <= 0:
                 image_to_show = self.__idle_anim
-            elif self.__stats._speed < self.__stats._max_speed * self.__run_threshold:
+            elif self.__stats.speed < self.__stats.max_speed * self.__run_threshold:
                 image_to_show = self.__walk_anim
             else:
                 image_to_show = self.__run_anim
@@ -395,7 +404,7 @@ class PlayerNode(PositionNode):
         self.__update_cam_target(dt)
 
     def __update_aim(self, dt):
-        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats._dir)
+        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats.dir)
         self.__aim_sprite.set_position(
             position = (
                 self.x + self.__aim_sprite_offset[0] + aim_vec.x,
