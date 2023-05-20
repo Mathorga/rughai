@@ -93,7 +93,7 @@ class PropLoader:
             file_path = os.path.join(abs_path, file_name)
             # checking if it is a file
             if os.path.isfile(file_path):
-                print(file_path)
+                print(f"Loading file {file_path}")
 
                 propmap = Image.open(file_path)
                 propmap_data = propmap.load()

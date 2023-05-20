@@ -1,4 +1,3 @@
-import os
 from typing import Dict, Optional
 import pyglet
 import pyglet.gl as gl
@@ -30,7 +29,6 @@ vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex
 frag_shader = pyglet.graphics.shader.Shader(FRAGMENT_SOURCE, "fragment")
 depth_shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
-
 class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
     def __init__(
         self,
@@ -50,49 +48,37 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
 
     def set_state(self):
         self.program.use()
-        global image
 
-        # TODO Set texture uniforms.
-        if "palette" in self.program.uniforms:
-            # Generate textures.
-            textures = [0] * 1
-            textures_ctype = (gl.GLuint * len(textures))(*textures)
-            gl.glGenTextures(1, textures_ctype)
+        # Set sampler uniforms.
+        if self.samplers_2d is not None:
+            for uniform_name in self.program.uniforms:
+                # Fetch current uniform.
+                uniform = self.program.uniforms[uniform_name]
 
-            # Prepare the texture to be read by the shader.
-            image = pyglet.image.load(os.path.join(pyglet.resource.path[0], "sprites/rughai/wilds/duk/duk_palette.png"))
-            # image = self.samplers_2d["palette"]
-            width, height = image.width, image.height
-            image_data = image.get_data('RGB', width * 3)
+                # Only check for sampler2D uniforms.
+                if uniform.type == gl.GL_SAMPLER_2D and uniform.name in self.samplers_2d.keys():
+                    # Generate textures.
+                    textures = [0] * 1
+                    textures_ctype = (gl.GLuint * len(textures))(*textures)
+                    gl.glGenTextures(1, textures_ctype)
 
-            # Pass the generated texture to GPU memory.
-            gl.glActiveTexture(gl.GL_TEXTURE1)
-            gl.glEnable(gl.GL_TEXTURE_2D)
-            gl.glBindTexture(gl.GL_TEXTURE_2D, textures_ctype[0])
-            gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, width, height, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, image_data)
-            gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-            gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-            gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-            gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-            # gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, width, height, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, texture)
-            # gl.glUniform1i(gl.glGetUniformLocation(self.program.id, "palette"), 1)
-            self.program["palette"] = 1
-        # if self.samplers_2d is not None:
-        #     for uniform_name in self.program.uniforms:
-        #         # Fetch current uniform.
-        #         uniform = self.program.uniforms[uniform_name]
+                    # Prepare the texture to be read by the shader.
+                    image = self.samplers_2d[uniform_name]
+                    width, height = image.width, image.height
+                    image_data = image.get_data('RGB', width * 3)
 
-        #         # Only check for sampler2D uniforms.
-        #         if uniform.type == gl.GL_SAMPLER_2D and uniform.name in self.samplers_2d.keys():
-        #             if uniform.name == "palette":
-        #                 print(self.samplers_2d[uniform.name])
-        #             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-        #             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-        #             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
-        #             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
-        #             gl.glActiveTexture(gl.GL_TEXTURE1)
-        #             gl.glBindTexture(gl.GL_TEXTURE_2D, self.samplers_2d[uniform.name].id)
-        #             self.program[uniform.name] = gl.GL_TEXTURE1
+                    # Pass the generated texture to GPU memory.
+                    gl.glActiveTexture(gl.GL_TEXTURE1)
+                    gl.glEnable(gl.GL_TEXTURE_2D)
+                    gl.glBindTexture(gl.GL_TEXTURE_2D, textures_ctype[0])
+                    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, width, height, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, image_data)
+
+                    # Make sure the texture is properly set up.
+                    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+                    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+                    self.program["palette"] = 1
 
         gl.glActiveTexture(gl.GL_TEXTURE0)
         gl.glBindTexture(self.texture.target, self.texture.id)
@@ -104,9 +90,9 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
         gl.glDepthFunc(gl.GL_LESS)
 
     def unset_state(self):
-        if "palette" in self.program.uniforms:
-            gl.glActiveTexture(gl.GL_TEXTURE1)
-            gl.glDisable(gl.GL_TEXTURE_2D)
+        # if "palette" in self.program.uniforms:
+        #     gl.glActiveTexture(gl.GL_TEXTURE1)
+        #     gl.glDisable(gl.GL_TEXTURE_2D)
         gl.glDisable(gl.GL_BLEND)
         gl.glDisable(gl.GL_DEPTH_TEST)
         self.program.stop()
@@ -145,7 +131,7 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
         self.samplers_2d = samplers_2d
 
         # Replace group with a new one that has samplers.
-        self._group = self.group_class(
+        self.group = self.group_class(
             texture = self._texture,
             blend_src = blend_src,
             blend_dest = blend_dest,
@@ -169,3 +155,65 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
         """
 
         return self.frame_index
+
+    @property
+    def group(self):
+        """Parent graphics group.
+
+        The sprite can change its rendering group, however this can be an
+        expensive operation.
+
+        :type: :py:class:`pyglet.graphics.Group`
+        """
+        return self._group.parent
+
+    @group.setter
+    def group(self, group):
+        if self._group.parent == group:
+            return
+        self._group = self.group_class(
+            texture = self._texture,
+            blend_src = self._group.blend_src,
+            blend_dest = self._group.blend_dest,
+            program = self._group.program,
+            parent = group,
+            samplers_2d = self.samplers_2d
+        )
+        self._batch.migrate(self._vertex_list, gl.GL_TRIANGLES, self._group, self._batch)
+
+    # This method is overridden because the group needs to have all samplers by the time it draws to screen.
+    def _set_texture(self, texture):
+        if texture.id is not self._texture.id:
+            self._group = self._group.__class__(
+                texture = texture,
+                blend_src = self._group.blend_src,
+                blend_dest = self._group.blend_dest,
+                program = self._group.program,
+                parent = self._group.parent,
+                samplers_2d = self.samplers_2d
+            )
+            self._vertex_list.delete()
+            self._texture = texture
+            self._create_vertex_list()
+        else:
+            self._vertex_list.tex_coords[:] = texture.tex_coords
+        self._texture = texture
+
+    @property
+    def program(self):
+        return self._program
+
+    @program.setter
+    def program(self, program):
+        if self._program == program:
+            return
+        self._group = self.group_class(
+            texture = self._texture,
+            blend_src = self._group.blend_src,
+            blend_dest = self._group.blend_dest,
+            program = program,
+            parent = self._group,
+            samplers_2d = self.samplers_2d
+        )
+        self._batch.migrate(self._vertex_list, gl.GL_TRIANGLES, self._group, self._batch)
+        self._program = program

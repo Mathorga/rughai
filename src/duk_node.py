@@ -2,6 +2,7 @@ import os
 from typing import Optional
 import pyglet
 import pyglet.gl as gl
+from watchpoints import watch
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
@@ -16,8 +17,6 @@ class DukNode(PositionNode):
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
-
-        self.__scaling = scaling
 
         self.__idle_animation = pyglet.resource.animation("sprites/rughai/wilds/duk/duk_idle.gif")
         animation_set_anchor(
@@ -39,16 +38,12 @@ class DukNode(PositionNode):
         # Load palette texture.
         palette = pyglet.image.load(os.path.join(pyglet.resource.path[0], "sprites/rughai/wilds/duk/duk_palette.png"))
 
-        # print(shader_program.uniforms["palette"].type)
-
-        # Pass the palette as uniform.
-        # shader_program["palette"] = gl.GL_TEXTURE0
-
+        # Pass non uniform.
         shader_program["mixer"] = 0.5
         shader_program["hit"] = False
         shader_program["dead"] = False
 
-        self.__sprite = SpriteNode(
+        self.sprite = SpriteNode(
             resource = self.__idle_animation,
             x = x,
             y = y,
@@ -62,4 +57,4 @@ class DukNode(PositionNode):
         )
 
     def draw(self) -> None:
-        self.__sprite.draw()
+        self.sprite.draw()
