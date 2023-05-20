@@ -97,11 +97,12 @@ void main(){
         color = alt_color(source, palette, mixer);
 
         if (dead) {
-            color.rgb *= 0.8;
+            color.rgb *= 0.6;
         }
     }
 
     // Set the newly calculated color.
-    final_color = color * mixer;
-    // final_color = texture(palette, texture_coords.xy);
+    final_color = color;
+    // final_color = texture(palette, vec2(0.1, 0.1));
+    // final_color = texelFetch(palette, ivec2(1, 3), 0);
 }

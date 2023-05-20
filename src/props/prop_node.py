@@ -15,7 +15,7 @@ class PropNode(PositionNode):
         # Proportion between main and secondary animations.
         main_to_sec: float = 0.99,
         # Animation duration.
-        anim_duration: float = 2.0,
+        anim_duration: float = 1.0,
         sec_idle_anims: List[pyglet.image.animation.Animation] = [],
         collision_manager: Optional[CollisionManager] = None,
         x: float = 0,
@@ -34,8 +34,6 @@ class PropNode(PositionNode):
         self.main_to_sec = main_to_sec
         self.__anim_duration = anim_duration
         self.__elapsed_anim_time = 0.0
-
-        self.__scaling = scaling
 
         self.sec_idle_anims = sec_idle_anims
 

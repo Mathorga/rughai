@@ -28,7 +28,7 @@ class DukNode(PositionNode):
 
         # Load fragment source from file.
         fragment_source: str
-        with open(os.path.join(pyglet.resource.path[0], "../shaders/color_swap.frag"), "r") as file:
+        with open(file = os.path.join(pyglet.resource.path[0], "../shaders/color_swap.frag"), mode = "r", encoding = "UTF8") as file:
             fragment_source = file.read()
 
         # Create shader program from vector and fragment.
@@ -37,15 +37,16 @@ class DukNode(PositionNode):
         shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
         # Load palette texture.
-        palette: pyglet.image.TextureRegion = pyglet.resource.image("sprites/rughai/wilds/duk/duk_palette.png")
+        palette = pyglet.image.load(os.path.join(pyglet.resource.path[0], "sprites/rughai/wilds/duk/duk_palette.png"))
 
         # print(shader_program.uniforms["palette"].type)
 
         # Pass the palette as uniform.
         # shader_program["palette"] = gl.GL_TEXTURE0
 
-        shader_program["mixer"] = 0.8
-        # shader_program["hit"] = False
+        shader_program["mixer"] = 0.5
+        shader_program["hit"] = False
+        shader_program["dead"] = False
 
         self.__sprite = SpriteNode(
             resource = self.__idle_animation,

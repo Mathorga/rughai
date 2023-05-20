@@ -8,7 +8,6 @@ from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.prop_loader import PropLoader
 from engine.scene_node import Bounds, SceneNode
-from engine.collision.collision_node import CollisionNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode

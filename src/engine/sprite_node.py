@@ -15,7 +15,7 @@ class SpriteNode(PositionNode):
         z: Optional[float] = None,
         scaling: int = 1,
         shader: Optional[pyglet.graphics.shader.ShaderProgram] = None,
-        samplers_2d: Optional[Dict[str, pyglet.image.TextureRegion]] = None,
+        samplers_2d: Optional[Dict[str, pyglet.image.ImageData]] = None,
     ) -> None:
         super().__init__(
             x = x,
