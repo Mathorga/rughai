@@ -15,7 +15,7 @@ from engine.collision.collision_shape import CollisionCircle
 from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sprite_node import SpriteNode
-import engine.utils as utils
+from engine import utils
 from engine.settings import settings, Builtins
 
 from player_stats import PlayerStats
@@ -40,6 +40,13 @@ class PlayerInput:
         """
 
         return self.__controller.key_presses.get(key.SPACE, False) or self.__controller.button_presses.get("b", False)
+
+    def get_interaction(self) -> bool:
+        """
+        Returns whether the interact button was pressed or not, either on controller or keyboard.
+        """
+
+        return self.__controller.key_presses.get(key.L, False) or self.__controller.button_presses.get("a", False)
 
     def get_main_atk(self) -> bool:
         """
