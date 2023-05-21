@@ -49,18 +49,15 @@ bool color_match(vec3 color_1, vec3 color_2, float tolerance) {
 vec4 alt_color(vec4 source, sampler2D palette_texture, float tuner) {
     // Fetch palette size in order to look it up.
     ivec2 palette_size = textureSize(palette_texture, 0);
-    // vec4 new_color = source;
-    // Setting the color to plain red helps you spot errors in the shader.
-    vec4 new_color = vec4(1.0, 0.0, 0.0, source.a);
+
+    // Setting the color to plain purple helps you spot errors in the shader.
+    vec4 new_color = vec4(1.0, 0.0, 1.0, source.a);
 
     // Precompute palette height as float.
-    float palette_width = float(palette_size.x);
-    float palette_height = float(palette_size.y);
+    // float palette_width = float(palette_size.x);
+    // float palette_height = float(palette_size.y);
     // float half_pixel_width = 0.5f / palette_width;
     // float half_pixel_height = 0.5f / palette_height;
-    float half_pixel_width = 0.5f;
-    float half_pixel_height = 0.5f;
-    // new_color = texelFetch(palette_texture, ivec2(0, 0), 0);
 
     // Look for the current color in the palette.
     for (int i = 0; i < palette_size.y; i++) {
