@@ -84,22 +84,22 @@ void main(){
     // Fetch original color.
     vec4 source = texture(sprite_texture, texture_coords.xy) * vertex_colors;
 
-    vec4 color = source;
+    vec4 new_color = source;
 
     // White color if hit.
     if (hit) {
-        color = vec4(1.0, 1.0, 1.0, source.a);
+        new_color = vec4(1.0, 1.0, 1.0, source.a);
     } else {
         // Fetch alternate color from palette.
-        color = alt_color(source, palette, mixer);
+        new_color = alt_color(source, palette, mixer);
 
         if (dead) {
-            color.rgb *= 0.6;
+            new_color.rgb *= 0.6;
         }
     }
 
     // Set the newly calculated color.
-    final_color = color;
+    final_color = new_color;
     // final_color = texture(palette, vec2(0.1, 0.1));
     // final_color = texelFetch(palette, ivec2(1, 3), 0);
 }
