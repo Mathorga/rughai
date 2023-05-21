@@ -47,7 +47,6 @@ The method used in this example is:
 """
 
 import pyglet
-import pyglet.gl as gl
 
 class Upscaler:
     def __init__(
@@ -65,11 +64,11 @@ class Upscaler:
 
         self.window.push_handlers(self)
 
-    def on_resize(self, width, height):
-        self._aspect = self._calculate_aspect(*self.window.get_framebuffer_size())
-        self._target_area = self._calculate_area(*self.window.get_framebuffer_size())
+    def on_resize(self, _width, _height):
+        self._aspect = self.__calculate_aspect(*self.window.get_framebuffer_size())
+        self._target_area = self.__calculate_area(*self.window.get_framebuffer_size())
 
-    def _calculate_aspect(self, new_screen_width, new_screen_height):
+    def __calculate_aspect(self, new_screen_width, new_screen_height):
         aspect_ratio = self.width / self.height
         aspect_width = new_screen_width
         aspect_height = (aspect_width / aspect_ratio) + 0.5
@@ -80,7 +79,7 @@ class Upscaler:
 
         return (aspect_width, aspect_height)
 
-    def _calculate_area(self, new_screen_width, new_screen_height):
+    def __calculate_area(self, new_screen_width, new_screen_height):
         return (
             # X.
             int((new_screen_width / 2) - (self._aspect[0] / 2)),

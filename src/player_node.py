@@ -21,10 +21,6 @@ from engine.settings import settings, Builtins
 from player_stats import PlayerStats
 
 class PlayerInput:
-    """
-    Main player class.
-    """
-
     def __init__(
         self,
         input_controller: InputController
@@ -96,6 +92,10 @@ class PlayerInput:
         )
 
 class PlayerNode(PositionNode):
+    """
+    Main player class.
+    """
+
     def __init__(
         self,
         input_controller: InputController,
