@@ -49,26 +49,25 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
     def set_state(self):
         self.program.use()
 
-        # Set sampler uniforms.
+        # Set sampler2D uniforms.
         if self.samplers_2d is not None:
-            for uniform_name in self.program.uniforms:
-                # Fetch current uniform.
-                uniform = self.program.uniforms[uniform_name]
+            sampler_2d_uniforms = list(filter(lambda element : element.type == gl.GL_SAMPLER_2D, self.program.uniforms.values()))
+            # Generate sampler2D textures.
+            textures = [0] * len(sampler_2d_uniforms)
+            textures_ctype = (gl.GLuint * len(textures))(*textures)
+            gl.glGenTextures(len(sampler_2d_uniforms), textures_ctype)
 
-                # Only check for sampler2D uniforms.
-                if uniform.type == gl.GL_SAMPLER_2D and uniform.name in self.samplers_2d.keys():
-                    # Generate textures.
-                    textures = [0] * 1
-                    textures_ctype = (gl.GLuint * len(textures))(*textures)
-                    gl.glGenTextures(1, textures_ctype)
-
+            # Loop through sampler2D uniforms.
+            for uniform_index, uniform in enumerate(sampler_2d_uniforms):
+                # Make sure self has an related uniform value.
+                if uniform.name in self.samplers_2d.keys():
                     # Prepare the texture to be read by the shader.
-                    image = self.samplers_2d[uniform_name]
+                    image = self.samplers_2d[uniform.name]
                     width, height = image.width, image.height
                     image_data = image.get_data('RGB', width * 3)
 
                     # Pass the generated texture to GPU memory.
-                    gl.glActiveTexture(gl.GL_TEXTURE1)
+                    gl.glActiveTexture(gl.GL_TEXTURE0 + uniform_index)
                     gl.glEnable(gl.GL_TEXTURE_2D)
                     gl.glBindTexture(gl.GL_TEXTURE_2D, textures_ctype[0])
                     gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, width, height, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, image_data)
@@ -78,7 +77,7 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
                     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
                     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
                     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-                    self.program["palette"] = 1
+                    self.program["palette"] = uniform_index
 
         gl.glActiveTexture(gl.GL_TEXTURE0)
         gl.glBindTexture(self.texture.target, self.texture.id)
@@ -90,9 +89,12 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
         gl.glDepthFunc(gl.GL_LESS)
 
     def unset_state(self):
-        # if "palette" in self.program.uniforms:
-        #     gl.glActiveTexture(gl.GL_TEXTURE1)
-        #     gl.glDisable(gl.GL_TEXTURE_2D)
+        # Clean up any set sampler2D uniform.
+        if self.samplers_2d is not None:
+            for uniform_index in range(0, len(self.program.uniforms)):
+                gl.glActiveTexture(gl.GL_TEXTURE0 + uniform_index)
+                gl.glDisable(gl.GL_TEXTURE_2D)
+
         gl.glDisable(gl.GL_BLEND)
         gl.glDisable(gl.GL_DEPTH_TEST)
         self.program.stop()
