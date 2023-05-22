@@ -2,7 +2,6 @@ import os
 from typing import Optional
 import pyglet
 import pyglet.gl as gl
-from watchpoints import watch
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
