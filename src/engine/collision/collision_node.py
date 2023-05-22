@@ -15,7 +15,7 @@ class CollisionNode(PositionNode):
         x: float = 0,
         y: float = 0,
         tags: List[str] = [],
-        type: CollisionType = CollisionType.STATIC,
+        collision_type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
         shapes: List[CollisionShape] = [],
         on_triggered: Optional[Callable[[bool], None]] = None
@@ -23,7 +23,7 @@ class CollisionNode(PositionNode):
         super().__init__(x, y)
 
         self.tags = tags
-        self.type = type
+        self.type = collision_type
         self.sensor = sensor
         self.shapes: List[CollisionShape] = shapes
         self.on_triggered = on_triggered

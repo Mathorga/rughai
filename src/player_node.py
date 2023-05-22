@@ -217,19 +217,9 @@ class PlayerNode(PositionNode):
         self.__collider = CollisionNode(
             x = x,
             y = y,
-            type = CollisionType.DYNAMIC,
+            collision_type = CollisionType.DYNAMIC,
             tags = [collision_tag],
             shapes = [
-                # CollisionRect(
-                #     x = x,
-                #     y = y,
-                #     width = 8,
-                #     height = 6,
-                #     anchor_x = 4,
-                #     anchor_y = 3,
-                #     scaling = scaling,
-                #     batch = batch
-                # ),
                 CollisionCircle(
                     x = x,
                     y = y,
@@ -240,6 +230,26 @@ class PlayerNode(PositionNode):
             ]
         )
         collision_manager.add_collider(self.__collider)
+
+        # Interaction finder.
+        # This collider is responsible for searching for interactables.
+        # self.__interactor = CollisionNode(
+        #     x = x,
+        #     y = y,
+        #     collision_type = CollisionType.DYNAMIC,
+        #     tags = [collision_tag],
+        #     on_triggered = lambda 
+        #     shapes = [
+        #         CollisionCircle(
+        #             x = x,
+        #             y = y,
+        #             radius = 4,
+        #             scaling = scaling,
+        #             batch = batch
+        #         )
+        #     ]
+        # )
+        # collision_manager.add_collider(self.__interactor)
 
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset

@@ -305,6 +305,18 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
+        # Priest.
+        priest_img = pyglet.resource.image("sprites/rughai/npc/priest_0/priest_0.png")
+        priest_img.anchor_x = 4
+        priest_img.anchor_y = 0
+        priest = SpriteNode(
+            resource = priest_img,
+            x = player_position[0] + 8,
+            y = player_position[1] + 8,
+            scaling = scaling,
+            batch = self._scene.world_batch
+        )
+
         self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
@@ -313,6 +325,7 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(clouds)
         self._scene.add_children(props)
+        self._scene.add_child(priest)
         self._scene.add_child(self._player)
         self._scene.add_child(south_door)
         self._scene.add_child(east_door)

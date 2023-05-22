@@ -66,7 +66,7 @@ vec4 alt_color(vec4 source, sampler2D palette_texture, float tuner) {
         // vec4 palette_color = texture(palette_texture, vec2(0.0f + half_pixel_width, (float(i) / palette_height) + half_pixel_height));
         vec4 palette_color = texelFetch(palette_texture, ivec2(0, i), 0);
 
-        if (color_match(source.rgb, palette_color.rgb, 0.05f)) {
+        if (color_match(source.rgb, palette_color.rgb, 0.1f)) {
             // If it matches the current UV color, then save the i-th color in the second column
             // of the palette.
             // new_color = texture(palette_texture, vec2((1.0f / palette_width) + half_pixel_width, (float(i) / palette_height) + half_pixel_height));
@@ -80,7 +80,7 @@ vec4 alt_color(vec4 source, sampler2D palette_texture, float tuner) {
     // return vec4(1.0, 0.5, 0.5, 0.5);
 }
 
-void main(){
+void main() {
     // Fetch original color.
     vec4 source = texture(sprite_texture, texture_coords.xy) * vertex_colors;
 

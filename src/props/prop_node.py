@@ -54,7 +54,7 @@ class PropNode(PositionNode):
             self.__collider = CollisionNode(
                 x = x,
                 y = y,
-                type = CollisionType.STATIC,
+                collision_type = CollisionType.STATIC,
                 tags = ["player"],
                 shapes = collision_shapes
             )
