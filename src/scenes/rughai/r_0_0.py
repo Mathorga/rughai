@@ -17,6 +17,7 @@ from player_node import PlayerNode
 from clouds_node import CloudsNode
 import constants.events as events
 import constants.scenes as scenes
+from priest_node import PriestNode
 
 class R_0_0(PlayableSceneNode):
     def __init__(
@@ -306,11 +307,8 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Priest.
-        priest_img = pyglet.resource.image("sprites/rughai/npc/priest_0/priest_0.png")
-        priest_img.anchor_x = 4
-        priest_img.anchor_y = 0
-        priest = SpriteNode(
-            resource = priest_img,
+        priest = PriestNode(
+            collision_manager = collision_manager,
             x = player_position[0] + 8,
             y = player_position[1] + 8,
             scaling = scaling,

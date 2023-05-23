@@ -9,6 +9,8 @@ import pyglet
 import pyglet.math as pm
 from pyglet.window import key
 
+from constants import collision_tags
+
 from engine.collision.collision_manager import CollisionManager
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle
@@ -114,7 +116,7 @@ class PlayerNode(PositionNode):
         y: float = 0,
         run_threshold: float = 0.75,
         scaling: int = 1,
-        collision_tag: str = "",
+        collision_tag: str = collision_tags.PLAYER_COLLISION,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         PositionNode.__init__(
@@ -233,23 +235,23 @@ class PlayerNode(PositionNode):
 
         # Interaction finder.
         # This collider is responsible for searching for interactables.
-        # self.__interactor = CollisionNode(
-        #     x = x,
-        #     y = y,
-        #     collision_type = CollisionType.DYNAMIC,
-        #     tags = [collision_tag],
-        #     on_triggered = lambda 
-        #     shapes = [
-        #         CollisionCircle(
-        #             x = x,
-        #             y = y,
-        #             radius = 4,
-        #             scaling = scaling,
-        #             batch = batch
-        #         )
-        #     ]
-        # )
-        # collision_manager.add_collider(self.__interactor)
+        self.__interactor = CollisionNode(
+            x = x,
+            y = y,
+            sensor = True,
+            collision_type = CollisionType.DYNAMIC,
+            tags = [collision_tags.PLAYER_INTERACTION],
+            shapes = [
+                CollisionCircle(
+                    x = x,
+                    y = y,
+                    radius = 4,
+                    scaling = scaling,
+                    batch = batch
+                )
+            ]
+        )
+        collision_manager.add_collider(self.__interactor)
 
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset
@@ -262,6 +264,7 @@ class PlayerNode(PositionNode):
         self.__aim_sprite.delete()
         self.__shadow_sprite.delete()
         self.__collider.delete()
+        self.__interactor.delete()
 
     def draw(self):
         # Draw collider out of batch.
@@ -420,6 +423,9 @@ class PlayerNode(PositionNode):
         # Update camera target.
         self.__update_cam_target(dt)
 
+        # Update interactor.
+        self.__update_interactor(dt)
+
     def __update_aim(self, dt):
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats.dir)
         self.__aim_sprite.set_position(
@@ -445,6 +451,18 @@ class PlayerNode(PositionNode):
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
         self.__cam_target.update(dt)
+
+    def __update_interactor(self, dt):
+        # TODO Don't use aim offset: use a dedicated one (Or call it something more generic).
+        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats.dir)
+        self.__interactor.set_position(
+            position = (
+                self.x + aim_vec.x,
+                self.y + aim_vec.y
+            ),
+        )
+
+        self.__interactor.update(dt)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()
