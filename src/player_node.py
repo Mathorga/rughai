@@ -135,6 +135,10 @@ class PlayerNode(PositionNode):
         self.__atk_idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_idle.gif")
         self.__atk_0_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_0.gif")
 
+        # Aim sprite distance, defines the distance at which the sprite floats.
+        self.__aim_sprite_distance = 10.0
+        self.__interactor_distance = 5.0
+
         # Center animations.
         utils.center_anim(self.__idle_anim)
         utils.center_anim(self.__walk_anim)
@@ -192,8 +196,6 @@ class PlayerNode(PositionNode):
         # Aim sprite offset, defines the offset from self.x and self.y, respectively.
         self.__aim_sprite_offset = (0.0, 8.0)
 
-        # Aim sprite distance, defines the distance at which the sprite floats.
-        self.__aim_sprite_distance = 10.0
         self.__aim_sprite = SpriteNode(
             resource = target_image,
             x = x,
@@ -453,8 +455,7 @@ class PlayerNode(PositionNode):
         self.__cam_target.update(dt)
 
     def __update_interactor(self, dt):
-        # TODO Don't use aim offset: use a dedicated one (Or call it something more generic).
-        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats.dir)
+        aim_vec = pyglet.math.Vec2.from_polar(self.__interactor_distance, self.__stats.dir)
         self.__interactor.set_position(
             position = (
                 self.x + aim_vec.x,

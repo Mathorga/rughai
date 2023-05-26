@@ -1,6 +1,7 @@
 from typing import Optional
 import pyglet
 
+from engine.settings import settings, Builtins
 from engine.node import PositionNode
 
 class TextNode(PositionNode):
@@ -13,8 +14,8 @@ class TextNode(PositionNode):
         color: tuple = (0x00, 0x00, 0x00, 0xFF),
         text: str = "_content_",
         scaling: int = 1,
-        font_name: Optional[str] = None,
-        ui: bool = False,
+        font_name: Optional[str] = settings[Builtins.FONT_NAME],
+        font_size: int = 6,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -22,20 +23,16 @@ class TextNode(PositionNode):
             y = y
         )
 
-        self.__width = width
-        self.__height = height
         self.text = text
 
         self.__scaling = scaling
 
-        self.__label = pyglet.text.Label(
+        self.label = pyglet.text.Label(
             text = text,
             x = x * scaling,
             y = y * scaling,
-            width = width * scaling,
-            height = height * scaling,
             font_name = font_name,
-            font_size = 32,
+            font_size = font_size * scaling,
             anchor_x = "center",
             anchor_y = "center",
             color = color,
@@ -43,7 +40,7 @@ class TextNode(PositionNode):
         )
 
     def delete(self) -> None:
-        self.__label.delete()
+        self.label.delete()
 
     def set_position(
         self,
@@ -52,14 +49,17 @@ class TextNode(PositionNode):
     ) -> None:
         if x is not None:
             self.x = x
-            self.__label.x = x * self.__scaling
+            self.label.x = x * self.__scaling
 
         if y is not None:
             self.y = y
-            self.__label.y = y * self.__scaling
+            self.label.y = y * self.__scaling
 
     def set_opacity(self, opacity: float):
-        self.__label.opacity = opacity
+        self.label.opacity = opacity
+
+    def set_text(self, text: str):
+        self.label.text = text
 
     def draw(self) -> None:
-        self.__label.draw()
+        self.label.draw()

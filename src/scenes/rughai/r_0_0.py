@@ -312,7 +312,8 @@ class R_0_0(PlayableSceneNode):
             x = player_position[0] + 8,
             y = player_position[1] + 8,
             scaling = scaling,
-            batch = self._scene.world_batch
+            world_batch = self._scene.world_batch,
+            ui_batch = self._scene.ui_batch
         )
 
         self._scene.set_cam_bounds(cam_bounds)

@@ -206,7 +206,8 @@ class RugHai:
                     self._render_bench.draw()
                     self._update_bench.draw()
 
-        self.fps_display.draw()
+        if settings[Builtins.DEBUG]:
+            self.fps_display.draw()
 
     def update(self, dt) -> None:
         # Benchmark measures update time.

@@ -2,6 +2,7 @@ from typing import Callable, Optional, Sequence, Tuple, Union
 import pyglet
 import pyglet.math as pm
 
+from engine.settings import settings, Builtins
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
@@ -74,14 +75,15 @@ class SceneNode(Node):
         self.__children = []
 
         # Scene title.
-        if (title is not None):
+        if title is not None and settings[Builtins.DEBUG]:
             label = TextNode(
-                ui = True,
                 x = view_width // 2,
                 y = view_height - 5,
                 color = (0xFF, 0xFF, 0xFF, 0xFF),
+                font_name = settings[Builtins.FONT_NAME],
                 scaling = scaling,
-                text = title
+                text = title,
+                batch = self.ui_batch
             )
             self.add_child(label)
 
