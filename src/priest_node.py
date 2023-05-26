@@ -2,6 +2,7 @@ from typing import Optional
 import pyglet
 
 from constants import collision_tags
+from engine.dialog_node import DialogNode
 from engine.settings import settings, Builtins
 from engine.collision.collision_manager import CollisionManager
 from engine.collision.collision_node import CollisionNode, CollisionType
@@ -9,7 +10,6 @@ from engine.collision.collision_shape import CollisionCircle
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.text_node import TextNode
 
 class PriestNode(PositionNode):
     def __init__(
@@ -35,18 +35,10 @@ class PriestNode(PositionNode):
             batch = world_batch
         )
 
-        self.off_text = ""
-        self.on_text = "Goodbye, cruel world."
-        self.current_text_length = 0
-        self.interacting = False
-
-        self.dialog = TextNode(
-            text = self.off_text,
-            font_name = settings[Builtins.FONT_NAME],
+        self.dialog = DialogNode(
             x = settings[Builtins.VIEW_WIDTH] / 2,
             y = 16,
             scaling = scaling,
-            font_size = 6,
             batch = ui_batch
         )
 
@@ -58,7 +50,7 @@ class PriestNode(PositionNode):
             sensor = True,
             collision_type = CollisionType.STATIC,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = self.on_interaction,
+            on_triggered = lambda entered: self.dialog.enable(entered),
             shapes = [
                 CollisionCircle(
                     x = x,
@@ -71,18 +63,8 @@ class PriestNode(PositionNode):
         )
         collision_manager.add_collider(self.interactor)
 
-    def on_interaction(self, entered: bool):
-        self.interacting = entered
-
     def update(self, dt: int) -> None:
-        if self.interacting:
-            self.current_text_length += 1
-            if self.current_text_length >= len(self.on_text):
-                self.current_text_length = len(self.on_text)
-        else:
-            self.current_text_length = 0
-
-        self.dialog.set_text(self.on_text[0:self.current_text_length])
+        self.dialog.update(dt)
 
     def delete(self) -> None:
         self.sprite.delete()
