@@ -69,6 +69,6 @@ class DialogNode(PositionNode):
         """
         Progresses the dialog to the next line.
         """
-        if self.active:
+        if self.active and self.current_line < len(self.lines) - 1:
             self.current_line += 1
             self.current_text_length = 0
