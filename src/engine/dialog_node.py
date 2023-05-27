@@ -25,7 +25,7 @@ class DialogNode(PositionNode):
 
         self.text = text
         self.current_text_length = 0
-        self.active = False
+        self.open = False
         self.char_duration = char_duration
         self.elapsed = 0.0
 
@@ -42,7 +42,7 @@ class DialogNode(PositionNode):
         )
 
     def update(self, dt: int) -> None:
-        if self.active:
+        if self.open:
             self.elapsed += dt
             if self.elapsed >= self.char_duration:
                 self.elapsed = 0.0
@@ -53,22 +53,36 @@ class DialogNode(PositionNode):
             self.current_line = 0
             self.current_text_length = 0
 
-        self.dialog.set_text(self.lines[self.current_line][0:self.current_text_length])
+        self.dialog.set_text(f"{self.lines[self.current_line][0:self.current_text_length]}")
 
     def delete(self) -> None:
         self.dialog.delete()
 
-    def enable(self, active: bool):
+    def toggle(self, enable: bool):
         """
         Activates or deactivates the dialog.
-        If active is True, then the dialog starts from the beginning.
+        If enable is True, then the dialog starts from the beginning.
         """
-        self.active = active
+        self.open = enable
 
     def next_line(self):
         """
         Progresses the dialog to the next line.
         """
-        if self.active and self.current_line < len(self.lines) - 1:
-            self.current_line += 1
-            self.current_text_length = 0
+        if self.open:
+            if self.current_text_length < len(self.lines[self.current_line]) - 1:
+                # Just go to end of the line if not there yet.
+                self.current_text_length = len(self.lines[self.current_line]) - 1
+            else:
+                if self.current_line < len(self.lines) - 1:
+                    # Go to next line if active and not there yet.
+                    self.current_line += 1
+                    self.current_text_length = 0
+                else:
+                    # End the dialog if finish line is reached already.
+                    self.current_line = 0
+                    self.current_text_length = 0
+                    self.open = False
+        else:
+            # Reopen if not already.
+            self.open = True

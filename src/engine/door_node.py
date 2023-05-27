@@ -1,7 +1,7 @@
 from typing import Callable, List, Optional
 import pyglet
-from engine.collision.collision_controller import CollisionController
 
+from engine import controllers
 from engine.collision.collision_node import CollisionNode
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
@@ -9,7 +9,6 @@ from engine.node import PositionNode
 class DoorNode(PositionNode):
     def __init__(
         self,
-        collision_controller: CollisionController,
         x: float = 0,
         y: float = 0,
         width: int = 0,
@@ -43,7 +42,7 @@ class DoorNode(PositionNode):
             ]
         )
 
-        collision_controller.add_collider(self.collider)
+        controllers.collision_controller.add_collider(self.collider)
 
     def delete(self):
         self.collider.delete()

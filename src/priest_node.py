@@ -2,9 +2,9 @@ from typing import Optional
 import pyglet
 
 from constants import collision_tags
+from engine import controllers
 from engine.dialog_node import DialogNode
 from engine.settings import settings, Builtins
-from engine.collision.collision_controller import CollisionController
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle
 from engine.dialog_controller import DialogController
@@ -15,8 +15,6 @@ from engine.sprite_node import SpriteNode
 class PriestNode(PositionNode):
     def __init__(
         self,
-        collision_controller: CollisionController,
-        dialog_controller: DialogController,
         x: float = 0,
         y: float = 0,
         scaling: int = 1,
@@ -48,7 +46,7 @@ class PriestNode(PositionNode):
             scaling = scaling,
             batch = ui_batch
         )
-        dialog_controller.add_dialog(self.dialog)
+        controllers.dialog_controller.add_dialog(self.dialog)
 
         # Interaction finder.
         # This collider is responsible for searching for interactables.
@@ -58,7 +56,7 @@ class PriestNode(PositionNode):
             sensor = True,
             collision_type = CollisionType.STATIC,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = self.dialog.enable,
+            on_triggered = lambda entered: controllers.dialog_controller.toggle_dialog(self.dialog, enable = entered),
             shapes = [
                 CollisionCircle(
                     x = x,
@@ -69,7 +67,7 @@ class PriestNode(PositionNode):
                 )
             ]
         )
-        collision_controller.add_collider(self.interactor)
+        controllers.collision_controller.add_collider(self.interactor)
 
     def update(self, dt: int) -> None:
         self.dialog.update(dt)

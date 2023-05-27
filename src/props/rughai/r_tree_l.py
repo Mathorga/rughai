@@ -1,19 +1,14 @@
-import random
 from typing import Optional
 import pyglet
 
-from engine.collision.collision_controller import CollisionController
-from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
-from engine.sprite_node import SpriteNode
 from engine.utils import animation_set_anchor
 from props.prop_node import PropNode
 
 class RTreeL(PositionNode):
     def __init__(
         self,
-        collision_controller: CollisionController,
         x: float = 0,
         y: float = 0,
         z: float = 0,
@@ -21,8 +16,6 @@ class RTreeL(PositionNode):
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
-
-        self.__scaling = scaling
 
         self.__idle_0_anim = pyglet.image.Animation.from_image_sequence([pyglet.resource.image("sprites/rughai/prop/tree_l/tree_l_idle_0.png")], 1.0)
         self.__idle_1_anim = pyglet.resource.animation("sprites/rughai/prop/tree_l/tree_l_idle_1.gif")
@@ -46,7 +39,6 @@ class RTreeL(PositionNode):
             sec_idle_anims = [
                 self.__idle_1_anim
             ],
-            collision_controller = collision_controller,
             collision_shapes = [
                 CollisionRect(
                     x = x,
