@@ -38,6 +38,7 @@ class PriestNode(PositionNode):
         self.dialog = DialogNode(
             x = settings[Builtins.VIEW_WIDTH] / 2,
             y = 16,
+            text = "Good morning fellow Rughai and welcome to this beautiful day!",
             scaling = scaling,
             batch = ui_batch
         )
@@ -50,7 +51,7 @@ class PriestNode(PositionNode):
             sensor = True,
             collision_type = CollisionType.STATIC,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered: self.dialog.enable(entered),
+            on_triggered = self.dialog.enable,
             shapes = [
                 CollisionCircle(
                     x = x,

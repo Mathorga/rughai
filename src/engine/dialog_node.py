@@ -11,15 +11,18 @@ class DialogNode(PositionNode):
         self,
         x: float = 0.0,
         y: float = 0.0,
+        text: str = "hello_world",
+        # Character duration in seconds.
+        char_duration: float = 0.05,
         scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None,
     ) -> None:
         super().__init__(x, y)
 
-        self.on_text = "Goodbye, cruel world."
+        self.text = text
         self.current_text_length = 0
         self.active = False
-        self.char_duration = 0.05
+        self.char_duration = char_duration
         self.elapsed = 0.0
 
         self.dialog = TextNode(
@@ -38,12 +41,12 @@ class DialogNode(PositionNode):
             if self.elapsed >= self.char_duration:
                 self.elapsed = 0.0
                 self.current_text_length += 1
-                if self.current_text_length >= len(self.on_text):
-                    self.current_text_length = len(self.on_text)
+                if self.current_text_length >= len(self.text):
+                    self.current_text_length = len(self.text)
         else:
             self.current_text_length = 0
 
-        self.dialog.set_text(self.on_text[0:self.current_text_length])
+        self.dialog.set_text(self.text[0:self.current_text_length])
 
     def delete(self) -> None:
         self.dialog.delete()
