@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 import pyglet
 
 from engine.node import PositionNode
@@ -12,12 +12,16 @@ class DialogNode(PositionNode):
         x: float = 0.0,
         y: float = 0.0,
         text: str = "hello_world",
+        lines: Optional[List[str]] = None,
         # Character duration in seconds.
         char_duration: float = 0.05,
         scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None,
     ) -> None:
         super().__init__(x, y)
+
+        self.lines = lines if lines is not None else []
+        self.current_line = 0
 
         self.text = text
         self.current_text_length = 0
@@ -52,4 +56,14 @@ class DialogNode(PositionNode):
         self.dialog.delete()
 
     def enable(self, active: bool):
+        """
+        Activates or deactivates the dialog.
+        If active is True, then the dialog starts from the beginning.
+        """
         self.active = active
+
+    def next_line(self):
+        """
+        Progresses the dialog to the next line.
+        """
+        self.current_line += 1
