@@ -38,7 +38,11 @@ class PriestNode(PositionNode):
         self.dialog = DialogNode(
             x = settings[Builtins.VIEW_WIDTH] / 2,
             y = 16,
-            text = "Good morning fellow Rughai and welcome to this beautiful day!",
+            text = "Good morning fellow Rughai and welcome to this beautiful day! How's it gonna be today?",
+            lines = [
+                "Welcome true believers and newcomers alike! Spiderman co-creator Stan Lee here!",
+                "How's it gonna be today?"
+            ],
             scaling = scaling,
             batch = ui_batch
         )

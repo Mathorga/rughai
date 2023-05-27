@@ -30,10 +30,12 @@ class DialogNode(PositionNode):
         self.elapsed = 0.0
 
         self.dialog = TextNode(
+            # Start with no text.
             text = "",
             font_name = settings[Builtins.FONT_NAME],
             x = settings[Builtins.VIEW_WIDTH] / 2,
             y = 16,
+            width = settings[Builtins.VIEW_WIDTH] * 0.8,
             scaling = scaling,
             font_size = 6,
             batch = batch
@@ -50,7 +52,7 @@ class DialogNode(PositionNode):
         else:
             self.current_text_length = 0
 
-        self.dialog.set_text(self.text[0:self.current_text_length])
+        self.dialog.set_text(self.lines[self.current_line][0:self.current_text_length])
 
     def delete(self) -> None:
         self.dialog.delete()
