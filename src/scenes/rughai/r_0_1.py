@@ -2,7 +2,7 @@ from typing import Callable, Optional
 import pyglet
 from clouds_node import CloudsNode
 
-from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_controller import CollisionController
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
@@ -21,7 +21,7 @@ class R_0_1(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
-        collision_manager: CollisionManager,
+        collision_controller: CollisionController,
         input_controller: InputController,
         view_width: int,
         view_height: int,
@@ -31,7 +31,7 @@ class R_0_1(PlayableSceneNode):
     ):
         super().__init__(
             window = window,
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             input_controller = input_controller,
             view_width = view_width,
             view_height = view_height,
@@ -89,7 +89,7 @@ class R_0_1(PlayableSceneNode):
         cam_target = PositionNode()
         self._player = PlayerNode(
             input_controller = input_controller,
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
@@ -100,7 +100,7 @@ class R_0_1(PlayableSceneNode):
 
         # Place doors.
         north_door = DoorNode(
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             x = 18 * self.__tile_size,
             y = 30 * self.__tile_size,
             width = 32 * self.__tile_size,
@@ -122,7 +122,7 @@ class R_0_1(PlayableSceneNode):
             batch = self._scene.world_batch
         )
         south_west_door = DoorNode(
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             x = 5 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 10 * self.__tile_size,
@@ -144,7 +144,7 @@ class R_0_1(PlayableSceneNode):
             batch = self._scene.world_batch
         )
         south_east_door = DoorNode(
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             x = 34 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 16 * self.__tile_size,
@@ -198,7 +198,7 @@ class R_0_1(PlayableSceneNode):
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_1",
             scaling = scaling,
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             batch = self._scene.world_batch
         )
 

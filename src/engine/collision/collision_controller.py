@@ -2,7 +2,7 @@ from typing import Dict, List
 
 from engine.collision.collision_node import CollisionType, CollisionNode
 
-class CollisionManager:
+class CollisionController:
     def __init__(self) -> None:
         self.__colliders: Dict[CollisionType, List[CollisionNode]] = {}
 

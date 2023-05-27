@@ -1,7 +1,8 @@
 from typing import Callable, List, Optional
 import pyglet
 
-from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_controller import CollisionController
+from engine.dialog_controller import DialogController
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
@@ -23,8 +24,9 @@ class R_0_0(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
-        collision_manager: CollisionManager,
+        collision_controller: CollisionController,
         input_controller: InputController,
+        dialog_controller: DialogController,
         view_width: int,
         view_height: int,
         scaling: int = 1,
@@ -33,8 +35,9 @@ class R_0_0(PlayableSceneNode):
     ):
         super().__init__(
             window = window,
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             input_controller = input_controller,
+            dialog_controller = dialog_controller,
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
@@ -78,7 +81,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size,
                 height = self.__tile_size * 6,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -87,7 +90,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size,
                 height = self.__tile_size,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -96,7 +99,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size * 5,
                 height = self.__tile_size,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -105,7 +108,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size,
                 height = self.__tile_size * 3,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -114,7 +117,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -123,7 +126,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -132,7 +135,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -141,7 +144,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -150,7 +153,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size * 2,
                 height = self.__tile_size,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
 
@@ -161,7 +164,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size,
                 height = self.__tile_size * 17,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -170,7 +173,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -179,7 +182,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -188,7 +191,7 @@ class R_0_0(PlayableSceneNode):
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
                 scaling = scaling,
-                collision_manager = collision_manager,
+                collision_controller = collision_controller,
                 batch = self._scene.world_batch
             )
         ]
@@ -215,7 +218,8 @@ class R_0_0(PlayableSceneNode):
         cam_target = PositionNode()
         self._player = PlayerNode(
             input_controller = input_controller,
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
+            dialog_controller = dialog_controller,
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
@@ -226,7 +230,7 @@ class R_0_0(PlayableSceneNode):
 
         # Place doors.
         south_door = DoorNode(
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
@@ -248,7 +252,7 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
         east_door = DoorNode(
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             x = tilemap_width * self.__tile_size,
             y = 25 * self.__tile_size,
             width = 2 * self.__tile_size,
@@ -302,13 +306,14 @@ class R_0_0(PlayableSceneNode):
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_0",
             scaling = scaling,
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             batch = self._scene.world_batch
         )
 
         # Priest.
         priest = PriestNode(
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
+            dialog_controller = dialog_controller,
             x = player_position[0] + 8,
             y = player_position[1] + 8,
             scaling = scaling,

@@ -1,7 +1,7 @@
 from typing import Optional
 import pyglet
 
-from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_controller import CollisionController
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.utils import animation_set_anchor
@@ -10,7 +10,7 @@ from props.prop_node import PropNode
 class RTreeM(PositionNode):
     def __init__(
         self,
-        collision_manager: CollisionManager,
+        collision_controller: CollisionController,
         x: float = 0,
         y: float = 0,
         z: float = 0,
@@ -43,7 +43,7 @@ class RTreeM(PositionNode):
             sec_idle_anims = [
                 self.__idle_1_anim
             ],
-            collision_manager = collision_manager,
+            collision_controller = collision_controller,
             collision_shapes = [
                 CollisionRect(
                     x = x,

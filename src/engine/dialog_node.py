@@ -50,6 +50,7 @@ class DialogNode(PositionNode):
                 if self.current_text_length >= len(self.text):
                     self.current_text_length = len(self.text)
         else:
+            self.current_line = 0
             self.current_text_length = 0
 
         self.dialog.set_text(self.lines[self.current_line][0:self.current_text_length])
@@ -68,4 +69,6 @@ class DialogNode(PositionNode):
         """
         Progresses the dialog to the next line.
         """
-        self.current_line += 1
+        if self.active:
+            self.current_line += 1
+            self.current_text_length = 0

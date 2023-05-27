@@ -11,9 +11,10 @@ from pyglet.window import key
 
 from constants import collision_tags
 
-from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_controller import CollisionController
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle
+from engine.dialog_controller import DialogController
 from engine.node import PositionNode
 from engine.input_controller import InputController
 from engine.sprite_node import SpriteNode
@@ -108,7 +109,8 @@ class PlayerNode(PositionNode):
     def __init__(
         self,
         input_controller: InputController,
-        collision_manager: CollisionManager,
+        collision_controller: CollisionController,
+        dialog_controller: DialogController,
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
@@ -124,6 +126,9 @@ class PlayerNode(PositionNode):
             x = x,
             y = y
         )
+
+        # Save dialog controller for later.
+        self.__dialog_controller = dialog_controller
 
         # IDLE state animations.
         self.__idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_idle.gif")
@@ -233,7 +238,7 @@ class PlayerNode(PositionNode):
                 )
             ]
         )
-        collision_manager.add_collider(self.__collider)
+        collision_controller.add_collider(self.__collider)
 
         # Interaction finder.
         # This collider is responsible for searching for interactables.
@@ -253,7 +258,7 @@ class PlayerNode(PositionNode):
                 )
             ]
         )
-        collision_manager.add_collider(self.__interactor)
+        collision_controller.add_collider(self.__interactor)
 
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset
@@ -324,6 +329,11 @@ class PlayerNode(PositionNode):
             self.__main_atk_ing = self.__input.get_main_atk()
             if self.__main_atk_ing:
                 self.__main_atk_ed = True
+
+            # Trigger dialogs' next line.
+            interact = self.__input.get_interaction()
+            if interact:
+                self.__dialog_controller.next_line()
 
     def __update_dir(self):
         if self.__move_input.mag > 0.0:

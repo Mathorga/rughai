@@ -2,7 +2,7 @@ import random
 from typing import List, Optional
 import pyglet
 
-from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_controller import CollisionController
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionShape
 from engine.node import PositionNode
@@ -17,7 +17,7 @@ class PropNode(PositionNode):
         # Animation duration.
         anim_duration: float = 1.0,
         sec_idle_anims: List[pyglet.image.animation.Animation] = [],
-        collision_manager: Optional[CollisionManager] = None,
+        collision_controller: Optional[CollisionController] = None,
         x: float = 0,
         y: float = 0,
         z: float = 0,
@@ -48,7 +48,7 @@ class PropNode(PositionNode):
 
         self.__collider: Optional[CollisionNode] = None
         if len(collision_shapes) > 0:
-            assert collision_manager is not None
+            assert collision_controller is not None
 
             # Collider.
             self.__collider = CollisionNode(
@@ -58,7 +58,7 @@ class PropNode(PositionNode):
                 tags = ["player"],
                 shapes = collision_shapes
             )
-            collision_manager.add_collider(self.__collider)
+            collision_controller.add_collider(self.__collider)
 
     def update(self, dt: float) -> None:
         self.__elapsed_anim_time += dt

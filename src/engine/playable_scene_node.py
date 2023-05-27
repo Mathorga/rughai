@@ -1,7 +1,8 @@
 from typing import Callable, Optional
 import pyglet
 
-from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_controller import CollisionController
+from engine.dialog_controller import DialogController
 from engine.input_controller import InputController
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
@@ -12,8 +13,9 @@ class PlayableSceneNode(Node):
     def __init__(
         self,
         window: pyglet.window.Window,
-        collision_manager: CollisionManager,
+        collision_controller: CollisionController,
         input_controller: InputController,
+        dialog_controller: DialogController,
         view_width: int,
         view_height: int,
         scaling: int = 1,
@@ -24,8 +26,9 @@ class PlayableSceneNode(Node):
 
         self._window = window
         self._on_ended = on_ended
-        self._collision_manager = collision_manager
+        self._collision_controller = collision_controller
         self._input_controller = input_controller
+        self._dialog_controller = dialog_controller
 
         # The bundle containing instructions for the next scene.
         self._bundle: dict
