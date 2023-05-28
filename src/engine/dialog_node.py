@@ -35,7 +35,7 @@ class DialogNode(PositionNode):
             font_name = settings[Builtins.FONT_NAME],
             x = settings[Builtins.VIEW_WIDTH] / 2,
             y = 16,
-            width = settings[Builtins.VIEW_WIDTH] * 0.8,
+            width = settings[Builtins.VIEW_WIDTH],
             scaling = scaling,
             font_size = 6,
             batch = batch

@@ -30,6 +30,7 @@ class RugHai:
         pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
         pyglet.resource.reindex()
         pyglet.font.add_file(f"{os.path.dirname(__file__)}/../assets/fonts/I-pixel-u.ttf")
+        pyglet.font.add_file(f"{os.path.dirname(__file__)}/../assets/fonts/rughai.ttf")
 
         # Load settings from file.
         load_settings(f"{os.path.dirname(__file__)}/../assets/settings.json")

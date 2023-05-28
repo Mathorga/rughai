@@ -18,6 +18,7 @@ from player_node import PlayerNode
 from clouds_node import CloudsNode
 import constants.events as events
 import constants.scenes as scenes
+from pokeball_node import PokeballNode
 from priest_node import PriestNode
 
 class R_0_0(PlayableSceneNode):
@@ -293,6 +294,13 @@ class R_0_0(PlayableSceneNode):
             world_batch = self._scene.world_batch,
             ui_batch = self._scene.ui_batch
         )
+        pokeball = PokeballNode(
+            x = self.__tile_size * 32,
+            y = self.__tile_size * 37,
+            scaling = scaling,
+            world_batch = self._scene.world_batch,
+            ui_batch = self._scene.ui_batch
+        )
 
         self._scene.set_cam_bounds(cam_bounds)
 
@@ -303,6 +311,7 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(priest)
+        self._scene.add_child(pokeball)
         self._scene.add_child(self._player)
         self._scene.add_child(south_door)
         self._scene.add_child(east_door)
