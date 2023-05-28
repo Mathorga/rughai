@@ -55,7 +55,7 @@ class PropNode(PositionNode):
                 tags = ["player"],
                 shapes = collision_shapes
             )
-            controllers.collision_controller.add_collider(self.__collider)
+            controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 
     def update(self, dt: float) -> None:
         self.__elapsed_anim_time += dt

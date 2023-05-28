@@ -43,7 +43,7 @@ class PriestNode(PositionNode):
             scaling = scaling,
             batch = ui_batch
         )
-        controllers.interaction_controller.add_interaction(self.dialog)
+        controllers.INTERACTION_CONTROLLER.add_interaction(self.dialog)
 
         # Interaction finder.
         # This collider is responsible for searching for interactables.
@@ -53,7 +53,7 @@ class PriestNode(PositionNode):
             sensor = True,
             collision_type = CollisionType.STATIC,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered: controllers.interaction_controller.toggle_interaction(self.dialog, enable = entered),
+            on_triggered = lambda entered: controllers.INTERACTION_CONTROLLER.toggle_interaction(self.dialog, enable = entered),
             shapes = [
                 CollisionCircle(
                     x = x,
@@ -64,7 +64,7 @@ class PriestNode(PositionNode):
                 )
             ]
         )
-        controllers.collision_controller.add_collider(self.interactor)
+        controllers.COLLISION_CONTROLLER.add_collider(self.interactor)
 
     def update(self, dt: int) -> None:
         self.dialog.update(dt)

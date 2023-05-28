@@ -42,7 +42,7 @@ class DoorNode(PositionNode):
             ]
         )
 
-        controllers.collision_controller.add_collider(self.collider)
+        controllers.COLLISION_CONTROLLER.add_collider(self.collider)
 
     def delete(self):
         self.collider.delete()

@@ -98,7 +98,7 @@ class RugHai:
     def __on_scene_end(self, bundle: dict):
         print("scene_ended", bundle)
         if bundle["next_scene"]:
-            controllers.collision_controller.clear()
+            controllers.COLLISION_CONTROLLER.clear()
             self._active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
@@ -199,11 +199,11 @@ class RugHai:
         # Benchmark measures update time.
         with self._update_bench:
             # InputController makes sure every input is handled correctly.
-            with controllers.input_controller:
+            with controllers.INPUT_CONTROLLER:
                 self._active_scene.update(dt)
 
         # Compute collisions through collision manager.
-        controllers.collision_controller.update(dt)
+        controllers.COLLISION_CONTROLLER.update(dt)
 
     def run(self) -> None:
         # Scale textures using nearest neighbor filtering.

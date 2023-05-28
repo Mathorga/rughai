@@ -34,7 +34,7 @@ class ColumnNode(PositionNode):
                 )
             ]
         )
-        controllers.collision_controller.add_collider(self.__collider)
+        controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 
     def delete(self) -> None:
         self.__collider.delete()
@@ -68,7 +68,7 @@ class WallNode(PositionNode):
                 )
             ]
         )
-        controllers.collision_controller.add_collider(self.__collider)
+        controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 
     def delete(self) -> None:
         self.__collider.delete()

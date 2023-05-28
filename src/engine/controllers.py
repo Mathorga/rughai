@@ -6,15 +6,15 @@ from engine.interaction_controller import InteractionController
 from engine.input_controller import InputController
 
 
-collision_controller: CollisionController
-input_controller: InputController
-interaction_controller: InteractionController
+COLLISION_CONTROLLER: CollisionController
+INPUT_CONTROLLER: InputController
+INTERACTION_CONTROLLER: InteractionController
 
 def create_controllers(window: pyglet.window.Window) -> Tuple:
-    global collision_controller
-    global input_controller
-    global interaction_controller
+    global COLLISION_CONTROLLER
+    global INPUT_CONTROLLER
+    global INTERACTION_CONTROLLER
 
-    collision_controller = CollisionController()
-    input_controller = InputController(window = window)
-    interaction_controller = InteractionController()
+    COLLISION_CONTROLLER = CollisionController()
+    INPUT_CONTROLLER = InputController(window = window)
+    INTERACTION_CONTROLLER = InteractionController()

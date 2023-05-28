@@ -5,12 +5,22 @@ from engine.node import Node
 from engine.settings import settings, Builtins
 from engine.text_node import TextNode
 
-
 class InteractionNode(Node):
-    def __init__(self) -> None:
+    """
+    Grabbable item.
+    """
+
+    def __init__(
+        self,
+        on_toggle: Optional[Callable[[], None]] = None,
+        on_interaction: Optional[Callable[[bool], None]] = None
+    ) -> None:
         super().__init__()
 
         self.enabled = False
+
+        self.on_toggle = on_toggle
+        self.on_interaction = on_interaction
 
     def toggle(self, enable: bool):
         """
@@ -18,33 +28,16 @@ class InteractionNode(Node):
         """
         self.enabled = enable
 
+        if self.on_toggle is not None:
+            self.on_toggle(enable)
+
     def interact(self):
         """
         Interaction method.
         """
 
-
-class GrabbableNode(InteractionNode):
-    """
-    Grabbable item.
-    """
-
-    def __init__(
-        self,
-        on_interaction: Optional[Callable] = None
-    ) -> None:
-        super().__init__()
-
-        self.on_interaction = on_interaction
-
-    def interact(self):
-        # TODO.
-
         if self.on_interaction is not None:
             self.on_interaction()
-
-        print("GRABBED_ITEM")
-        super().interact()
 
 
 class DialogNode(InteractionNode):

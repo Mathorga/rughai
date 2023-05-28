@@ -15,7 +15,7 @@ from player_node import PlayerNode
 from clouds_node import CloudsNode
 import constants.events as events
 import constants.scenes as scenes
-from pokeball_node import PokeballNode
+from battery_node import BatteryNode
 from priest_node import PriestNode
 
 class R_0_0(PlayableSceneNode):
@@ -291,8 +291,8 @@ class R_0_0(PlayableSceneNode):
             world_batch = self._scene.world_batch,
             ui_batch = self._scene.ui_batch
         )
-        self.pokeball = PokeballNode(
-            x = self.__tile_size * 32,
+        self.battery = BatteryNode(
+            x = self.__tile_size * 38,
             y = self.__tile_size * 37,
             on_interaction = self.delete_pokeball,
             scaling = scaling,
@@ -308,7 +308,7 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(priest)
-        self._scene.add_child(self.pokeball)
+        self._scene.add_child(self.battery)
         self._scene.add_child(self._player)
         self._scene.add_child(south_door)
         self._scene.add_child(east_door)
@@ -316,5 +316,5 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(health_bar)
 
     def delete_pokeball(self) -> None:
-        self._scene.remove_child(self.pokeball)
-        self.pokeball.delete()
+        self._scene.remove_child(self.battery)
+        self.battery.delete()
