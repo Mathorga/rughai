@@ -6,7 +6,7 @@ from engine.interaction_node import InteractionNode
 class InteractionController:
     def __init__(self) -> None:
         self.interactions: List[InteractionNode] = []
-        self.active_interaction: InteractionNode
+        self.active_interaction: InteractionNode = None
 
     def add_interaction(
         self,
