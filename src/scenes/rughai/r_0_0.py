@@ -1,15 +1,12 @@
 from typing import Callable, List, Optional
 import pyglet
 
-from engine.collision.collision_controller import CollisionController
-from engine.dialog_controller import DialogController
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.prop_loader import PropLoader
 from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
-from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
 from engine.wall_node import WallNode
 from engine.settings import settings, Builtins
@@ -294,12 +291,12 @@ class R_0_0(PlayableSceneNode):
             world_batch = self._scene.world_batch,
             ui_batch = self._scene.ui_batch
         )
-        pokeball = PokeballNode(
+        self.pokeball = PokeballNode(
             x = self.__tile_size * 32,
             y = self.__tile_size * 37,
+            on_interaction = self.delete_pokeball,
             scaling = scaling,
-            world_batch = self._scene.world_batch,
-            ui_batch = self._scene.ui_batch
+            batch = self._scene.world_batch
         )
 
         self._scene.set_cam_bounds(cam_bounds)
@@ -311,9 +308,13 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(priest)
-        self._scene.add_child(pokeball)
+        self._scene.add_child(self.pokeball)
         self._scene.add_child(self._player)
         self._scene.add_child(south_door)
         self._scene.add_child(east_door)
         self._scene.add_child(energy_bar)
         self._scene.add_child(health_bar)
+
+    def delete_pokeball(self) -> None:
+        self._scene.remove_child(self.pokeball)
+        self.pokeball.delete()

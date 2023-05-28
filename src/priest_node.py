@@ -3,11 +3,9 @@ import pyglet
 
 from constants import collision_tags
 from engine import controllers
-from engine.dialog_node import DialogNode
-from engine.settings import settings, Builtins
+from engine.interaction_node import DialogNode
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle
-from engine.dialog_controller import DialogController
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
@@ -36,17 +34,16 @@ class PriestNode(PositionNode):
         )
 
         self.dialog = DialogNode(
-            x = settings[Builtins.VIEW_WIDTH] / 2,
-            y = 16,
-            text = "Good morning fellow Rughai and welcome to this beautiful day! How's it gonna be today?",
             lines = [
                 "Welcome true believers and newcomers alike! Spiderman co-creator Stan Lee here!",
-                "How's it gonna be today?"
+                "How's it gonna be today?",
+                "Oh I see! You're gonna make a mess as usual",
+                "Just be careful with those pokemon over there, I'd like to eat them eventually."
             ],
             scaling = scaling,
             batch = ui_batch
         )
-        controllers.dialog_controller.add_dialog(self.dialog)
+        controllers.interaction_controller.add_interaction(self.dialog)
 
         # Interaction finder.
         # This collider is responsible for searching for interactables.
@@ -56,7 +53,7 @@ class PriestNode(PositionNode):
             sensor = True,
             collision_type = CollisionType.STATIC,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered: controllers.dialog_controller.toggle_dialog(self.dialog, enable = entered),
+            on_triggered = lambda entered: controllers.interaction_controller.toggle_interaction(self.dialog, enable = entered),
             shapes = [
                 CollisionCircle(
                     x = x,

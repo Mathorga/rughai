@@ -197,6 +197,10 @@ class SceneNode(Node):
         child: Union[Node, PositionNode],
         cam_target: bool = False
     ):
+        """
+        Adds the provided child to the scene.
+        if cam_target is True, then the child has to be a PositionNode.
+        """
         if cam_target:
             # Make sure the given child is actually a position node, otherwise it can't be a cam_target.
             assert isinstance(child, PositionNode)
@@ -209,6 +213,13 @@ class SceneNode(Node):
                 )
 
         self.__children.append(child)
+
+    def remove_child(self, child: Union[Node, PositionNode]):
+        """
+        Removes the provided child from the scene.
+        """
+
+        self.__children.remove(child)
 
     def add_children(
         self,

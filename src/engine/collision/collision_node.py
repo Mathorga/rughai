@@ -36,7 +36,8 @@ class CollisionNode(PositionNode):
 
     def set_position(
         self,
-        position: Tuple[float, float]
+        position: Tuple[float, float],
+        z: Optional[float] = None
     ) -> None:
         self.x = position[0]
         self.y = position[1]

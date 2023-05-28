@@ -28,3 +28,9 @@ class CollisionController:
 
     def clear(self) -> None:
         self.__colliders.clear()
+
+    def remove_collider(self, collider: CollisionNode):
+        """
+        Removes the given collider from the list, effectively preventing it from triggering collisions.
+        """
+        self.__colliders[collider.type].remove(collider)

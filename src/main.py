@@ -4,7 +4,7 @@ import pyglet.gl as gl
 
 import engine.controllers as controllers
 from engine.collision.collision_controller import CollisionController
-from engine.dialog_controller import DialogController
+from engine.interaction_controller import InteractionController
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.upscaler import Upscaler

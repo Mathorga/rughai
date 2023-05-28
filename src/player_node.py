@@ -319,7 +319,7 @@ class PlayerNode(PositionNode):
             # Trigger dialogs' next line.
             interact = self.__input.get_interaction()
             if interact:
-                controllers.dialog_controller.next_line()
+                controllers.interaction_controller.interact()
 
     def __update_dir(self):
         if self.__move_input.mag > 0.0:
