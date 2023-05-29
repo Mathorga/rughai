@@ -2,7 +2,6 @@ import os
 from typing import Optional
 import pyglet
 from PIL import Image
-from engine.collision.collision_manager import CollisionManager
 
 from engine.node import PositionNode
 from props.rughai.r_grass_0 import RGrass0
@@ -15,7 +14,6 @@ from props.rughai.r_veg_1 import RVeg1
 
 def map_prop(
     prop_name: str,
-    collision_manager: CollisionManager,
     x: float,
     y: float,
     scaling: int = 1,
@@ -54,7 +52,6 @@ def map_prop(
             x = x,
             y = y,
             scaling = scaling,
-            collision_manager = collision_manager,
             batch = batch
         )
     elif prop_name == "r_tree_m":
@@ -62,7 +59,6 @@ def map_prop(
             x = x,
             y = y,
             scaling = scaling,
-            collision_manager = collision_manager,
             batch = batch
         )
     elif prop_name == "r_tree_s":
@@ -70,7 +66,6 @@ def map_prop(
             x = x,
             y = y,
             scaling = scaling,
-            collision_manager = collision_manager,
             batch = batch
         )
 
@@ -78,7 +73,6 @@ class PropLoader:
     @staticmethod
     def fetch_props(
         source: str,
-        collision_manager: CollisionManager,
         tile_width: int = 8,
         tile_height: int = 8,
         scaling: int = 1,
@@ -108,7 +102,6 @@ class PropLoader:
                                 x = x * tile_width + tile_width / 2,
                                 y = (propmap.height - 1 - y) * tile_height,
                                 scaling = scaling,
-                                collision_manager = collision_manager,
                                 batch = batch
                             )
 

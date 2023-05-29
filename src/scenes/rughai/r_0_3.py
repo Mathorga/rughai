@@ -1,27 +1,23 @@
 from typing import Callable, Optional
 import pyglet
 
-from engine.collision.collision_manager import CollisionManager
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
-from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
 from engine.settings import settings, Builtins
 
 from player_node import PlayerNode
 from duk_node import DukNode
-import constants.events as events
+import constants.events as events   
 import constants.scenes as scenes
 
 class R_0_3(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
-        collision_manager: CollisionManager,
-        input_controller: InputController,
         view_width: int,
         view_height: int,
         scaling: int = 1,
@@ -30,8 +26,6 @@ class R_0_3(PlayableSceneNode):
     ):
         super().__init__(
             window = window,
-            collision_manager = collision_manager,
-            input_controller = input_controller,
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
@@ -81,8 +75,6 @@ class R_0_3(PlayableSceneNode):
         )
         cam_target = PositionNode()
         self._player = PlayerNode(
-            input_controller = input_controller,
-            collision_manager = collision_manager,
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
@@ -101,7 +93,6 @@ class R_0_3(PlayableSceneNode):
 
         # Place doors.
         north_west_door = DoorNode(
-            collision_manager = collision_manager,
             x = 20 * self.__tile_size,
             y = 26 * self.__tile_size,
             width = 12 * self.__tile_size,
@@ -125,7 +116,6 @@ class R_0_3(PlayableSceneNode):
             batch = self._scene.world_batch
         )
         north_east_door = DoorNode(
-            collision_manager = collision_manager,
             x = 65 * self.__tile_size,
             y = 26 * self.__tile_size,
             width = 12 * self.__tile_size,

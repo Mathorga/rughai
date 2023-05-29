@@ -184,7 +184,7 @@ class TilemapNode(PositionNode):
 
             if layer_data is None or layer_data.text is None:
                 # The provided file does not contain valid information.
-                raise Exception
+                raise ValueError("TMX layer data not found")
 
             # Remove all newline characters and split by comma.
             layer_content = layer_data.text.replace("\n", "").split(",")

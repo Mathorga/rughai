@@ -1,11 +1,10 @@
 import os
 from typing import Optional
 import pyglet
-import pyglet.gl as gl
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.utils import *
+from engine import utils
 
 class DukNode(PositionNode):
     def __init__(
@@ -18,7 +17,7 @@ class DukNode(PositionNode):
         super().__init__(x, y)
 
         self.__idle_animation = pyglet.resource.animation("sprites/rughai/wilds/duk/duk_idle.gif")
-        animation_set_anchor(
+        utils.animation_set_anchor(
             animation = self.__idle_animation,
             x = self.__idle_animation.get_max_width() / 2,
             y = 0

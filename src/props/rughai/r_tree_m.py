@@ -1,7 +1,6 @@
 from typing import Optional
 import pyglet
 
-from engine.collision.collision_manager import CollisionManager
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.utils import animation_set_anchor
@@ -10,7 +9,6 @@ from props.prop_node import PropNode
 class RTreeM(PositionNode):
     def __init__(
         self,
-        collision_manager: CollisionManager,
         x: float = 0,
         y: float = 0,
         z: float = 0,
@@ -18,8 +16,6 @@ class RTreeM(PositionNode):
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
-
-        self.__scaling = scaling
 
         self.__idle_0_anim = pyglet.image.Animation.from_image_sequence(sequence = [pyglet.resource.image("sprites/rughai/prop/tree_m/tree_m_idle_0.png")], duration = 1.0)
         self.__idle_1_anim = pyglet.resource.animation(name = "sprites/rughai/prop/tree_m/tree_m_idle_1.gif")
@@ -43,7 +39,6 @@ class RTreeM(PositionNode):
             sec_idle_anims = [
                 self.__idle_1_anim
             ],
-            collision_manager = collision_manager,
             collision_shapes = [
                 CollisionRect(
                     x = x,

@@ -2,7 +2,9 @@ import os.path
 import pyglet
 import pyglet.gl as gl
 
-from engine.collision.collision_manager import CollisionManager
+import engine.controllers as controllers
+from engine.collision.collision_controller import CollisionController
+from engine.interaction_controller import InteractionController
 from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.upscaler import Upscaler
@@ -28,6 +30,7 @@ class RugHai:
         pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
         pyglet.resource.reindex()
         pyglet.font.add_file(f"{os.path.dirname(__file__)}/../assets/fonts/I-pixel-u.ttf")
+        pyglet.font.add_file(f"{os.path.dirname(__file__)}/../assets/fonts/rughai.ttf")
 
         # Load settings from file.
         load_settings(f"{os.path.dirname(__file__)}/../assets/settings.json")
@@ -36,12 +39,11 @@ class RugHai:
         self._window = self.__create_window()
         self.fps_display = pyglet.window.FPSDisplay(window = self._window, color = (0, 0, 0, 255), samples = 16)
 
-        # Handlers.
-        # Create a collision manager.
-        self._collision_manager = CollisionManager()
-
-        # Create an input handler.
-        self._input = InputController(window = self._window)
+        # Controllers.
+        controllers.create_controllers(window = self._window)
+        # self._collision_controller = CollisionController()
+        # self._input_controller = InputController(window = self._window)
+        # self._dialog_controller = DialogController()
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
@@ -71,8 +73,6 @@ class RugHai:
         # Create a scene.
         self._active_scene = R_0_0(
             window = self._window,
-            collision_manager = self._collision_manager,
-            input_controller = self._input,
             view_width = settings[Builtins.VIEW_WIDTH],
             view_height = settings[Builtins.VIEW_HEIGHT],
             scaling = self._scaling,
@@ -98,14 +98,12 @@ class RugHai:
     def __on_scene_end(self, bundle: dict):
         print("scene_ended", bundle)
         if bundle["next_scene"]:
-            self._collision_manager.clear()
+            controllers.COLLISION_CONTROLLER.clear()
             self._active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
                 self._active_scene = R_0_0(
                     window = self._window,
-                    collision_manager = self._collision_manager,
-                    input_controller = self._input,
                     view_width = settings[Builtins.VIEW_WIDTH],
                     view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
@@ -115,8 +113,6 @@ class RugHai:
             elif bundle["next_scene"] == scenes.R_0_1:
                 self._active_scene = R_0_1(
                     window = self._window,
-                    collision_manager = self._collision_manager,
-                    input_controller = self._input,
                     view_width = settings[Builtins.VIEW_WIDTH],
                     view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
@@ -126,8 +122,6 @@ class RugHai:
             elif bundle["next_scene"] == scenes.R_0_2:
                 self._active_scene = R_0_2(
                     window = self._window,
-                    collision_manager = self._collision_manager,
-                    input_controller = self._input,
                     view_width = settings[Builtins.VIEW_WIDTH],
                     view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
@@ -137,8 +131,6 @@ class RugHai:
             elif bundle["next_scene"] == scenes.R_0_3:
                 self._active_scene = R_0_3(
                     window = self._window,
-                    collision_manager = self._collision_manager,
-                    input_controller = self._input,
                     view_width = settings[Builtins.VIEW_WIDTH],
                     view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
@@ -148,8 +140,6 @@ class RugHai:
             elif bundle["next_scene"] == scenes.R_0_4:
                 self._active_scene = R_0_4(
                     window = self._window,
-                    collision_manager = self._collision_manager,
-                    input_controller = self._input,
                     view_width = settings[Builtins.VIEW_WIDTH],
                     view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
@@ -159,8 +149,6 @@ class RugHai:
             elif bundle["next_scene"] == scenes.R_0_5:
                 self._active_scene = R_0_5(
                     window = self._window,
-                    collision_manager = self._collision_manager,
-                    input_controller = self._input,
                     view_width = settings[Builtins.VIEW_WIDTH],
                     view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
@@ -170,8 +158,6 @@ class RugHai:
             elif bundle["next_scene"] == scenes.R_0_6:
                 self._active_scene = R_0_6(
                     window = self._window,
-                    collision_manager = self._collision_manager,
-                    input_controller = self._input,
                     view_width = settings[Builtins.VIEW_WIDTH],
                     view_height = settings[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
@@ -206,17 +192,18 @@ class RugHai:
                     self._render_bench.draw()
                     self._update_bench.draw()
 
-        self.fps_display.draw()
+        if settings[Builtins.DEBUG]:
+            self.fps_display.draw()
 
     def update(self, dt) -> None:
         # Benchmark measures update time.
         with self._update_bench:
             # InputController makes sure every input is handled correctly.
-            with self._input:
+            with controllers.INPUT_CONTROLLER:
                 self._active_scene.update(dt)
 
         # Compute collisions through collision manager.
-        self._collision_manager.update(dt)
+        controllers.COLLISION_CONTROLLER.update(dt)
 
     def run(self) -> None:
         # Scale textures using nearest neighbor filtering.

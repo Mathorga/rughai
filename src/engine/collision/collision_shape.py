@@ -28,11 +28,15 @@ class CollisionShape(PositionNode):
         if self.render_shape is not None:
             self.render_shape.set_position(position)
 
-    def overlap(self, other) -> bool:
+    def overlap(self, _other) -> bool:
         return False
 
-    def collide(self, other) -> Tuple[float, float]:
+    def collide(self, _other) -> Tuple[float, float]:
         return (0.0, 0.0)
+
+    def delete(self) -> None:
+        if self.render_shape is not None:
+            self.render_shape.delete()
 
 class CollisionRect(CollisionShape):
     def __init__(

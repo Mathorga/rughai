@@ -2,6 +2,7 @@ from typing import Callable, Optional, Sequence, Tuple, Union
 import pyglet
 import pyglet.math as pm
 
+from engine.settings import settings, Builtins
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
@@ -74,14 +75,15 @@ class SceneNode(Node):
         self.__children = []
 
         # Scene title.
-        if (title is not None):
+        if title is not None and settings[Builtins.DEBUG]:
             label = TextNode(
-                ui = True,
                 x = view_width // 2,
                 y = view_height - 5,
                 color = (0xFF, 0xFF, 0xFF, 0xFF),
+                font_name = settings[Builtins.FONT_NAME],
                 scaling = scaling,
-                text = title
+                text = title,
+                batch = self.ui_batch
             )
             self.add_child(label)
 
@@ -195,6 +197,10 @@ class SceneNode(Node):
         child: Union[Node, PositionNode],
         cam_target: bool = False
     ):
+        """
+        Adds the provided child to the scene.
+        if cam_target is True, then the child has to be a PositionNode.
+        """
         if cam_target:
             # Make sure the given child is actually a position node, otherwise it can't be a cam_target.
             assert isinstance(child, PositionNode)
@@ -207,6 +213,13 @@ class SceneNode(Node):
                 )
 
         self.__children.append(child)
+
+    def remove_child(self, child: Union[Node, PositionNode]):
+        """
+        Removes the provided child from the scene.
+        """
+
+        self.__children.remove(child)
 
     def add_children(
         self,

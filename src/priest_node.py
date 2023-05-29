@@ -1,24 +1,23 @@
-import os
 from typing import Optional
 import pyglet
-import pyglet.gl as gl
+
 from constants import collision_tags
-from engine.collision.collision_manager import CollisionManager
+from engine import controllers
+from engine.interaction_node import DialogNode
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.utils import *
 
 class PriestNode(PositionNode):
     def __init__(
         self,
-        collision_manager: CollisionManager,
         x: float = 0,
         y: float = 0,
         scaling: int = 1,
-        batch: Optional[pyglet.graphics.Batch] = None
+        world_batch: Optional[pyglet.graphics.Batch] = None,
+        ui_batch: Optional[pyglet.graphics.Batch] = None,
     ) -> None:
         super().__init__(x, y)
 
@@ -31,8 +30,20 @@ class PriestNode(PositionNode):
             x = x,
             y = y,
             scaling = scaling,
-            batch = batch
+            batch = world_batch
         )
+
+        self.dialog = DialogNode(
+            lines = [
+                "Welcome true believers and newcomers alike! Spiderman co-creator Stan Lee here!",
+                "How's it gonna be today?",
+                "Oh I see! You're gonna make a mess as usual",
+                "Just be careful with those pokemon over there, I'd like to eat them eventually."
+            ],
+            scaling = scaling,
+            batch = ui_batch
+        )
+        controllers.INTERACTION_CONTROLLER.add_interaction(self.dialog)
 
         # Interaction finder.
         # This collider is responsible for searching for interactables.
@@ -42,19 +53,23 @@ class PriestNode(PositionNode):
             sensor = True,
             collision_type = CollisionType.STATIC,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered: print("SHOW_INTERACTION") if entered else None,
+            on_triggered = lambda entered: controllers.INTERACTION_CONTROLLER.toggle_interaction(self.dialog, enable = entered),
             shapes = [
                 CollisionCircle(
                     x = x,
                     y = y,
-                    radius = 6,
+                    radius = 8,
                     scaling = scaling,
-                    batch = batch
+                    batch = world_batch
                 )
             ]
         )
-        collision_manager.add_collider(self.interactor)
+        controllers.COLLISION_CONTROLLER.add_collider(self.interactor)
+
+    def update(self, dt: int) -> None:
+        self.dialog.update(dt)
 
     def delete(self) -> None:
         self.sprite.delete()
         self.interactor.delete()
+        self.dialog.delete()

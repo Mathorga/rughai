@@ -1,7 +1,7 @@
 from typing import Callable, Optional
 import pyglet
 
-from engine.collision.collision_manager import CollisionManager
+from engine.collision.collision_controller import CollisionController
 from engine.input_controller import InputController
 from engine.playable_scene_node import PlayableSceneNode
 
@@ -13,7 +13,7 @@ class MapSceneNode(PlayableSceneNode):
     def __init__(
             self,
             window: pyglet.window.Window,
-            collision_manager: CollisionManager,
+            collision_controller: CollisionController,
             input_controller: InputController,
             view_width: int,
             view_height: int,
@@ -23,7 +23,7 @@ class MapSceneNode(PlayableSceneNode):
     ) -> None:
         super().__init__(
             window,
-            collision_manager,
+            collision_controller,
             input_controller,
             view_width,
             view_height,

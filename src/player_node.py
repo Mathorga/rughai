@@ -11,82 +11,75 @@ from pyglet.window import key
 
 from constants import collision_tags
 
-from engine.collision.collision_manager import CollisionManager
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle
 from engine.node import PositionNode
-from engine.input_controller import InputController
 from engine.sprite_node import SpriteNode
 from engine import utils
 from engine.settings import settings, Builtins
 
+import engine.controllers as controllers
 from player_stats import PlayerStats
 
 class PlayerInput:
-    def __init__(
-        self,
-        input_controller: InputController
-    ) -> None:
-        self.__controller = input_controller
-
     def get_modifier(self) -> bool:
         """
         Returns whether or not the modifier key is being pressed, either on controller or keyboard.
         """
 
-        return self.__controller[key.LSHIFT] or self.__controller.buttons.get("leftshoulder", False)
+        return controllers.INPUT_CONTROLLER[key.LSHIFT] or controllers.INPUT_CONTROLLER.buttons.get("leftshoulder", False)
 
     def get_sprint(self) -> bool:
         """
         Returns whether the sprint button was pressed or not, either on controller or keyboard.
         """
 
-        return self.__controller.key_presses.get(key.SPACE, False) or self.__controller.button_presses.get("b", False)
+        return controllers.INPUT_CONTROLLER.key_presses.get(key.SPACE, False) or controllers.INPUT_CONTROLLER.button_presses.get("b", False)
 
     def get_interaction(self) -> bool:
         """
         Returns whether the interact button was pressed or not, either on controller or keyboard.
         """
 
-        return self.__controller.key_presses.get(key.L, False) or self.__controller.button_presses.get("a", False)
+        return controllers.INPUT_CONTROLLER.key_presses.get(key.L, False) or controllers.INPUT_CONTROLLER.button_presses.get("a", False)
 
     def get_main_atk(self) -> bool:
         """
         Returns whether the main attack button was pressed or not, either on controller or keyboard.
         """
 
-        return self.__controller.key_presses.get(key.M, False) or self.__controller.button_presses.get("x", False)
+        return controllers.INPUT_CONTROLLER.key_presses.get(key.M, False) or controllers.INPUT_CONTROLLER.button_presses.get("x", False)
 
     def get_secondary_atk(self) -> bool:
         """
         Returns whether the secondary attack button was pressed or not, either on controller or keyboard.
         """
 
-        return self.__controller.key_presses.get(key.K, False) or self.__controller.button_presses.get("y", False)
+        return controllers.INPUT_CONTROLLER.key_presses.get(key.K, False) or controllers.INPUT_CONTROLLER.button_presses.get("y", False)
 
     def get_fire_aim(self) -> bool:
         """
         Returns whether the range attack aim button was pressed or not.
         """
 
-        return self.__controller.triggers.get("lefttrigger", 0.0) > 0.0
+        return controllers.INPUT_CONTROLLER.triggers.get("lefttrigger", 0.0) > 0.0
 
     def get_fire_load(self) -> bool:
         """
         Returns whether the range attack load button was pressed or not.
         """
 
-        return self.__controller.triggers.get("righttrigger", 0.0) > 0.0
+        return controllers.INPUT_CONTROLLER.triggers.get("righttrigger", 0.0) > 0.0
 
     def get_move_input(self) -> pyglet.math.Vec2:
         """
         Returns the movement vector from keyboard and controller.
         """
 
-        stick = self.__controller.sticks.get("leftstick", (0.0, 0.0))
+        stick = controllers.INPUT_CONTROLLER.sticks.get("leftstick", (0.0, 0.0))
         return pyglet.math.Vec2(
-            (self.__controller[key.D] - self.__controller[key.A]) + stick[0],
-            (self.__controller[key.W] - self.__controller[key.S]) + stick[1]
+            (controllers.INPUT_CONTROLLER[key.D] - controllers.INPUT_CONTROLLER[key.A]) + stick[0],
+            (controllers.INPUT_CONTROLLER[key.W] - controllers.INPUT_CONTROLLER[key.S]) + stick[1]
         )
 
     def get_look_input(self) -> pyglet.math.Vec2:
@@ -94,10 +87,10 @@ class PlayerInput:
         Returns the camera movement vector from keyboard and controller.
         """
 
-        stick = self.__controller.sticks.get("rightstick", (0.0, 0.0))
+        stick = controllers.INPUT_CONTROLLER.sticks.get("rightstick", (0.0, 0.0))
         return pyglet.math.Vec2(
-            (self.__controller[key.RIGHT] - self.__controller[key.LEFT]) + stick[0],
-            (self.__controller[key.UP] - self.__controller[key.DOWN]) + stick[1]
+            (controllers.INPUT_CONTROLLER[key.RIGHT] - controllers.INPUT_CONTROLLER[key.LEFT]) + stick[0],
+            (controllers.INPUT_CONTROLLER[key.UP] - controllers.INPUT_CONTROLLER[key.DOWN]) + stick[1]
         )
 
 class PlayerNode(PositionNode):
@@ -107,8 +100,6 @@ class PlayerNode(PositionNode):
 
     def __init__(
         self,
-        input_controller: InputController,
-        collision_manager: CollisionManager,
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
@@ -135,6 +126,10 @@ class PlayerNode(PositionNode):
         self.__atk_idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_idle.gif")
         self.__atk_0_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_0.gif")
 
+        # Aim sprite distance, defines the distance at which the sprite floats.
+        self.__aim_sprite_distance = 10.0
+        self.__interactor_distance = 5.0
+
         # Center animations.
         utils.center_anim(self.__idle_anim)
         utils.center_anim(self.__walk_anim)
@@ -149,7 +144,7 @@ class PlayerNode(PositionNode):
 
         # Setup input handling.
         self.__controls_enabled = True
-        self.__input = PlayerInput(input_controller = input_controller)
+        self.__input = PlayerInput()
         self.__move_input = pyglet.math.Vec2()
         self.__look_input = pyglet.math.Vec2()
 
@@ -192,8 +187,6 @@ class PlayerNode(PositionNode):
         # Aim sprite offset, defines the offset from self.x and self.y, respectively.
         self.__aim_sprite_offset = (0.0, 8.0)
 
-        # Aim sprite distance, defines the distance at which the sprite floats.
-        self.__aim_sprite_distance = 10.0
         self.__aim_sprite = SpriteNode(
             resource = target_image,
             x = x,
@@ -231,7 +224,7 @@ class PlayerNode(PositionNode):
                 )
             ]
         )
-        collision_manager.add_collider(self.__collider)
+        controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 
         # Interaction finder.
         # This collider is responsible for searching for interactables.
@@ -251,7 +244,7 @@ class PlayerNode(PositionNode):
                 )
             ]
         )
-        collision_manager.add_collider(self.__interactor)
+        controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
 
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset
@@ -322,6 +315,11 @@ class PlayerNode(PositionNode):
             self.__main_atk_ing = self.__input.get_main_atk()
             if self.__main_atk_ing:
                 self.__main_atk_ed = True
+
+            # Trigger dialogs' next line.
+            interact = self.__input.get_interaction()
+            if interact:
+                controllers.INTERACTION_CONTROLLER.interact()
 
     def __update_dir(self):
         if self.__move_input.mag > 0.0:
@@ -453,8 +451,7 @@ class PlayerNode(PositionNode):
         self.__cam_target.update(dt)
 
     def __update_interactor(self, dt):
-        # TODO Don't use aim offset: use a dedicated one (Or call it something more generic).
-        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats.dir)
+        aim_vec = pyglet.math.Vec2.from_polar(self.__interactor_distance, self.__stats.dir)
         self.__interactor.set_position(
             position = (
                 self.x + aim_vec.x,
