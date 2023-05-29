@@ -144,10 +144,12 @@ class SceneNode(Node):
 
     def __update_camera(self, dt):
         if self.__camera is not None and self.__cam_target is not None:
+            scaled_view_size = self.get_scaled_view_size()
+
             # Compute camera movement from camera target.
             camera_movement = pm.Vec2(
-                (self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
-                (self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
+                (self.__cam_target.x * self.__scaling - scaled_view_size[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
+                (self.__cam_target.y * self.__scaling - scaled_view_size[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
             )
 
             updated_x = self.__camera.position[0] + camera_movement.x

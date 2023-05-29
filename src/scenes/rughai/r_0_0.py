@@ -294,7 +294,7 @@ class R_0_0(PlayableSceneNode):
         self.battery = BatteryNode(
             x = self.__tile_size * 38,
             y = self.__tile_size * 37,
-            on_interaction = self.delete_pokeball,
+            on_interaction = self.delete_battery,
             scaling = scaling,
             batch = self._scene.world_batch
         )
@@ -315,6 +315,7 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(energy_bar)
         self._scene.add_child(health_bar)
 
-    def delete_pokeball(self) -> None:
-        self._scene.remove_child(self.battery)
+    def delete_battery(self) -> None:
+        if self._scene is not None:
+            self._scene.remove_child(self.battery)
         self.battery.delete()
