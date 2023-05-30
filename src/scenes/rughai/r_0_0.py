@@ -293,7 +293,7 @@ class R_0_0(PlayableSceneNode):
         )
         self.battery = BatteryNode(
             x = self.__tile_size * 38,
-            y = self.__tile_size * 37,
+            y = self.__tile_size * 35,
             on_interaction = self.delete_battery,
             scaling = scaling,
             batch = self._scene.world_batch
