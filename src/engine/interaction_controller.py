@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from engine.interaction_node import InteractionNode
 
@@ -6,7 +6,7 @@ from engine.interaction_node import InteractionNode
 class InteractionController:
     def __init__(self) -> None:
         self.interactions: List[InteractionNode] = []
-        self.active_interaction: InteractionNode = None
+        self.active_interaction: Optional[InteractionNode] = None
 
     def add_interaction(
         self,
@@ -14,7 +14,7 @@ class InteractionController:
     ) -> None:
         self.interactions.append(dialog)
 
-    def toggle_interaction(
+    def toggle(
         self,
         dialog: InteractionNode,
         enable: bool

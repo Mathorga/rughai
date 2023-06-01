@@ -1,12 +1,8 @@
 from typing import Optional
 import pyglet
-
 from constants import collision_tags
-from engine import controllers
-from engine.interaction_node import DialogNode
-from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionCircle
 
+from engine.dialog_node import DialogNode
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 
@@ -34,42 +30,22 @@ class PriestNode(PositionNode):
         )
 
         self.dialog = DialogNode(
+            x = self.x,
+            y = self.y,
             lines = [
                 "Welcome true believers and newcomers alike! Spiderman co-creator Stan Lee here!",
                 "How's it gonna be today?",
                 "Oh I see! You're gonna make a mess as usual",
                 "Just be careful with those pokemon over there, I'd like to eat them eventually."
             ],
+            tags = [collision_tags.PLAYER_INTERACTION],
             scaling = scaling,
             batch = ui_batch
         )
-        controllers.INTERACTION_CONTROLLER.add_interaction(self.dialog)
-
-        # Interaction finder.
-        # This collider is responsible for searching for interactables.
-        self.interactor = CollisionNode(
-            x = x,
-            y = y,
-            sensor = True,
-            collision_type = CollisionType.STATIC,
-            tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered: controllers.INTERACTION_CONTROLLER.toggle_interaction(self.dialog, enable = entered),
-            shapes = [
-                CollisionCircle(
-                    x = x,
-                    y = y,
-                    radius = 8,
-                    scaling = scaling,
-                    batch = world_batch
-                )
-            ]
-        )
-        controllers.COLLISION_CONTROLLER.add_collider(self.interactor)
 
     def update(self, dt: int) -> None:
         self.dialog.update(dt)
 
     def delete(self) -> None:
         self.sprite.delete()
-        self.interactor.delete()
         self.dialog.delete()

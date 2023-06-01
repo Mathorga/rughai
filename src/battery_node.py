@@ -65,7 +65,7 @@ class BatteryNode(PositionNode):
             sensor = True,
             collision_type = CollisionType.STATIC,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered: controllers.INTERACTION_CONTROLLER.toggle_interaction(self.interaction, enable = entered),
+            on_triggered = lambda entered: controllers.INTERACTION_CONTROLLER.toggle(self.interaction, enable = entered),
             shapes = [
                 CollisionCircle(
                     x = x,
