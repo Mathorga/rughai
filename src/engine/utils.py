@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Tuple
 import math
 import pyglet
 import pyglet.math as pm
@@ -52,11 +52,11 @@ def rect_rect_min_dist(
 
     return math.sqrt(inner_width ** 2 + inner_height ** 2)
 
-def clamp(src, min, max):
-    if src < min:
-        return min
-    elif src > max:
-        return max
+def clamp(src, min_value, max_value):
+    if src < min_value:
+        return min_value
+    elif src > max_value:
+        return max_value
     else:
         return src
 

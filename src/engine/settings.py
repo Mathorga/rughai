@@ -41,8 +41,9 @@ SETTINGS = {
     # GBA resolution x3:
     Builtins.WINDOW_WIDTH: 720,
     Builtins.WINDOW_HEIGHT: 480,
+
+    # Defines whether rendering and movement is per pixel or sub-pixel (unused for now).
     Builtins.PIXEL_PERFECT: False,
-    Builtins.SCALING: 1,
     Builtins.FULLSCREEN: True,
 
     # Keep target fps high, as low values could cause unwanted lags.
