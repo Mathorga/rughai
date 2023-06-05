@@ -48,6 +48,8 @@ The method used in this example is:
 
 import pyglet
 
+from engine.settings import settings, Builtins
+
 class Upscaler:
     def __init__(
         self,
@@ -58,6 +60,9 @@ class Upscaler:
         self.window = window
         self.width = width
         self.height = height
+
+        # On retina Macs everything is rendered 4x-zoomed for some reason. compensate for this using a platform scaling.
+        self.platform_scaling = 0.25 if "macOS" in settings[Builtins.PLATFORM] else 1
 
         self._target_area = (0, 0, 0, 0, 0)
         self._aspect = (0, 0)
@@ -94,8 +99,8 @@ class Upscaler:
     def __enter__(self):
         framebuffer_size = self.window.get_framebuffer_size()
         self.window.view = pyglet.math.Mat4.from_scale(pyglet.math.Vec3(
-            framebuffer_size[0] / self.width,
-            framebuffer_size[1] / self.height,
+            framebuffer_size[0] / self.width * self.platform_scaling,
+            framebuffer_size[1] / self.height * self.platform_scaling,
             1.0
         ))
         self.window.viewport = self._target_area

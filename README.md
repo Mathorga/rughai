@@ -4,10 +4,10 @@
 Rughai is an action RPG game built entirely in Python.
 
 ## Install dependencies
-`pip install pyglet==2.0.3 pillow==9.5.0`
+`pip3 install -r requirements.txt` or `pip3 install pyglet==2.0.3 pillow==9.5.0`
 
 ## Run
-`python -O .\src\main.py`
+`python3 -O .\src\main.py`
 
 ## Settings
 You can change game settings by manually editing the `assets/settings.json` file:</br>

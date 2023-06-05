@@ -1,5 +1,6 @@
 from enum import Enum
 import json
+import platform
 
 
 class Builtins(str, Enum):
@@ -17,6 +18,7 @@ class Builtins(str, Enum):
     TARGET_FPS = "target_fps"
     CAMERA_SPEED = "camera_speed"
     LAYERS_Z_SPACING = "layers_z_spacing"
+    PLATFORM = "platform"
 
 settings = {
     # Debug.
@@ -42,7 +44,9 @@ settings = {
     Builtins.TARGET_FPS: 480,
 
     Builtins.CAMERA_SPEED: 5.0,
-    Builtins.LAYERS_Z_SPACING: 32.0
+    Builtins.LAYERS_Z_SPACING: 32.0,
+
+    Builtins.PLATFORM: ""
 }
 
 def load_settings(source: str):
@@ -57,3 +61,5 @@ def load_settings(source: str):
 
     for entry in data.items():
         settings.update({entry})
+
+    settings[Builtins.PLATFORM] = platform.platform()
