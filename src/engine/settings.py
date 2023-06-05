@@ -4,6 +4,7 @@ import platform
 
 
 class Builtins(str, Enum):
+    # Settings.
     DEBUG = "debug"
     SHOW_COLLISIONS = "show_collisions"
     SHOW_TILES_GRID = "show_tiles_grid"
@@ -18,9 +19,12 @@ class Builtins(str, Enum):
     TARGET_FPS = "target_fps"
     CAMERA_SPEED = "camera_speed"
     LAYERS_Z_SPACING = "layers_z_spacing"
-    PLATFORM = "platform"
 
-settings = {
+    # Globals.
+    PLATFORM = "platform"
+    SCALING = "scaling"
+
+SETTINGS = {
     # Debug.
     Builtins.DEBUG: True,
     Builtins.SHOW_COLLISIONS: True,
@@ -38,6 +42,7 @@ settings = {
     Builtins.WINDOW_WIDTH: 720,
     Builtins.WINDOW_HEIGHT: 480,
     Builtins.PIXEL_PERFECT: False,
+    Builtins.SCALING: 1,
     Builtins.FULLSCREEN: True,
 
     # Keep target fps high, as low values could cause unwanted lags.
@@ -45,21 +50,22 @@ settings = {
 
     Builtins.CAMERA_SPEED: 5.0,
     Builtins.LAYERS_Z_SPACING: 32.0,
+}
 
-    Builtins.PLATFORM: ""
+GLOBALS = {
+    Builtins.PLATFORM: "",
+    Builtins.SCALING: 1
 }
 
 def load_settings(source: str):
-    # Load settings from json file.
-    global settings
-
     data: dict
 
     # Load JSON file.
-    with open(source) as content:
+    with open(file = source, mode = "r", encoding = "UTF-8") as content:
         data = json.load(content)
 
     for entry in data.items():
-        settings.update({entry})
+        SETTINGS.update({entry})
 
-    settings[Builtins.PLATFORM] = platform.platform()
+    # Save platform for later use.
+    SETTINGS[Builtins.PLATFORM] = platform.platform()

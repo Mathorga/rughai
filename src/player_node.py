@@ -16,7 +16,7 @@ from engine.collision.collision_shape import CollisionCircle
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine import utils
-from engine.settings import settings, Builtins
+from engine.settings import SETTINGS, Builtins
 
 import engine.controllers as controllers
 from player_stats import PlayerStats
@@ -106,7 +106,6 @@ class PlayerNode(PositionNode):
         x: float = 0,
         y: float = 0,
         run_threshold: float = 0.75,
-        scaling: int = 1,
         collision_tag: str = collision_tags.PLAYER_COLLISION,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
@@ -175,7 +174,6 @@ class PlayerNode(PositionNode):
             on_animation_end = self.on_sprite_animation_end,
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
 
@@ -191,7 +189,6 @@ class PlayerNode(PositionNode):
             resource = target_image,
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
 
@@ -204,7 +201,6 @@ class PlayerNode(PositionNode):
             resource = shadow_image,
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
 
@@ -219,7 +215,6 @@ class PlayerNode(PositionNode):
                     x = x,
                     y = y,
                     radius = 4,
-                    scaling = scaling,
                     batch = batch
                 )
             ]
@@ -239,7 +234,6 @@ class PlayerNode(PositionNode):
                     x = x,
                     y = y,
                     radius = 4,
-                    scaling = scaling,
                     batch = batch
                 )
             ]
@@ -431,7 +425,7 @@ class PlayerNode(PositionNode):
                 self.x + self.__aim_sprite_offset[0] + aim_vec.x,
                 self.y + self.__aim_sprite_offset[1] + aim_vec.y
             ),
-            z = self.y + settings[Builtins.LAYERS_Z_SPACING] * 0.5
+            z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
         )
         self.__aim_sprite.update(dt)
 
@@ -439,7 +433,7 @@ class PlayerNode(PositionNode):
         self.__shadow_sprite.set_position(
             position = (self.x, self.y),
             # z = 0
-            z = -(self.y + (settings[Builtins.LAYERS_Z_SPACING] * 0.5))
+            z = -(self.y + (SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5))
         )
         self.__shadow_sprite.update(dt)
 

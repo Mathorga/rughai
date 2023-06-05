@@ -11,7 +11,6 @@ class PriestNode(PositionNode):
         self,
         x: float = 0,
         y: float = 0,
-        scaling: int = 1,
         world_batch: Optional[pyglet.graphics.Batch] = None,
         ui_batch: Optional[pyglet.graphics.Batch] = None,
     ) -> None:
@@ -25,7 +24,6 @@ class PriestNode(PositionNode):
             resource = self.__image,
             x = x,
             y = y,
-            scaling = scaling,
             batch = world_batch
         )
 
@@ -39,8 +37,8 @@ class PriestNode(PositionNode):
                 "Just be careful with those pokemon over there, I'd like to eat them eventually."
             ],
             tags = [collision_tags.PLAYER_INTERACTION],
-            scaling = scaling,
-            batch = ui_batch
+            world_batch = world_batch,
+            ui_batch = ui_batch
         )
 
     def update(self, dt: int) -> None:

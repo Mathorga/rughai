@@ -1,11 +1,11 @@
 from typing import Optional, Tuple
 import pyglet
-from engine.circle_node import CircleNode
 
 from engine.node import PositionNode
+from engine.circle_node import CircleNode
 from engine.rect_node import RectNode
 import engine.utils as utils
-from engine.settings import settings, Builtins
+from engine.settings import SETTINGS, Builtins
 
 class CollisionShape(PositionNode):
     def __init__(
@@ -48,7 +48,6 @@ class CollisionRect(CollisionShape):
         height: int = 0,
         anchor_x: float = 0,
         anchor_y: float = 0,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
@@ -57,15 +56,13 @@ class CollisionRect(CollisionShape):
         self.height = height
         self.anchor_x = anchor_x
         self.anchor_y = anchor_y
-        self.scaling = scaling
 
-        if settings[Builtins.DEBUG] and settings[Builtins.SHOW_COLLISIONS]:
+        if SETTINGS[Builtins.DEBUG] and SETTINGS[Builtins.SHOW_COLLISIONS]:
             self.render_shape = RectNode(
                 x = x,
                 y = y,
                 width = width,
                 height = height,
-                scaling = scaling,
                 anchor_x = anchor_x,
                 anchor_y = anchor_y,
                 color = (0x7F, 0xFF, 0xFF, 0x7F),
@@ -109,7 +106,6 @@ class CollisionCircle(CollisionShape):
         y: float = 0,
         z: float = 0.0,
         radius: int = 1,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
@@ -117,17 +113,15 @@ class CollisionCircle(CollisionShape):
         self.radius = radius
         self.width = radius * 2
         self.height = radius * 2
-        self.scaling = scaling
 
 
-        if settings[Builtins.DEBUG] and settings[Builtins.SHOW_COLLISIONS]:
+        if SETTINGS[Builtins.DEBUG] and SETTINGS[Builtins.SHOW_COLLISIONS]:
             self.render_shape = CircleNode(
                 x = x,
                 y = y,
                 z = z,
                 radius = radius,
                 color = (0x7F, 0xFF, 0xFF, 0x7F),
-                scaling = scaling,
                 batch = batch
             )
 

@@ -15,7 +15,6 @@ class DoorNode(PositionNode):
         height: int = 0,
         anchor_x: float = 0,
         anchor_y: float = 0,
-        scaling: int = 1,
         tags: List[str] = [],
         on_triggered: Optional[Callable[[bool], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
@@ -36,7 +35,6 @@ class DoorNode(PositionNode):
                     height = height,
                     anchor_x = anchor_x,
                     anchor_y = anchor_y,
-                    scaling = scaling,
                     batch = batch
                 )
             ]

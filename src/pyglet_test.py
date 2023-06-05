@@ -6,7 +6,7 @@ import pyglet.math as pm
 
 import old_settings
 from engine.camera import Camera
-from engine.upscaler import FixedResolution
+from engine.upscaler import UpscalerOld
 
 pyglet.resource.path = ["../assets"]
 pyglet.resource.reindex()
@@ -23,7 +23,7 @@ window = pyglet.window.Window(
 )
 window.set_minimum_size(old_settings.VIEW_WIDTH, old_settings.VIEW_HEIGHT)
 
-fr = FixedResolution(
+fr = UpscalerOld(
     window,
     width = old_settings.VIEW_WIDTH,
     height = old_settings.VIEW_HEIGHT

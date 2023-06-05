@@ -12,7 +12,6 @@ class RTreeM(PositionNode):
         x: float = 0,
         y: float = 0,
         z: float = 0,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
@@ -34,7 +33,6 @@ class RTreeM(PositionNode):
             x = x,
             y = y,
             z = z,
-            scaling = scaling,
             main_idle_anim = self.__idle_0_anim,
             sec_idle_anims = [
                 self.__idle_1_anim
@@ -47,7 +45,6 @@ class RTreeM(PositionNode):
                     height = 8,
                     anchor_x = 4,
                     anchor_y = 0,
-                    scaling = scaling,
                     batch = batch
                 )
             ],

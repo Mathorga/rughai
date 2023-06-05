@@ -6,7 +6,7 @@ import pyglet.gl as gl
 
 from engine.depth_sprite import DepthSprite
 from engine.node import PositionNode
-from engine.settings import settings, Builtins
+from engine.settings import GLOBALS, SETTINGS, Builtins
 
 # Tile scaling factor, used to avoid texture bleeding.
 # If tiles are slightly bigger, then they slightly overlap with each other, effectively never causing texture bleeding.
@@ -65,7 +65,6 @@ class TilemapNode(PositionNode):
         map_height: int,
         x: float = 0,
         y: float = 0,
-        scaling: int = 1,
         z_offset: int = 0,
         batch: Optional[pyglet.graphics.Batch] = None
     ):
@@ -73,19 +72,18 @@ class TilemapNode(PositionNode):
             x = x,
             y = y
         )
-        self.__scaling = scaling
         self.__tileset = tileset
         self.__map = data
         self.map_width = map_width
         self.map_height = map_height
 
         height = (self.map_height - 1) * tileset.tile_height
-        scaled_height = height * scaling
+        scaled_height = height * GLOBALS[Builtins.SCALING]
         self.__sprites = [
             DepthSprite(
                 img = self.__tileset.tiles[tex_index],
-                x = int(x + (index % self.map_width) * self.__tileset.tile_width * scaling),
-                y = int(y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * scaling),
+                x = int(x + (index % self.map_width) * self.__tileset.tile_width * GLOBALS[Builtins.SCALING]),
+                y = int(y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * GLOBALS[Builtins.SCALING]),
                 z = int(-((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset)),
                 batch = batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
@@ -94,18 +92,18 @@ class TilemapNode(PositionNode):
 
         for spr in self.__sprites:
             # Tile sprites are scaled up in order to avoid texture bleeding.
-            spr.scale = scaling * TILE_SCALING
+            spr.scale = GLOBALS[Builtins.SCALING] * TILE_SCALING
 
         self.grid_lines = []
-        if settings[Builtins.DEBUG] and settings[Builtins.SHOW_TILES_GRID]:
+        if SETTINGS[Builtins.DEBUG] and SETTINGS[Builtins.SHOW_TILES_GRID]:
             # Horizontal lines.
             for i in range(map_height):
                 self.grid_lines.append(
                     pyglet.shapes.Line(
-                        x = -1000 * scaling,
-                        y = i * self.__tileset.tile_height * scaling,
-                        x2 = 1000 * scaling,
-                        y2 = i * self.__tileset.tile_height * scaling,
+                        x = -1000 * GLOBALS[Builtins.SCALING],
+                        y = i * self.__tileset.tile_height * GLOBALS[Builtins.SCALING],
+                        x2 = 1000 * GLOBALS[Builtins.SCALING],
+                        y2 = i * self.__tileset.tile_height * GLOBALS[Builtins.SCALING],
                         width = 1,
                         batch = batch
                     )
@@ -115,10 +113,10 @@ class TilemapNode(PositionNode):
             for i in range(map_width):
                 self.grid_lines.append(
                     pyglet.shapes.Line(
-                        y = -1000 * scaling,
-                        x = i * self.__tileset.tile_width * scaling,
-                        y2 = 1000 * scaling,
-                        x2 = i * self.__tileset.tile_width * scaling,
+                        y = -1000 * GLOBALS[Builtins.SCALING],
+                        x = i * self.__tileset.tile_width * GLOBALS[Builtins.SCALING],
+                        y2 = 1000 * GLOBALS[Builtins.SCALING],
+                        x2 = i * self.__tileset.tile_width * GLOBALS[Builtins.SCALING],
                         width = 1,
                         batch = batch
                     )
@@ -139,7 +137,6 @@ class TilemapNode(PositionNode):
         source: str,
         x: float = 0.0,
         y: float = 0.0,
-        scaling: int = 1,
         # Distance (z-axis) between tilemap layers.
         layers_spacing: Optional[int] = None,
         # Starting z-offset for all layers in the file.
@@ -165,7 +162,7 @@ class TilemapNode(PositionNode):
         tilemap_tilesets = root.findall("tileset")
 
         # Read layers spacing from settings if not provided.
-        spacing = layers_spacing if layers_spacing is not None else settings[Builtins.LAYERS_Z_SPACING]
+        spacing = layers_spacing if layers_spacing is not None else SETTINGS[Builtins.LAYERS_Z_SPACING]
 
         # Extract a tileset from all the given file.
         tileset = Tileset(
@@ -199,7 +196,6 @@ class TilemapNode(PositionNode):
                 map_height = map_height,
                 x = x,
                 y = y,
-                scaling = scaling,
                 # Only apply layers offset if not a rat layer.
                 z_offset = 0 if "rat" in layer[0] else z_offset + spacing * (len(layers) - layer_index),
                 batch = batch
@@ -211,7 +207,6 @@ class TilemapNode(PositionNode):
         source: str,
         x: float = 0,
         y: float = 0,
-        scaling: int = 1
     ) -> list:
         """
         Constructs a new tilemaps list from the given TMJ (JSON) file.
@@ -241,16 +236,15 @@ class TilemapNode(PositionNode):
                 map_height = data["height"],
                 x = x,
                 y = y,
-                scaling = scaling
             ) for layer in tilemap_layers
         ]
 
     def get_bounding_box(self):
         return (
-            self.x * self.__scaling,
-            self.y * self.__scaling,
-            self.map_width * self.__tileset.tile_width * self.__scaling,
-            self.map_height * self.__tileset.tile_height * self.__scaling
+            self.x * GLOBALS[Builtins.SCALING],
+            self.y * GLOBALS[Builtins.SCALING],
+            self.map_width * self.__tileset.tile_width * GLOBALS[Builtins.SCALING],
+            self.map_height * self.__tileset.tile_height * GLOBALS[Builtins.SCALING]
         )
 
     def get_tile_size(self):

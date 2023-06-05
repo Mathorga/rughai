@@ -12,7 +12,6 @@ class PlayableSceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        scaling: int = 1,
         bundle: Optional[dict] = None,
         on_ended: Optional[Callable[[dict], None]] = None
     ) -> None:

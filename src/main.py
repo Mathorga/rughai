@@ -5,7 +5,7 @@ import pyglet.gl as gl
 import engine.controllers as controllers
 from engine.benchmark import Benchmark
 from engine.upscaler import Upscaler
-from engine.settings import settings, Builtins, load_settings
+from engine.settings import GLOBALS, SETTINGS, Builtins, load_settings
 
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
@@ -45,15 +45,16 @@ class RugHai:
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
-        self._scaling = 1 if settings[Builtins.PIXEL_PERFECT] else min(
-            self._window.width // settings[Builtins.VIEW_WIDTH],
-            self._window.height // settings[Builtins.VIEW_HEIGHT]
+        GLOBALS[Builtins.SCALING] = 1 if SETTINGS[Builtins.PIXEL_PERFECT] else min(
+            self._window.width // SETTINGS[Builtins.VIEW_WIDTH],
+            self._window.height // SETTINGS[Builtins.VIEW_HEIGHT]
         )
+
 
         self._upscaler = Upscaler(
             window = self._window,
-            width = settings[Builtins.VIEW_WIDTH] * self._scaling,
-            height = settings[Builtins.VIEW_HEIGHT] * self._scaling
+            width = SETTINGS[Builtins.VIEW_WIDTH] * GLOBALS[Builtins.SCALING],
+            height = SETTINGS[Builtins.VIEW_HEIGHT] * GLOBALS[Builtins.SCALING]
         )
 
         # Create benchmarks.
@@ -70,24 +71,23 @@ class RugHai:
         # Create a scene.
         self._active_scene = R_0_0(
             window = self._window,
-            view_width = settings[Builtins.VIEW_WIDTH],
-            view_height = settings[Builtins.VIEW_HEIGHT],
-            scaling = self._scaling,
+            view_width = SETTINGS[Builtins.VIEW_WIDTH],
+            view_height = SETTINGS[Builtins.VIEW_HEIGHT],
             on_ended = self.__on_scene_end
         )
 
     def __create_window(self) -> pyglet.window.Window:
         window = pyglet.window.Window(
-            settings[Builtins.WINDOW_WIDTH] if not settings[Builtins.FULLSCREEN] else None,
-            settings[Builtins.WINDOW_HEIGHT] if not settings[Builtins.FULLSCREEN] else None,
-            settings[Builtins.TITLE],
-            fullscreen = settings[Builtins.FULLSCREEN],
+            SETTINGS[Builtins.WINDOW_WIDTH] if not SETTINGS[Builtins.FULLSCREEN] else None,
+            SETTINGS[Builtins.WINDOW_HEIGHT] if not SETTINGS[Builtins.FULLSCREEN] else None,
+            SETTINGS[Builtins.TITLE],
+            fullscreen = SETTINGS[Builtins.FULLSCREEN],
             vsync = True,
             resizable = False
         )
 
         window.push_handlers(self)
-        if not settings[Builtins.DEBUG]:
+        if not SETTINGS[Builtins.DEBUG]:
             window.set_mouse_visible(False)
 
         return window
@@ -101,64 +101,57 @@ class RugHai:
             if bundle["next_scene"] == scenes.R_0_0:
                 self._active_scene = R_0_0(
                     window = self._window,
-                    view_width = settings[Builtins.VIEW_WIDTH],
-                    view_height = settings[Builtins.VIEW_HEIGHT],
+                    view_width = SETTINGS[Builtins.VIEW_WIDTH],
+                    view_height = SETTINGS[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
-                    scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_1:
                 self._active_scene = R_0_1(
                     window = self._window,
-                    view_width = settings[Builtins.VIEW_WIDTH],
-                    view_height = settings[Builtins.VIEW_HEIGHT],
+                    view_width = SETTINGS[Builtins.VIEW_WIDTH],
+                    view_height = SETTINGS[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
-                    scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_2:
                 self._active_scene = R_0_2(
                     window = self._window,
-                    view_width = settings[Builtins.VIEW_WIDTH],
-                    view_height = settings[Builtins.VIEW_HEIGHT],
+                    view_width = SETTINGS[Builtins.VIEW_WIDTH],
+                    view_height = SETTINGS[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
-                    scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_3:
                 self._active_scene = R_0_3(
                     window = self._window,
-                    view_width = settings[Builtins.VIEW_WIDTH],
-                    view_height = settings[Builtins.VIEW_HEIGHT],
+                    view_width = SETTINGS[Builtins.VIEW_WIDTH],
+                    view_height = SETTINGS[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
-                    scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_4:
                 self._active_scene = R_0_4(
                     window = self._window,
-                    view_width = settings[Builtins.VIEW_WIDTH],
-                    view_height = settings[Builtins.VIEW_HEIGHT],
+                    view_width = SETTINGS[Builtins.VIEW_WIDTH],
+                    view_height = SETTINGS[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
-                    scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_5:
                 self._active_scene = R_0_5(
                     window = self._window,
-                    view_width = settings[Builtins.VIEW_WIDTH],
-                    view_height = settings[Builtins.VIEW_HEIGHT],
+                    view_width = SETTINGS[Builtins.VIEW_WIDTH],
+                    view_height = SETTINGS[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
-                    scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_6:
                 self._active_scene = R_0_6(
                     window = self._window,
-                    view_width = settings[Builtins.VIEW_WIDTH],
-                    view_height = settings[Builtins.VIEW_HEIGHT],
+                    view_width = SETTINGS[Builtins.VIEW_WIDTH],
+                    view_height = SETTINGS[Builtins.VIEW_HEIGHT],
                     bundle = bundle,
-                    scaling = self._scaling,
                     on_ended = self.__on_scene_end
                 )
 
@@ -186,11 +179,11 @@ class RugHai:
             with self._upscaler:
                 self._active_scene.draw()
 
-                if settings[Builtins.DEBUG]:
+                if SETTINGS[Builtins.DEBUG]:
                     self._render_bench.draw()
                     self._update_bench.draw()
 
-        if settings[Builtins.DEBUG]:
+        if SETTINGS[Builtins.DEBUG]:
             self.fps_display.draw()
 
     def update(self, dt) -> None:
@@ -208,7 +201,7 @@ class RugHai:
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
-        pyglet.clock.schedule_interval(self.update, 1.0 / settings[Builtins.TARGET_FPS])
+        pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Builtins.TARGET_FPS])
         # pyglet.clock.schedule(self.update)
         pyglet.app.run()
 
