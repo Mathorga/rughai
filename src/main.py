@@ -3,9 +3,6 @@ import pyglet
 import pyglet.gl as gl
 
 import engine.controllers as controllers
-from engine.collision.collision_controller import CollisionController
-from engine.interaction_controller import InteractionController
-from engine.input_controller import InputController
 from engine.benchmark import Benchmark
 from engine.upscaler import Upscaler
 from engine.settings import settings, Builtins, load_settings
@@ -176,6 +173,7 @@ class RugHai:
             right = self._window.width,
             bottom = 0,
             top = self._window.height,
+            # For some reason near and far planes are inverted in sign, so that -500 means 500 and 1024 means -1024.
             z_near = -1000,
             z_far = 1000
         )
