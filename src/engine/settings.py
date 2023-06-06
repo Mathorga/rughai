@@ -69,4 +69,4 @@ def load_settings(source: str):
         SETTINGS.update({entry})
 
     # Save platform for later use.
-    SETTINGS[Builtins.PLATFORM] = platform.platform()
+    GLOBALS[Builtins.PLATFORM] = platform.platform()
