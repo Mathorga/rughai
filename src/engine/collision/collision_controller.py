@@ -3,6 +3,7 @@ from typing import Dict, List
 from engine.collision.collision_node import CollisionType, CollisionNode
 
 class CollisionController:
+    # TODO Swept collisions.
     def __init__(self) -> None:
         self.__colliders: Dict[CollisionType, List[CollisionNode]] = {}
 
