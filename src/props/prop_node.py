@@ -20,7 +20,6 @@ class PropNode(PositionNode):
         x: float = 0,
         y: float = 0,
         z: float = 0,
-        scaling: int = 1,
         collision_shapes: List[CollisionShape] = [],
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
@@ -41,7 +40,6 @@ class PropNode(PositionNode):
             resource = main_idle_anim,
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
 

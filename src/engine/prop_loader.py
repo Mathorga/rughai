@@ -16,56 +16,48 @@ def map_prop(
     prop_name: str,
     x: float,
     y: float,
-    scaling: int = 1,
     batch: Optional[pyglet.graphics.Batch] = None
 ) -> Optional[PositionNode]:
     if prop_name == "r_veg_0":
         return RVeg0(
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
     elif prop_name == "r_veg_1":
         return RVeg1(
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
     elif prop_name == "r_grass_0":
         return RGrass0(
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
     elif prop_name == "r_grass_1":
         return RGrass1(
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
     elif prop_name == "r_tree_l":
         return RTreeL(
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
     elif prop_name == "r_tree_m":
         return RTreeM(
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
     elif prop_name == "r_tree_s":
         return RTreeS(
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
 
@@ -75,7 +67,6 @@ class PropLoader:
         source: str,
         tile_width: int = 8,
         tile_height: int = 8,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> list:
         prop_set = []
@@ -101,7 +92,6 @@ class PropLoader:
                                 file_name.split(".")[0],
                                 x = x * tile_width + tile_width / 2,
                                 y = (propmap.height - 1 - y) * tile_height,
-                                scaling = scaling,
                                 batch = batch
                             )
 

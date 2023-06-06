@@ -12,7 +12,6 @@ class CloudsNode(Node):
     def __init__(
         self,
         bounds: Bounds,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__()
@@ -26,7 +25,6 @@ class CloudsNode(Node):
             CloudNode(
                 x = bounds.left + random.random() * (bounds.right - bounds.left),
                 y = bounds.bottom + random.random() * (bounds.top - bounds.bottom),
-                scaling = scaling,
                 batch = batch
             ) for _ in range(self.clouds_num)
         ]

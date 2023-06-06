@@ -5,7 +5,7 @@ from constants import collision_tags
 from engine import controllers, utils
 from engine.interaction_node import InteractionNode
 from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionCircle
+from engine.collision.collision_shape import CollisionRect
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
@@ -16,7 +16,6 @@ class BatteryNode(PositionNode):
         x: float = 0,
         y: float = 0,
         on_interaction: Optional[Callable] = None,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
@@ -47,7 +46,6 @@ class BatteryNode(PositionNode):
             resource = self.__closed_image,
             x = x,
             y = y,
-            scaling = scaling,
             batch = batch
         )
 
@@ -67,11 +65,13 @@ class BatteryNode(PositionNode):
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered: controllers.INTERACTION_CONTROLLER.toggle(self.interaction, enable = entered),
             shapes = [
-                CollisionCircle(
+                CollisionRect(
                     x = x,
                     y = y,
-                    radius = 6,
-                    scaling = scaling,
+                    width = 16,
+                    height = 8,
+                    anchor_x = 8,
+                    anchor_y = 4,
                     batch = batch
                 )
             ]

@@ -9,7 +9,7 @@ from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.wall_node import WallNode
-from engine.settings import settings, Builtins
+from engine.settings import SETTINGS, Builtins
 
 from player_node import PlayerNode
 from clouds_node import CloudsNode
@@ -24,7 +24,6 @@ class R_0_0(PlayableSceneNode):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        scaling: int = 1,
         bundle: Optional[dict] = None,
         on_ended: Optional[Callable[[dict], None]] = None
     ):
@@ -32,7 +31,6 @@ class R_0_0(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             bundle = bundle,
             on_ended = on_ended
         )
@@ -42,8 +40,7 @@ class R_0_0(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
-            cam_speed = settings[Builtins.CAMERA_SPEED],
+            cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = "R_0_0",
             on_scene_end = self._on_scene_end
         )
@@ -51,7 +48,6 @@ class R_0_0(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_0.tmx",
-            scaling = scaling,
             batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -72,7 +68,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 30,
                 width = self.__tile_size,
                 height = self.__tile_size * 6,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -80,7 +75,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 30,
                 width = self.__tile_size,
                 height = self.__tile_size,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -88,7 +82,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 36,
                 width = self.__tile_size * 5,
                 height = self.__tile_size,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -96,7 +89,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 36,
                 width = self.__tile_size,
                 height = self.__tile_size * 3,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -104,7 +96,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 38,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -112,7 +103,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -120,7 +110,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 32,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -128,7 +117,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 30,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -136,7 +124,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 30,
                 width = self.__tile_size * 2,
                 height = self.__tile_size,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
 
@@ -146,7 +133,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 27,
                 width = self.__tile_size,
                 height = self.__tile_size * 17,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -154,7 +140,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 27,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -162,7 +147,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 25,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
-                scaling = scaling,
                 batch = self._scene.world_batch
             ),
             WallNode(
@@ -170,7 +154,6 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 23,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
-                scaling = scaling,
                 batch = self._scene.world_batch
             )
         ]
@@ -185,7 +168,6 @@ class R_0_0(PlayableSceneNode):
             x = (tilemap_width * self.__tile_size) // 2,
             y = (tilemap_height * self.__tile_size) // 2,
             z = -500,
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
@@ -199,7 +181,6 @@ class R_0_0(PlayableSceneNode):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            scaling = scaling,
             collision_tag = "player",
             batch = self._scene.world_batch
         )
@@ -210,7 +191,6 @@ class R_0_0(PlayableSceneNode):
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
             height = 2 * self.__tile_size,
-            scaling = scaling,
             tags = ["player"],
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -231,7 +211,6 @@ class R_0_0(PlayableSceneNode):
             y = 25 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
-            scaling = scaling,
             tags = ["player"],
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -257,7 +236,6 @@ class R_0_0(PlayableSceneNode):
             x = 4,
             y = view_height - 4,
             z = 500,
-            scaling = scaling,
             batch = self._scene.ui_batch
         )
         health_bar = SpriteNode(
@@ -265,21 +243,18 @@ class R_0_0(PlayableSceneNode):
             x = 4,
             y = view_height - 12,
             z = 500,
-            scaling = scaling,
             batch = self._scene.ui_batch
         )
 
         # Clouds.
         clouds = CloudsNode(
             bounds = cam_bounds,
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
         # Props.
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_0",
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
@@ -287,7 +262,6 @@ class R_0_0(PlayableSceneNode):
         priest = PriestNode(
             x = self.__tile_size * 26,
             y = self.__tile_size * 35,
-            scaling = scaling,
             world_batch = self._scene.world_batch,
             ui_batch = self._scene.ui_batch
         )
@@ -295,7 +269,6 @@ class R_0_0(PlayableSceneNode):
             x = self.__tile_size * 38,
             y = self.__tile_size * 35,
             on_interaction = self.delete_battery,
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 

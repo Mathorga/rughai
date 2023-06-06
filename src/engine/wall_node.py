@@ -2,7 +2,6 @@ from typing import Optional
 import pyglet
 
 from engine import controllers
-from engine.collision.collision_controller import CollisionController
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle, CollisionRect
 from engine.node import PositionNode
@@ -13,7 +12,6 @@ class ColumnNode(PositionNode):
         x: float = 0,
         y: float = 0,
         radius: int = 1,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
@@ -29,7 +27,6 @@ class ColumnNode(PositionNode):
                     x = x,
                     y = y,
                     radius = radius,
-                    scaling = scaling,
                     batch = batch
                 )
             ]
@@ -46,7 +43,6 @@ class WallNode(PositionNode):
         y: float = 0,
         width: int = 8,
         height: int = 8,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
@@ -63,7 +59,6 @@ class WallNode(PositionNode):
                     y = y,
                     width = width,
                     height = height,
-                    scaling = scaling,
                     batch = batch
                 )
             ]

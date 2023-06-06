@@ -2,7 +2,7 @@ from typing import List, Optional, Sequence
 import pyglet
 
 from engine import controllers
-from engine.settings import settings, Builtins
+from engine.settings import SETTINGS, Builtins
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle
 from engine.interaction_node import InteractionNode
@@ -23,8 +23,8 @@ class DialogNode(PositionNode):
         # Character duration in seconds.
         char_duration: float = 0.05,
         tags: Optional[Sequence[str]] = None,
-        scaling: int = 1,
-        batch: Optional[pyglet.graphics.Batch] = None,
+        world_batch: Optional[pyglet.graphics.Batch] = None,
+        ui_batch: Optional[pyglet.graphics.Batch] = None,
     ) -> None:
         super().__init__(x, y)
 
@@ -54,8 +54,7 @@ class DialogNode(PositionNode):
                     x = x,
                     y = y,
                     radius = 8,
-                    scaling = scaling,
-                    batch = batch
+                    batch = world_batch
                 )
             ]
         )
@@ -64,13 +63,12 @@ class DialogNode(PositionNode):
         self.text = TextNode(
             # Start with no text.
             text = "",
-            font_name = settings[Builtins.FONT_NAME],
-            x = settings[Builtins.VIEW_WIDTH] / 2,
+            font_name = SETTINGS[Builtins.FONT_NAME],
+            x = SETTINGS[Builtins.VIEW_WIDTH] / 2,
             y = 16,
-            width = settings[Builtins.VIEW_WIDTH] * 0.8,
-            scaling = scaling,
+            width = SETTINGS[Builtins.VIEW_WIDTH] * 0.8,
             font_size = 6,
-            batch = batch
+            batch = ui_batch
         )
 
     def update(self, dt: int) -> None:

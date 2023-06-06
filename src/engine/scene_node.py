@@ -2,7 +2,7 @@ from typing import Callable, Optional, Sequence, Tuple, Union
 import pyglet
 import pyglet.math as pm
 
-from engine.settings import settings, Builtins
+from engine.settings import GLOBALS, SETTINGS, Builtins
 from engine.camera import Camera
 from engine.node import Node, PositionNode
 from engine.rect_node import RectNode
@@ -50,14 +50,12 @@ class SceneNode(Node):
         view_height: int,
         title: Optional[str] = None,
         on_scene_end: Optional[Callable[[], None]] = None,
-        scaling: int = 1,
         cam_speed: float = 10.0,
         curtain_speed: int = 200,
         cam_bounds: Optional[Bounds] = None
     ):
         self.__view_width = view_width
         self.__view_height = view_height
-        self.__scaling = scaling
 
         self.__on_scene_end = on_scene_end
         self.world_batch = pyglet.graphics.Batch()
@@ -75,13 +73,12 @@ class SceneNode(Node):
         self.__children = []
 
         # Scene title.
-        if title is not None and settings[Builtins.DEBUG]:
+        if title is not None and SETTINGS[Builtins.DEBUG]:
             label = TextNode(
                 x = view_width // 2,
                 y = view_height - 5,
                 color = (0xFF, 0xFF, 0xFF, 0xFF),
-                font_name = settings[Builtins.FONT_NAME],
-                scaling = scaling,
+                font_name = SETTINGS[Builtins.FONT_NAME],
                 text = title,
                 batch = self.ui_batch
             )
@@ -91,8 +88,7 @@ class SceneNode(Node):
             x = 0,
             y = 0,
             width = view_width,
-            height = view_height,
-            scaling = scaling
+            height = view_height
         )
         self.__curtain_opacity = 0xFF
         self.__curtain_speed = curtain_speed
@@ -102,8 +98,8 @@ class SceneNode(Node):
 
     def get_scaled_view_size(self):
         return (
-            self.__view_width * self.__scaling,
-            self.__view_height * self.__scaling
+            self.__view_width * GLOBALS[Builtins.SCALING],
+            self.__view_height * GLOBALS[Builtins.SCALING]
         )
 
     def draw(self):
@@ -148,8 +144,8 @@ class SceneNode(Node):
 
             # Compute camera movement from camera target.
             camera_movement = pm.Vec2(
-                (self.__cam_target.x * self.__scaling - scaled_view_size[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
-                (self.__cam_target.y * self.__scaling - scaled_view_size[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
+                (self.__cam_target.x * GLOBALS[Builtins.SCALING] - scaled_view_size[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
+                (self.__cam_target.y * GLOBALS[Builtins.SCALING] - scaled_view_size[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
             )
 
             updated_x = self.__camera.position[0] + camera_movement.x
@@ -157,14 +153,14 @@ class SceneNode(Node):
 
             if self.__cam_bounds is not None:
                 # Apply bounds to camera movement by limiting updated position.
-                if self.__cam_bounds.top != None and self.__cam_bounds.top * self.__scaling < updated_y + self.__view_height * self.__scaling:
-                    updated_y = self.__cam_bounds.top * self.__scaling - self.__view_height * self.__scaling
-                if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom * self.__scaling > updated_y:
-                    updated_y = self.__cam_bounds.bottom * self.__scaling
-                if self.__cam_bounds.left != None and self.__cam_bounds.left * self.__scaling > updated_x:
-                    updated_x = self.__cam_bounds.left * self.__scaling
-                if self.__cam_bounds.right != None and self.__cam_bounds.right * self.__scaling < updated_x + self.__view_width * self.__scaling:
-                    updated_x = self.__cam_bounds.right * self.__scaling - self.__view_width * self.__scaling
+                if self.__cam_bounds.top != None and self.__cam_bounds.top * GLOBALS[Builtins.SCALING] < updated_y + self.__view_height * GLOBALS[Builtins.SCALING]:
+                    updated_y = self.__cam_bounds.top * GLOBALS[Builtins.SCALING] - self.__view_height * GLOBALS[Builtins.SCALING]
+                if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom * GLOBALS[Builtins.SCALING] > updated_y:
+                    updated_y = self.__cam_bounds.bottom * GLOBALS[Builtins.SCALING]
+                if self.__cam_bounds.left != None and self.__cam_bounds.left * GLOBALS[Builtins.SCALING] > updated_x:
+                    updated_x = self.__cam_bounds.left * GLOBALS[Builtins.SCALING]
+                if self.__cam_bounds.right != None and self.__cam_bounds.right * GLOBALS[Builtins.SCALING] < updated_x + self.__view_width * GLOBALS[Builtins.SCALING]:
+                    updated_x = self.__cam_bounds.right * GLOBALS[Builtins.SCALING] - self.__view_width * GLOBALS[Builtins.SCALING]
 
             # Actually update camera position.
             # Values are rounded in order not to cause subpixel movements and therefore texture bleeding.
@@ -190,8 +186,8 @@ class SceneNode(Node):
     #     return (
     #         self.__camera.position[0],
     #         self.__camera.position[1],
-    #         self.__view_width * self.__scaling,
-    #         self.__view_height * self.__scaling,
+    #         self.__view_width * GLOBALS[Builtins.SCALING],
+    #         self.__view_height * GLOBALS[Builtins.SCALING],
     #     ) if self.__camera is not None else None
 
     def add_child(
@@ -210,8 +206,8 @@ class SceneNode(Node):
             self.__cam_target = child
             if self.__camera is not None:
                 self.__camera.position = (
-                    self.__cam_target.x * self.__scaling - self.get_scaled_view_size()[0] / 2,
-                    self.__cam_target.y * self.__scaling - self.get_scaled_view_size()[1] / 2,
+                    self.__cam_target.x * GLOBALS[Builtins.SCALING] - self.get_scaled_view_size()[0] / 2,
+                    self.__cam_target.y * GLOBALS[Builtins.SCALING] - self.get_scaled_view_size()[1] / 2,
                 )
 
         self.__children.append(child)

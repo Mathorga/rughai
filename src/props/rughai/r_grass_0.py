@@ -1,10 +1,7 @@
-import random
 from typing import Optional
 import pyglet
-from engine.collision.collision_shape import CollisionRect
 
 from engine.node import PositionNode
-from engine.sprite_node import SpriteNode
 from engine.utils import animation_set_anchor
 from props.prop_node import PropNode
 
@@ -14,12 +11,9 @@ class RGrass0(PositionNode):
         x: float = 0,
         y: float = 0,
         z: float = 0,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
-
-        self.__scaling = scaling
 
         self.__idle_0_anim = pyglet.image.Animation.from_image_sequence([pyglet.resource.image("sprites/rughai/prop/grass_0/grass_0_idle_0.png")], 1.0)
         self.__idle_1_anim = pyglet.resource.animation("sprites/rughai/prop/grass_0/grass_0_idle_1.gif")
@@ -38,7 +32,6 @@ class RGrass0(PositionNode):
             x = x,
             y = y,
             z = z,
-            scaling = scaling,
             main_idle_anim = self.__idle_0_anim,
             sec_idle_anims = [
                 self.__idle_1_anim
