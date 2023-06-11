@@ -86,30 +86,35 @@ def swept_rect_rect(
     w2: float,
     h2: float,
     vx1: float,
-    vy1: float,
-    vx2: float,
-    vy2: float
-) -> float:
+    vy1: float
+) -> Tuple[float, float, float]:
+    """
+    Returns the collision time with object 2, meaning the percentage at which a collision occurs from the given position using the given velocity.
+    """
     # TODO https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
-    xInvEntry: float
-    yInvEntry: float
-    xInvExit: float
-    yInvExit: float
+
+    normal_x: float
+    normal_y: float
+
+    dx_entry: float
+    dy_entry: float
+    dx_exit: float
+    dy_exit: float
 
     # Find the distance between the objects on the near and far sides for both x and y.
     if vx1 > 0.0:
-        xInvEntry = x2 - (x1 + w1)
-        xInvExit = (x2 + w2) - x1
+        dx_entry = x2 - (x1 + w1)
+        dx_exit = (x2 + w2) - x1
     else:
-        xInvEntry = (x2 + w2) - x1
-        xInvExit = x2 - (x1 + w1)
+        dx_entry = (x2 + w2) - x1
+        dx_exit = x2 - (x1 + w1)
 
     if vy1 > 0.0:
-        yInvEntry = y2 - (y1 + h1)
-        yInvExit = (y2 + h2) - y1
+        dy_entry = y2 - (y1 + h1)
+        dy_exit = (y2 + h2) - y1
     else:
-        yInvEntry = (y2 + h2) - y1
-        yInvExit = y2 - (y1 + h1)
+        dy_entry = (y2 + h2) - y1
+        dy_exit = y2 - (y1 + h1)
 
     # Ffind time of collision and time of leaving for each axis (if statement is to prevent divide by zero).
     xEntry: float
@@ -121,45 +126,43 @@ def swept_rect_rect(
         xEntry = -(float("inf"))
         xExit = (float("inf"))
     else:
-        xEntry = xInvEntry / vx1
-        xExit = xInvExit / vx1
+        xEntry = dx_entry / vx1
+        xExit = dx_exit / vx1
 
     if vy1 == 0.0:
         yEntry = -(float("inf"))
         yExit = (float("inf"))
     else:
-        yEntry = yInvEntry / vy1
-        yExit = yInvExit / vy1
+        yEntry = dy_entry / vy1
+        yExit = dy_exit / vy1
 
     # Find the earliest/latest times of collision.
     entryTime = max(xEntry, yEntry)
     exitTime = min(xExit, yExit)
 
     if entryTime > exitTime or xEntry < 0.0 and yEntry < 0.0 or xEntry > 1.0 or yEntry > 1.0:
-        # If there was no collision.
-        normalx = 0.0
-        normaly = 0.0
-        return 1.0
+        # There was no collision.
+        return (1.0, 0.0, 0.0)
 
     else:
-        # If there was a collision.
+        # There was a collision.
         # Calculate normal of collided surface and return the time of collision.
         if xEntry > yEntry:
-            if xInvEntry < 0.0:
-                normalx = 1.0
-                normaly = 0.0
+            if dx_entry < 0.0:
+                normal_x = 1.0
+                normal_y = 0.0
             else:
-                normalx = -1.0
-                normaly = 0.0
+                normal_x = -1.0
+                normal_y = 0.0
         else:
-            if yInvEntry < 0.0:
-                normalx = 0.0
-                normaly = 1.0
+            if dy_entry < 0.0:
+                normal_x = 0.0
+                normal_y = 1.0
             else:
-                normalx = 0.0
-                normaly = -1.0
+                normal_x = 0.0
+                normal_y = -1.0
 
-        return entryTime
+        return (entryTime, normal_x, normal_y)
 
 def circle_circle_check(
     x1: float,
@@ -246,9 +249,9 @@ def circle_rect_solve(
     nearest_y = max(y2, min(y1, y2 + h2))    
     dist = pm.Vec2(x1 - nearest_x, y1 - nearest_y)
 
-    penetrationDepth = r1 - dist.mag
-    penetrationVector = dist.from_magnitude(penetrationDepth)
-    return (penetrationVector.x, penetrationVector.y)
+    penetration_depth = r1 - dist.mag
+    penetration_vector = dist.from_magnitude(penetration_depth)
+    return (penetration_vector.x, penetration_vector.y)
 
 def center_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
     """
@@ -268,7 +271,7 @@ def circle_circle_solve(
     r2: float
 ) -> Tuple[float, float]:
     angle = math.atan2(y1 - y2, x1 - x2)
-    distanceBetweenCircles = math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
-    distanceToMove = r2 + r1 - distanceBetweenCircles
+    distance_between_circles = math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+    distance_to_move = r2 + r1 - distance_between_circles
 
-    return (math.cos(angle) * distanceToMove, math.sin(angle) * distanceToMove)
+    return (math.cos(angle) * distance_to_move, math.sin(angle) * distance_to_move)

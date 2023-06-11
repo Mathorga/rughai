@@ -65,18 +65,29 @@ class CollisionNode(PositionNode):
         collision: Tuple[float, float] = (0.0, 0.0)
         collisions: List[pm.Vec2] = []
 
+        collision_time = 1.0
+        normal_x = 0.0
+        normal_y = 0.0
+
         # Make sure there's at least one matching tag.
         if bool(set(self.tags) & set(other.tags)):
             overlap: bool = False
             for shape in self.shapes:
                 for other_shape in other.shapes:
-                    overlap = shape.overlap(other_shape)
-                    if overlap:
-                        collision = shape.collide(other_shape)
-                        collisions.append(pm.Vec2(*collision))
+                    collision_time, normal_x, normal_y = shape.swept_collide(other_shape)
+                    if collision_time < 1.0:
+                        collisions.append(pm.Vec2(normal_x, normal_y))
+
+                    # overlap = shape.overlap(other_shape)
+                    # if overlap:
+                    #     collision = shape.collide(other_shape)
+                    #     collisions.append(pm.Vec2(*collision))
 
             if not other.sensor:
-                self.set_position((self.x + collision[0], self.y + collision[1]))
+                if self.velocity_x * collision_time > 0.0 or self.velocity_y * collision_time > 0.0:
+                    print((self.velocity_x * collision_time, self.velocity_y * collision_time))
+                self.set_position((self.x + self.velocity_x * collision_time, self.y + self.velocity_y * collision_time))
+                # self.set_position((self.x + collision[0], self.y + collision[1]))
 
             if other not in self.collisions and overlap:
                 # Store the colliding sensor.

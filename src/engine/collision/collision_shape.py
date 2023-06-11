@@ -47,6 +47,9 @@ class CollisionShape(PositionNode):
         self.velocity_x = velocity[0]
         self.velocity_y = velocity[1]
 
+    def swept_collide(self, other) -> Tuple[float, float, float]:
+        return (1.0, 0.0, 0.0)
+
     def overlap(self, _other) -> bool:
         return False
 
@@ -95,6 +98,19 @@ class CollisionRect(CollisionShape):
             self.width,
             self.height
         )
+
+    def swept_collide(self, other) -> Tuple[float, float, float]:
+        if isinstance(other, CollisionRect):
+            # Rect/rect collision.
+            return utils.swept_rect_rect(
+                *self.get_collision_bounds(),
+                *other.get_collision_bounds(),
+                self.velocity_x,
+                self.velocity_y
+            )
+        else:
+            # Other.
+            return False
 
     def overlap(self, other) -> bool:
         if isinstance(other, CollisionRect):
