@@ -16,6 +16,10 @@ class CollisionShape(PositionNode):
     ) -> None:
         super().__init__(x, y, z)
 
+        # Velocity components.
+        self.velocity_x = 0.0
+        self.velocity_y = 0.0
+
         self.render_shape: Optional[PositionNode] = None
 
     def set_position(
@@ -23,10 +27,25 @@ class CollisionShape(PositionNode):
         position: Tuple[float, float],
         z: Optional[float] = None
     ) -> None:
+        """
+        Sets the shape position.
+        """
+
         self.x = position[0]
         self.y = position[1]
         if self.render_shape is not None:
             self.render_shape.set_position(position)
+
+    def set_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        """
+        Sets the shape velocity.
+        """
+
+        self.velocity_x = velocity[0]
+        self.velocity_y = velocity[1]
 
     def overlap(self, _other) -> bool:
         return False

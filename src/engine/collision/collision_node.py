@@ -22,6 +22,10 @@ class CollisionNode(PositionNode):
     ) -> None:
         super().__init__(x, y)
 
+        # Velocity components.
+        self.velocity_x = 0.0
+        self.velocity_y = 0.0
+
         self.tags = tags
         self.type = collision_type
         self.sensor = sensor
@@ -45,6 +49,16 @@ class CollisionNode(PositionNode):
         for shape in self.shapes:
             shape.set_position(position)
 
+    def set_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        self.velocity_x = velocity[0]
+        self.velocity_y = velocity[1]
+
+        for shape in self.shapes:
+            shape.set_velocity(velocity)
+
     def collide(self, other) -> None:
         assert isinstance(other, CollisionNode)
 
@@ -52,7 +66,6 @@ class CollisionNode(PositionNode):
         collisions: List[pm.Vec2] = []
 
         # Make sure there's at least one matching tag.
-        # if other.tags == self.tags:
         if bool(set(self.tags) & set(other.tags)):
             overlap: bool = False
             for shape in self.shapes:
