@@ -12,7 +12,7 @@ from pyglet.window import key
 from constants import collision_tags
 
 from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionCircle
+from engine.collision.collision_shape import CollisionCircle, CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine import utils
@@ -211,10 +211,19 @@ class PlayerNode(PositionNode):
             collision_type = CollisionType.DYNAMIC,
             tags = [collision_tag],
             shapes = [
-                CollisionCircle(
+                # CollisionCircle(
+                #     x = x,
+                #     y = y,
+                #     radius = 4,
+                #     batch = batch
+                # ),
+                CollisionRect(
                     x = x,
                     y = y,
-                    radius = 4,
+                    anchor_x = 4,
+                    anchor_y = 4,
+                    width = 8,
+                    height = 8,
                     batch = batch
                 )
             ]
@@ -373,7 +382,9 @@ class PlayerNode(PositionNode):
         collider_position = self.__collider.get_position()
 
         # Apply movement.
-        self.__collider.set_position((collider_position[0] + movement.x, collider_position[1] + movement.y))
+        # self.__collider.set_position((collider_position[0] + movement.x, collider_position[1] + movement.y))
+        # Apply velocity instead of position.
+        self.__collider.set_velocity((movement.x, movement.y))
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
