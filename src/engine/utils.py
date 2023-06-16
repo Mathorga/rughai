@@ -117,37 +117,37 @@ def swept_rect_rect(
         dy_exit = y2 - (y1 + h1)
 
     # Ffind time of collision and time of leaving for each axis (if statement is to prevent divide by zero).
-    xEntry: float
-    yEntry: float
-    xExit: float
-    yExit: float
+    x_entry_time: float
+    y_entry_time: float
+    x_exit_time: float
+    y_exit_time: float
 
     if vx1 == 0.0:
-        xEntry = -(float("inf"))
-        xExit = (float("inf"))
+        x_entry_time = -(float("inf"))
+        x_exit_time = (float("inf"))
     else:
-        xEntry = dx_entry / vx1
-        xExit = dx_exit / vx1
+        x_entry_time = dx_entry / vx1
+        x_exit_time = dx_exit / vx1
 
     if vy1 == 0.0:
-        yEntry = -(float("inf"))
-        yExit = (float("inf"))
+        y_entry_time = -(float("inf"))
+        y_exit_time = (float("inf"))
     else:
-        yEntry = dy_entry / vy1
-        yExit = dy_exit / vy1
+        y_entry_time = dy_entry / vy1
+        y_exit_time = dy_exit / vy1
 
     # Find the earliest/latest times of collision.
-    entryTime = max(xEntry, yEntry)
-    exitTime = min(xExit, yExit)
+    entry_time = max(x_entry_time, y_entry_time)
+    exit_time = min(x_exit_time, y_exit_time)
 
-    if entryTime > exitTime or xEntry < 0.0 and yEntry < 0.0 or xEntry > 1.0 or yEntry > 1.0:
+    if entry_time > exit_time or x_entry_time < 0.0 and y_entry_time < 0.0 or x_entry_time > 1.0 or y_entry_time > 1.0:
         # There was no collision.
         return (1.0, 0.0, 0.0)
 
     else:
         # There was a collision.
         # Calculate normal of collided surface and return the time of collision.
-        if xEntry > yEntry:
+        if x_entry_time > y_entry_time:
             if dx_entry < 0.0:
                 normal_x = 1.0
                 normal_y = 0.0
@@ -162,7 +162,7 @@ def swept_rect_rect(
                 normal_x = 0.0
                 normal_y = -1.0
 
-        return (entryTime, normal_x, normal_y)
+        return (entry_time, normal_x, normal_y)
 
 def circle_circle_check(
     x1: float,
