@@ -77,21 +77,21 @@ class TilemapNode(PositionNode):
         self.map_width = map_width
         self.map_height = map_height
 
-        height = (self.map_height - 1) * tileset.tile_height
+        height = (self.map_height - SETTINGS[Builtins.TILEMAP_BUFFER] - 1) * tileset.tile_height
         scaled_height = height * GLOBALS[Builtins.SCALING]
         self.__sprites = [
             DepthSprite(
                 img = self.__tileset.tiles[tex_index],
-                x = int(x + (index % self.map_width) * self.__tileset.tile_width * GLOBALS[Builtins.SCALING]),
-                y = int(y + scaled_height - ((index // self.map_width) * self.__tileset.tile_height) * GLOBALS[Builtins.SCALING]),
-                z = int(-((y + height - ((index // self.map_width) * self.__tileset.tile_height)) + z_offset)),
+                x = int(x + (index % self.map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tileset.tile_width * GLOBALS[Builtins.SCALING]),
+                y = int(y + scaled_height - ((index // self.map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tileset.tile_height) * GLOBALS[Builtins.SCALING]),
+                z = int(-((y + height - ((index // self.map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tileset.tile_height)) + z_offset)),
                 batch = batch
             ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
         ]
 
 
         for spr in self.__sprites:
-            # Tile sprites are scaled up in order to avoid texture bleeding.
+            # Tile sprites are scaled up a bit in order to avoid texture bleeding.
             spr.scale = GLOBALS[Builtins.SCALING] * TILE_SCALING
 
         self.grid_lines = []
@@ -211,6 +211,7 @@ class TilemapNode(PositionNode):
         """
         Constructs a new tilemaps list from the given TMJ (JSON) file.
         Returns a tilemap for each layer.
+        WARNING: This method is not complete anymore, don't use!
         """
 
         data: dict
