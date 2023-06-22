@@ -31,9 +31,11 @@ class PriestNode(PositionNode):
             x = self.x,
             y = self.y,
             lines = [
-                "Welcome true believers and newcomers alike! Spiderman co-creator Stan Lee here!",
+                "Welcome true believers and newcomers alike!",
+                "Spiderman co-creator Stan Lee here!",
                 "How's it gonna be today?",
-                "Oh I see! You're gonna make a mess as usual",
+                "Oh I see! You're gonna make a mess",
+                "as usual",
                 "Just be careful with those pokemon over there, I'd like to eat them eventually."
             ],
             tags = [collision_tags.PLAYER_INTERACTION],

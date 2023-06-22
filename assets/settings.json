@@ -3,7 +3,7 @@
     "show_collisions": true,
     "show_tiles_grid": false,
     "title": "RUGHAI",
-    "font_name": "I pixel u",
+    "font_name": "rughai",
     "view_width": 240,
     "view_height": 160,
     "pixel_perfect": false,
@@ -12,5 +12,6 @@
     "fullscreen": true,
     "target_fps": 120,
     "camera_speed": 5.0,
-    "layers_z_spacing": 32.0
+    "layers_z_spacing": 32.0,
+    "tilemap_buffer": 2
 }
