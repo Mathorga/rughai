@@ -65,63 +65,63 @@ class R_0_0(PlayableSceneNode):
             # House.
             WallNode(
                 x = self.__tile_size * 43,
-                y = self.__tile_size * 30,
+                y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 6,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 44,
-                y = self.__tile_size * 30,
+                y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 43,
-                y = self.__tile_size * 36,
+                y = self.__tile_size * 38,
                 width = self.__tile_size * 5,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 48,
-                y = self.__tile_size * 36,
+                y = self.__tile_size * 38,
                 width = self.__tile_size,
                 height = self.__tile_size * 3,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 49,
-                y = self.__tile_size * 38,
+                y = self.__tile_size * 40,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 53,
-                y = self.__tile_size * 32,
+                y = self.__tile_size * 34,
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 49,
-                y = self.__tile_size * 32,
+                y = self.__tile_size * 34,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 49,
-                y = self.__tile_size * 30,
+                y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 47,
-                y = self.__tile_size * 30,
+                y = self.__tile_size * 32,
                 width = self.__tile_size * 2,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
@@ -130,28 +130,28 @@ class R_0_0(PlayableSceneNode):
             # Slopes.
             WallNode(
                 x = self.__tile_size * 62,
-                y = self.__tile_size * 27,
+                y = self.__tile_size * 29,
                 width = self.__tile_size,
                 height = self.__tile_size * 17,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 63,
-                y = self.__tile_size * 27,
+                y = self.__tile_size * 29,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 66,
-                y = self.__tile_size * 25,
+                y = self.__tile_size * 27,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
                 batch = self._scene.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 66,
-                y = self.__tile_size * 23,
+                y = self.__tile_size * 25,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
                 batch = self._scene.world_batch

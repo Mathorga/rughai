@@ -1,9 +1,9 @@
 {
-    "debug": true,
+    "debug": false,
     "show_collisions": true,
     "show_tiles_grid": false,
     "title": "RUGHAI",
-    "font_name": "I pixel u",
+    "font_name": "rughai",
     "view_width": 240,
     "view_height": 160,
     "pixel_perfect": false,
