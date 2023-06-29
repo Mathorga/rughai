@@ -33,11 +33,14 @@ class PriestNode(PositionNode):
             lines = [
                 "Welcome true believers and newcomers alike!",
                 "Spiderman co-creator Stan Lee here!",
-                "How's it gonna be today?",
-                "Oh I see! You're gonna make a mess...",
-                "...as usual",
-                "Just be careful with those pokemon over there,",
-                "I'd like to eat them eventually."
+                "Once again we find our hero Peter Parker,",
+                "better known around the world as the amazing Spider-Man, in a heap of trouble",
+                "But this is just the beginning, Spidey fans.",
+                "So get ready for a true superhero action thriller,",
+                "packed to the brim with thrills and chills,",
+                "twists and turns,",
+                "more super-villains than you can shake a web at",
+                "and of course, non-stop web-slinging, wall-crawling action!"
             ],
             tags = [collision_tags.PLAYER_INTERACTION],
             world_batch = world_batch,
