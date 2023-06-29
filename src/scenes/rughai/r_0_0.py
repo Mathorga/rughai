@@ -16,7 +16,7 @@ from clouds_node import CloudsNode
 import constants.events as events
 import constants.scenes as scenes
 from battery_node import BatteryNode
-from priest_node import PriestNode
+from stan_lee_node import StanLeeNode
 
 class R_0_0(PlayableSceneNode):
     def __init__(
@@ -258,8 +258,8 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        # Priest.
-        priest = PriestNode(
+        # Stan Lee.
+        stan_lee = StanLeeNode(
             x = self.__tile_size * 46,
             y = self.__tile_size * 35,
             world_batch = self._scene.world_batch,
@@ -280,7 +280,7 @@ class R_0_0(PlayableSceneNode):
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(clouds)
         self._scene.add_children(props)
-        self._scene.add_child(priest)
+        self._scene.add_child(stan_lee)
         self._scene.add_child(self.battery)
         self._scene.add_child(self._player)
         self._scene.add_child(south_door)
