@@ -373,8 +373,7 @@ class PlayerNode(PositionNode):
 
     def __move(self, dt):
         # Apply movement after collision.
-        self.x = self.__collider.x
-        self.y = self.__collider.y
+        self.set_position(self.__collider.get_position())
 
         # Compute movement.
         movement = self.__compute_movement(dt)
@@ -447,7 +446,6 @@ class PlayerNode(PositionNode):
             z = -(self.y + (SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5))
         )
         self.__shadow_sprite.update(dt)
-
 
     def __update_cam_target(self, dt):
         cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)

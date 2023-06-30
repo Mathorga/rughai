@@ -84,8 +84,10 @@ class CollisionNode(PositionNode):
                     #     collisions.append(pm.Vec2(*collision))
 
             if not other.sensor:
-                if self.velocity_x * collision_time > 0.0 or self.velocity_y * collision_time > 0.0:
-                    print((self.velocity_x * collision_time, self.velocity_y * collision_time))
+                # if self.velocity_x * collision_time > 0.0 or self.velocity_y * collision_time > 0.0:
+                #     print((self.velocity_x * collision_time, self.velocity_y * collision_time))
+                if self.velocity_x > 0.0:
+                    print(self.velocity_x)
                 self.set_position((self.x + self.velocity_x * collision_time, self.y + self.velocity_y * collision_time))
                 # self.set_position((self.x + collision[0], self.y + collision[1]))
 
