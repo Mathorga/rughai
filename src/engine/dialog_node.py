@@ -7,7 +7,6 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle
 from engine.interaction_node import InteractionNode
 from engine.node import PositionNode
-from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
 
 
