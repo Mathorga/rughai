@@ -1,7 +1,7 @@
 from typing import Optional
 import pyglet
-from constants import collision_tags
 
+from constants import collision_tags
 from engine.dialog_node import DialogNode
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
@@ -34,8 +34,8 @@ class StanLeeNode(PositionNode):
                 "Welcome true believers and newcomers alike!",
                 "Spiderman co-creator Stan Lee here!",
                 "Once again we find our hero Peter Parker,",
-                "better known around the world as the amazing Spider-Man",
-                "in a heap of trouble",
+                "better known around the world as the amazing Spider-Man...",
+                "...in a heap of trouble!",
                 "But this is just the beginning, Spidey fans.",
                 "So get ready for a true superhero action thriller,",
                 "packed to the brim with thrills and chills,",
