@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Tuple
 import pyglet
 
@@ -114,7 +115,7 @@ class CollisionRect(CollisionShape):
                 self.velocity_y
             )
             if collision_time < 1.0:
-                print(f"CAPRONE {collision_time}, {normal_x}, {normal_y}")
+                print(f"TIMESTAMP {datetime.now()} --- COLLISION_TIME {collision_time}")
                 self.render_shape.set_color(COLLIDING_COLOR)
             else:
                 self.render_shape.set_color(FREE_COLOR)
