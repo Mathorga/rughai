@@ -34,6 +34,9 @@ class CollisionNode(PositionNode):
 
         self.collisions = set()
 
+        # A collision time >= 1.0 means no collision at all.
+        self.collision_time = 1.0
+
     def delete(self) -> None:
         for shape in self.shapes:
             shape.delete()
@@ -59,12 +62,19 @@ class CollisionNode(PositionNode):
         for shape in self.shapes:
             shape.set_velocity(velocity)
 
+    def update(self, dt: int) -> None:
+        self.set_position((self.x + self.velocity_x * self.collision_time, self.y + self.velocity_y * self.collision_time))
+
+        # Reset collision time.
+        self.collision_time = 1.0
+
     def collide(self, other) -> None:
         assert isinstance(other, CollisionNode)
 
         collision: Tuple[float, float] = (0.0, 0.0)
         collisions: List[pm.Vec2] = []
 
+        # Reset collision time.
         collision_time = 1.0
         normal_x = 0.0
         normal_y = 0.0
@@ -84,11 +94,10 @@ class CollisionNode(PositionNode):
                     #     collisions.append(pm.Vec2(*collision))
 
             if not other.sensor:
-                # if self.velocity_x * collision_time > 0.0 or self.velocity_y * collision_time > 0.0:
-                #     print((self.velocity_x * collision_time, self.velocity_y * collision_time))
-                if self.velocity_x > 0.0:
-                    print(self.velocity_x)
-                self.set_position((self.x + self.velocity_x * collision_time, self.y + self.velocity_y * collision_time))
+                # Overwrite collision time if a smaller one is found.
+                if collision_time < self.collision_time:
+                    self.collision_time = collision_time
+
                 # self.set_position((self.x + collision[0], self.y + collision[1]))
 
             if other not in self.collisions and overlap:
