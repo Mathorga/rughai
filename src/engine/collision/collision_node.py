@@ -36,6 +36,8 @@ class CollisionNode(PositionNode):
 
         # A collision time >= 1.0 means no collision at all.
         self.collision_time = 1.0
+        self.normal_x = 0.0
+        self.normal_y = 0.0
 
     def delete(self) -> None:
         for shape in self.shapes:
@@ -65,8 +67,18 @@ class CollisionNode(PositionNode):
     def update(self, dt: int) -> None:
         self.set_position((self.x + self.velocity_x * self.collision_time, self.y + self.velocity_y * self.collision_time))
 
+        # remaining_time = 1.0 - self.collision_time
+
+        # dotprod = (self.velocity_x * self.normal_y + self.velocity_y * self.normal_x) * remaining_time
+        # vx = dotprod * self.normal_y
+        # vy = dotprod * self.normal_x
+
+        # self.set_position((self.x + vx, self.y + vy))
+
         # Reset collision time.
         self.collision_time = 1.0
+        self.normal_x = 0.0
+        self.normal_y = 0.0
 
     def collide(self, other) -> None:
         assert isinstance(other, CollisionNode)
@@ -97,6 +109,8 @@ class CollisionNode(PositionNode):
                 # Overwrite collision time if a smaller one is found.
                 if collision_time < self.collision_time:
                     self.collision_time = collision_time
+                    self.normal_x = normal_x
+                    self.normal_y = normal_y
 
                 # self.set_position((self.x + collision[0], self.y + collision[1]))
 

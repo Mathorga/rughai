@@ -2,10 +2,15 @@ from typing import Optional, Tuple
 import pyglet
 
 from engine.node import PositionNode
-from engine.circle_node import CircleNode
-from engine.rect_node import RectNode
+from engine.shapes.circle_node import CircleNode
+from engine.shapes.rect_node import RectNode
+from engine.shapes.shape_node import ShapeNode
 import engine.utils as utils
 from engine.settings import SETTINGS, Builtins
+
+
+COLLIDING_COLOR = (0x7FF, 0x7F, 0x7F, 0x7F)
+FREE_COLOR = (0x7F, 0xFF, 0xFF, 0x7F)
 
 class CollisionShape(PositionNode):
     def __init__(
@@ -20,7 +25,7 @@ class CollisionShape(PositionNode):
         self.velocity_x = 0.0
         self.velocity_y = 0.0
 
-        self.render_shape: Optional[PositionNode] = None
+        self.render_shape: Optional[ShapeNode] = None
 
     def set_position(
         self,
@@ -102,15 +107,21 @@ class CollisionRect(CollisionShape):
     def swept_collide(self, other) -> Tuple[float, float, float]:
         if isinstance(other, CollisionRect):
             # Rect/rect collision.
-            return utils.swept_rect_rect(
+            (collision_time, normal_x, normal_y) = utils.swept_rect_rect(
                 *self.get_collision_bounds(),
                 *other.get_collision_bounds(),
                 self.velocity_x,
                 self.velocity_y
             )
+            if collision_time < 1.0:
+                print(f"CAPRONE {collision_time}, {normal_x}, {normal_y}")
+                self.render_shape.set_color(COLLIDING_COLOR)
+            else:
+                self.render_shape.set_color(FREE_COLOR)
+            return (collision_time, normal_x, normal_y)
         else:
             # Other.
-            return False
+            return (1.0, 0.0, 0.0)
 
     def overlap(self, other) -> bool:
         if isinstance(other, CollisionRect):
@@ -154,7 +165,6 @@ class CollisionCircle(CollisionShape):
             self.render_shape = CircleNode(
                 x = x,
                 y = y,
-                z = z,
                 radius = radius,
                 color = (0x7F, 0xFF, 0xFF, 0x7F),
                 batch = batch

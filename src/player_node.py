@@ -381,11 +381,7 @@ class PlayerNode(PositionNode):
         # Compute velocity.
         velocity = self.__compute_velocity(dt)
 
-        collider_position = self.__collider.get_position()
-
-        # Apply movement.
-        # self.__collider.set_position((collider_position[0] + movement.x, collider_position[1] + movement.y))
-        # Apply velocity instead of position.
+        # Apply the computed velocity to the collider.
         self.__collider.set_velocity((velocity.x, velocity.y))
 
     def __update_sprites(self, dt):
