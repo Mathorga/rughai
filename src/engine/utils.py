@@ -92,6 +92,9 @@ def swept_rect_rect(
     Returns the collision time with object 2, meaning the percentage at which a collision occurs from the given position using the given velocity.
     """
     # TODO https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
+    # TODO https://noonat.github.io/intersect/
+    # TODO https://blog.hamaluik.ca/posts/simple-aabb-collision-using-minkowski-difference/
+    # TODO https://www.haroldserrano.com/blog/visualizing-the-gjk-collision-algorithm
 
     normal_x: float
     normal_y: float
