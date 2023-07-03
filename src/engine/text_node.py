@@ -16,8 +16,8 @@ class TextNode(PositionNode):
         width: float = SETTINGS[Builtins.VIEW_WIDTH],
         height: Optional[float] = None,
         color: tuple = (0x00, 0x00, 0x00, 0xFF),
-        font_name: Optional[str] = SETTINGS[Builtins.FONT_NAME],
-        font_size: int = 6,
+        font_name: Optional[str] = None,
+        font_size: int = 12,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(

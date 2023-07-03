@@ -195,8 +195,8 @@ class RugHai:
             with controllers.INPUT_CONTROLLER:
                 self._active_scene.update(dt)
 
-        # Compute collisions through collision manager.
-        controllers.COLLISION_CONTROLLER.update(dt)
+            # Compute collisions through collision manager.
+            controllers.COLLISION_CONTROLLER.update(dt)
 
     def run(self) -> None:
         # Scale textures using nearest neighbor filtering.

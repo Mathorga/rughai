@@ -1,12 +1,12 @@
 from typing import Optional
 import pyglet
-from constants import collision_tags
 
+from constants import collision_tags
 from engine.dialog_node import DialogNode
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 
-class PriestNode(PositionNode):
+class StanLeeNode(PositionNode):
     def __init__(
         self,
         x: float = 0,
@@ -16,7 +16,7 @@ class PriestNode(PositionNode):
     ) -> None:
         super().__init__(x, y)
 
-        self.__image = pyglet.resource.image("sprites/rughai/npc/priest_0/priest_0.png")
+        self.__image = pyglet.resource.image("sprites/extras/stan_lee.png")
         self.__image.anchor_x = 4
         self.__image.anchor_y = 0
 
@@ -31,10 +31,17 @@ class PriestNode(PositionNode):
             x = self.x,
             y = self.y,
             lines = [
-                "Welcome true believers and newcomers alike! Spiderman co-creator Stan Lee here!",
-                "How's it gonna be today?",
-                "Oh I see! You're gonna make a mess as usual",
-                "Just be careful with those pokemon over there, I'd like to eat them eventually."
+                "Welcome true believers and newcomers alike!",
+                "Spiderman co-creator Stan Lee here!",
+                "Once again we find our hero Peter Parker,",
+                "better known around the world as the amazing Spider-Man...",
+                "...in a heap of trouble!",
+                "But this is just the beginning, Spidey fans.",
+                "So get ready for a true superhero action thriller,",
+                "packed to the brim with thrills and chills,",
+                "twists and turns,",
+                "more super-villains than you can shake a web at",
+                "and of course, non-stop web-slinging, wall-crawling action!"
             ],
             tags = [collision_tags.PLAYER_INTERACTION],
             world_batch = world_batch,

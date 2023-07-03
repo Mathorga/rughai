@@ -1,15 +1,14 @@
 from typing import Optional, Tuple
 import pyglet
 
-from engine.node import PositionNode
 from engine.settings import GLOBALS, Builtins
+from engine.shapes.shape_node import ShapeNode
 
-class CircleNode(PositionNode):
+class CircleNode(ShapeNode):
     def __init__(
         self,
         x: float = 0,
         y: float = 0,
-        z: float = 0.0,
         radius: int = 0,
         color: tuple = (0x00, 0x00, 0x00, 0xFF),
         batch: Optional[pyglet.graphics.Batch] = None
@@ -17,7 +16,7 @@ class CircleNode(PositionNode):
         super().__init__(
             x = x,
             y = y,
-            z = z
+            color = color
         )
 
         self.__radius = radius
@@ -32,6 +31,11 @@ class CircleNode(PositionNode):
 
     def delete(self) -> None:
         self.__shape.delete()
+
+    def set_color(self, color: Tuple[int, int, int]):
+        super().set_color(color)
+
+        self.__shape.color = color
 
     def set_position(self, position: Tuple[int, int]) -> None:
         self.x = position[0]

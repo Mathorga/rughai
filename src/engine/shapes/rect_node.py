@@ -1,10 +1,10 @@
 from typing import Tuple
 import pyglet
 
-from engine.node import PositionNode
 from engine.settings import GLOBALS, Builtins
+from engine.shapes.shape_node import ShapeNode
 
-class RectNode(PositionNode):
+class RectNode(ShapeNode):
     def __init__(
         self,
         x: float = 0,
@@ -14,12 +14,12 @@ class RectNode(PositionNode):
         anchor_x: float = 0,
         anchor_y: float = 0,
         color: tuple = (0x00, 0x00, 0x00),
-        batch = None,
-        group = None
+        batch = None
     ) -> None:
         super().__init__(
             x = x,
-            y = y
+            y = y,
+            color = color
         )
 
         self.__shape = pyglet.shapes.Rectangle(
@@ -28,13 +28,17 @@ class RectNode(PositionNode):
             width = width * GLOBALS[Builtins.SCALING],
             height = height * GLOBALS[Builtins.SCALING],
             color = color,
-            batch = batch,
-            group = group
+            batch = batch
         )
         self.__shape.anchor_position = (anchor_x * GLOBALS[Builtins.SCALING], anchor_y * GLOBALS[Builtins.SCALING])
 
     def delete(self) -> None:
         self.__shape.delete()
+
+    def set_color(self, color: Tuple[int, int, int]):
+        super().set_color(color)
+
+        self.__shape.color = color
 
     def set_position(
         self,

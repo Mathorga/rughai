@@ -280,6 +280,9 @@ class PlayerNode(PositionNode):
         # Compute and apply movement to self's x and y coords.
         self.__move(dt)
 
+        # Update collider-
+        self.__update_collider(dt)
+
         # Update sprites accordingly.
         self.__update_sprites(dt)
 
@@ -367,24 +370,19 @@ class PlayerNode(PositionNode):
             # Clamp speed between 0 and max speed.
             self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, self.__stats.max_speed)
 
-    def __compute_movement(self, dt) -> pm.Vec2:
+    def __compute_velocity(self, dt) -> pm.Vec2:
         # Define a vector from speed and direction.
         return pm.Vec2.from_polar(self.__stats.speed * dt, self.__stats.dir)
 
     def __move(self, dt):
         # Apply movement after collision.
-        self.x = self.__collider.x
-        self.y = self.__collider.y
+        self.set_position(self.__collider.get_position())
 
-        # Compute movement.
-        movement = self.__compute_movement(dt)
+        # Compute velocity.
+        velocity = self.__compute_velocity(dt)
 
-        collider_position = self.__collider.get_position()
-
-        # Apply movement.
-        # self.__collider.set_position((collider_position[0] + movement.x, collider_position[1] + movement.y))
-        # Apply velocity instead of position.
-        self.__collider.set_velocity((movement.x, movement.y))
+        # Apply the computed velocity to the collider.
+        self.__collider.set_velocity((velocity.x, velocity.y))
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
@@ -448,7 +446,6 @@ class PlayerNode(PositionNode):
         )
         self.__shadow_sprite.update(dt)
 
-
     def __update_cam_target(self, dt):
         cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
@@ -465,6 +462,9 @@ class PlayerNode(PositionNode):
         )
 
         self.__interactor.update(dt)
+
+    def __update_collider(self, dt):
+        self.__collider.update(dt)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()

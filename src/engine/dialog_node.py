@@ -67,7 +67,14 @@ class DialogNode(PositionNode):
             x = SETTINGS[Builtins.VIEW_WIDTH] / 2,
             y = 16,
             width = SETTINGS[Builtins.VIEW_WIDTH] * 0.8,
-            font_size = 6,
+            batch = ui_batch
+        )
+
+        self.next_icon = TextNode(
+            text = "",
+            font_name = SETTINGS[Builtins.FONT_NAME],
+            x = SETTINGS[Builtins.VIEW_WIDTH] - 16,
+            y = 16,
             batch = ui_batch
         )
 
@@ -84,8 +91,12 @@ class DialogNode(PositionNode):
             self.current_char = 0
 
         text = f"{self.lines[self.current_line][0:self.current_char]}"
+
+        # Make the next_icon visible if the current line is ended.
         if self.current_char >= len(self.lines[self.current_line]) and self.current_line < len(self.lines) - 1:
-            text += " ..."
+            self.next_icon.set_text(">")
+        else:
+            self.next_icon.set_text("")
 
         self.text.set_text(text)
 
