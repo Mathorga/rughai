@@ -132,7 +132,21 @@ class R_0_0(PlayableSceneNode):
                 x = self.__tile_size * 62,
                 y = self.__tile_size * 29,
                 width = self.__tile_size,
-                height = self.__tile_size * 17,
+                height = self.__tile_size * 7,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 61,
+                y = self.__tile_size * 34,
+                width = self.__tile_size,
+                height = self.__tile_size * 8,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 62,
+                y = self.__tile_size * 41,
+                width = self.__tile_size,
+                height = self.__tile_size * 5,
                 batch = self._scene.world_batch
             ),
             WallNode(
