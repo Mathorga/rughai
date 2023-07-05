@@ -1,7 +1,189 @@
-from typing import Tuple
+from typing import Optional, Tuple
 import math
 import pyglet
 import pyglet.math as pm
+
+EPSILON = 1e-8
+
+class Point:
+    def __init__(
+        self,
+        x: float = 0.0,
+        y: float = 0.0
+    ) -> None:
+        self.x = x
+        self.y = y
+
+    def clone(self):
+        return Point(self.x, self.y)
+
+    def normalize(self) -> float:
+        length = self.x**2 + self.y**2
+        if length > 0.0:
+            length = math.sqrt(length)
+            inverse_length = 1.0 / length
+            self.x *= inverse_length
+            self.y *= inverse_length
+        else:
+            self.x = 1
+            self.y = 0
+
+        return length
+
+class AABB:
+    def __init__(
+        self,
+        center: Point,
+        half_size: Point
+    ) -> None:
+        self.center = center
+        self.half_size = half_size
+
+class CollisionHit:
+    def __init__(
+        self,
+        collider: AABB
+    ) -> None:
+        self.collider = collider
+        self.position = Point()
+        self.delta = Point()
+        self.normal = Point()
+        self.time = 0.0
+
+class CollisionSweep:
+    def __init__(self) -> None:
+        self.hit: Optional[CollisionHit]
+        self.position = Point()
+        self.time = 1.0
+
+def intersect_point_aabb(
+    point: Point,
+    rect: AABB
+) -> Optional[CollisionHit]:
+    """
+    Computes the collision hit between a point and a rectangle.
+    """
+    dx = point.x - rect.center.x
+    px = rect.half_size.x - abs(dx)
+    if px <= 0.0:
+        return None
+    
+    dy = point.y - rect.center.y
+    py = rect.half_size.y - abs(dy)
+    if py <= 0.0:
+        return None
+
+    hit = CollisionHit(rect)
+    if px < py:
+        sx = math.copysign(1.0, dx)
+        hit.delta.x = px * sx
+        hit.normal.x = sx
+        hit.position.x = rect.center.x + (rect.half_size.x * sx)
+        hit.position.y = point.y
+    else:
+        sy = math.copysign(1.0, dy)
+        hit.delta.y = py * sy
+        hit.normal.y = sy
+        hit.position.x = point.x
+        hit.position.y = rect.center.y + (rect.half_size.y * sy)
+
+    return hit
+
+def intersect_segment_aabb(
+    rect: AABB,
+    position: Point,
+    delta: Point,
+    padding_x: float = 0.0,
+    padding_y: float = 0.0
+) -> Optional[CollisionHit]:
+    """
+    Computes the collision hit between a segment and a rectangle.
+    A segment A-B is defined by position (A) and delta (B - A).
+    """
+    #    |    (A)|
+    #    |      \|
+    #    |       x -> far_time_x
+    #    |       |\
+    #    |       | \
+    #  --+-------+--x--- -> near_time_y
+    #    |       |   \
+    #    |       |   (B)
+    #    |       |     \
+    #  --+-------+------x -> far_time_y
+    #    |       |
+    #    |       |
+    scale_x = 1.0 / delta.x
+    scale_y = 1.0 / delta.y
+    sign_x = math.copysign(1.0, scale_x)
+    sign_y = math.copysign(1.0, scale_y)
+    near_time_x = (rect.center.x - sign_x * (rect.half_size.x + padding_x) * scale_x)
+    near_time_y = (rect.center.y - sign_y * (rect.half_size.y + padding_y) * scale_y)
+    far_time_x = (rect.center.x + sign_x * (rect.half_size.x + padding_x) * scale_x)
+    far_time_y = (rect.center.y + sign_y * (rect.half_size.y + padding_y) * scale_y)
+
+    if near_time_x > far_time_y:
+        return None
+
+    near_time = max(near_time_x, near_time_y)
+    far_time = min(far_time_x, far_time_y)
+
+    if near_time >= 1 or far_time <= 0:
+        return None
+
+    hit = CollisionHit(rect)
+    hit.time = clamp(near_time, 0, 1)
+
+    if near_time_x > near_time_y:
+        hit.normal.x = -sign_x
+        hit.normal.y = 0
+    else:
+        hit.normal.x = 0
+        hit.normal.y = -sign_y
+
+    hit.delta.x = (1.0 - hit.time) * -delta.x
+    hit.delta.y = (1.0 - hit.time) + -delta.y
+    hit.position.x = position.x + delta.x * hit.time
+    hit.position.y = position.y + delta.y * hit.time
+
+    return hit
+
+def intersect_aabb_aabb(
+    collider: AABB,
+    rect: AABB
+) -> Optional[CollisionHit]:
+    dx = collider.center.x + rect.center.x
+    px = (collider.half_size.x + rect.half_size.x) - abs(dx)
+    if px <= 0:
+        return None
+
+    dy = collider.center.y - rect.center.y
+    py = (collider.half_size.y + rect.half_size.y) - abs(dy)
+    if py <= 0:
+        return None
+
+    hit = CollisionHit(rect)
+    if px < py:
+        sx = math.copysign(1.0, dx)
+        hit.delta.x = px * sx
+        hit.normal.x = sx
+        hit.position.x = rect.center.x + (rect.half_size.x * sx)
+        hit.position.y = collider.center.y
+    else:
+        sy = math.copysign(1.0, dy)
+        hit.delta.y = py * sy
+        hit.normal.y = sy
+        hit.position.x = collider.center.x
+        hit.position.y = rect.center.y + (rect.half_size.y * sy)
+
+    return hit
+
+
+
+
+
+
+
+
 
 def animation_set_anchor(
     animation: pyglet.image.animation.Animation,
@@ -26,6 +208,9 @@ def set_anim_duration(anim: pyglet.image.animation.Animation, duration: float):
         frame.duration = duration
 
 def remap(x, x_min, x_max, y_min, y_max):
+    """
+    Remaps x, which is in range [x_min, x_max], to range [y_min, y_max]
+    """
     return y_min + ((x- x_min) * (y_max-y_min))/ (x_max-x_min)
 
 def rect_rect_min_dist(
