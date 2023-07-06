@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, Tuple
 import pyglet
+import pyglet.math as pm
 
 from engine.node import PositionNode
 from engine.shapes.circle_node import CircleNode
@@ -53,8 +53,8 @@ class CollisionShape(PositionNode):
         self.velocity_x = velocity[0]
         self.velocity_y = velocity[1]
 
-    def swept_collide(self, other) -> Tuple[float, float, float]:
-        return (1.0, 0.0, 0.0)
+    def swept_collide(self, other) -> utils.CollisionSweep:
+        return utils.CollisionSweep()
 
     def overlap(self, _other) -> bool:
         return False
@@ -105,24 +105,18 @@ class CollisionRect(CollisionShape):
             self.height
         )
 
-    def swept_collide(self, other) -> Tuple[float, float, float]:
-        if isinstance(other, CollisionRect):
-            # Rect/rect collision.
-            (collision_time, normal_x, normal_y) = utils.swept_rect_rect(
-                *self.get_collision_bounds(),
-                *other.get_collision_bounds(),
-                self.velocity_x,
-                self.velocity_y
-            )
-            if collision_time < 1.0:
-                print(f"TIMESTAMP {datetime.now()} --- COLLISION_TIME {collision_time}")
-                self.render_shape.set_color(COLLIDING_COLOR)
-            else:
-                self.render_shape.set_color(FREE_COLOR)
-            return (collision_time, normal_x, normal_y)
-        else:
-            # Other.
-            return (1.0, 0.0, 0.0)
+    def swept_collide(self, other) -> utils.CollisionSweep:
+        return utils.sweep_aabb_aabb(
+            collider = utils.AABB(
+                center = pm.Vec2(self.x + self.width / 2, self.y + self.height / 2),
+                half_size = pm.Vec2(self.width / 2, self.height / 2)
+            ),
+            rect = utils.AABB(
+                center = pm.Vec2(other.x + other.width / 2, other.y + other.height / 2),
+                half_size = pm.Vec2(other.width / 2, other.height / 2)
+            ),
+            delta = pm.Vec2(self.velocity_x, self.velocity_y)
+        )
 
     def overlap(self, other) -> bool:
         if isinstance(other, CollisionRect):

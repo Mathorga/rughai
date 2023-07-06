@@ -16,6 +16,7 @@ from scenes.rughai.r_0_5 import R_0_5
 from scenes.rughai.r_0_6 import R_0_6
 
 import constants.scenes as scenes
+from scenes.rughai.test_room import TestRoom
 
 class RugHai:
     """
@@ -71,7 +72,7 @@ class RugHai:
         )
 
         # Create a scene.
-        self._active_scene = R_0_0(
+        self._active_scene = TestRoom(
             window = self._window,
             view_width = SETTINGS[Builtins.VIEW_WIDTH],
             view_height = SETTINGS[Builtins.VIEW_HEIGHT],

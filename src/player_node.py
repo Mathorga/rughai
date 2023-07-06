@@ -280,8 +280,8 @@ class PlayerNode(PositionNode):
         # Compute and apply movement to self's x and y coords.
         self.__move(dt)
 
-        # Update collider-
-        self.__update_collider(dt)
+        # Update collider.
+        # self.__update_collider(dt)
 
         # Update sprites accordingly.
         self.__update_sprites(dt)

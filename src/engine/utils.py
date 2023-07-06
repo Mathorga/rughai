@@ -5,36 +5,11 @@ import pyglet.math as pm
 
 EPSILON = 1e-8
 
-class Point:
-    def __init__(
-        self,
-        x: float = 0.0,
-        y: float = 0.0
-    ) -> None:
-        self.x = x
-        self.y = y
-
-    def clone(self):
-        return Point(self.x, self.y)
-
-    def normalize(self) -> float:
-        length = self.x**2 + self.y**2
-        if length > 0.0:
-            length = math.sqrt(length)
-            inverse_length = 1.0 / length
-            self.x *= inverse_length
-            self.y *= inverse_length
-        else:
-            self.x = 1
-            self.y = 0
-
-        return length
-
 class AABB:
     def __init__(
         self,
-        center: Point,
-        half_size: Point
+        center: pm.Vec2,
+        half_size: pm.Vec2
     ) -> None:
         self.center = center
         self.half_size = half_size
@@ -45,19 +20,27 @@ class CollisionHit:
         collider: AABB
     ) -> None:
         self.collider = collider
-        self.position = Point()
-        self.delta = Point()
-        self.normal = Point()
+
+        # Point of contact between colliders.
+        self.position = pm.Vec2()
+
+        # Vector describing the overlap between colliders.
+        self.delta = pm.Vec2()
+
+        # Surface normal at the point of contact.
+        self.normal = pm.Vec2()
+
+        # Time of intersection, only used with segments intersection (and swept rectangles).
         self.time = 0.0
 
 class CollisionSweep:
     def __init__(self) -> None:
-        self.hit: Optional[CollisionHit]
-        self.position = Point()
+        self.hit: Optional[CollisionHit] = None
+        self.position = pm.Vec2()
         self.time = 1.0
 
 def intersect_point_aabb(
-    point: Point,
+    point: pm.Vec2,
     rect: AABB
 ) -> Optional[CollisionHit]:
     """
@@ -91,8 +74,8 @@ def intersect_point_aabb(
 
 def intersect_segment_aabb(
     rect: AABB,
-    position: Point,
-    delta: Point,
+    position: pm.Vec2,
+    delta: pm.Vec2,
     padding_x: float = 0.0,
     padding_y: float = 0.0
 ) -> Optional[CollisionHit]:
@@ -112,16 +95,16 @@ def intersect_segment_aabb(
     #  --+-------+------x -> far_time_y
     #    |       |
     #    |       |
-    scale_x = 1.0 / delta.x
-    scale_y = 1.0 / delta.y
+    scale_x = 1.0 / delta.x if delta.x != 0.0 else 1.0
+    scale_y = 1.0 / delta.y if delta.y != 0.0 else 1.0
     sign_x = math.copysign(1.0, scale_x)
     sign_y = math.copysign(1.0, scale_y)
-    near_time_x = (rect.center.x - sign_x * (rect.half_size.x + padding_x) * scale_x)
-    near_time_y = (rect.center.y - sign_y * (rect.half_size.y + padding_y) * scale_y)
-    far_time_x = (rect.center.x + sign_x * (rect.half_size.x + padding_x) * scale_x)
-    far_time_y = (rect.center.y + sign_y * (rect.half_size.y + padding_y) * scale_y)
+    near_time_x = rect.center.x - sign_x * (rect.half_size.x + padding_x) * scale_x
+    near_time_y = rect.center.y - sign_y * (rect.half_size.y + padding_y) * scale_y
+    far_time_x = rect.center.x + sign_x * (rect.half_size.x + padding_x) * scale_x
+    far_time_y = rect.center.y + sign_y * (rect.half_size.y + padding_y) * scale_y
 
-    if near_time_x > far_time_y:
+    if near_time_x > far_time_y or near_time_y > far_time_x:
         return None
 
     near_time = max(near_time_x, near_time_y)
@@ -151,6 +134,9 @@ def intersect_aabb_aabb(
     collider: AABB,
     rect: AABB
 ) -> Optional[CollisionHit]:
+    """
+    Finds the hit point between a static rectangle (rect) and another (collider).
+    """
     dx = collider.center.x + rect.center.x
     px = (collider.half_size.x + rect.half_size.x) - abs(dx)
     if px <= 0:
@@ -177,6 +163,61 @@ def intersect_aabb_aabb(
 
     return hit
 
+def sweep_aabb_aabb(
+    collider: AABB,
+    rect: AABB,
+    delta: pm.Vec2
+) -> CollisionSweep:
+    sweep = CollisionSweep()
+
+    # If the "moving" rectangle isn't actually moving (delta length is 0.0),
+    # then just perform a static test.
+    if delta.x == 0.0 and delta.y == 0.0:
+        sweep.position.x = collider.center.x
+        sweep.position.y = collider.center.y
+        sweep.hit = intersect_aabb_aabb(
+            collider = collider,
+            rect = rect
+        )
+        if sweep.hit is not None:
+            sweep.hit.time = 0.0
+            sweep.time = 0.0
+        else:
+            sweep.time = 1.0
+        return sweep
+
+    # Otherwise just check for segment intersection, with the segment starting point
+    # being the center of the moving rectangle, its delta being the rectangle delta
+    # and the padding being the rectangle half size.
+    sweep.hit = intersect_segment_aabb(
+        rect = rect,
+        position = collider.center,
+        delta = delta,
+        padding_x = collider.half_size.x,
+        padding_y = collider.half_size.y
+    )
+    if sweep.hit is not None:
+        sweep.time = clamp(sweep.hit.time - EPSILON, 0.0, 1.0)
+        sweep.position.x = collider.center.x + delta.x * sweep.time
+        sweep.position.y = collider.center.y + delta.y * sweep.time
+        direction = pm.Vec2(x = delta.x, y = delta.y)
+        direction.normalize()
+        sweep.hit.position.x = clamp(
+            sweep.hit.position.x + direction.x * collider.half_size.x,
+            rect.center.x - rect.half_size.x,
+            rect.center.x + rect.half_size.x
+        )
+        sweep.hit.position.y = clamp(
+            sweep.hit.position.y + direction.y * collider.half_size.y,
+            rect.center.y - rect.half_size.y,
+            rect.center.y + rect.half_size.y
+        )
+    else:
+        sweep.position.x = collider.center.x + delta.x
+        sweep.position.y = collider.center.y + delta.y
+        sweep.time = 1.0
+
+    return sweep
 
 
 
