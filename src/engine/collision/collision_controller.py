@@ -34,15 +34,15 @@ class CollisionController:
                         if collision_sweep.hit is not None and collision_sweep.time < 1.0:
                             collisions.append(collision_sweep)
 
-                # TODO Handle collider movement here.
-                # Handling it here allows us to check for all collisions before actually moving.
+                # Handling collider movement here allows us to check for all collisions before actually moving.
                 # This also allows to perform multiple collision steps if necessary.
 
-                # Just set the position without taking collisions into consideration.
-                if len(collisions) > 0:
-                    print(len(collisions))
                 collider_position = collider.get_position()
-                collider.set_position((collider_position[0] + collider.velocity_x, collider_position[1] + collider.velocity_y))
+                if len(collisions) > 0:
+                    collider.set_position((collider_position[0] + collider.velocity_x * collisions[0].time, collider_position[1] + collider.velocity_y * collisions[0].time))
+                else:
+                    # Just set the position without taking collisions into consideration.
+                    collider.set_position((collider_position[0] + collider.velocity_x, collider_position[1] + collider.velocity_y))
 
     def update(self, dt) -> None:
         self.__check_collisions()

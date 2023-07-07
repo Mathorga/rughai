@@ -99,10 +99,10 @@ def intersect_segment_aabb(
     scale_y = 1.0 / delta.y if delta.y != 0.0 else 1.0
     sign_x = math.copysign(1.0, scale_x)
     sign_y = math.copysign(1.0, scale_y)
-    near_time_x = rect.center.x - sign_x * (rect.half_size.x + padding_x) * scale_x
-    near_time_y = rect.center.y - sign_y * (rect.half_size.y + padding_y) * scale_y
-    far_time_x = rect.center.x + sign_x * (rect.half_size.x + padding_x) * scale_x
-    far_time_y = rect.center.y + sign_y * (rect.half_size.y + padding_y) * scale_y
+    near_time_x = (rect.center.x - sign_x * (rect.half_size.x + padding_x) - position.x) * scale_x
+    near_time_y = (rect.center.y - sign_y * (rect.half_size.y + padding_y) - position.y) * scale_y
+    far_time_x = (rect.center.x + sign_x * (rect.half_size.x + padding_x) - position.x) * scale_x
+    far_time_y = (rect.center.y + sign_y * (rect.half_size.y + padding_y) - position.y) * scale_y
 
     if near_time_x > far_time_y or near_time_y > far_time_x:
         return None
