@@ -4,6 +4,7 @@ import pyglet.math as pm
 
 from engine.node import PositionNode
 from engine.shapes.circle_node import CircleNode
+from engine.shapes.line_node import LineNode
 from engine.shapes.rect_node import RectNode
 from engine.shapes.shape_node import ShapeNode
 import engine.utils as utils
@@ -27,6 +28,7 @@ class CollisionShape(PositionNode):
         self.velocity_y = 0.0
 
         self.render_shape: Optional[ShapeNode] = None
+        self.velocity_shape: Optional[LineNode] = None
 
     def set_position(
         self,
@@ -36,11 +38,13 @@ class CollisionShape(PositionNode):
         """
         Sets the shape position.
         """
+        super().set_position(position, z)
 
-        self.x = position[0]
-        self.y = position[1]
         if self.render_shape is not None:
             self.render_shape.set_position(position)
+
+        if self.velocity_shape is not None:
+            self.velocity_shape.set_position(position)
 
     def set_velocity(
         self,
@@ -52,6 +56,9 @@ class CollisionShape(PositionNode):
 
         self.velocity_x = velocity[0]
         self.velocity_y = velocity[1]
+
+        if self.velocity_shape is not None:
+            self.velocity_shape.set_delta(velocity)
 
     def swept_collide(self, other) -> utils.CollisionSweep:
         return utils.CollisionSweep()
@@ -94,6 +101,15 @@ class CollisionRect(CollisionShape):
                 anchor_x = anchor_x,
                 anchor_y = anchor_y,
                 color = (0x7F, 0xFF, 0xFF, 0x7F),
+                batch = batch
+            )
+
+            self.velocity_shape = LineNode(
+                x = x,
+                y = y,
+                delta_x = self.velocity_x,
+                delta_y = self.velocity_y,
+                color = (0xFF, 0x7F, 0xFF, 0x7F),
                 batch = batch
             )
 

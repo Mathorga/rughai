@@ -71,19 +71,6 @@ class TestRoom(PlayableSceneNode):
             )
         ]
 
-        # Define a background.
-        bg_image = pyglet.resource.image("bg.png")
-        bg_image.anchor_x = bg_image.width / 2
-        bg_image.anchor_y = bg_image.height / 2
-        bg = SpriteNode(
-            resource = bg_image,
-            on_animation_end = lambda : None,
-            x = (tilemap_width * self.__tile_size) // 2,
-            y = (tilemap_height * self.__tile_size) // 2,
-            z = -500,
-            batch = self._scene.world_batch
-        )
-
         # Player.
         player_position = (
             bundle["player_position"][0] if bundle else 25 * self.__tile_size,
@@ -100,7 +87,6 @@ class TestRoom(PlayableSceneNode):
 
         self._scene.set_cam_bounds(cam_bounds)
 
-        self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_children(walls)
         self._scene.add_child(cam_target, cam_target = True)

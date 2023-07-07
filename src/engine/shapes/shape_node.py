@@ -1,4 +1,5 @@
 from typing import Tuple
+
 from engine.node import PositionNode
 
 
@@ -7,7 +8,7 @@ class ShapeNode(PositionNode):
         self,
         x: float = 0,
         y: float = 0,
-        color: tuple = (0x00, 0x00, 0x00)
+        color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF)
     ) -> None:
         super().__init__(
             x = x,

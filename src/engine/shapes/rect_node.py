@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 import pyglet
 
 from engine.settings import GLOBALS, Builtins
@@ -13,8 +13,8 @@ class RectNode(ShapeNode):
         height: int = 0,
         anchor_x: float = 0,
         anchor_y: float = 0,
-        color: tuple = (0x00, 0x00, 0x00),
-        batch = None
+        color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF),
+        batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
             x = x,
@@ -44,10 +44,9 @@ class RectNode(ShapeNode):
         self,
         position: Tuple[int, int]
     ) -> None:
-        self.x = position[0]
-        self.__shape.x = position[0] * GLOBALS[Builtins.SCALING]
+        super().set_position(position)
 
-        self.y = position[1]
+        self.__shape.x = position[0] * GLOBALS[Builtins.SCALING]
         self.__shape.y = position[1] * GLOBALS[Builtins.SCALING]
 
     def set_opacity(self, opacity: float):
