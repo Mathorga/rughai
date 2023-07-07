@@ -44,11 +44,23 @@ class CollisionNode(PositionNode):
         position: Tuple[float, float],
         z: Optional[float] = None
     ) -> None:
-        self.x = position[0]
-        self.y = position[1]
+        super().set_position(position)
 
         for shape in self.shapes:
             shape.set_position(position)
+
+    def put_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        """
+        Sums the provided velocity to any already there.
+        """
+        self.velocity_x += velocity[0]
+        self.velocity_y += velocity[1]
+
+        for shape in self.shapes:
+            shape.put_velocity(velocity)
 
     def set_velocity(
         self,

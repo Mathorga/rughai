@@ -60,6 +60,19 @@ class CollisionShape(PositionNode):
         if self.velocity_shape is not None:
             self.velocity_shape.set_delta(velocity)
 
+    def put_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        """
+        Sums the provided velocity to any already there.
+        """
+        self.velocity_x += velocity[0]
+        self.velocity_y += velocity[1]
+
+        if self.velocity_shape is not None:
+            self.velocity_shape.set_delta((self.velocity_shape.delta_x + velocity[0], self.velocity_shape.delta_y + velocity[1]))
+
     def swept_collide(self, other) -> utils.CollisionSweep:
         return utils.CollisionSweep()
 

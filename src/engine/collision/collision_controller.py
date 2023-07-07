@@ -36,15 +36,22 @@ class CollisionController:
 
                 # Handling collider movement here allows us to check for all collisions before actually moving.
                 # This also allows to perform multiple collision steps if necessary.
-
                 collider_position = collider.get_position()
                 if len(collisions) > 0:
+                    # Set the resulting position.
                     collider.set_position((collider_position[0] + collider.velocity_x * collisions[0].time, collider_position[1] + collider.velocity_y * collisions[0].time))
+
+                    # Compute sliding reaction.
+                    dotprod = (collider.velocity_x * collisions[0].hit.normal.x + collider.velocity_y * collisions[0].hit.normal.y) * (1.0 - collisions[0].hit.time)
+                    collider.set_velocity((dotprod * collisions[0].hit.normal.y, dotprod * collisions[0].hit.normal.x))
+
+                    # Set the resulting position again.
+                    collider.set_position((collider_position[0] + collider.velocity_x, collider_position[1] + collider.velocity_y))
                 else:
                     # Just set the position without taking collisions into consideration.
                     collider.set_position((collider_position[0] + collider.velocity_x, collider_position[1] + collider.velocity_y))
 
-    def update(self, dt) -> None:
+    def update(self, _dt) -> None:
         self.__check_collisions()
 
     def clear(self) -> None:
