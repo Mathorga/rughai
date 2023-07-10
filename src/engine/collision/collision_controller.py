@@ -1,4 +1,5 @@
 from typing import Dict, List
+import pyglet.math as pm
 
 from engine.utils import CollisionSweep
 from engine.collision.collision_node import CollisionType, CollisionNode
@@ -36,20 +37,17 @@ class CollisionController:
 
                 # Handling collider movement here allows us to check for all collisions before actually moving.
                 # This also allows to perform multiple collision steps if necessary.
-                collider_position = collider.get_position()
                 if len(collisions) > 0:
-                    # Set the resulting position.
-                    collider.set_position((collider_position[0] + collider.velocity_x * collisions[0].time, collider_position[1] + collider.velocity_y * collisions[0].time))
+                    # Move to the collision point.
+                    collider.set_position((collider.get_position()[0] + collider.velocity_x * collisions[0].time, collider.get_position()[1] + collider.velocity_y * collisions[0].time))
 
                     # Compute sliding reaction.
-                    dotprod = (collider.velocity_x * collisions[0].hit.normal.x + collider.velocity_y * collisions[0].hit.normal.y) * (1.0 - collisions[0].hit.time)
-                    collider.set_velocity((dotprod * collisions[0].hit.normal.y, dotprod * collisions[0].hit.normal.x))
+                    x_result = (collider.velocity_x * abs(collisions[0].hit.normal.y)) * (1.0 - collisions[0].hit.time)
+                    y_result = (collider.velocity_y * abs(collisions[0].hit.normal.x)) * (1.0 - collisions[0].hit.time)
+                    collider.set_velocity((x_result, y_result))
 
-                    # Set the resulting position again.
-                    collider.set_position((collider_position[0] + collider.velocity_x, collider_position[1] + collider.velocity_y))
-                else:
-                    # Just set the position without taking collisions into consideration.
-                    collider.set_position((collider_position[0] + collider.velocity_x, collider_position[1] + collider.velocity_y))
+                collider.set_position((collider.get_position()[0] + collider.velocity_x, collider.get_position()[1] + collider.velocity_y))
+                collider.set_velocity((0.0, 0.0))
 
     def update(self, _dt) -> None:
         self.__check_collisions()
