@@ -137,7 +137,7 @@ class CollisionRect(CollisionShape):
     def swept_collide(self, other) -> utils.CollisionSweep:
         return utils.sweep_aabb_aabb(
             collider = utils.AABB(
-                center = pm.Vec2(self.x + self.width / 2, self.y + self.height / 2),
+                center = pm.Vec2(self.x - self.anchor_x + self.width / 2, self.y - self.anchor_y + self.height / 2),
                 half_size = pm.Vec2(self.width / 2, self.height / 2)
             ),
             rect = utils.AABB(

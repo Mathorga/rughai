@@ -1,5 +1,4 @@
-from typing import Dict, List
-import pyglet.math as pm
+from typing import Dict, List, Optional
 
 from engine.utils import CollisionSweep
 from engine.collision.collision_node import CollisionType, CollisionNode
@@ -26,6 +25,7 @@ class CollisionController:
 
                 # Save the resulting collisions for the current collider.
                 collisions: List[CollisionSweep] = []
+                nearest_collision: Optional[CollisionSweep] = None
                 for other in self.__colliders[CollisionType.STATIC]:
                     if collider != other:
                         # Compute collision between colliders.
@@ -33,17 +33,22 @@ class CollisionController:
 
                         # Only save collision if it actually happened.
                         if collision_sweep.hit is not None and collision_sweep.time < 1.0:
+                            if nearest_collision is None:
+                                nearest_collision = collision_sweep
+                            else:
+                                if collision_sweep.hit.time < nearest_collision.hit.time:
+                                    nearest_collision = collision_sweep
                             collisions.append(collision_sweep)
 
                 # Handling collider movement here allows us to check for all collisions before actually moving.
                 # This also allows to perform multiple collision steps if necessary.
-                if len(collisions) > 0:
+                if nearest_collision is not None:
                     # Move to the collision point.
-                    collider.set_position((collider.get_position()[0] + collider.velocity_x * collisions[0].time, collider.get_position()[1] + collider.velocity_y * collisions[0].time))
+                    collider.set_position((collider.get_position()[0] + collider.velocity_x * nearest_collision.hit.time, collider.get_position()[1] + collider.velocity_y * collisions[0].time))
 
                     # Compute sliding reaction.
-                    x_result = (collider.velocity_x * abs(collisions[0].hit.normal.y)) * (1.0 - collisions[0].hit.time)
-                    y_result = (collider.velocity_y * abs(collisions[0].hit.normal.x)) * (1.0 - collisions[0].hit.time)
+                    x_result = (collider.velocity_x * abs(nearest_collision.hit.normal.y)) * (1.0 - nearest_collision.hit.time)
+                    y_result = (collider.velocity_y * abs(nearest_collision.hit.normal.x)) * (1.0 - nearest_collision.hit.time)
                     collider.set_velocity((x_result, y_result))
 
                 collider.set_position((collider.get_position()[0] + collider.velocity_x, collider.get_position()[1] + collider.velocity_y))

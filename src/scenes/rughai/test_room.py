@@ -68,6 +68,13 @@ class TestRoom(PlayableSceneNode):
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
                 batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 42,
+                y = self.__tile_size * 26,
+                width = self.__tile_size * 2,
+                height = self.__tile_size * 4,
+                batch = self._scene.world_batch
             )
         ]
 
