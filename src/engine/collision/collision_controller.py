@@ -40,6 +40,9 @@ class CollisionController:
                                     nearest_collision = collision_sweep
                             collisions.append(collision_sweep)
 
+                # TODO A possible solution to solve multiple collisions would be not to just keep track of time, but all time components(x, y). This way collisions on different axes
+                # can be solved simultaneously by taking the nearest both on the x and y axes and moving accordingly.
+
                 # Handling collider movement here allows us to check for all collisions before actually moving.
                 # This also allows to perform multiple collision steps if necessary.
                 if nearest_collision is not None:
@@ -52,7 +55,7 @@ class CollisionController:
                     collider.set_velocity((x_result, y_result))
 
                 collider.set_position((collider.get_position()[0] + collider.velocity_x, collider.get_position()[1] + collider.velocity_y))
-                collider.set_velocity((0.0, 0.0))
+                # collider.set_velocity((0.0, 0.0))
 
     def update(self, _dt) -> None:
         self.__check_collisions()
