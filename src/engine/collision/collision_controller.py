@@ -54,8 +54,9 @@ class CollisionController:
                     y_result = (collider.velocity_y * abs(nearest_collision.hit.normal.x)) * (1.0 - nearest_collision.hit.time)
                     collider.set_velocity((x_result, y_result))
 
-                collider.set_position((collider.get_position()[0] + collider.velocity_x, collider.get_position()[1] + collider.velocity_y))
-                # collider.set_velocity((0.0, 0.0))
+                else:
+                    collider.set_position((collider.get_position()[0] + collider.velocity_x, collider.get_position()[1] + collider.velocity_y))
+                    collider.set_velocity((0.0, 0.0))
 
     def update(self, _dt) -> None:
         self.__check_collisions()
