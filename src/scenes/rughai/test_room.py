@@ -63,17 +63,31 @@ class TestRoom(PlayableSceneNode):
         # Solid walls.
         walls: List[PositionNode] = [
             WallNode(
-                x = self.__tile_size * 40,
+                x = self.__tile_size * 41,
                 y = self.__tile_size * 25,
-                width = self.__tile_size * 4,
-                height = self.__tile_size * 2,
+                width = self.__tile_size * 2,
+                height = self.__tile_size * 1,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 42,
-                y = self.__tile_size * 27,
-                width = self.__tile_size * 2,
+                x = self.__tile_size * 43,
+                y = self.__tile_size * 25,
+                width = self.__tile_size * 1,
                 height = self.__tile_size * 4,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 40,
+                y = self.__tile_size * 28,
+                width = self.__tile_size * 2,
+                height = self.__tile_size * 1,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 40,
+                y = self.__tile_size * 25,
+                width = self.__tile_size * 1,
+                height = self.__tile_size * 2,
                 batch = self._scene.world_batch
             )
         ]

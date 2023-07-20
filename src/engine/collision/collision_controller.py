@@ -40,13 +40,10 @@ class CollisionController:
                             #         nearest_collision = collision_sweep
                             collisions.append(collision_sweep)
 
-                collisions.sort(key = lambda element: element.time)
-
-                # TODO A possible solution to solve multiple collisions would be not to just keep track of time, but all time components(x, y). This way collisions on different axes
-                # can be solved simultaneously by taking the nearest both on the x and y axes and moving accordingly.
+                # Sort collision by hit time, in order to process them correctly.
+                collisions.sort(key = lambda element: element.hit.time)
 
                 # Handling collider movement here allows us to check for all collisions before actually moving.
-                # This also allows to perform multiple collision steps if necessary.
                 for nearest_collision in collisions:
                 # if nearest_collision is not None:
                     # Move to the collision point.
