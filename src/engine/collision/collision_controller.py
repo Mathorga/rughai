@@ -25,7 +25,7 @@ class CollisionController:
 
                 # Save the resulting collisions for the current collider.
                 collisions: List[CollisionSweep] = []
-                nearest_collision: Optional[CollisionSweep] = None
+                # nearest_collision: Optional[CollisionSweep] = None
                 for other in self.__colliders[CollisionType.STATIC]:
                     if collider != other:
                         # Compute collision between colliders.
@@ -33,30 +33,32 @@ class CollisionController:
 
                         # Only save collision if it actually happened.
                         if collision_sweep.hit is not None and collision_sweep.time < 1.0:
-                            if nearest_collision is None:
-                                nearest_collision = collision_sweep
-                            else:
-                                if collision_sweep.hit.time < nearest_collision.hit.time:
-                                    nearest_collision = collision_sweep
+                            # if nearest_collision is None:
+                            #     nearest_collision = collision_sweep
+                            # else:
+                            #     if collision_sweep.hit.time < nearest_collision.hit.time:
+                            #         nearest_collision = collision_sweep
                             collisions.append(collision_sweep)
+
+                collisions.sort(key = lambda element: element.time)
 
                 # TODO A possible solution to solve multiple collisions would be not to just keep track of time, but all time components(x, y). This way collisions on different axes
                 # can be solved simultaneously by taking the nearest both on the x and y axes and moving accordingly.
 
                 # Handling collider movement here allows us to check for all collisions before actually moving.
                 # This also allows to perform multiple collision steps if necessary.
-                if nearest_collision is not None:
+                for nearest_collision in collisions:
+                # if nearest_collision is not None:
                     # Move to the collision point.
-                    collider.set_position((collider.get_position()[0] + collider.velocity_x * nearest_collision.hit.time, collider.get_position()[1] + collider.velocity_y * collisions[0].time))
+                    collider.set_position((collider.get_position()[0] + collider.velocity_x * nearest_collision.hit.time, collider.get_position()[1] + collider.velocity_y * nearest_collision.hit.time))
 
                     # Compute sliding reaction.
                     x_result = (collider.velocity_x * abs(nearest_collision.hit.normal.y)) * (1.0 - nearest_collision.hit.time)
                     y_result = (collider.velocity_y * abs(nearest_collision.hit.normal.x)) * (1.0 - nearest_collision.hit.time)
                     collider.set_velocity((x_result, y_result))
 
-                else:
-                    collider.set_position((collider.get_position()[0] + collider.velocity_x, collider.get_position()[1] + collider.velocity_y))
-                    collider.set_velocity((0.0, 0.0))
+                collider.set_position((collider.get_position()[0] + collider.velocity_x, collider.get_position()[1] + collider.velocity_y))
+                collider.set_velocity((0.0, 0.0))
 
     def update(self, _dt) -> None:
         self.__check_collisions()
