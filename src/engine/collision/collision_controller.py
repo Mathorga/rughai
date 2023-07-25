@@ -53,19 +53,31 @@ class CollisionController:
 
         #     # TODO Compute sliding reaction (???).
 
+        actor_position = actor.get_position()
+
         # Handling collider movement here allows us to check for all collisions before actually moving.
         # for nearest_collision in collisions:
         if nearest_collision is not None:
+
             # Move to the collision point.
-            actor.set_position((actor.get_position()[0] + actor.velocity_x * nearest_collision.hit.time, actor.get_position()[1] + actor.velocity_y * nearest_collision.hit.time))
+            actor.set_position((
+                actor_position[0] + actor.velocity_x * nearest_collision.hit.time,
+                actor_position[1] + actor.velocity_y * nearest_collision.hit.time
+            ))
+
+            # dot_prod = (actor.velocity_x * nearest_collision.hit.normal.y + actor.velocity_y * nearest_collision.hit.normal.x) * (1.0 - nearest_collision.hit.time)
+            # x_result = dot_prod * nearest_collision.hit.normal.y
+            # y_result = dot_prod * nearest_collision.hit.normal.x
+            # print(x_result, y_result)
 
             # Compute sliding reaction.
             x_result = (actor.velocity_x * abs(nearest_collision.hit.normal.y)) * (1.0 - nearest_collision.hit.time)
             y_result = (actor.velocity_y * abs(nearest_collision.hit.normal.x)) * (1.0 - nearest_collision.hit.time)
+            print(x_result, y_result)
+            # print(nearest_collision.hit.time, nearest_collision.hit.normal, x_result, y_result, dot_prod)
             actor.set_velocity((x_result, y_result))
-
         else:
-            actor.set_position((actor.get_position()[0] + actor.velocity_x, actor.get_position()[1] + actor.velocity_y))
+            actor.set_position((actor_position[0] + actor.velocity_x, actor_position[1] + actor.velocity_y))
             actor.set_velocity((0.0, 0.0))
 
     def __check_collisions(self) -> None:
@@ -75,12 +87,14 @@ class CollisionController:
                 # TODO Add a broad phase to enhance performance.
 
                 # Fetch actor velocity in order to solve for x first and then for y.
-                actor_velocity = actor.get_velocity()
-                actor.set_velocity((actor_velocity[0], 0.0))
-                self.__solve_collision(actor)
+                # actor_velocity = actor.get_velocity()
+                # actor.set_velocity((actor_velocity[0], 0.0))
+                # self.__solve_collision(actor)
 
-                actor.set_velocity((0.0, actor_velocity[1]))
-                self.__solve_collision(actor)
+                # actor.set_velocity((0.0, actor_velocity[1]))
+                while actor.velocity_x != 0.0 or actor.velocity_y != 0.0:
+                    print(actor.get_velocity())
+                    self.__solve_collision(actor)
 
     def update(self, _dt) -> None:
         self.__check_collisions()
