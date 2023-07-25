@@ -9,8 +9,8 @@
     "pixel_perfect": false,
     "window_width": 720,
     "window_height": 480,
-    "fullscreen": true,
-    "target_fps": 120,
+    "fullscreen": false,
+    "target_fps": 12,
     "camera_speed": 5.0,
     "layers_z_spacing": 32.0,
     "tilemap_buffer": 2

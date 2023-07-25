@@ -62,10 +62,11 @@ class TestRoom(PlayableSceneNode):
 
         # Solid walls.
         walls: List[PositionNode] = [
+            # Square.
             WallNode(
-                x = self.__tile_size * 41,
+                x = self.__tile_size * 40,
                 y = self.__tile_size * 25,
-                width = self.__tile_size * 2,
+                width = self.__tile_size * 4,
                 height = self.__tile_size * 1,
                 batch = self._scene.world_batch
             ),
@@ -79,7 +80,7 @@ class TestRoom(PlayableSceneNode):
             WallNode(
                 x = self.__tile_size * 40,
                 y = self.__tile_size * 28,
-                width = self.__tile_size * 2,
+                width = self.__tile_size * 4,
                 height = self.__tile_size * 1,
                 batch = self._scene.world_batch
             ),
@@ -87,7 +88,23 @@ class TestRoom(PlayableSceneNode):
                 x = self.__tile_size * 40,
                 y = self.__tile_size * 25,
                 width = self.__tile_size * 1,
-                height = self.__tile_size * 2,
+                height = self.__tile_size * 4,
+                batch = self._scene.world_batch
+            ),
+
+            # Angle.
+            WallNode(
+                x = self.__tile_size * 40,
+                y = self.__tile_size * 20,
+                width = self.__tile_size * 4,
+                height = self.__tile_size * 1,
+                batch = self._scene.world_batch
+            ),
+            WallNode(
+                x = self.__tile_size * 40,
+                y = self.__tile_size * 17,
+                width = self.__tile_size * 1,
+                height = self.__tile_size * 4,
                 batch = self._scene.world_batch
             )
         ]

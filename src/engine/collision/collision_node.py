@@ -49,6 +49,9 @@ class CollisionNode(PositionNode):
         for shape in self.shapes:
             shape.set_position(position)
 
+    def get_velocity(self) -> Tuple[float, float]:
+        return (self.velocity_x, self.velocity_y)
+
     def put_velocity(
         self,
         velocity: Tuple[float, float]
