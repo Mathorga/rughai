@@ -88,15 +88,15 @@ def intersect_segment_aabb(
     #    |       x -> far_time_x
     #    |       |\
     #    |       | \
-    #  --+-------+--x--- -> near_time_y
+    # ---+-------+--x--- -> near_time_y
     #    |       |   \
     #    |       |   (B)
     #    |       |     \
-    #  --+-------+------x -> far_time_y
+    # ---+-------+------x -> far_time_y
     #    |       |
     #    |       |
-    scale_x = 1.0 / delta.x if delta.x != 0.0 else 1.0
-    scale_y = 1.0 / delta.y if delta.y != 0.0 else 1.0
+    scale_x = 1.0 / delta.x if delta.x != 0.0 else float("infinity")
+    scale_y = 1.0 / delta.y if delta.y != 0.0 else float("infinity")
     sign_x = math.copysign(1.0, scale_x)
     sign_y = math.copysign(1.0, scale_y)
     near_time_x = (rect.center.x - sign_x * (rect.half_size.x + padding_x) - position.x) * scale_x

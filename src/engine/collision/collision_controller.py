@@ -29,6 +29,7 @@ class CollisionController:
         for other in self.__colliders[CollisionType.STATIC]:
             if actor != other:
                 # Compute collision between colliders.
+                print("COLLIDING")
                 collision_sweep = actor.collide(other)
 
                 # Only save collision if it actually happened.
@@ -92,7 +93,7 @@ class CollisionController:
                 # self.__solve_collision(actor)
 
                 # actor.set_velocity((0.0, actor_velocity[1]))
-                while actor.velocity_x != 0.0 or actor.velocity_y != 0.0:
+                while abs(actor.velocity_x) > 3e-10 or abs(actor.velocity_y) > 3e-10:
                     print(actor.get_velocity())
                     self.__solve_collision(actor)
 
