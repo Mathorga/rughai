@@ -97,12 +97,12 @@ def intersect_segment_aabb(
     #    |       |
     scale_x = 1.0 / delta.x if delta.x != 0.0 else float("infinity")
     scale_y = 1.0 / delta.y if delta.y != 0.0 else float("infinity")
-    sign_x = math.copysign(1.0, scale_x)
-    sign_y = math.copysign(1.0, scale_y)
-    near_time_x = (rect.center.x - sign_x * (rect.half_size.x + padding_x) - position.x) * scale_x
-    near_time_y = (rect.center.y - sign_y * (rect.half_size.y + padding_y) - position.y) * scale_y
-    far_time_x = (rect.center.x + sign_x * (rect.half_size.x + padding_x) - position.x) * scale_x
-    far_time_y = (rect.center.y + sign_y * (rect.half_size.y + padding_y) - position.y) * scale_y
+    sign_x = math.copysign(1.0, delta.x)
+    sign_y = math.copysign(1.0, delta.y)
+    near_time_x = scale_x if math.isinf(scale_x) else (rect.center.x - sign_x * (rect.half_size.x + padding_x) - position.x) * scale_x
+    near_time_y = scale_y if math.isinf(scale_y) else (rect.center.y - sign_y * (rect.half_size.y + padding_y) - position.y) * scale_y
+    far_time_x = scale_x if math.isinf(scale_x) else (rect.center.x + sign_x * (rect.half_size.x + padding_x) - position.x) * scale_x
+    far_time_y = scale_y if math.isinf(scale_y) else (rect.center.y + sign_y * (rect.half_size.y + padding_y) - position.y) * scale_y
 
     if near_time_x > far_time_y or near_time_y > far_time_x:
         return None
@@ -124,7 +124,7 @@ def intersect_segment_aabb(
         hit.normal.y = -sign_y
 
     hit.delta.x = (1.0 - hit.time) * -delta.x
-    hit.delta.y = (1.0 - hit.time) + -delta.y
+    hit.delta.y = (1.0 - hit.time) * -delta.y
     hit.position.x = position.x + delta.x * hit.time
     hit.position.y = position.y + delta.y * hit.time
 

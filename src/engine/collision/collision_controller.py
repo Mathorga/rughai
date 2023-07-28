@@ -29,7 +29,6 @@ class CollisionController:
         for other in self.__colliders[CollisionType.STATIC]:
             if actor != other:
                 # Compute collision between colliders.
-                print("COLLIDING")
                 collision_sweep = actor.collide(other)
 
                 # Only save collision if it actually happened.
