@@ -73,7 +73,7 @@ class CollisionController:
             # Compute sliding reaction.
             x_result = (actor.velocity_x * abs(nearest_collision.hit.normal.y)) * (1.0 - nearest_collision.hit.time)
             y_result = (actor.velocity_y * abs(nearest_collision.hit.normal.x)) * (1.0 - nearest_collision.hit.time)
-            print(x_result, y_result)
+            # print(x_result, y_result)
             # print(nearest_collision.hit.time, nearest_collision.hit.normal, x_result, y_result, dot_prod)
             actor.set_velocity((x_result, y_result))
         else:
@@ -93,7 +93,7 @@ class CollisionController:
 
                 # actor.set_velocity((0.0, actor_velocity[1]))
                 while abs(actor.velocity_x) > 3e-10 or abs(actor.velocity_y) > 3e-10:
-                    print(actor.get_velocity())
+                    # print(actor.get_velocity())
                     self.__solve_collision(actor)
 
     def update(self, _dt) -> None:
