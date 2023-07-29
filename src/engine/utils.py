@@ -82,6 +82,7 @@ def intersect_segment_aabb(
     """
     Computes the collision hit between a segment and a rectangle.
     A segment A-B is defined by position (A) and delta (B - A).
+    Slight adaptation of https://github.com/Joshua-Micheletti/PysicsWorld
     """
     #    |    (A)|
     #    |      \|
@@ -96,6 +97,7 @@ def intersect_segment_aabb(
     #    |       |
     #    |       |
 
+    # Prepare a tiny number to account for division by 0.
     division_threshold_x = 1e-8
     division_threshold_y = 1e-8
 
@@ -111,11 +113,15 @@ def intersect_segment_aabb(
     if delta.y == 0:
         delta.y = division_threshold_y
 
-    near_time_x = (rect.center.x - (rect.half_size.x + padding_x) - position.x) / delta.x
-    far_time_x = (rect.center.x + (rect.half_size.x + padding_x) - position.x) / delta.x
+    # Cache division.
+    scale_x = 1.0 / delta.x
+    scale_y = 1.0 / delta.y
 
-    near_time_y = (rect.center.y - (rect.half_size.y + padding_y) - position.y) / delta.y
-    far_time_y = (rect.center.y + (rect.half_size.y + padding_y) - position.y) / delta.y
+    near_time_x = (rect.center.x - (rect.half_size.x + padding_x) - position.x) * scale_x
+    far_time_x = (rect.center.x + (rect.half_size.x + padding_x) - position.x) * scale_x
+
+    near_time_y = (rect.center.y - (rect.half_size.y + padding_y) - position.y) * scale_y
+    far_time_y = (rect.center.y + (rect.half_size.y + padding_y) - position.y) * scale_y
 
     if near_time_x > far_time_x:
         tmp = near_time_x
