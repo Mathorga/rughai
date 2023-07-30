@@ -33,7 +33,7 @@ class CollisionController:
         # Save the resulting collisions for the given actor.
         nearest_collision: Optional[CollisionSweep] = None
         for other in self.__colliders[CollisionType.STATIC]:
-            # TODO Add a broad phase to enhance performance.
+            # TODO Add a broad phase to enhance performance!
 
             if actor != other:
                 # Compute collision between colliders.
