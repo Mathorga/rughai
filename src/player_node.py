@@ -244,6 +244,15 @@ class PlayerNode(PositionNode):
                     radius = 4,
                     batch = batch
                 )
+                # CollisionRect(
+                #     x = x,
+                #     y = y,
+                #     anchor_x = 4,
+                #     anchor_y = 4,
+                #     width = 8,
+                #     height = 8,
+                #     batch = batch
+                # )
             ]
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)

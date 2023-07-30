@@ -9,22 +9,28 @@ class CollisionController:
     # TODO Swept collisions.
     def __init__(self) -> None:
         self.__colliders: Dict[CollisionType, List[CollisionNode]] = {}
+        self.__sensors: Dict[CollisionType, List[CollisionNode]] = {}
 
     def add_collider(
         self,
         collider: CollisionNode
     ) -> None:
-        if collider.type in self.__colliders:
-            self.__colliders[collider.type].append(collider)
+        if collider.sensor:
+            if collider.type in self.__sensors:
+                self.__sensors[collider.type].append(collider)
+            else:
+                self.__sensors[collider.type] = [collider]
         else:
-            self.__colliders[collider.type] = [collider]
+            if collider.type in self.__colliders:
+                self.__colliders[collider.type].append(collider)
+            else:
+                self.__colliders[collider.type] = [collider]
 
     def __solve_collision(
         self,
         actor: CollisionNode
     ) -> None:
         # Save the resulting collisions for the given actor.
-        collisions: List[CollisionSweep] = []
         nearest_collision: Optional[CollisionSweep] = None
         for other in self.__colliders[CollisionType.STATIC]:
             # TODO Add a broad phase to enhance performance.
@@ -40,7 +46,6 @@ class CollisionController:
                     else:
                         if collision_sweep.hit.time < nearest_collision.hit.time:
                             nearest_collision = collision_sweep
-                    collisions.append(collision_sweep)
 
         actor_position = actor.get_position()
 
@@ -66,11 +71,23 @@ class CollisionController:
 
     def __check_collisions(self) -> None:
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
+        # Sort out colliders first.
         if CollisionType.DYNAMIC in self.__colliders and CollisionType.STATIC in self.__colliders:
             for actor in self.__colliders[CollisionType.DYNAMIC]:
-                # Iterate until velocity is exhausted.
+                # Solve collision and iterate until velocity is exhausted.
                 while abs(actor.velocity_x) > 0.0 or abs(actor.velocity_y) > 0.0:
                     self.__solve_collision(actor)
+
+        # Then sensors.
+        if CollisionType.DYNAMIC in self.__sensors and CollisionType.STATIC in self.__sensors:
+            for actor in self.__sensors[CollisionType.DYNAMIC]:
+                # Check for intersection.
+                for other in self.__sensors[CollisionType.STATIC]:
+                    # TODO Add a broad phase to enhance performance.
+
+                    if actor != other:
+                        # Compute collision between colliders.
+                        actor.sense(other)
 
     def update(self, _dt) -> None:
         self.__check_collisions()

@@ -75,25 +75,21 @@ class CollisionNode(PositionNode):
         for shape in self.shapes:
             shape.set_velocity(velocity)
 
-    def collide(self, other) -> CollisionSweep:
+    def sense(self, other):
         assert isinstance(other, CollisionNode)
 
-        # collision: Tuple[float, float] = (0.0, 0.0)
+        collision: Tuple[float, float] = (0.0, 0.0)
         collisions: List[pm.Vec2] = []
 
-        # Reset collision time.
-        collision_sweep = CollisionSweep()
-
         # Make sure there's at least one matching tag.
+        # if other.tags == self.tags:
         if bool(set(self.tags) & set(other.tags)):
             overlap: bool = False
-
-            # Only consider the first shape for now.
-            # TODO Use all shapes.
-            if len(self.shapes) > 0:
-                collision_sweep = self.shapes[0].swept_collide(other.shapes[0])
-                if collision_sweep.hit is not None and collision_sweep.time < 1.0:
-                    collisions.append(collision_sweep.hit.normal)
+            for shape in self.shapes:
+                for other_shape in other.shapes:
+                    overlap = shape.overlap(other_shape)
+                    if overlap:
+                        collisions.append(pm.Vec2(*collision))
 
             if other not in self.collisions and overlap:
                 # Store the colliding sensor.
@@ -115,5 +111,19 @@ class CollisionNode(PositionNode):
                     self.on_triggered(False)
                 if other.on_triggered is not None:
                     other.on_triggered(False)
+
+    def collide(self, other) -> CollisionSweep:
+        assert isinstance(other, CollisionNode)
+
+        # Reset collision time.
+        collision_sweep = CollisionSweep()
+
+        # Make sure there's at least one matching tag.
+        if bool(set(self.tags) & set(other.tags)):
+
+            # Only consider the first shape for now.
+            # TODO Use all shapes.
+            if len(self.shapes) > 0:
+                collision_sweep = self.shapes[0].swept_collide(other.shapes[0])
 
         return collision_sweep
