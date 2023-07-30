@@ -141,7 +141,7 @@ class CollisionRect(CollisionShape):
                 half_size = pm.Vec2(self.width / 2, self.height / 2)
             ),
             rect = utils.AABB(
-                center = pm.Vec2(other.x + other.width / 2, other.y + other.height / 2),
+                center = pm.Vec2(other.x - other.anchor_x + other.width / 2, other.y - other.anchor_y + other.height / 2),
                 half_size = pm.Vec2(other.width / 2, other.height / 2)
             ),
             delta = pm.Vec2(self.velocity_x, self.velocity_y)

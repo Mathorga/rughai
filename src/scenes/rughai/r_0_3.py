@@ -79,7 +79,6 @@ class R_0_3(PlayableSceneNode):
             x = player_position[0],
             y = player_position[1],
             scaling = scaling,
-            collision_tag = "player",
             batch = self._scene.world_batch
         )
 

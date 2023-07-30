@@ -106,7 +106,6 @@ class PlayerNode(PositionNode):
         x: float = 0,
         y: float = 0,
         run_threshold: float = 0.75,
-        collision_tag: str = collision_tags.PLAYER_COLLISION,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         PositionNode.__init__(
@@ -209,7 +208,7 @@ class PlayerNode(PositionNode):
             x = x,
             y = y,
             collision_type = CollisionType.DYNAMIC,
-            tags = [collision_tag],
+            tags = [collision_tags.PLAYER_COLLISION],
             shapes = [
                 # CollisionCircle(
                 #     x = x,
@@ -220,10 +219,10 @@ class PlayerNode(PositionNode):
                 CollisionRect(
                     x = x,
                     y = y,
-                    anchor_x = 4,
-                    anchor_y = 4,
-                    width = 8,
-                    height = 8,
+                    anchor_x = 3,
+                    anchor_y = 3,
+                    width = 6,
+                    height = 6,
                     batch = batch
                 )
             ]
@@ -232,22 +231,22 @@ class PlayerNode(PositionNode):
 
         # Interaction finder.
         # This collider is responsible for searching for interactables.
-        # self.__interactor = CollisionNode(
-        #     x = x,
-        #     y = y,
-        #     sensor = True,
-        #     collision_type = CollisionType.DYNAMIC,
-        #     tags = [collision_tags.PLAYER_INTERACTION],
-        #     shapes = [
-        #         CollisionCircle(
-        #             x = x,
-        #             y = y,
-        #             radius = 4,
-        #             batch = batch
-        #         )
-        #     ]
-        # )
-        # controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
+        self.__interactor = CollisionNode(
+            x = x,
+            y = y,
+            sensor = True,
+            collision_type = CollisionType.DYNAMIC,
+            tags = [collision_tags.PLAYER_INTERACTION],
+            shapes = [
+                CollisionCircle(
+                    x = x,
+                    y = y,
+                    radius = 4,
+                    batch = batch
+                )
+            ]
+        )
+        controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
 
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset
@@ -454,14 +453,14 @@ class PlayerNode(PositionNode):
 
     def __update_interactor(self, dt):
         aim_vec = pyglet.math.Vec2.from_polar(self.__interactor_distance, self.__stats.dir)
-        # self.__interactor.set_position(
-        #     position = (
-        #         self.x + aim_vec.x,
-        #         self.y + aim_vec.y
-        #     ),
-        # )
+        self.__interactor.set_position(
+            position = (
+                self.x + aim_vec.x,
+                self.y + aim_vec.y
+            ),
+        )
 
-        # self.__interactor.update(dt)
+        self.__interactor.update(dt)
 
     def __update_collider(self, dt):
         self.__collider.update(dt)

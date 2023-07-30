@@ -40,19 +40,6 @@ class CollisionController:
                             nearest_collision = collision_sweep
                     collisions.append(collision_sweep)
 
-        # Sort collision by hit time, in order to process them correctly.
-        # collisions.sort(key = lambda element: element.hit.time)
-
-        # if len(collisions) > 0:
-        #     # TODO Compute collision reaction.
-        #     deltas = list(map(lambda element: element.hit.delta, collisions))
-        #     reaction = functools.reduce(lambda result, current: result + current, deltas)
-
-        #     actor_velocity = actor.get_velocity()
-        #     actor.set_velocity((actor_velocity[0] + reaction.x, actor_velocity[1] + reaction.y))
-
-        #     # TODO Compute sliding reaction (???).
-
         actor_position = actor.get_position()
 
         # Handling collider movement here allows us to check for all collisions before actually moving.
@@ -65,16 +52,11 @@ class CollisionController:
                 actor_position[1] + actor.velocity_y * nearest_collision.hit.time
             ))
 
-            # dot_prod = (actor.velocity_x * nearest_collision.hit.normal.y + actor.velocity_y * nearest_collision.hit.normal.x) * (1.0 - nearest_collision.hit.time)
-            # x_result = dot_prod * nearest_collision.hit.normal.y
-            # y_result = dot_prod * nearest_collision.hit.normal.x
-            # print(x_result, y_result)
-
             # Compute sliding reaction.
             x_result = (actor.velocity_x * abs(nearest_collision.hit.normal.y)) * (1.0 - nearest_collision.hit.time)
             y_result = (actor.velocity_y * abs(nearest_collision.hit.normal.x)) * (1.0 - nearest_collision.hit.time)
-            # print(x_result, y_result)
-            # print(nearest_collision.hit.time, nearest_collision.hit.normal, x_result, y_result, dot_prod)
+
+            # Set the resulting velocity for the next iteration.
             actor.set_velocity((x_result, y_result))
         else:
             actor.set_position((actor_position[0] + actor.velocity_x, actor_position[1] + actor.velocity_y))
@@ -86,14 +68,8 @@ class CollisionController:
             for actor in self.__colliders[CollisionType.DYNAMIC]:
                 # TODO Add a broad phase to enhance performance.
 
-                # Fetch actor velocity in order to solve for x first and then for y.
-                # actor_velocity = actor.get_velocity()
-                # actor.set_velocity((actor_velocity[0], 0.0))
-                # self.__solve_collision(actor)
-
-                # actor.set_velocity((0.0, actor_velocity[1]))
-                while abs(actor.velocity_x) > 3e-10 or abs(actor.velocity_y) > 3e-10:
-                    # print(actor.get_velocity())
+                # Iterate until velocity is exhausted.
+                while abs(actor.velocity_x) > 0.0 or abs(actor.velocity_y) > 0.0:
                     self.__solve_collision(actor)
 
     def update(self, _dt) -> None:

@@ -72,7 +72,7 @@ class RugHai:
         )
 
         # Create a scene.
-        self._active_scene = TestRoom(
+        self._active_scene = R_0_0(
             window = self._window,
             view_width = SETTINGS[Builtins.VIEW_WIDTH],
             view_height = SETTINGS[Builtins.VIEW_HEIGHT],
