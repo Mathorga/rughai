@@ -69,7 +69,7 @@ class CollisionController:
             actor.set_position((actor_position[0] + actor.velocity_x, actor_position[1] + actor.velocity_y))
             actor.set_velocity((0.0, 0.0))
 
-    def __check_collisions(self) -> None:
+    def __handle_collisions(self) -> None:
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
         # Sort out colliders first.
         if CollisionType.DYNAMIC in self.__colliders and CollisionType.STATIC in self.__colliders:
@@ -90,7 +90,7 @@ class CollisionController:
                         actor.sense(other)
 
     def update(self, _dt) -> None:
-        self.__check_collisions()
+        self.__handle_collisions()
 
     def clear(self) -> None:
         self.__colliders.clear()
