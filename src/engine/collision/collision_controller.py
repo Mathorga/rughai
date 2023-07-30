@@ -27,6 +27,8 @@ class CollisionController:
         collisions: List[CollisionSweep] = []
         nearest_collision: Optional[CollisionSweep] = None
         for other in self.__colliders[CollisionType.STATIC]:
+            # TODO Add a broad phase to enhance performance.
+
             if actor != other:
                 # Compute collision between colliders.
                 collision_sweep = actor.collide(other)
@@ -66,8 +68,6 @@ class CollisionController:
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
         if CollisionType.DYNAMIC in self.__colliders and CollisionType.STATIC in self.__colliders:
             for actor in self.__colliders[CollisionType.DYNAMIC]:
-                # TODO Add a broad phase to enhance performance.
-
                 # Iterate until velocity is exhausted.
                 while abs(actor.velocity_x) > 0.0 or abs(actor.velocity_y) > 0.0:
                     self.__solve_collision(actor)
