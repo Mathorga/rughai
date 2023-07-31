@@ -1,6 +1,7 @@
 import random
 from typing import List, Optional
 import pyglet
+from constants import collision_tags
 
 from engine import controllers
 from engine.collision.collision_node import CollisionNode, CollisionType
@@ -50,7 +51,7 @@ class PropNode(PositionNode):
                 x = x,
                 y = y,
                 collision_type = CollisionType.STATIC,
-                tags = ["player"],
+                tags = [collision_tags.PLAYER_COLLISION],
                 shapes = collision_shapes
             )
             controllers.COLLISION_CONTROLLER.add_collider(self.__collider)

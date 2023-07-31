@@ -12,7 +12,7 @@ from pyglet.window import key
 from constants import collision_tags
 
 from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionCircle
+from engine.collision.collision_shape import CollisionCircle, CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine import utils
@@ -106,7 +106,6 @@ class PlayerNode(PositionNode):
         x: float = 0,
         y: float = 0,
         run_threshold: float = 0.75,
-        collision_tag: str = collision_tags.PLAYER_COLLISION,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         PositionNode.__init__(
@@ -209,12 +208,21 @@ class PlayerNode(PositionNode):
             x = x,
             y = y,
             collision_type = CollisionType.DYNAMIC,
-            tags = [collision_tag],
+            tags = [collision_tags.PLAYER_COLLISION],
             shapes = [
-                CollisionCircle(
+                # CollisionCircle(
+                #     x = x,
+                #     y = y,
+                #     radius = 4,
+                #     batch = batch
+                # ),
+                CollisionRect(
                     x = x,
                     y = y,
-                    radius = 4,
+                    anchor_x = 3,
+                    anchor_y = 3,
+                    width = 6,
+                    height = 6,
                     batch = batch
                 )
             ]
@@ -236,6 +244,15 @@ class PlayerNode(PositionNode):
                     radius = 4,
                     batch = batch
                 )
+                # CollisionRect(
+                #     x = x,
+                #     y = y,
+                #     anchor_x = 4,
+                #     anchor_y = 4,
+                #     width = 8,
+                #     height = 8,
+                #     batch = batch
+                # )
             ]
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
@@ -270,6 +287,9 @@ class PlayerNode(PositionNode):
 
         # Compute and apply movement to self's x and y coords.
         self.__move(dt)
+
+        # Update collider.
+        # self.__update_collider(dt)
 
         # Update sprites accordingly.
         self.__update_sprites(dt)
@@ -358,22 +378,19 @@ class PlayerNode(PositionNode):
             # Clamp speed between 0 and max speed.
             self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, self.__stats.max_speed)
 
-    def __compute_movement(self, dt) -> pm.Vec2:
+    def __compute_velocity(self, dt) -> pm.Vec2:
         # Define a vector from speed and direction.
         return pm.Vec2.from_polar(self.__stats.speed * dt, self.__stats.dir)
 
     def __move(self, dt):
         # Apply movement after collision.
-        self.x = self.__collider.x
-        self.y = self.__collider.y
+        self.set_position(self.__collider.get_position())
 
-        # Compute movement.
-        movement = self.__compute_movement(dt)
+        # Compute velocity.
+        velocity = self.__compute_velocity(dt)
 
-        collider_position = self.__collider.get_position()
-
-        # Apply movement.
-        self.__collider.set_position((collider_position[0] + movement.x, collider_position[1] + movement.y))
+        # Apply the computed velocity to the collider.
+        self.__collider.put_velocity((round(velocity.x, 5), round(velocity.y, 5)))
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
@@ -437,7 +454,6 @@ class PlayerNode(PositionNode):
         )
         self.__shadow_sprite.update(dt)
 
-
     def __update_cam_target(self, dt):
         cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
@@ -454,6 +470,9 @@ class PlayerNode(PositionNode):
         )
 
         self.__interactor.update(dt)
+
+    def __update_collider(self, dt):
+        self.__collider.update(dt)
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()

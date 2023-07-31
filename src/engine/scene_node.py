@@ -5,7 +5,7 @@ import pyglet.math as pm
 from engine.settings import GLOBALS, SETTINGS, Builtins
 from engine.camera import Camera
 from engine.node import Node, PositionNode
-from engine.rect_node import RectNode
+from engine.shapes.rect_node import RectNode
 from engine.text_node import TextNode
 
 class Bounds:

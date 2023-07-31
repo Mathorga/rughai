@@ -1,30 +1,96 @@
-from typing import Dict, List
+import functools
+from typing import Dict, List, Optional
+import pyglet
 
+from engine.utils import CollisionSweep
 from engine.collision.collision_node import CollisionType, CollisionNode
 
 class CollisionController:
+    # TODO Swept collisions.
     def __init__(self) -> None:
         self.__colliders: Dict[CollisionType, List[CollisionNode]] = {}
+        self.__sensors: Dict[CollisionType, List[CollisionNode]] = {}
 
     def add_collider(
         self,
         collider: CollisionNode
     ) -> None:
-        if collider.type in self.__colliders:
-            self.__colliders[collider.type].append(collider)
+        if collider.sensor:
+            if collider.type in self.__sensors:
+                self.__sensors[collider.type].append(collider)
+            else:
+                self.__sensors[collider.type] = [collider]
         else:
-            self.__colliders[collider.type] = [collider]
+            if collider.type in self.__colliders:
+                self.__colliders[collider.type].append(collider)
+            else:
+                self.__colliders[collider.type] = [collider]
 
-    def __check_collisions(self) -> None:
+    def __solve_collision(
+        self,
+        actor: CollisionNode
+    ) -> None:
+        # Save the resulting collisions for the given actor.
+        nearest_collision: Optional[CollisionSweep] = None
+        for other in self.__colliders[CollisionType.STATIC]:
+            # TODO Add a broad phase to enhance performance!
+
+            if actor != other:
+                # Compute collision between colliders.
+                collision_sweep = actor.collide(other)
+
+                # Only save collision if it actually happened.
+                if collision_sweep.hit is not None and collision_sweep.time < 1.0:
+                    if nearest_collision is None:
+                        nearest_collision = collision_sweep
+                    else:
+                        if collision_sweep.hit.time < nearest_collision.hit.time:
+                            nearest_collision = collision_sweep
+
+        actor_position = actor.get_position()
+
+        # Handling collider movement here allows us to check for all collisions before actually moving.
+        # for nearest_collision in collisions:
+        if nearest_collision is not None:
+
+            # Move to the collision point.
+            actor.set_position((
+                actor_position[0] + actor.velocity_x * nearest_collision.hit.time,
+                actor_position[1] + actor.velocity_y * nearest_collision.hit.time
+            ))
+
+            # Compute sliding reaction.
+            x_result = (actor.velocity_x * abs(nearest_collision.hit.normal.y)) * (1.0 - nearest_collision.hit.time)
+            y_result = (actor.velocity_y * abs(nearest_collision.hit.normal.x)) * (1.0 - nearest_collision.hit.time)
+
+            # Set the resulting velocity for the next iteration.
+            actor.set_velocity((x_result, y_result))
+        else:
+            actor.set_position((actor_position[0] + actor.velocity_x, actor_position[1] + actor.velocity_y))
+            actor.set_velocity((0.0, 0.0))
+
+    def __handle_collisions(self) -> None:
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
+        # Sort out colliders first.
         if CollisionType.DYNAMIC in self.__colliders and CollisionType.STATIC in self.__colliders:
-            for collider in self.__colliders[CollisionType.DYNAMIC]:
-                for other in self.__colliders[CollisionType.STATIC]:
-                    if collider != other:
-                        collider.collide(other)
+            for actor in self.__colliders[CollisionType.DYNAMIC]:
+                # Solve collision and iterate until velocity is exhausted.
+                while abs(actor.velocity_x) > 0.0 or abs(actor.velocity_y) > 0.0:
+                    self.__solve_collision(actor)
 
-    def update(self, dt) -> None:
-        self.__check_collisions()
+        # Then sensors.
+        if CollisionType.DYNAMIC in self.__sensors and CollisionType.STATIC in self.__sensors:
+            for actor in self.__sensors[CollisionType.DYNAMIC]:
+                # Check for intersection.
+                for other in self.__sensors[CollisionType.STATIC]:
+                    # TODO Add a broad phase to enhance performance.
+
+                    if actor != other:
+                        # Compute collision between colliders.
+                        actor.sense(other)
+
+    def update(self, _dt) -> None:
+        self.__handle_collisions()
 
     def clear(self) -> None:
         self.__colliders.clear()

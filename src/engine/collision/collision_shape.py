@@ -1,11 +1,18 @@
 from typing import Optional, Tuple
 import pyglet
+import pyglet.math as pm
 
 from engine.node import PositionNode
-from engine.circle_node import CircleNode
-from engine.rect_node import RectNode
+from engine.shapes.circle_node import CircleNode
+from engine.shapes.line_node import LineNode
+from engine.shapes.rect_node import RectNode
+from engine.shapes.shape_node import ShapeNode
 import engine.utils as utils
 from engine.settings import SETTINGS, Builtins
+
+
+COLLIDING_COLOR = (0x7FF, 0x7F, 0x7F, 0x7F)
+FREE_COLOR = (0x7F, 0xFF, 0xFF, 0x7F)
 
 class CollisionShape(PositionNode):
     def __init__(
@@ -16,17 +23,58 @@ class CollisionShape(PositionNode):
     ) -> None:
         super().__init__(x, y, z)
 
-        self.render_shape: Optional[PositionNode] = None
+        # Velocity components.
+        self.velocity_x = 0.0
+        self.velocity_y = 0.0
+
+        self.render_shape: Optional[ShapeNode] = None
+        self.velocity_shape: Optional[LineNode] = None
 
     def set_position(
         self,
         position: Tuple[float, float],
         z: Optional[float] = None
     ) -> None:
-        self.x = position[0]
-        self.y = position[1]
+        """
+        Sets the shape position.
+        """
+        super().set_position(position, z)
+
         if self.render_shape is not None:
             self.render_shape.set_position(position)
+
+        if self.velocity_shape is not None:
+            self.velocity_shape.set_position(position)
+
+    def set_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        """
+        Sets the shape velocity.
+        """
+
+        self.velocity_x = velocity[0]
+        self.velocity_y = velocity[1]
+
+        if self.velocity_shape is not None:
+            self.velocity_shape.set_delta(velocity)
+
+    def put_velocity(
+        self,
+        velocity: Tuple[float, float]
+    ) -> None:
+        """
+        Sums the provided velocity to any already there.
+        """
+        self.velocity_x += velocity[0]
+        self.velocity_y += velocity[1]
+
+        if self.velocity_shape is not None:
+            self.velocity_shape.set_delta((self.velocity_shape.delta_x + velocity[0], self.velocity_shape.delta_y + velocity[1]))
+
+    def swept_collide(self, other) -> utils.CollisionSweep:
+        return utils.CollisionSweep()
 
     def overlap(self, _other) -> bool:
         return False
@@ -69,12 +117,34 @@ class CollisionRect(CollisionShape):
                 batch = batch
             )
 
+            self.velocity_shape = LineNode(
+                x = x,
+                y = y,
+                delta_x = self.velocity_x,
+                delta_y = self.velocity_y,
+                color = (0xFF, 0x7F, 0xFF, 0x7F),
+                batch = batch
+            )
+
     def get_collision_bounds(self):
         return (
             self.x - self.anchor_x,
             self.y - self.anchor_y,
             self.width,
             self.height
+        )
+
+    def swept_collide(self, other) -> utils.CollisionSweep:
+        return utils.sweep_aabb_aabb(
+            collider = utils.AABB(
+                center = pm.Vec2(self.x - self.anchor_x + self.width / 2, self.y - self.anchor_y + self.height / 2),
+                half_size = pm.Vec2(self.width / 2, self.height / 2)
+            ),
+            rect = utils.AABB(
+                center = pm.Vec2(other.x - other.anchor_x + other.width / 2, other.y - other.anchor_y + other.height / 2),
+                half_size = pm.Vec2(other.width / 2, other.height / 2)
+            ),
+            delta = pm.Vec2(self.velocity_x, self.velocity_y)
         )
 
     def overlap(self, other) -> bool:
@@ -119,7 +189,6 @@ class CollisionCircle(CollisionShape):
             self.render_shape = CircleNode(
                 x = x,
                 y = y,
-                z = z,
                 radius = radius,
                 color = (0x7F, 0xFF, 0xFF, 0x7F),
                 batch = batch

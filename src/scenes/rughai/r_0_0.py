@@ -195,7 +195,6 @@ class R_0_0(PlayableSceneNode):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            collision_tag = "player",
             batch = self._scene.world_batch
         )
 
