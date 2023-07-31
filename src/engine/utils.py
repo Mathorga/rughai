@@ -123,6 +123,7 @@ def intersect_segment_aabb(
     near_time_y = (rect.center.y - (rect.half_size.y + padding_y) - position.y) * scale_y
     far_time_y = (rect.center.y + (rect.half_size.y + padding_y) - position.y) * scale_y
 
+    # Make sure near_time is less than far_time, otherwise the delta vector may be reversed and the two values should be swapped.
     if near_time_x > far_time_x:
         tmp = near_time_x
         near_time_x = far_time_x

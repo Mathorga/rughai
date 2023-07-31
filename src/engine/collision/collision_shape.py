@@ -217,6 +217,11 @@ class CollisionCircle(CollisionShape):
             # Other.
             return False
 
+    def swept_collide(self, other) -> utils.CollisionSweep:
+        # TODO
+        # https://ericleong.me/research/circle-circle/#dynamic-static-circle-collision-detection
+        return utils.CollisionSweep()
+
     def collide(self, other) -> Tuple[float, float]:
         if isinstance(other, CollisionRect):
             # Circle/rect collision.
