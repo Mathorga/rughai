@@ -98,8 +98,8 @@ def intersect_segment_aabb(
     #    |       |
 
     # Prepare a tiny number to account for division by 0.
-    division_threshold_x = 1e-8
-    division_threshold_y = 1e-8
+    division_threshold_x = EPSILON
+    division_threshold_y = EPSILON
 
     if position.x <= rect.center.x:
         division_threshold_x = -division_threshold_x
@@ -198,6 +198,14 @@ def sweep_aabb_aabb(
     rect: AABB,
     delta: pm.Vec2
 ) -> CollisionSweep:
+    """
+    Useful links:
+    https://github.com/Joshua-Micheletti/PysicsWorld
+    https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
+    https://noonat.github.io/intersect/
+    https://blog.hamaluik.ca/posts/simple-aabb-collision-using-minkowski-difference/
+    https://www.haroldserrano.com/blog/visualizing-the-gjk-collision-algorithm
+    """
     sweep = CollisionSweep()
 
     # If the "moving" rectangle isn't actually moving (delta length is 0.0),
@@ -248,6 +256,14 @@ def sweep_aabb_aabb(
         sweep.time = 1.0
 
     return sweep
+
+def sweep_circle_aabb() -> CollisionSweep:
+    """
+    A single line-AABB intersection test, and possibly one line-circle test, depending on the outcome of first test.
+    As seen in the image below, a single line-test to a larger AABB, expanded with the circle radius from the original AABB, decides whether or not the swept circle can hit at all.
+    If it does hit, one needs only to check if the collision point is in any of the corners (colored in the image).
+    If that is the case, the real collision point is always the line-circle intersection to that circle, and otherwise it's the collision point from the first test.
+    """
 
 
 
@@ -331,97 +347,6 @@ def rect_rect_check(
     """
 
     return x1 < x2 + w2 and x1 + w1 > x2 and y1 < y2 + h2 and h1 + y1 > y2
-
-def swept_rect_rect(
-    x1: float,
-    y1: float,
-    w1: float,
-    h1: float,
-    x2: float,
-    y2: float,
-    w2: float,
-    h2: float,
-    vx1: float,
-    vy1: float
-) -> Tuple[float, float, float]:
-    """
-    Returns the collision time with object 2, meaning the percentage at which a collision occurs from the given position using the given velocity.
-    """
-    # TODO https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
-    # TODO https://noonat.github.io/intersect/
-    # TODO https://blog.hamaluik.ca/posts/simple-aabb-collision-using-minkowski-difference/
-    # TODO https://www.haroldserrano.com/blog/visualizing-the-gjk-collision-algorithm
-
-    normal_x: float
-    normal_y: float
-
-    dx_entry: float
-    dy_entry: float
-    dx_exit: float
-    dy_exit: float
-
-    # Find the distance between the objects on the near and far sides for both x and y.
-    if vx1 > 0.0:
-        dx_entry = x2 - (x1 + w1)
-        dx_exit = (x2 + w2) - x1
-    else:
-        dx_entry = (x2 + w2) - x1
-        dx_exit = x2 - (x1 + w1)
-
-    if vy1 > 0.0:
-        dy_entry = y2 - (y1 + h1)
-        dy_exit = (y2 + h2) - y1
-    else:
-        dy_entry = (y2 + h2) - y1
-        dy_exit = y2 - (y1 + h1)
-
-    # Ffind time of collision and time of leaving for each axis (if statement is to prevent divide by zero).
-    x_entry_time: float
-    y_entry_time: float
-    x_exit_time: float
-    y_exit_time: float
-
-    if vx1 == 0.0:
-        x_entry_time = -(float("inf"))
-        x_exit_time = (float("inf"))
-    else:
-        x_entry_time = dx_entry / vx1
-        x_exit_time = dx_exit / vx1
-
-    if vy1 == 0.0:
-        y_entry_time = -(float("inf"))
-        y_exit_time = (float("inf"))
-    else:
-        y_entry_time = dy_entry / vy1
-        y_exit_time = dy_exit / vy1
-
-    # Find the earliest/latest times of collision.
-    entry_time = max(x_entry_time, y_entry_time)
-    exit_time = min(x_exit_time, y_exit_time)
-
-    if entry_time > exit_time or x_entry_time < 0.0 and y_entry_time < 0.0 or x_entry_time > 1.0 or y_entry_time > 1.0:
-        # There was no collision.
-        return (1.0, 0.0, 0.0)
-
-    else:
-        # There was a collision.
-        # Calculate normal of collided surface and return the time of collision.
-        if x_entry_time > y_entry_time:
-            if dx_entry < 0.0:
-                normal_x = 1.0
-                normal_y = 0.0
-            else:
-                normal_x = -1.0
-                normal_y = 0.0
-        else:
-            if dy_entry < 0.0:
-                normal_x = 0.0
-                normal_y = 1.0
-            else:
-                normal_x = 0.0
-                normal_y = -1.0
-
-        return (entry_time, normal_x, normal_y)
 
 def circle_circle_check(
     x1: float,
