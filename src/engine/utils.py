@@ -5,7 +5,7 @@ import pyglet.math as pm
 
 EPSILON = 1e-8
 
-class AABB:
+class Rect:
     def __init__(
         self,
         center: pm.Vec2,
@@ -17,7 +17,7 @@ class AABB:
 class CollisionHit:
     def __init__(
         self,
-        collider: AABB
+        collider: Rect
     ) -> None:
         self.collider = collider
 
@@ -41,7 +41,7 @@ class CollisionSweep:
 
 def intersect_point_aabb(
     point: pm.Vec2,
-    rect: AABB
+    rect: Rect
 ) -> Optional[CollisionHit]:
     """
     Computes the collision hit between a point and a rectangle.
@@ -73,7 +73,7 @@ def intersect_point_aabb(
     return hit
 
 def intersect_segment_aabb(
-    rect: AABB,
+    rect: Rect,
     position: pm.Vec2,
     delta: pm.Vec2,
     padding_x: float = 0.0,
@@ -161,8 +161,8 @@ def intersect_segment_aabb(
     return hit
 
 def intersect_aabb_aabb(
-    collider: AABB,
-    rect: AABB
+    collider: Rect,
+    rect: Rect
 ) -> Optional[CollisionHit]:
     """
     Finds the hit point between a static rectangle (rect) and another (collider).
@@ -193,9 +193,9 @@ def intersect_aabb_aabb(
 
     return hit
 
-def sweep_aabb_aabb(
-    collider: AABB,
-    rect: AABB,
+def sweep_rect_rect(
+    collider: Rect,
+    rect: Rect,
     delta: pm.Vec2
 ) -> CollisionSweep:
     """
