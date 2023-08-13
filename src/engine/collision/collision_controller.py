@@ -52,11 +52,12 @@ class CollisionController:
         # Handling collider movement here allows us to check for all collisions before actually moving.
         # for nearest_collision in collisions:
         if nearest_collision is not None:
+            print("CONNINO", nearest_collision.time, nearest_collision.hit.time)
 
             # Move to the collision point.
             actor.set_position((
-                actor_position[0] + actor.velocity_x * nearest_collision.hit.time,
-                actor_position[1] + actor.velocity_y * nearest_collision.hit.time
+                actor_position[0] + actor.velocity_x * nearest_collision.time,
+                actor_position[1] + actor.velocity_y * nearest_collision.time
             ))
 
             # Compute sliding reaction.
