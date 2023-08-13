@@ -126,4 +126,25 @@ class CollisionNode(PositionNode):
             if len(self.shapes) > 0:
                 collision_hit = self.shapes[0].swept_collide(other.shapes[0])
 
+            if other not in self.collisions and collision_hit is not None:
+                # Store the colliding sensor.
+                self.collisions.add(other)
+                other.collisions.add(self)
+
+                # Collision enter callback.
+                if self.on_triggered is not None:
+                    self.on_triggered(True)
+                if other.on_triggered is not None:
+                    other.on_triggered(True)
+            elif other in self.collisions and collision_hit is None:
+                # Remove if not colliding anymore.
+                self.collisions.remove(other)
+                other.collisions.remove(self)
+
+                # Collision exit callback.
+                if self.on_triggered is not None:
+                    self.on_triggered(False)
+                if other.on_triggered is not None:
+                    other.on_triggered(False)
+
         return collision_hit

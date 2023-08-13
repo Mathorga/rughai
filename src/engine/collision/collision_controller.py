@@ -68,7 +68,7 @@ class CollisionController:
 
     def __handle_collisions(self) -> None:
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
-        # Sort out colliders first.
+        # Deal with colliders first.
         if CollisionType.DYNAMIC in self.__colliders and CollisionType.STATIC in self.__colliders:
             for actor in self.__colliders[CollisionType.DYNAMIC]:
                 # Solve collision and iterate until velocity is exhausted.
@@ -84,7 +84,7 @@ class CollisionController:
 
                     if actor != other:
                         # Compute collision between colliders.
-                        actor.sense(other)
+                        actor.collide(other)
 
     def update(self, _dt) -> None:
         self.__handle_collisions()

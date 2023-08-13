@@ -238,21 +238,21 @@ class PlayerNode(PositionNode):
             collision_type = CollisionType.DYNAMIC,
             tags = [collision_tags.PLAYER_INTERACTION],
             shapes = [
-                CollisionCircle(
-                    x = x,
-                    y = y,
-                    radius = 4,
-                    batch = batch
-                )
-                # CollisionRect(
+                # CollisionCircle(
                 #     x = x,
                 #     y = y,
-                #     anchor_x = 4,
-                #     anchor_y = 4,
-                #     width = 8,
-                #     height = 8,
+                #     radius = 4,
                 #     batch = batch
                 # )
+                CollisionRect(
+                    x = x,
+                    y = y,
+                    anchor_x = 4,
+                    anchor_y = 4,
+                    width = 8,
+                    height = 8,
+                    batch = batch
+                )
             ]
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
