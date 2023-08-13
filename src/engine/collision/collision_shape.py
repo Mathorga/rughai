@@ -73,8 +73,8 @@ class CollisionShape(PositionNode):
         if self.velocity_shape is not None:
             self.velocity_shape.set_delta((self.velocity_shape.delta_x + velocity[0], self.velocity_shape.delta_y + velocity[1]))
 
-    def swept_collide(self, other) -> utils.CollisionSweep:
-        return utils.CollisionSweep()
+    def swept_collide(self, other) -> Optional[utils.CollisionHit]:
+        return None
 
     def overlap(self, _other) -> bool:
         return False
@@ -134,7 +134,7 @@ class CollisionRect(CollisionShape):
             self.height
         )
 
-    def swept_collide(self, other) -> utils.CollisionSweep:
+    def swept_collide(self, other) -> Optional[utils.CollisionHit]:
         return utils.sweep_rect_rect(
             collider = utils.Rect(
                 center = pm.Vec2(self.x - self.anchor_x + self.width / 2, self.y - self.anchor_y + self.height / 2),
@@ -217,10 +217,10 @@ class CollisionCircle(CollisionShape):
             # Other.
             return False
 
-    def swept_collide(self, other) -> utils.CollisionSweep:
+    def swept_collide(self, other) -> Optional[utils.CollisionHit]:
         # TODO
         # https://ericleong.me/research/circle-circle/#dynamic-static-circle-collision-detection
-        return utils.CollisionSweep()
+        return None
 
     def collide(self, other) -> Tuple[float, float]:
         if isinstance(other, CollisionRect):

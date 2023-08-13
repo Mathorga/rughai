@@ -4,7 +4,7 @@ import pyglet.math as pm
 
 from engine.collision.collision_shape import CollisionShape
 from engine.node import PositionNode
-from engine.utils import CollisionSweep
+from engine.utils import CollisionHit
 
 class CollisionType(Enum):
     STATIC = 0
@@ -112,11 +112,11 @@ class CollisionNode(PositionNode):
                 if other.on_triggered is not None:
                     other.on_triggered(False)
 
-    def collide(self, other) -> CollisionSweep:
+    def collide(self, other) -> Optional[CollisionHit]:
         assert isinstance(other, CollisionNode)
 
         # Reset collision time.
-        collision_sweep = CollisionSweep()
+        collision_hit = None
 
         # Make sure there's at least one matching tag.
         if bool(set(self.tags) & set(other.tags)):
@@ -124,6 +124,6 @@ class CollisionNode(PositionNode):
             # Only consider the first shape for now.
             # TODO Use all shapes.
             if len(self.shapes) > 0:
-                collision_sweep = self.shapes[0].swept_collide(other.shapes[0])
+                collision_hit = self.shapes[0].swept_collide(other.shapes[0])
 
-        return collision_sweep
+        return collision_hit

@@ -1,9 +1,7 @@
-import functools
 from typing import Dict, List, Optional
-import pyglet
 
-from engine.utils import CollisionSweep
 from engine.collision.collision_node import CollisionType, CollisionNode
+from engine.utils import CollisionHit
 
 class CollisionController:
     # TODO Swept collisions.
@@ -31,29 +29,27 @@ class CollisionController:
         actor: CollisionNode
     ) -> None:
         # Save the resulting collisions for the given actor.
-        nearest_collision: Optional[CollisionSweep] = None
+        nearest_collision: Optional[CollisionHit] = None
         for other in self.__colliders[CollisionType.STATIC]:
             # TODO Add a broad phase to enhance performance!
 
             if actor != other:
                 # Compute collision between colliders.
-                collision_sweep = actor.collide(other)
+                collision_hit = actor.collide(other)
 
                 # Only save collision if it actually happened.
-                if collision_sweep.hit is not None and collision_sweep.time < 1.0:
+                if collision_hit is not None and collision_hit.time < 1.0:
                     if nearest_collision is None:
-                        nearest_collision = collision_sweep
+                        nearest_collision = collision_hit
                     else:
-                        if collision_sweep.hit.time < nearest_collision.hit.time:
-                            nearest_collision = collision_sweep
+                        if collision_hit.time < nearest_collision.time:
+                            nearest_collision = collision_hit
 
         actor_position = actor.get_position()
 
         # Handling collider movement here allows us to check for all collisions before actually moving.
         # for nearest_collision in collisions:
         if nearest_collision is not None:
-            print("CONNINO", nearest_collision.time, nearest_collision.hit.time)
-
             # Move to the collision point.
             actor.set_position((
                 actor_position[0] + actor.velocity_x * nearest_collision.time,
@@ -61,8 +57,8 @@ class CollisionController:
             ))
 
             # Compute sliding reaction.
-            x_result = (actor.velocity_x * abs(nearest_collision.hit.normal.y)) * (1.0 - nearest_collision.hit.time)
-            y_result = (actor.velocity_y * abs(nearest_collision.hit.normal.x)) * (1.0 - nearest_collision.hit.time)
+            x_result = (actor.velocity_x * abs(nearest_collision.normal.y)) * (1.0 - nearest_collision.time)
+            y_result = (actor.velocity_y * abs(nearest_collision.normal.x)) * (1.0 - nearest_collision.time)
 
             # Set the resulting velocity for the next iteration.
             actor.set_velocity((x_result, y_result))

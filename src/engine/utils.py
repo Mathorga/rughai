@@ -33,13 +33,7 @@ class CollisionHit:
         # Time of intersection, only used with segments intersection (and swept rectangles).
         self.time = 0.0
 
-class CollisionSweep:
-    def __init__(self) -> None:
-        self.hit: Optional[CollisionHit] = None
-        self.position = pm.Vec2()
-        self.time = 1.0
-
-def intersect_point_aabb(
+def intersect_point_rect(
     point: pm.Vec2,
     rect: Rect
 ) -> Optional[CollisionHit]:
@@ -72,7 +66,7 @@ def intersect_point_aabb(
 
     return hit
 
-def intersect_segment_aabb(
+def intersect_segment_rect(
     rect: Rect,
     position: pm.Vec2,
     delta: pm.Vec2,
@@ -113,7 +107,7 @@ def intersect_segment_aabb(
     if delta.y == 0:
         delta.y = division_threshold_y
 
-    # Cache division.
+    # Cache division in order not to waste time computing them multiple times.
     scale_x = 1.0 / delta.x
     scale_y = 1.0 / delta.y
 
@@ -160,7 +154,7 @@ def intersect_segment_aabb(
 
     return hit
 
-def intersect_aabb_aabb(
+def intersect_rect_rect(
     collider: Rect,
     rect: Rect
 ) -> Optional[CollisionHit]:
@@ -197,7 +191,7 @@ def sweep_rect_rect(
     collider: Rect,
     rect: Rect,
     delta: pm.Vec2
-) -> CollisionSweep:
+) -> Optional[CollisionHit]:
     """
     Useful links:
     https://github.com/Joshua-Micheletti/PysicsWorld
@@ -206,58 +200,27 @@ def sweep_rect_rect(
     https://blog.hamaluik.ca/posts/simple-aabb-collision-using-minkowski-difference/
     https://www.haroldserrano.com/blog/visualizing-the-gjk-collision-algorithm
     """
-    sweep = CollisionSweep()
 
     # If the "moving" rectangle isn't actually moving (delta length is 0.0),
     # then just perform a static test.
     if delta.x == 0.0 and delta.y == 0.0:
-        sweep.position.x = collider.center.x
-        sweep.position.y = collider.center.y
-        sweep.hit = intersect_aabb_aabb(
+        return intersect_rect_rect(
             collider = collider,
             rect = rect
         )
-        if sweep.hit is not None:
-            sweep.hit.time = 0.0
-            sweep.time = 0.0
-        else:
-            sweep.time = 1.0
-        return sweep
 
     # Otherwise just check for segment intersection, with the segment starting point
     # being the center of the moving rectangle, its delta being the rectangle delta
     # and the padding being the rectangle half size.
-    sweep.hit = intersect_segment_aabb(
+    return intersect_segment_rect(
         rect = rect,
         position = collider.center,
         delta = delta,
         padding_x = collider.half_size.x,
         padding_y = collider.half_size.y
     )
-    if sweep.hit is not None:
-        sweep.time = clamp(sweep.hit.time - EPSILON, 0.0, 1.0)
-        sweep.position.x = collider.center.x + delta.x * sweep.time
-        sweep.position.y = collider.center.y + delta.y * sweep.time
-        direction = pm.Vec2(x = delta.x, y = delta.y)
-        direction.normalize()
-        sweep.hit.position.x = clamp(
-            sweep.hit.position.x + direction.x * collider.half_size.x,
-            rect.center.x - rect.half_size.x,
-            rect.center.x + rect.half_size.x
-        )
-        sweep.hit.position.y = clamp(
-            sweep.hit.position.y + direction.y * collider.half_size.y,
-            rect.center.y - rect.half_size.y,
-            rect.center.y + rect.half_size.y
-        )
-    else:
-        sweep.position.x = collider.center.x + delta.x
-        sweep.position.y = collider.center.y + delta.y
-        sweep.time = 1.0
 
-    return sweep
-
-def sweep_circle_aabb() -> CollisionSweep:
+def sweep_circle_rect() -> Optional[CollisionHit]:
     """
     A single line-AABB intersection test, and possibly one line-circle test, depending on the outcome of first test.
     As seen in the image below, a single line-test to a larger AABB, expanded with the circle radius from the original AABB, decides whether or not the swept circle can hit at all.
