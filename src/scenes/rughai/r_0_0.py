@@ -1,5 +1,6 @@
 from typing import Callable, List, Optional
 import pyglet
+from constants import collision_tags
 
 from engine.door_node import DoorNode
 from engine.node import PositionNode
@@ -204,7 +205,7 @@ class R_0_0(PlayableSceneNode):
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = ["player"],
+            tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -224,7 +225,7 @@ class R_0_0(PlayableSceneNode):
             y = 25 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
-            tags = ["player"],
+            tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
