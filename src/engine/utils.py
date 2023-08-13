@@ -161,7 +161,7 @@ def intersect_rect_rect(
     """
     Finds the hit point between a static rectangle (rect) and another (collider).
     """
-    dx = collider.center.x + rect.center.x
+    dx = collider.center.x - rect.center.x
     px = (collider.half_size.x + rect.half_size.x) - abs(dx)
     if px <= 0:
         return None
