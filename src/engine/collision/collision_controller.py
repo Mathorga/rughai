@@ -86,6 +86,8 @@ class CollisionController:
                         # Compute collision between colliders.
                         actor.collide(other)
 
+                actor.set_velocity((0.0, 0.0))
+
     def update(self, _dt) -> None:
         self.__handle_collisions()
 

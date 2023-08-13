@@ -389,8 +389,9 @@ class PlayerNode(PositionNode):
         # Compute velocity.
         velocity = self.__compute_velocity(dt)
 
-        # Apply the computed velocity to the collider.
-        self.__collider.put_velocity((round(velocity.x, 5), round(velocity.y, 5)))
+        # Apply the computed velocity to all colliders.
+        self.__collider.set_velocity((round(velocity.x, 5), round(velocity.y, 5)))
+        self.__interactor.set_velocity((round(velocity.x, 5), round(velocity.y, 5)))
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.

@@ -4,7 +4,7 @@ import pyglet
 from engine import controllers
 from engine.settings import SETTINGS, Builtins
 from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionCircle, CollisionRect
+from engine.collision.collision_shape import CollisionRect
 from engine.interaction_node import InteractionNode
 from engine.node import PositionNode
 from engine.text_node import TextNode
@@ -50,19 +50,13 @@ class DialogNode(PositionNode):
             tags = [] if tags is None else list(tags),
             on_triggered = lambda entered: controllers.INTERACTION_CONTROLLER.toggle(self.interaction, enable = entered),
             shapes = [
-                # CollisionCircle(
-                #     x = x,
-                #     y = y,
-                #     radius = 8,
-                #     batch = world_batch
-                # )
                 CollisionRect(
                     x = x,
                     y = y,
-                    anchor_x = 4,
-                    anchor_y = 4,
-                    width = 8,
-                    height = 8,
+                    anchor_x = 6,
+                    anchor_y = 6,
+                    width = 12,
+                    height = 12,
                     batch = world_batch
                 )
             ]

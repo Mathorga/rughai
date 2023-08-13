@@ -52,7 +52,7 @@ class CollisionNode(PositionNode):
     def get_velocity(self) -> Tuple[float, float]:
         return (self.velocity_x, self.velocity_y)
 
-    def put_velocity(
+    def set_velocity(
         self,
         velocity: Tuple[float, float]
     ) -> None:
