@@ -98,4 +98,8 @@ class CollisionController:
         """
         Removes the given collider from the list, effectively preventing it from triggering collisions.
         """
-        self.__colliders[collider.type].remove(collider)
+
+        if collider.sensor:
+            self.__sensors[collider.type].remove(collider)
+        else:
+            self.__colliders[collider.type].remove(collider)

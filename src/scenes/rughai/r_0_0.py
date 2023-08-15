@@ -202,7 +202,7 @@ class R_0_0(PlayableSceneNode):
         # Place doors.
         south_door = DoorNode(
             x = 19 * self.__tile_size,
-            y = -2 * self.__tile_size,
+            y = 0,
             width = 31 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_INTERACTION],
@@ -221,8 +221,8 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
         east_door = DoorNode(
-            x = tilemap_width * self.__tile_size,
-            y = 25 * self.__tile_size,
+            x = (tilemap_width - 2) * self.__tile_size,
+            y = 27 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
             tags = [collision_tags.PLAYER_INTERACTION],
@@ -286,7 +286,7 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        self._scene.set_cam_bounds(cam_bounds)
+        # self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)

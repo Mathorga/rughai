@@ -1,7 +1,8 @@
 from typing import Callable, Optional
+from constants import collision_tags
 import pyglet
-from clouds_node import CloudsNode
 
+from clouds_node import CloudsNode
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
@@ -21,7 +22,6 @@ class R_0_1(PlayableSceneNode):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        scaling: int = 1,
         bundle: Optional[dict] = None,
         on_ended: Optional[Callable[[dict], None]] = None
     ):
@@ -29,7 +29,6 @@ class R_0_1(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             bundle = bundle,
             on_ended = on_ended
         )
@@ -39,7 +38,6 @@ class R_0_1(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = "R_0_1",
             on_scene_end = self._on_scene_end
@@ -48,7 +46,6 @@ class R_0_1(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_1.tmx",
-            scaling = scaling,
             batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -71,7 +68,6 @@ class R_0_1(PlayableSceneNode):
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
             z = -500,
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
@@ -85,7 +81,6 @@ class R_0_1(PlayableSceneNode):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
@@ -95,7 +90,6 @@ class R_0_1(PlayableSceneNode):
             y = 30 * self.__tile_size,
             width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
-            scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -116,7 +110,6 @@ class R_0_1(PlayableSceneNode):
             y = -2 * self.__tile_size,
             width = 10 * self.__tile_size,
             height = 2 * self.__tile_size,
-            scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -137,7 +130,6 @@ class R_0_1(PlayableSceneNode):
             y = -2 * self.__tile_size,
             width = 16 * self.__tile_size,
             height = 2 * self.__tile_size,
-            scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -163,7 +155,6 @@ class R_0_1(PlayableSceneNode):
             x = 4,
             y = view_height - 4,
             z = 500,
-            scaling = scaling,
             batch = self._scene.ui_batch
         )
         health_bar = SpriteNode(
@@ -171,21 +162,18 @@ class R_0_1(PlayableSceneNode):
             x = 4,
             y = view_height - 12,
             z = 500,
-            scaling = scaling,
             batch = self._scene.ui_batch
         )
 
         # Clouds.
         clouds = CloudsNode(
             bounds = cam_bounds,
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
         # Props.
         props = PropLoader.fetch_props(
             "propmaps/rughai/r_0_1",
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
