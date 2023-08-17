@@ -57,7 +57,7 @@ class R_0_0(PlayableSceneNode):
         cam_bounds = Bounds(
             bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * self.__tile_size,
             right = (tilemap_width - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size,
-            left = (-20) * self.__tile_size,
+            left = SETTINGS[Builtins.TILEMAP_BUFFER] * self.__tile_size,
             top = (tilemap_height - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size
         )
 

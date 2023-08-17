@@ -52,10 +52,10 @@ class R_0_1(PlayableSceneNode):
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
         cam_bounds = Bounds(
-            top = tilemap_height * self.__tile_size,
-            bottom = 0,
-            left = (-20) * self.__tile_size,
-            right = tilemap_width * self.__tile_size
+            bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * self.__tile_size,
+            right = (tilemap_width - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size,
+            left = SETTINGS[Builtins.TILEMAP_BUFFER] * self.__tile_size,
+            top = (tilemap_height - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size
         )
 
         # Define a background.
@@ -87,7 +87,7 @@ class R_0_1(PlayableSceneNode):
         # Place doors.
         north_door = DoorNode(
             x = 18 * self.__tile_size,
-            y = 30 * self.__tile_size,
+            y = 32 * self.__tile_size,
             width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_INTERACTION],
@@ -107,7 +107,7 @@ class R_0_1(PlayableSceneNode):
         )
         south_west_door = DoorNode(
             x = 5 * self.__tile_size,
-            y = -2 * self.__tile_size,
+            y = 0,
             width = 10 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_INTERACTION],
