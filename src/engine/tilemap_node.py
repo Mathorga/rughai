@@ -6,6 +6,7 @@ import pyglet.gl as gl
 
 from engine.depth_sprite import DepthSprite
 from engine.node import PositionNode
+from engine.scene_node import Bounds
 from engine.settings import GLOBALS, SETTINGS, Builtins
 
 # Tile scaling factor, used to avoid texture bleeding.
@@ -121,6 +122,14 @@ class TilemapNode(PositionNode):
                         batch = batch
                     )
                 )
+
+        # Compute bounds.
+        self.bounds = Bounds(
+            bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * tileset.tile_height,
+            right = (map_width - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_width,
+            left = SETTINGS[Builtins.TILEMAP_BUFFER] * tileset.tile_width,
+            top = (map_height - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_height
+        )
 
     def delete(self) -> None:
         for sprite in self.__sprites:

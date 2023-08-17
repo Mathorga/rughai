@@ -54,12 +54,7 @@ class R_0_0(PlayableSceneNode):
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
-        cam_bounds = Bounds(
-            bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * self.__tile_size,
-            right = (tilemap_width - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size,
-            left = SETTINGS[Builtins.TILEMAP_BUFFER] * self.__tile_size,
-            top = (tilemap_height - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size
-        )
+        cam_bounds = tilemaps[0].bounds
 
         # Solid walls.
         walls: List[PositionNode] = [
