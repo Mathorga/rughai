@@ -12,7 +12,7 @@ from pyglet.window import key
 from constants import collision_tags
 
 from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionCircle, CollisionRect
+from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine import utils
