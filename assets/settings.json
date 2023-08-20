@@ -1,5 +1,5 @@
 {
-    "debug": false,
+    "debug": true,
     "show_collisions": true,
     "show_tiles_grid": false,
     "title": "RUGHAI",
@@ -9,7 +9,7 @@
     "pixel_perfect": false,
     "window_width": 720,
     "window_height": 480,
-    "fullscreen": true,
+    "fullscreen": false,
     "target_fps": 120,
     "camera_speed": 5.0,
     "layers_z_spacing": 32.0,
