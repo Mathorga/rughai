@@ -1,6 +1,7 @@
 from typing import Optional
 import pyglet
 
+from constants import collision_tags
 from engine import controllers
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle, CollisionRect
@@ -21,7 +22,7 @@ class ColumnNode(PositionNode):
             x = x,
             y = y,
             collision_type = CollisionType.STATIC,
-            tags = ["player"],
+            tags = [collision_tags.PLAYER_COLLISION],
             shapes = [
                 CollisionCircle(
                     x = x,
@@ -52,7 +53,7 @@ class WallNode(PositionNode):
             x = x,
             y = y,
             collision_type = CollisionType.STATIC,
-            tags = ["player"],
+            tags = [collision_tags.PLAYER_COLLISION],
             shapes = [
                 CollisionRect(
                     x = x,

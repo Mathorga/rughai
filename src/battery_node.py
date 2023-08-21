@@ -20,6 +20,12 @@ class BatteryNode(PositionNode):
     ) -> None:
         super().__init__(x, y)
 
+        # Opening and closing flag.
+        self.__in_transition = False
+
+        self.__open_requested = False
+        self.__close_requested = False
+
         self.__closed_image = pyglet.resource.image("sprites/battery/battery_closed.png")
         self.__closed_image.anchor_x = 16
         self.__closed_image.anchor_y = 6
@@ -80,13 +86,25 @@ class BatteryNode(PositionNode):
 
     def __on_animation_end(self) -> None:
         sprite_image = self.sprite.get_image()
-        if sprite_image == self.__open_image:
-            self.sprite.set_image(self.__opened_image)
-        elif sprite_image == self.__close_image:
-            self.sprite.set_image(self.__closed_image)
+        if self.__open_requested and sprite_image != self.__open_image and sprite_image != self.__opened_image:
+            self.sprite.set_image(self.__open_image)
+        elif self.__close_requested and sprite_image != self.__close_image and sprite_image != self.__closed_image:
+            self.sprite.set_image(self.__close_image)
+        else:
+            if sprite_image == self.__open_image:
+                self.sprite.set_image(self.__opened_image)
+            elif sprite_image == self.__close_image:
+                self.sprite.set_image(self.__closed_image)
+
+        self.__in_transition = False
 
     def __toggle(self, enable: bool) -> None:
-        self.sprite.set_image(self.__open_image if enable else self.__close_image)
+        self.__open_requested = enable
+        self.__close_requested = not enable
+        
+        if not self.__in_transition:
+            self.__in_transition = True
+            self.sprite.set_image(self.__open_image if enable else self.__close_image)
 
     def update(self, dt: int) -> None:
         self.interaction.update(dt)

@@ -4,15 +4,15 @@ Module containing the main player class.
 
 import math
 from typing import Optional
+from inputs.player_input import PlayerInput
 
 import pyglet
 import pyglet.math as pm
-from pyglet.window import key
 
 from constants import collision_tags
 
 from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionCircle, CollisionRect
+from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine import utils
@@ -20,78 +20,6 @@ from engine.settings import SETTINGS, Builtins
 
 import engine.controllers as controllers
 from player_stats import PlayerStats
-
-class PlayerInput:
-    def get_modifier(self) -> bool:
-        """
-        Returns whether or not the modifier key is being pressed, either on controller or keyboard.
-        """
-
-        return controllers.INPUT_CONTROLLER[key.LSHIFT] or controllers.INPUT_CONTROLLER.buttons.get("leftshoulder", False)
-
-    def get_sprint(self) -> bool:
-        """
-        Returns whether the sprint button was pressed or not, either on controller or keyboard.
-        """
-
-        return controllers.INPUT_CONTROLLER.key_presses.get(key.SPACE, False) or controllers.INPUT_CONTROLLER.button_presses.get("b", False)
-
-    def get_interaction(self) -> bool:
-        """
-        Returns whether the interact button was pressed or not, either on controller or keyboard.
-        """
-
-        return controllers.INPUT_CONTROLLER.key_presses.get(key.L, False) or controllers.INPUT_CONTROLLER.button_presses.get("a", False)
-
-    def get_main_atk(self) -> bool:
-        """
-        Returns whether the main attack button was pressed or not, either on controller or keyboard.
-        """
-
-        return controllers.INPUT_CONTROLLER.key_presses.get(key.M, False) or controllers.INPUT_CONTROLLER.button_presses.get("x", False)
-
-    def get_secondary_atk(self) -> bool:
-        """
-        Returns whether the secondary attack button was pressed or not, either on controller or keyboard.
-        """
-
-        return controllers.INPUT_CONTROLLER.key_presses.get(key.K, False) or controllers.INPUT_CONTROLLER.button_presses.get("y", False)
-
-    def get_fire_aim(self) -> bool:
-        """
-        Returns whether the range attack aim button was pressed or not.
-        """
-
-        return controllers.INPUT_CONTROLLER.triggers.get("lefttrigger", 0.0) > 0.0
-
-    def get_fire_load(self) -> bool:
-        """
-        Returns whether the range attack load button was pressed or not.
-        """
-
-        return controllers.INPUT_CONTROLLER.triggers.get("righttrigger", 0.0) > 0.0
-
-    def get_move_input(self) -> pyglet.math.Vec2:
-        """
-        Returns the movement vector from keyboard and controller.
-        """
-
-        stick = controllers.INPUT_CONTROLLER.sticks.get("leftstick", (0.0, 0.0))
-        return pyglet.math.Vec2(
-            (controllers.INPUT_CONTROLLER[key.D] - controllers.INPUT_CONTROLLER[key.A]) + stick[0],
-            (controllers.INPUT_CONTROLLER[key.W] - controllers.INPUT_CONTROLLER[key.S]) + stick[1]
-        )
-
-    def get_look_input(self) -> pyglet.math.Vec2:
-        """
-        Returns the camera movement vector from keyboard and controller.
-        """
-
-        stick = controllers.INPUT_CONTROLLER.sticks.get("rightstick", (0.0, 0.0))
-        return pyglet.math.Vec2(
-            (controllers.INPUT_CONTROLLER[key.RIGHT] - controllers.INPUT_CONTROLLER[key.LEFT]) + stick[0],
-            (controllers.INPUT_CONTROLLER[key.UP] - controllers.INPUT_CONTROLLER[key.DOWN]) + stick[1]
-        )
 
 class PlayerNode(PositionNode):
     """
@@ -210,12 +138,6 @@ class PlayerNode(PositionNode):
             collision_type = CollisionType.DYNAMIC,
             tags = [collision_tags.PLAYER_COLLISION],
             shapes = [
-                # CollisionCircle(
-                #     x = x,
-                #     y = y,
-                #     radius = 4,
-                #     batch = batch
-                # ),
                 CollisionRect(
                     x = x,
                     y = y,
@@ -238,21 +160,15 @@ class PlayerNode(PositionNode):
             collision_type = CollisionType.DYNAMIC,
             tags = [collision_tags.PLAYER_INTERACTION],
             shapes = [
-                CollisionCircle(
+                CollisionRect(
                     x = x,
                     y = y,
-                    radius = 4,
+                    anchor_x = 4,
+                    anchor_y = 4,
+                    width = 8,
+                    height = 8,
                     batch = batch
                 )
-                # CollisionRect(
-                #     x = x,
-                #     y = y,
-                #     anchor_x = 4,
-                #     anchor_y = 4,
-                #     width = 8,
-                #     height = 8,
-                #     batch = batch
-                # )
             ]
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
@@ -389,8 +305,9 @@ class PlayerNode(PositionNode):
         # Compute velocity.
         velocity = self.__compute_velocity(dt)
 
-        # Apply the computed velocity to the collider.
-        self.__collider.put_velocity((round(velocity.x, 5), round(velocity.y, 5)))
+        # Apply the computed velocity to all colliders.
+        self.__collider.set_velocity((round(velocity.x, 5), round(velocity.y, 5)))
+        self.__interactor.set_velocity((round(velocity.x, 5), round(velocity.y, 5)))
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.

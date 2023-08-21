@@ -16,7 +16,6 @@ from scenes.rughai.r_0_5 import R_0_5
 from scenes.rughai.r_0_6 import R_0_6
 
 import constants.scenes as scenes
-from scenes.rughai.test_room import TestRoom
 
 class RugHai:
     """

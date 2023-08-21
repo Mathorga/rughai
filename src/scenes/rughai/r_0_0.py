@@ -1,11 +1,12 @@
 from typing import Callable, List, Optional
 import pyglet
+from constants import collision_tags
 
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.prop_loader import PropLoader
-from engine.scene_node import Bounds, SceneNode
+from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.wall_node import WallNode
@@ -53,12 +54,7 @@ class R_0_0(PlayableSceneNode):
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
-        cam_bounds = Bounds(
-            bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * self.__tile_size,
-            right = (tilemap_width - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size,
-            left = (-20) * self.__tile_size,
-            top = (tilemap_height - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size
-        )
+        cam_bounds = tilemaps[0].bounds
 
         # Solid walls.
         walls: List[PositionNode] = [
@@ -201,10 +197,10 @@ class R_0_0(PlayableSceneNode):
         # Place doors.
         south_door = DoorNode(
             x = 19 * self.__tile_size,
-            y = -2 * self.__tile_size,
+            y = 0,
             width = 31 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = ["player"],
+            tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -220,11 +216,11 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
         east_door = DoorNode(
-            x = tilemap_width * self.__tile_size,
-            y = 25 * self.__tile_size,
+            x = (tilemap_width - 2) * self.__tile_size,
+            y = 27 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
-            tags = ["player"],
+            tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
