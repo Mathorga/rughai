@@ -45,7 +45,7 @@ class R_0_1(PlayableSceneNode):
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
-            source = "tilemaps/rughai/r_0_1.tmx",
+            source = "tilemaps/r_0_1.tmx",
             batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -168,7 +168,7 @@ class R_0_1(PlayableSceneNode):
 
         # Props.
         props = PropLoader.fetch_props(
-            "propmaps/rughai/r_0_1",
+            "propmaps/r_0_1",
             batch = self._scene.world_batch
         )
 

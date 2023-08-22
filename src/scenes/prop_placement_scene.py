@@ -1,7 +1,7 @@
 from typing import Callable, Optional
-from player_node import PlayerNode
 import pyglet
 
+from engine.prop_loader import PropLoader
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
 from engine.tilemap_node import TilemapNode
@@ -34,7 +34,7 @@ class PropPlacementScene(Node):
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
-            source = source,
+            source = f"tilemaps/{source}.tmx",
             batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -62,11 +62,18 @@ class PropPlacementScene(Node):
             batch = self._scene.world_batch
         )
 
+        # Props.
+        props = PropLoader.fetch_props(
+            source = f"propmaps/{source}",
+            batch = self._scene.world_batch
+        )
+
         self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(clouds)
+        self._scene.add_children(props)
         self._scene.add_child(self.__cursor)
 
     def draw(self) -> None:

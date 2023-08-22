@@ -1,5 +1,6 @@
 from typing import Callable, Optional
 import pyglet
+from constants import collision_tags
 
 from engine.door_node import DoorNode
 from engine.node import PositionNode
@@ -11,8 +12,9 @@ from engine.settings import SETTINGS, Builtins
 
 from player_node import PlayerNode
 from duk_node import DukNode
-import constants.events as events   
+import constants.events as events
 import constants.scenes as scenes
+
 
 class R_0_3(PlayableSceneNode):
     def __init__(
@@ -28,7 +30,6 @@ class R_0_3(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             bundle = bundle,
             on_ended = on_ended
         )
@@ -38,7 +39,6 @@ class R_0_3(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = "R_0_3",
             on_scene_end = self._on_scene_end
@@ -46,8 +46,7 @@ class R_0_3(PlayableSceneNode):
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
-            source = "tilemaps/rughai/r_0_3.tmx",
-            scaling = scaling,
+            source = "tilemaps/r_0_3.tmx",
             batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -59,13 +58,12 @@ class R_0_3(PlayableSceneNode):
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
         bg = SpriteNode(
-            resource = pyglet.resource.image("bg.png"),
-            on_animation_end = lambda : None,
-            x = (tilemaps[0].map_width * self.__tile_size) // 2,
-            y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            z = -500,
-            scaling = scaling,
-            batch = self._scene.world_batch
+            resource=pyglet.resource.image("bg.png"),
+            on_animation_end=lambda: None,
+            x=(tilemaps[0].map_width * self.__tile_size) // 2,
+            y=(tilemaps[0].map_height * self.__tile_size) // 2,
+            z=-500,
+            batch=self._scene.world_batch
         )
 
         # Player.
@@ -78,16 +76,15 @@ class R_0_3(PlayableSceneNode):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
         # Duk.
         duk = DukNode(
-            x = 10 * self.__tile_size,
-            y = 8 * self.__tile_size,
-            scaling = scaling,
-            batch = self._scene.world_batch
+            x=10 * self.__tile_size,
+            y=8 * self.__tile_size,
+            scaling=scaling,
+            batch=self._scene.world_batch
         )
 
         # Place doors.
@@ -98,7 +95,6 @@ class R_0_3(PlayableSceneNode):
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -111,7 +107,7 @@ class R_0_3(PlayableSceneNode):
                             self.__tile_size
                         ]
                     }
-                ),
+            ),
             batch = self._scene.world_batch
         )
         north_east_door = DoorNode(
@@ -121,7 +117,6 @@ class R_0_3(PlayableSceneNode):
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda entered:
                 self.on_door_triggered(
@@ -134,7 +129,7 @@ class R_0_3(PlayableSceneNode):
                             self.__tile_size
                         ]
                     }
-                ),
+            ),
             batch = self._scene.world_batch
         )
 
@@ -147,7 +142,6 @@ class R_0_3(PlayableSceneNode):
             x = 4,
             y = view_height - 4,
             z = 500,
-            scaling = scaling,
             batch = self._scene.ui_batch
         )
         health_bar = SpriteNode(
@@ -155,7 +149,6 @@ class R_0_3(PlayableSceneNode):
             x = 4,
             y = view_height - 12,
             z = 500,
-            scaling = scaling,
             batch = self._scene.ui_batch
         )
 
@@ -169,7 +162,7 @@ class R_0_3(PlayableSceneNode):
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
-        self._scene.add_child(cam_target, cam_target = True)
+        self._scene.add_child(cam_target, cam_target=True)
         self._scene.add_child(self._player)
         self._scene.add_child(duk)
         self._scene.add_child(north_west_door)

@@ -7,7 +7,7 @@ from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.prop_loader import PropLoader
-from engine.scene_node import Bounds, SceneNode
+from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
@@ -46,7 +46,7 @@ class R_0_2(PlayableSceneNode):
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
-            source = "tilemaps/rughai/r_0_2.tmx",
+            source = "tilemaps/r_0_2.tmx",
             batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -182,7 +182,7 @@ class R_0_2(PlayableSceneNode):
 
         # Props.
         props = PropLoader.fetch_props(
-            "propmaps/rughai/r_0_2",
+            "propmaps/r_0_2",
             batch = self._scene.world_batch
         )
 
