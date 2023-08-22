@@ -21,12 +21,11 @@ class EditorCursornode(PositionNode):
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
-        x: float = 0,
-        y: float = 0,
+        x: float = 0.0,
+        y: float = 0.0,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
-        PositionNode.__init__(
-            self,
+        super().__init__(
             x = x,
             y = y
         )

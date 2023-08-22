@@ -1,14 +1,48 @@
+from enum import Enum
 from typing import Callable, Optional
 import pyglet
 
 from engine.prop_loader import PropLoader
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
+from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
 
 from clouds_node import CloudsNode
 from editor_cursor_node import EditorCursornode
+
+class EditorAction(str, Enum):
+    # Settings.
+    ADD = "add_editor_action"
+    EDIT = "edit_editor_action"
+    DELETE = "delete_editor_action"
+
+class ActionSign(PositionNode):
+    def __init__(
+        self,
+        x: float = 0.0,
+        y: float = 0.0,
+        action: EditorAction = EditorAction.ADD,
+        batch: Optional[pyglet.graphics.Batch] = None
+    ) -> None:
+        super().__init__(
+            x = x,
+            y = y
+        )
+
+        self.action = action
+        
+        image = pyglet.resource.image(f"sprites/{action.value}.png")
+        image.anchor_x = 0
+        image.anchor_y = image.height
+        self.__sprite = SpriteNode(
+            resource = image,
+            x = x,
+            y = y,
+            z = 500,
+            batch = batch
+        )
 
 class PropPlacementScene(Node):
     def __init__(
@@ -56,6 +90,14 @@ class PropPlacementScene(Node):
             batch = self._scene.world_batch
         )
 
+        # Action sign.
+        action_sign = ActionSign(
+            x = self.__tile_size,
+            y = view_height - self.__tile_size,
+            action = EditorAction.DELETE,
+            batch = self._scene.ui_batch
+        )
+
         # Clouds.
         clouds = CloudsNode(
             bounds = cam_bounds,
@@ -72,6 +114,7 @@ class PropPlacementScene(Node):
 
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
+        self._scene.add_child(action_sign)
         self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(self.__cursor)
