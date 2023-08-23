@@ -57,7 +57,7 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
 pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
 pyglet.resource.reindex()
 
-image = pyglet.resource.image("sprites/rughai/prop/tree_l.png")
+image = pyglet.resource.image("sprites/prop/rughai/tree_l.png")
 batch = pyglet.graphics.Batch()
 
 sprites = []

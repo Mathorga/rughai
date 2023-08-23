@@ -43,14 +43,14 @@ class PlayerNode(PositionNode):
         )
 
         # IDLE state animations.
-        self.__idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_idle.gif")
-        self.__walk_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_walk.gif")
-        self.__run_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_run.gif")
-        self.__sprint_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_roll.gif")
+        self.__idle_anim = pyglet.resource.animation("sprites/iryo/iryo_idle.gif")
+        self.__walk_anim = pyglet.resource.animation("sprites/iryo/iryo_walk.gif")
+        self.__run_anim = pyglet.resource.animation("sprites/iryo/iryo_run.gif")
+        self.__sprint_anim = pyglet.resource.animation("sprites/iryo/iryo_roll.gif")
 
         # ATK state animations.
-        self.__atk_idle_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_idle.gif")
-        self.__atk_0_anim = pyglet.resource.animation("sprites/rughai/iryo/iryo_atk_0.gif")
+        self.__atk_idle_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_idle.gif")
+        self.__atk_0_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_0.gif")
 
         # Aim sprite distance, defines the distance at which the sprite floats.
         self.__aim_sprite_distance = 10.0

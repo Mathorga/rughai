@@ -11,10 +11,6 @@ import engine.controllers as controllers
 from inputs.cursor_input import CursorInput
 
 class EditorCursornode(PositionNode):
-    """
-    Main player class.
-    """
-
     def __init__(
         self,
         tile_size: int,
@@ -78,7 +74,7 @@ class EditorCursornode(PositionNode):
         self.__move_input = self.__input.get_move_input().limit(1.0)
 
         # Trigger dialogs' next line.
-        interact = self.__input.get_interaction()
+        interact = self.__input.get_confirm()
         if interact:
             controllers.INTERACTION_CONTROLLER.interact()
 

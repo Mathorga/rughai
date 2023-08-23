@@ -15,10 +15,10 @@ batch = pg.graphics.Batch()
 z_flipped: bool = False
 
 im1 = pg.image.load(
-    'assets/sprites/rughai/prop/tree_l.png')
+    'assets/sprites/prop/rughai/tree_l.png')
 sprite1 = pg.sprite.Sprite(im1, x=100, y=100, z=105, batch=batch)
 im2 = pg.image.load(
-    'assets/sprites/rughai/prop/tree_l.png')
+    'assets/sprites/prop/rughai/tree_l.png')
 sprite2 = pg.sprite.Sprite(im2, x=105, y=105, z=100, batch=batch)
 
 @window.event

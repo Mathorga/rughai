@@ -8,7 +8,7 @@ class ShapeNode(PositionNode):
         self,
         x: float = 0,
         y: float = 0,
-        color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF)
+        color: Tuple[int, int, int] = (0x00, 0x00, 0x00)
     ) -> None:
         super().__init__(
             x = x,

@@ -151,7 +151,7 @@ vert_shader = Shader(vertex_source, 'vertex')
 frag_shader = Shader(fragment_source, 'fragment')
 program = ShaderProgram(vert_shader, frag_shader)
 
-anim = pyglet.resource.image("sprites/rughai/iryo/iryo.png")
+anim = pyglet.resource.image("sprites/iryo/iryo.png")
 # for frame in anim.frames:
 #     frame.image.anchor_x = anim.get_max_width() / 2
 #     frame.image.anchor_y = 0

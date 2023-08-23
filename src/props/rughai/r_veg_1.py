@@ -15,8 +15,8 @@ class RVeg1(PositionNode):
     ) -> None:
         super().__init__(x, y, z)
 
-        self.__idle_0_anim = pyglet.image.Animation.from_image_sequence([pyglet.resource.image("sprites/rughai/prop/veg_1/veg_1_idle_0.png")], 1.0)
-        self.__idle_1_anim = pyglet.resource.animation("sprites/rughai/prop/veg_1/veg_1_idle_1.gif")
+        self.__idle_0_anim = pyglet.image.Animation.from_image_sequence([pyglet.resource.image("sprites/prop/rughai/veg_1/veg_1_idle_0.png")], 1.0)
+        self.__idle_1_anim = pyglet.resource.animation("sprites/prop/rughai/veg_1/veg_1_idle_1.gif")
         animation_set_anchor(
             animation = self.__idle_1_anim,
             x = self.__idle_1_anim.get_max_width() / 2,

@@ -13,7 +13,7 @@ class RectNode(ShapeNode):
         height: int = 0,
         anchor_x: float = 0,
         anchor_y: float = 0,
-        color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF),
+        color: Tuple[int, int, int] = (0x00, 0x00, 0x00),
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(

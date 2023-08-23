@@ -5,7 +5,7 @@ from engine import controllers
 
 class CursorInput:
 
-    def get_interaction(self) -> bool:
+    def get_confirm(self) -> bool:
         """
         Returns whether the interact button was pressed or not, either on controller or keyboard.
         """
@@ -26,6 +26,9 @@ class CursorInput:
             1 if d else 0 - 1 if a else 0,
             1 if w else 0 - 1 if s else 0
         )
+
+    def get_start(self) -> bool:
+        return controllers.INPUT_CONTROLLER.key_presses.get(key.ENTER, False)
 
     def get_look_input(self) -> pm.Vec2:
         """

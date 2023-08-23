@@ -28,11 +28,11 @@ class RugHai:
         pyglet.resource.reindex()
 
         # Load font files.
-        pyglet.font.add_file(f"{os.path.dirname(__file__)}/../assets/fonts/I-pixel-u.ttf")
-        pyglet.font.add_file(f"{os.path.dirname(__file__)}/../assets/fonts/rughai.ttf")
+        pyglet.font.add_file(f"{pyglet.resource.path[0]}/fonts/I-pixel-u.ttf")
+        pyglet.font.add_file(f"{pyglet.resource.path[0]}/fonts/rughai.ttf")
 
         # Load settings from file.
-        load_settings(f"{os.path.dirname(__file__)}/../assets/settings.json")
+        load_settings(f"{pyglet.resource.path[0]}/settings.json")
 
         # Create a window.
         self._window = self.__create_window()

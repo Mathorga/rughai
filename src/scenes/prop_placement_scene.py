@@ -1,16 +1,20 @@
 from enum import Enum
-from typing import Callable, Optional
+import json
+import os
+from typing import Callable, Dict, List, Optional
 import pyglet
 
 from engine.prop_loader import PropLoader
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
+from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
 
 from clouds_node import CloudsNode
 from editor_cursor_node import EditorCursornode
+from inputs.cursor_input import CursorInput
 
 class EditorAction(str, Enum):
     # Settings.
@@ -44,6 +48,54 @@ class ActionSign(PositionNode):
             batch = batch
         )
 
+class PropEditorMenuNode(Node):
+    def __init__(
+        self,
+        props_map: Dict[str, List[str]],
+        view_width: int,
+        view_height: int,
+        open: bool = False,
+        batch: Optional[pyglet.graphics.Batch] = None
+    ) -> None:
+        super().__init__()
+
+        self.__props_map = props_map
+        self.__view_width = view_width
+        self.__view_height = view_height
+        self.__batch = batch
+        self.__open = open
+
+        self.__background: Optional[RectNode]
+
+    def is_open(self) -> bool:
+        return self.__open
+    
+    def toggle(self) -> None:
+        if self.__open:
+            self.close()
+        else:
+            self.open()
+
+    def open(self) -> None:
+        self.__open = True
+
+        self.__background = RectNode(
+            x = 0.0,
+            y = 0.0,
+            width = self.__view_width,
+            height = self.__view_height,
+            color = (0x33, 0x44, 0x88),
+            batch = self.__batch
+        )
+        self.__background.set_opacity(0x7F)
+
+    def close(self) -> None:
+        self.__open = False
+
+        if self.__background is not None:
+            self.__background.delete()
+            self.__background = None
+
 class PropPlacementScene(Node):
     def __init__(
         self,
@@ -54,11 +106,11 @@ class PropPlacementScene(Node):
         on_ended: Optional[Callable[[dict], None]] = None
     ):
         super().__init__()
-        self._window = window
-        self._on_ended = on_ended
+        self.__window = window
+        self.__on_ended = on_ended
 
         # Define the scene.
-        self._scene = SceneNode(
+        self.__scene = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
@@ -66,10 +118,23 @@ class PropPlacementScene(Node):
             title = source
         )
 
+        self.__props_map = self.__load_props_map(f"{pyglet.resource.path[0]}/props.json")
+        self.__in_menu = False
+
+        self.__menu = PropEditorMenuNode(
+            props_map = self.__props_map,
+            view_width = view_width,
+            view_height = view_height,
+            open = self.__in_menu,
+            batch = self.__scene.ui_batch
+        )
+
+        self.__input = CursorInput()
+
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = f"tilemaps/{source}.tmx",
-            batch = self._scene.world_batch
+            batch = self.__scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -87,7 +152,7 @@ class PropPlacementScene(Node):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            batch = self._scene.world_batch
+            batch = self.__scene.world_batch
         )
 
         # Action sign.
@@ -95,38 +160,51 @@ class PropPlacementScene(Node):
             x = self.__tile_size,
             y = view_height - self.__tile_size,
             action = EditorAction.DELETE,
-            batch = self._scene.ui_batch
+            batch = self.__scene.ui_batch
         )
 
         # Clouds.
         clouds = CloudsNode(
             bounds = cam_bounds,
-            batch = self._scene.world_batch
+            batch = self.__scene.world_batch
         )
 
         # Props.
         props = PropLoader.fetch_props(
             source = f"propmaps/{source}",
-            batch = self._scene.world_batch
+            batch = self.__scene.world_batch
         )
 
-        self._scene.set_cam_bounds(cam_bounds)
+        self.__scene.set_cam_bounds(cam_bounds)
 
-        self._scene.add_children(tilemaps)
-        self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(action_sign)
-        self._scene.add_child(clouds)
-        self._scene.add_children(props)
-        self._scene.add_child(self.__cursor)
+        self.__scene.add_children(tilemaps)
+        self.__scene.add_child(cam_target, cam_target = True)
+        self.__scene.add_child(action_sign)
+        self.__scene.add_child(clouds)
+        self.__scene.add_children(props)
+        self.__scene.add_child(self.__cursor)
+        self.__scene.add_child(self.__menu)
 
     def draw(self) -> None:
-        if self._scene is not None:
-            self._scene.draw()
+        if self.__scene is not None:
+            self.__scene.draw()
 
     def update(self, dt) -> None:
-        if self._scene is not None:
-            self._scene.update(dt)
+        if self.__input.get_start():
+            self.__menu.toggle()
+
+        if self.__scene is not None:
+            self.__scene.update(dt)
 
     def delete(self) -> None:
-        if self._scene is not None:
-            self._scene.delete()
+        if self.__scene is not None:
+            self.__scene.delete()
+
+    def __load_props_map(self, source: str) -> Dict[str, List[str]]:
+        data: Dict[str, List[str]]
+
+        # Load JSON file.
+        with open(file = source, mode = "r", encoding = "UTF-8") as content:
+            data = json.load(content)
+
+        return data
