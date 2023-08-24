@@ -103,10 +103,10 @@ class PropEditorMenuNode(Node):
             y = 0.0,
             width = self.__view_width,
             height = self.__view_height,
-            color = (0x33, 0x44, 0x88),
+            color = (0x83, 0x94, 0xC8),
             batch = self.__batch
         )
-        self.__background.set_opacity(0x7F)
+        self.__background.set_opacity(0xAF)
 
         # Open callback.
         if self.__on_open is not None:
@@ -137,7 +137,7 @@ class PropEditorMenuNode(Node):
 
         self.__current_page_props = [TextNode(
             x = 10,
-            y = self.__view_height - 20 * index,
+            y = self.__view_height - (10 + 20 * index),
             text = prop_name,
             font_name = "rughai",
             anchor_x = "left",
