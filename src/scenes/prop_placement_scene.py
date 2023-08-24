@@ -3,6 +3,7 @@ import json
 import os
 from typing import Callable, Dict, List, Optional
 import pyglet
+from engine import controllers
 
 from engine.prop_loader import PropLoader
 from engine.node import Node, PositionNode
@@ -14,7 +15,6 @@ from engine.settings import SETTINGS, Builtins
 
 from clouds_node import CloudsNode
 from editor_cursor_node import EditorCursornode
-from inputs.cursor_input import CursorInput
 
 class EditorAction(str, Enum):
     # Settings.
@@ -55,7 +55,9 @@ class PropEditorMenuNode(Node):
         view_width: int,
         view_height: int,
         open: bool = False,
-        batch: Optional[pyglet.graphics.Batch] = None
+        batch: Optional[pyglet.graphics.Batch] = None,
+        on_open: Optional[Callable[[], None]] = None,
+        on_close: Optional[Callable[[], None]] = None,
     ) -> None:
         super().__init__()
 
@@ -65,7 +67,18 @@ class PropEditorMenuNode(Node):
         self.__batch = batch
         self.__open = open
 
+        # Open/close callbacks.
+        self.__on_open = on_open
+        self.__on_close = on_close
+
         self.__background: Optional[RectNode]
+
+    def update(self, dt: int) -> None:
+        super().update(dt)
+
+        # Toggle open/close upon start key pressed.
+        if controllers.INPUT_CONTROLLER.get_start():
+            self.toggle()
 
     def is_open(self) -> bool:
         return self.__open
@@ -89,12 +102,20 @@ class PropEditorMenuNode(Node):
         )
         self.__background.set_opacity(0x7F)
 
+        # Open callback.
+        if self.__on_open is not None:
+            self.__on_open()
+
     def close(self) -> None:
         self.__open = False
 
         if self.__background is not None:
             self.__background.delete()
             self.__background = None
+
+        # Close callback.
+        if self.__on_close is not None:
+            self.__on_close()
 
 class PropPlacementScene(Node):
     def __init__(
@@ -121,16 +142,6 @@ class PropPlacementScene(Node):
         self.__props_map = self.__load_props_map(f"{pyglet.resource.path[0]}/props.json")
         self.__in_menu = False
 
-        self.__menu = PropEditorMenuNode(
-            props_map = self.__props_map,
-            view_width = view_width,
-            view_height = view_height,
-            open = self.__in_menu,
-            batch = self.__scene.ui_batch
-        )
-
-        self.__input = CursorInput()
-
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = f"tilemaps/{source}.tmx",
@@ -141,8 +152,8 @@ class PropPlacementScene(Node):
         tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
 
-        # Player.
-        player_position = (
+        # Cursor.
+        cursor_position = (
             (tilemap_width / 2) * self.__tile_size,
             (tilemap_height / 2) * self.__tile_size
         )
@@ -150,9 +161,19 @@ class PropPlacementScene(Node):
         self.__cursor = EditorCursornode(
             tile_size = self.__tile_size,
             cam_target = cam_target,
-            x = player_position[0],
-            y = player_position[1],
+            x = cursor_position[0],
+            y = cursor_position[1],
             batch = self.__scene.world_batch
+        )
+
+        self.__menu = PropEditorMenuNode(
+            props_map = self.__props_map,
+            view_width = view_width,
+            view_height = view_height,
+            open = self.__in_menu,
+            batch = self.__scene.ui_batch,
+            on_open = lambda: self.__cursor.disable_controls(),
+            on_close = lambda: self.__cursor.enable_controls()
         )
 
         # Action sign.
@@ -190,9 +211,6 @@ class PropPlacementScene(Node):
             self.__scene.draw()
 
     def update(self, dt) -> None:
-        if self.__input.get_start():
-            self.__menu.toggle()
-
         if self.__scene is not None:
             self.__scene.update(dt)
 

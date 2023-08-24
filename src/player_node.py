@@ -4,7 +4,6 @@ Module containing the main player class.
 
 import math
 from typing import Optional
-from inputs.player_input import PlayerInput
 
 import pyglet
 import pyglet.math as pm
@@ -70,7 +69,6 @@ class PlayerNode(PositionNode):
 
         # Setup input handling.
         self.__controls_enabled = True
-        self.__input = PlayerInput()
         self.__move_input = pyglet.math.Vec2()
         self.__look_input = pyglet.math.Vec2()
 
@@ -217,7 +215,7 @@ class PlayerNode(PositionNode):
         if self.__main_atk_ing:
             self.__main_atk_ing = False
 
-    def disable_controls(self):
+    def disable_controls(self) -> None:
         """
         Disables user controls over the player and stops all existing inputs.
         """
@@ -226,28 +224,35 @@ class PlayerNode(PositionNode):
         self.__move_input = pm.Vec2()
         self.__controls_enabled = False
 
+    def enable_controls(self) -> None:
+        """
+        Enables user controls over the player.
+        """
+
+        self.__controls_enabled = True
+
     def __fetch_input(self):
         if self.__controls_enabled:
             # Allow the player to look around even if they're rolling.
-            self.__look_input = self.__input.get_look_input().limit(1.0)
+            self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
             # All other input should be fetched if not rolling.
             if self.__sprint_ing or self.__main_atk_ing:
                 return
 
-            self.__move_input = self.__input.get_move_input().limit(1.0)
-            self.__slow = self.__input.get_modifier()
+            self.__move_input = controllers.INPUT_CONTROLLER.get_movement().limit(1.0)
+            self.__slow = controllers.INPUT_CONTROLLER.get_modifier()
 
-            self.__sprint_ing = self.__input.get_sprint()
+            self.__sprint_ing = controllers.INPUT_CONTROLLER.get_sprint()
             if self.__sprint_ing:
                 self.__sprint_ed = True
 
-            self.__main_atk_ing = self.__input.get_main_atk()
+            self.__main_atk_ing = controllers.INPUT_CONTROLLER.get_main_atk()
             if self.__main_atk_ing:
                 self.__main_atk_ed = True
 
             # Trigger dialogs' next line.
-            interact = self.__input.get_interaction()
+            interact = controllers.INPUT_CONTROLLER.get_interaction()
             if interact:
                 controllers.INTERACTION_CONTROLLER.interact()
 

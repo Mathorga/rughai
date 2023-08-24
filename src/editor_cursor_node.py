@@ -3,12 +3,9 @@ from typing import Optional
 import pyglet
 import pyglet.math as pm
 
-
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 import engine.controllers as controllers
-
-from inputs.cursor_input import CursorInput
 
 class EditorCursornode(PositionNode):
     def __init__(
@@ -29,7 +26,7 @@ class EditorCursornode(PositionNode):
         self.__tile_size = tile_size
 
         # Setup input handling.
-        self.__input = CursorInput()
+        self.__controls_enabled = True
         self.__move_input = pm.Vec2()
         self.__look_input = pm.Vec2()
 
@@ -67,16 +64,33 @@ class EditorCursornode(PositionNode):
         # Update sprites accordingly.
         self.__update_sprites(dt)
 
+    def disable_controls(self):
+        """
+        Disables user controls over the player and stops all existing inputs.
+        """
+
+        self.__look_input = pm.Vec2()
+        self.__move_input = pm.Vec2()
+        self.__controls_enabled = False
+
+    def enable_controls(self) -> None:
+        """
+        Enables user controls over the player.
+        """
+
+        self.__controls_enabled = True
+
     def __fetch_input(self):
-        # Allow the player to look around even if they're rolling.
-        self.__look_input = self.__input.get_look_input().limit(1.0)
+        if self.__controls_enabled:
+            # Allow the player to look around even if they're rolling.
+            self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
-        self.__move_input = self.__input.get_move_input().limit(1.0)
+            self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement().limit(1.0)
 
-        # Trigger dialogs' next line.
-        interact = self.__input.get_confirm()
-        if interact:
-            controllers.INTERACTION_CONTROLLER.interact()
+            # Trigger dialogs' next line.
+            interact = controllers.INPUT_CONTROLLER.get_interaction()
+            if interact:
+                controllers.INTERACTION_CONTROLLER.interact()
 
     def __move(self, dt):
         self.set_position((
