@@ -1,7 +1,7 @@
 from enum import Enum
 import json
 import os
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Text
 import pyglet
 from engine import controllers
 
@@ -10,6 +10,7 @@ from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
+from engine.text_node import TextNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
 
@@ -51,7 +52,7 @@ class ActionSign(PositionNode):
 class PropEditorMenuNode(Node):
     def __init__(
         self,
-        props_map: Dict[str, List[str]],
+        prop_names: Dict[str, List[str]],
         view_width: int,
         view_height: int,
         open: bool = False,
@@ -61,11 +62,14 @@ class PropEditorMenuNode(Node):
     ) -> None:
         super().__init__()
 
-        self.__props_map = props_map
+        self.__prop_names = prop_names
         self.__view_width = view_width
         self.__view_height = view_height
         self.__batch = batch
         self.__open = open
+
+        self.__current_page = list(self.__prop_names.keys())[0]
+        self.__current_page_props: List[TextNode] = []
 
         # Open/close callbacks.
         self.__on_open = on_open
@@ -92,15 +96,17 @@ class PropEditorMenuNode(Node):
     def open(self) -> None:
         self.__open = True
 
+        self.set_page(self.__current_page)
+
         self.__background = RectNode(
             x = 0.0,
             y = 0.0,
             width = self.__view_width,
             height = self.__view_height,
-            color = (0x33, 0x44, 0x88),
+            color = (0x83, 0x94, 0xC8),
             batch = self.__batch
         )
-        self.__background.set_opacity(0x7F)
+        self.__background.set_opacity(0xAF)
 
         # Open callback.
         if self.__on_open is not None:
@@ -109,6 +115,8 @@ class PropEditorMenuNode(Node):
     def close(self) -> None:
         self.__open = False
 
+        self.clear_page()
+
         if self.__background is not None:
             self.__background.delete()
             self.__background = None
@@ -116,6 +124,26 @@ class PropEditorMenuNode(Node):
         # Close callback.
         if self.__on_close is not None:
             self.__on_close()
+
+    def clear_page(self) -> None:
+        # Delete any pre-existent prop icons.
+        for prop_icon in self.__current_page_props:
+            prop_icon.delete()
+
+        self.__current_page_props = []
+
+    def set_page(self, page: str) -> None:
+        self.clear_page()
+
+        self.__current_page_props = [TextNode(
+            x = 10,
+            y = self.__view_height - (10 + 20 * index),
+            text = prop_name,
+            font_name = "rughai",
+            anchor_x = "left",
+            align = "left",
+            batch = self.__batch
+        ) for index, prop_name in enumerate(self.__prop_names[page])]
 
 class PropPlacementScene(Node):
     def __init__(
@@ -167,7 +195,7 @@ class PropPlacementScene(Node):
         )
 
         self.__menu = PropEditorMenuNode(
-            props_map = self.__props_map,
+            prop_names = self.__props_map,
             view_width = view_width,
             view_height = view_height,
             open = self.__in_menu,

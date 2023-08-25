@@ -26,22 +26,22 @@ class BatteryNode(PositionNode):
         self.__open_requested = False
         self.__close_requested = False
 
-        self.__closed_image = pyglet.resource.image("sprites/battery/battery_closed.png")
+        self.__closed_image = pyglet.resource.image("sprites/extras/battery/battery_closed.png")
         self.__closed_image.anchor_x = 16
         self.__closed_image.anchor_y = 6
 
-        self.__opened_image = pyglet.resource.image("sprites/battery/battery_opened.png")
+        self.__opened_image = pyglet.resource.image("sprites/extras/battery/battery_open.png")
         self.__opened_image.anchor_x = 16
         self.__opened_image.anchor_y = 6
 
-        self.__open_image = pyglet.resource.animation("sprites/battery/battery_open.gif")
+        self.__open_image = pyglet.resource.animation("sprites/extras/battery/battery_opening.gif")
         utils.animation_set_anchor(
             animation = self.__open_image,
             x = 16.0,
             y = 6.0
         )
 
-        self.__close_image = pyglet.resource.animation("sprites/battery/battery_close.gif")
+        self.__close_image = pyglet.resource.animation("sprites/extras/battery/battery_closing.gif")
         utils.animation_set_anchor(
             animation = self.__close_image,
             x = 16.0,
