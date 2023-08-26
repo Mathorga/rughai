@@ -162,6 +162,10 @@ class PropEditorMenuNode(Node):
 
             # Prop selection.
             self.__current_prop += controllers.INPUT_CONTROLLER.get_cursor_movement().x
+            if self.__current_prop < 0:
+                self.__current_prop = 0
+            if self.__current_prop >= len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page]]):
+                self.__current_prop = len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page]]) - 1
 
             self.set_page(list(self.__prop_names.keys())[self.__current_page])
 
