@@ -151,12 +151,17 @@ class PropEditorMenuNode(Node):
             self.toggle()
 
         if self.__open:
+            # Only handle all other controls if open:
+            # Page change.
             if controllers.INPUT_CONTROLLER.get_menu_page_left():
                 self.__current_page -= 1
                 self.__current_page = self.__current_page % len(self.__prop_names)
             if controllers.INPUT_CONTROLLER.get_menu_page_right():
                 self.__current_page += 1
                 self.__current_page = self.__current_page % len(self.__prop_names)
+
+            # Prop selection.
+            # TODO
 
             self.set_page(list(self.__prop_names.keys())[self.__current_page])
 
