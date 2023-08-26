@@ -49,6 +49,63 @@ class ActionSign(PositionNode):
             batch = batch
         )
 
+class EditorMenuEntryNode(PositionNode):
+    def __init__(
+        self,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0
+    ) -> None:
+        super().__init__(x, y, z)
+
+class EditorMenuTitleNode(PositionNode):
+    def __init__(
+        self,
+        text: str,
+        view_width: int,
+        view_height: int,
+        z: float = 0.0,
+        batch: Optional[pyglet.graphics.Batch] = None,
+    ) -> None:
+        super().__init__(
+            view_width / 2,
+            view_height - 10,
+            z
+        )
+
+        self.__left_arrow = TextNode(
+            x = self.x + 10,
+            y = self.y,
+            text = "L",
+            align = "left",
+            anchor_x = "center",
+            font_name = "rughai",
+            batch = batch
+        )
+        self.__text = TextNode(
+            x = self.x,
+            y = self.y,
+            text = text,
+            align = "center",
+            anchor_x = "center",
+            font_name = "rughai",
+            batch = batch
+        )
+        self.__right_arrow = TextNode(
+            x = self.x - 10,
+            y = self.y,
+            text = "R",
+            align = "right",
+            anchor_x = "center",
+            font_name = "rughai",
+            batch = batch
+        )
+
+    def delete(self) -> None:
+        if self.__text is not None:
+            self.__text.delete()
+            self.__text = None
+
 class PropEditorMenuNode(Node):
     def __init__(
         self,
@@ -70,9 +127,15 @@ class PropEditorMenuNode(Node):
         # Flag, defines whether the menu is open or close.
         self.__open = open
 
-        self.__current_page = list(self.__prop_names.keys())[0]
-        self.__current_page_props: List[TextNode] = []
-        self.__current_prop: Optional[str]
+        # Current page.
+        self.__current_page: int = 0
+        self.__page_title: Optional[EditorMenuTitleNode] = None
+
+        # Elements in the current page.
+        self.__prop_nodes: List[TextNode] = []
+
+        # Currently selected element.
+        self.__current_prop: int = 0
 
         # Open/close callbacks.
         self.__on_open = on_open
@@ -87,6 +150,16 @@ class PropEditorMenuNode(Node):
         if controllers.INPUT_CONTROLLER.get_start():
             self.toggle()
 
+        if self.__open:
+            if controllers.INPUT_CONTROLLER.get_menu_page_left():
+                self.__current_page -= 1
+                self.__current_page = self.__current_page % len(self.__prop_names)
+            if controllers.INPUT_CONTROLLER.get_menu_page_right():
+                self.__current_page += 1
+                self.__current_page = self.__current_page % len(self.__prop_names)
+
+            self.set_page(list(self.__prop_names.keys())[self.__current_page])
+
     def is_open(self) -> bool:
         return self.__open
     
@@ -99,7 +172,7 @@ class PropEditorMenuNode(Node):
     def open(self) -> None:
         self.__open = True
 
-        self.set_page(self.__current_page)
+        self.set_page(list(self.__prop_names.keys())[self.__current_page])
 
         self.__background = RectNode(
             x = 0.0,
@@ -129,18 +202,30 @@ class PropEditorMenuNode(Node):
             self.__on_close()
 
     def clear_page(self) -> None:
+        # Delete page title.
+        if self.__page_title is not None:
+            self.__page_title.delete()
+            self.__page_title = None
+
         # Delete any pre-existent prop icons.
-        for prop_icon in self.__current_page_props:
+        for prop_icon in self.__prop_nodes:
             prop_icon.delete()
 
-        self.__current_page_props = []
+        self.__prop_nodes = []
 
     def set_page(self, page: str) -> None:
         self.clear_page()
 
-        self.__current_page_props = [TextNode(
+        self.__page_title = EditorMenuTitleNode(
+            view_width = self.__view_width,
+            view_height = self.__view_height,
+            text = list(self.__prop_names.keys())[self.__current_page],
+            batch = self.__batch
+        )
+
+        self.__prop_nodes = [TextNode(
             x = 10,
-            y = self.__view_height - (10 + 20 * index),
+            y = self.__view_height - 30 - (20 * index),
             text = prop_name,
             font_name = "rughai",
             anchor_x = "left",

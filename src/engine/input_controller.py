@@ -104,8 +104,9 @@ class InputController:
         self.key_presses.clear()
         pass
 
-
-    # Player input.
+    # ----------------------------------------------------------------------
+    # Getters.
+    # ----------------------------------------------------------------------
     def get_modifier(self) -> bool:
         """
         Returns whether or not the modifier key is being pressed, either on controller or keyboard.
@@ -194,3 +195,9 @@ class InputController:
 
     def get_start(self) -> bool:
         return self.key_presses.get(pyglet.window.key.ENTER, False)
+
+    def get_menu_page_left(self) -> bool:
+        return self.key_presses.get(pyglet.window.key.Q, False)
+
+    def get_menu_page_right(self) -> bool:
+        return self.key_presses.get(pyglet.window.key.E, False)

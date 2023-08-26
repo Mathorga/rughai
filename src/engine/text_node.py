@@ -7,8 +7,9 @@ from engine.node import PositionNode
 class TextNode(PositionNode):
     def __init__(
         self,
-        x: float = 0,
-        y: float = 0,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
         text: str = "_content_",
         align: str = "center",
         anchor_x: str = "center",
@@ -31,6 +32,7 @@ class TextNode(PositionNode):
             text = text,
             x = x * GLOBALS[Builtins.SCALING],
             y = y * GLOBALS[Builtins.SCALING],
+            z = z,
             multiline = True,
             width = width * GLOBALS[Builtins.SCALING],
             height = height * GLOBALS[Builtins.SCALING] if height is not None else None,
