@@ -76,7 +76,7 @@ class EditorMenuTitleNode(PositionNode):
         self.__left_arrow = TextNode(
             x = self.x + 10,
             y = self.y,
-            text = "L",
+            text = "< (Q/L)",
             align = "left",
             anchor_x = "center",
             font_name = "rughai",
@@ -94,7 +94,7 @@ class EditorMenuTitleNode(PositionNode):
         self.__right_arrow = TextNode(
             x = self.x - 10,
             y = self.y,
-            text = "R",
+            text = "(E/R) >",
             align = "right",
             anchor_x = "center",
             font_name = "rughai",
@@ -132,7 +132,7 @@ class PropEditorMenuNode(Node):
         self.__page_title: Optional[EditorMenuTitleNode] = None
 
         # Elements in the current page.
-        self.__prop_nodes: List[TextNode] = []
+        self.__prop_entries: List[TextNode] = []
 
         # Currently selected element.
         self.__current_prop: int = 0
@@ -161,7 +161,7 @@ class PropEditorMenuNode(Node):
                 self.__current_page = self.__current_page % len(self.__prop_names)
 
             # Prop selection.
-            # TODO
+            self.__current_prop += controllers.INPUT_CONTROLLER.get_cursor_movement().x
 
             self.set_page(list(self.__prop_names.keys())[self.__current_page])
 
@@ -213,10 +213,10 @@ class PropEditorMenuNode(Node):
             self.__page_title = None
 
         # Delete any pre-existent prop icons.
-        for prop_icon in self.__prop_nodes:
+        for prop_icon in self.__prop_entries:
             prop_icon.delete()
 
-        self.__prop_nodes = []
+        self.__prop_entries = []
 
     def set_page(self, page: str) -> None:
         self.clear_page()
@@ -228,13 +228,13 @@ class PropEditorMenuNode(Node):
             batch = self.__batch
         )
 
-        self.__prop_nodes = [TextNode(
-            x = 10,
-            y = self.__view_height - 30 - (20 * index),
+        self.__prop_entries = [TextNode(
+            x = self.__view_width / 2 + ((index - self.__current_prop) * 50),
+            y = self.__view_height / 2,
             text = prop_name,
             font_name = "rughai",
-            anchor_x = "left",
-            align = "left",
+            anchor_x = "center",
+            align = "center",
             batch = self.__batch
         ) for index, prop_name in enumerate(self.__prop_names[page])]
 
