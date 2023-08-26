@@ -66,10 +66,13 @@ class PropEditorMenuNode(Node):
         self.__view_width = view_width
         self.__view_height = view_height
         self.__batch = batch
+
+        # Flag, defines whether the menu is open or close.
         self.__open = open
 
         self.__current_page = list(self.__prop_names.keys())[0]
         self.__current_page_props: List[TextNode] = []
+        self.__current_prop: Optional[str]
 
         # Open/close callbacks.
         self.__on_open = on_open
