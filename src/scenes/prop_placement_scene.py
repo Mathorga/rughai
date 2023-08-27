@@ -234,7 +234,7 @@ class PropEditorMenuNode(Node):
 
         self.__prop_entries = [TextNode(
             x = self.__view_width / 2 + ((index - self.__current_prop) * 50),
-            y = self.__view_height / 2,
+            y = 10,
             text = prop_name,
             font_name = "rughai",
             anchor_x = "center",
