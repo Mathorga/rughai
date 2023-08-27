@@ -86,6 +86,7 @@ class EditorMenuTitleNode(PositionNode):
             x = self.x,
             y = self.y,
             text = text,
+            color = (0xFF, 0xFF, 0xFF, 0xFF),
             align = "center",
             anchor_x = "center",
             font_name = "rughai",
@@ -190,10 +191,10 @@ class PropEditorMenuNode(Node):
             z = -100.0,
             width = self.__view_width,
             height = self.__view_height,
-            color = (0x83, 0x94, 0xC8),
+            color = (0x33, 0x33, 0x33),
             batch = self.__batch
         )
-        self.__background.set_opacity(0xAF)
+        self.__background.set_opacity(0xDD)
 
         # Open callback.
         if self.__on_open is not None:
@@ -242,6 +243,7 @@ class PropEditorMenuNode(Node):
             x = self.__view_width / 2 + ((index - self.__current_prop) * 50),
             y = 10,
             text = prop_name,
+            color = (0xFF, 0xFF, 0xFF, 0xFF) if self.__current_prop == index else (0x00, 0x00, 0x00, 0xFF),
             font_name = "rughai",
             anchor_x = "center",
             align = "center",
