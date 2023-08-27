@@ -1,3 +1,4 @@
+from turtle import width
 from typing import Callable, Optional, Sequence, Tuple, Union
 import pyglet
 import pyglet.math as pm
@@ -77,6 +78,7 @@ class SceneNode(Node):
             label = TextNode(
                 x = view_width // 2,
                 y = view_height - 5,
+                width = view_width,
                 color = (0xFF, 0xFF, 0xFF, 0xFF),
                 font_name = SETTINGS[Builtins.FONT_NAME],
                 text = title,

@@ -1,11 +1,12 @@
 from enum import Enum
 import json
 import os
-from typing import Callable, Dict, List, Optional, Text
+from turtle import width
+from typing import Callable, Dict, List, Optional, Text, Tuple
 import pyglet
 from engine import controllers
 
-from engine.prop_loader import PropLoader
+from engine.prop_loader import PropLoader, map_prop
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
 from engine.shapes.rect_node import RectNode
@@ -15,20 +16,19 @@ from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
 
 from clouds_node import CloudsNode
-from editor_cursor_node import EditorCursornode
+from map_cursor_node import MapCursornode
 
 class EditorAction(str, Enum):
     # Settings.
-    ADD = "add_editor_action"
-    EDIT = "edit_editor_action"
-    DELETE = "delete_editor_action"
+    INSERT = "INS"
+    DELETE = "DEL"
 
 class ActionSign(PositionNode):
     def __init__(
         self,
         x: float = 0.0,
         y: float = 0.0,
-        action: EditorAction = EditorAction.ADD,
+        action: EditorAction = EditorAction.INSERT,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -36,18 +36,57 @@ class ActionSign(PositionNode):
             y = y
         )
 
+        self.__batch = batch
+        self.__label: Optional[TextNode] = None
+
         self.action = action
-        
-        image = pyglet.resource.image(f"sprites/{action.value}.png")
-        image.anchor_x = 0
-        image.anchor_y = image.height
-        self.__sprite = SpriteNode(
-            resource = image,
-            x = x,
-            y = y,
-            z = 500,
-            batch = batch
-        )
+        self.visible = True
+
+    def __compute_text(self) -> str:
+        return f"(tab) {self.action.value}"
+
+    def __compute_color(self) -> Tuple[int, int, int, int]:
+        return (0xFF, 0x00, 0x00, 0xFF) if self.action == EditorAction.DELETE else (0x00, 0xFF, 0x00, 0xFF)
+
+    def update(self, dt: int) -> None:
+        super().update(dt)
+
+        # Only do stuff if visible.
+        if self.visible:
+            if controllers.INPUT_CONTROLLER.get_switch():
+                self.toggle()
+
+    def toggle(self) -> None:
+        if self.action == EditorAction.INSERT:
+            self.action = EditorAction.DELETE
+        else:
+            self.action = EditorAction.INSERT
+
+        self.__label.set_text(self.__compute_text())
+        self.__label.set_color(self.__compute_color())
+
+    def hide(self) -> None:
+        self.visible = False
+
+        if self.__label is not None:
+            self.__label.delete()
+            self.__label = None
+
+    def show(self) -> None:
+        self.visible = True
+
+        if self.__label is None:
+            self.__label = TextNode(
+                x = self.x,
+                y = self.y,
+                width = 0.0,
+                anchor_x = "left",
+                text = self.__compute_text(),
+                color = self.__compute_color(),
+                font_name = "rughai",
+                multiline = False,
+                batch = self.__batch
+            )
 
 class EditorMenuEntryNode(PositionNode):
     def __init__(
@@ -76,6 +115,7 @@ class EditorMenuTitleNode(PositionNode):
         self.__left_arrow = TextNode(
             x = self.x + 10,
             y = self.y,
+            width = view_width,
             text = "< (Q/L)",
             align = "left",
             anchor_x = "center",
@@ -85,6 +125,7 @@ class EditorMenuTitleNode(PositionNode):
         self.__text = TextNode(
             x = self.x,
             y = self.y,
+            width = view_width,
             text = text,
             color = (0xFF, 0xFF, 0xFF, 0xFF),
             align = "center",
@@ -95,6 +136,7 @@ class EditorMenuTitleNode(PositionNode):
         self.__right_arrow = TextNode(
             x = self.x - 10,
             y = self.y,
+            width = view_width,
             text = "(E/R) >",
             align = "right",
             anchor_x = "center",
@@ -134,6 +176,7 @@ class PropEditorMenuNode(Node):
 
         # Elements in the current page.
         self.__prop_texts: List[TextNode] = []
+        # self.__prop_icons: List[SpriteNode] = []
 
         # Currently selected element.
         self.__current_prop: int = 0
@@ -170,6 +213,12 @@ class PropEditorMenuNode(Node):
                 self.__current_prop = len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page]]) - 1
 
             self.set_page(list(self.__prop_names.keys())[self.__current_page])
+
+    def get_current_page(self) -> str:
+        return list(self.__prop_names.keys())[self.__current_page]
+
+    def get_current_prop(self) -> str:
+        return self.__prop_names[list(self.__prop_names.keys())[self.__current_page]][self.__current_prop]
 
     def is_open(self) -> bool:
         return self.__open
@@ -223,9 +272,11 @@ class PropEditorMenuNode(Node):
             self.__current_prop_icon.delete()
             self.__current_prop_icon = None
 
-        # Delete any pre-existent prop icons.
+        # Delete any pre-existent prop texts and icons.
         for prop_text in self.__prop_texts:
             prop_text.delete()
+        # for prop_icon in self.__prop_icons:
+        #     prop_icon.delete()
 
         self.__prop_texts = []
 
@@ -242,6 +293,7 @@ class PropEditorMenuNode(Node):
         self.__prop_texts = [TextNode(
             x = self.__view_width / 2 + ((index - self.__current_prop) * 50),
             y = 10,
+            width = self.__view_width,
             text = prop_name,
             color = (0xFF, 0xFF, 0xFF, 0xFF) if self.__current_prop == index else (0x00, 0x00, 0x00, 0xFF),
             font_name = "rughai",
@@ -249,6 +301,8 @@ class PropEditorMenuNode(Node):
             align = "center",
             batch = self.__batch
         ) for index, prop_name in enumerate(self.__prop_names[page])]
+
+        # self.__prop_icons = 
 
         current_page_name = list(self.__prop_names.keys())[self.__current_page]
         current_prop_name = list(self.__prop_names.values())[self.__current_page][self.__current_prop]
@@ -285,7 +339,7 @@ class PropPlacementScene(Node):
             title = source
         )
 
-        self.__props_map = self.__load_props_map(f"{pyglet.resource.path[0]}/props.json")
+        self.__prop_names = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
         self.__in_menu = False
 
         # Define a tilemap.
@@ -303,9 +357,20 @@ class PropPlacementScene(Node):
             (tilemap_width / 2) * self.__tile_size,
             (tilemap_height / 2) * self.__tile_size
         )
+
+        # TODO Replace with lines.
+        cursor_image = pyglet.resource.image("sprites/extras/battery/battery_open.png")
+        cursor_image.anchor_x = cursor_image.width / 2
+        cursor_image.anchor_y = 0
+        cursor_sprite = SpriteNode(
+            resource = cursor_image,
+            batch = self.__scene.world_batch
+        )
         cam_target = PositionNode()
-        self.__cursor = EditorCursornode(
-            tile_size = self.__tile_size,
+        self.__cursor = MapCursornode(
+            tile_width = self.__tile_size,
+            tile_height = self.__tile_size,
+            child = cursor_sprite,
             cam_target = cam_target,
             x = cursor_position[0],
             y = cursor_position[1],
@@ -313,22 +378,23 @@ class PropPlacementScene(Node):
         )
 
         self.__menu = PropEditorMenuNode(
-            prop_names = self.__props_map,
+            prop_names = self.__prop_names,
             view_width = view_width,
             view_height = view_height,
             open = self.__in_menu,
             batch = self.__scene.ui_batch,
-            on_open = lambda: self.__cursor.disable_controls(),
-            on_close = lambda: self.__cursor.enable_controls()
+            on_open = self.__on_menu_open,
+            on_close = self.__on_menu_close
         )
 
         # Action sign.
-        action_sign = ActionSign(
+        self.__action_sign = ActionSign(
             x = self.__tile_size,
             y = view_height - self.__tile_size,
             action = EditorAction.DELETE,
             batch = self.__scene.ui_batch
         )
+        self.__action_sign.show()
 
         # Clouds.
         clouds = CloudsNode(
@@ -336,19 +402,19 @@ class PropPlacementScene(Node):
             batch = self.__scene.world_batch
         )
 
-        # Props.
-        props = PropLoader.fetch_props(
-            source = f"propmaps/{source}",
-            batch = self.__scene.world_batch
+        # Fetch current prop maps.
+        self.__prop_maps = PropLoader.fetch_prop_maps(
+            source = f"propmaps/{source}"
         )
+        self.__props: List[PositionNode] = []
+        self.__refresh_props()
 
         self.__scene.set_cam_bounds(cam_bounds)
 
         self.__scene.add_children(tilemaps)
         self.__scene.add_child(cam_target, cam_target = True)
-        self.__scene.add_child(action_sign)
+        self.__scene.add_child(self.__action_sign)
         self.__scene.add_child(clouds)
-        self.__scene.add_children(props)
         self.__scene.add_child(self.__cursor)
         self.__scene.add_child(self.__menu)
 
@@ -357,6 +423,17 @@ class PropPlacementScene(Node):
             self.__scene.draw()
 
     def update(self, dt) -> None:
+        if not self.__menu.is_open():
+            if controllers.INPUT_CONTROLLER.get_interaction():
+                if self.__action_sign.action == EditorAction.INSERT:
+                    # Add the currently selected prop if the interaction button was pressed.
+                    if self.__menu.get_current_prop() not in list(self.__prop_maps.keys()):
+                        self.__prop_maps[self.__menu.get_current_prop()] = set()
+                    self.__prop_maps[self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
+
+                    # Refresh props to apply changes.
+                    self.__refresh_props()
+
         if self.__scene is not None:
             self.__scene.update(dt)
 
@@ -364,7 +441,24 @@ class PropPlacementScene(Node):
         if self.__scene is not None:
             self.__scene.delete()
 
-    def __load_props_map(self, source: str) -> Dict[str, List[str]]:
+    def __refresh_props(self) -> None:
+        # Delete all existing props.
+        for prop in self.__props:
+            if prop is not None:
+                prop.delete()
+        self.__props.clear()
+
+        # Recreate all of them starting from prop maps.
+        for prop_name in list(self.__prop_maps.keys()):
+            for position in self.__prop_maps[prop_name]:
+                self.__props.append(map_prop(
+                    prop_name,
+                    x = position[0] * self.__tile_size + self.__tile_size / 2,
+                    y = position[1] * self.__tile_size,
+                    batch = self.__scene.world_batch
+                ))
+
+    def __load_prop_names(self, source: str) -> Dict[str, List[str]]:
         data: Dict[str, List[str]]
 
         # Load JSON file.
@@ -372,3 +466,11 @@ class PropPlacementScene(Node):
             data = json.load(content)
 
         return data
+
+    def __on_menu_open(self) -> None:
+        self.__cursor.disable_controls()
+        self.__action_sign.hide()
+
+    def __on_menu_close(self) -> None:
+        self.__cursor.enable_controls()
+        self.__action_sign.show()

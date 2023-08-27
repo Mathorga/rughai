@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Dict, List, Optional, Set, Tuple
 import pyglet
 from PIL import Image
 
@@ -18,43 +18,43 @@ def map_prop(
     y: float,
     batch: Optional[pyglet.graphics.Batch] = None
 ) -> Optional[PositionNode]:
-    if prop_name == "r_veg_0":
+    if prop_name == "r_veg_0" or prop_name == "veg_0":
         return RVeg0(
             x = x,
             y = y,
             batch = batch
         )
-    elif prop_name == "r_veg_1":
+    elif prop_name == "r_veg_1" or prop_name == "veg_1":
         return RVeg1(
             x = x,
             y = y,
             batch = batch
         )
-    elif prop_name == "r_grass_0":
+    elif prop_name == "r_grass_0" or prop_name == "grass_0":
         return RGrass0(
             x = x,
             y = y,
             batch = batch
         )
-    elif prop_name == "r_grass_1":
+    elif prop_name == "r_grass_1" or prop_name == "grass_1":
         return RGrass1(
             x = x,
             y = y,
             batch = batch
         )
-    elif prop_name == "r_tree_l":
+    elif prop_name == "r_tree_l" or prop_name == "tree_l":
         return RTreeL(
             x = x,
             y = y,
             batch = batch
         )
-    elif prop_name == "r_tree_m":
+    elif prop_name == "r_tree_m" or prop_name == "tree_m":
         return RTreeM(
             x = x,
             y = y,
             batch = batch
         )
-    elif prop_name == "r_tree_s":
+    elif prop_name == "r_tree_s" or prop_name == "tree_s":
         return RTreeS(
             x = x,
             y = y,
@@ -63,20 +63,21 @@ def map_prop(
 
 class PropLoader:
     @staticmethod
-    def fetch_props(
+    def fetch_prop_list(
         source: str,
         tile_width: int = 8,
         tile_height: int = 8,
         batch: Optional[pyglet.graphics.Batch] = None
-    ) -> list:
-        prop_set = []
+    ) -> List:
+        prop_list = []
 
         abs_path = os.path.join(pyglet.resource.path[0], source)
 
         # Iterate over files in the source dir.
         for file_name in os.listdir(abs_path):
             file_path = os.path.join(abs_path, file_name)
-            # checking if it is a file
+
+            # Make sure the current file is actually a file (and not a directory).
             if os.path.isfile(file_path):
                 print(f"Loading file {file_path}")
 
@@ -96,6 +97,38 @@ class PropLoader:
                             )
 
                             if prop is not None:
-                                prop_set.append(prop)
+                                prop_list.append(prop)
 
-        return prop_set
+        return prop_list
+
+    @staticmethod
+    def fetch_prop_maps(source: str) -> Dict[str, Set[Tuple[int, int]]]:
+        """
+        Returns a dictionary containing every found prop name as keys and a list of positions as values.
+        """
+
+        prop_list: Dict[str, Set[Tuple[int, int]]] = {}
+
+        abs_path = os.path.join(pyglet.resource.path[0], source)
+
+        # Iterate over files in the source dir.
+        for file_name in os.listdir(abs_path):
+            file_path = os.path.join(abs_path, file_name)
+
+            # Make sure the current file is actually a file (and not a directory).
+            if os.path.isfile(file_path):
+                print(f"Loading file {file_path}")
+
+                propmap = Image.open(file_path)
+                propmap_data = propmap.load()
+
+                prop_list[file_name.split(".")[0]] = set()
+
+                for y in range(propmap.height):
+                    for x in range(propmap.width):
+
+                        # Only keep pixels with alpha greater than 50% (0x7F = 127).
+                        if propmap_data[x, y][3] > 0x7F:
+                            prop_list[file_name.split(".")[0]].add((x, propmap.height - 1 - y))
+
+        return prop_list
