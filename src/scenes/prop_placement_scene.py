@@ -132,16 +132,17 @@ class PropEditorMenuNode(Node):
         self.__page_title: Optional[EditorMenuTitleNode] = None
 
         # Elements in the current page.
-        self.__prop_entries: List[TextNode] = []
+        self.__prop_texts: List[TextNode] = []
 
         # Currently selected element.
         self.__current_prop: int = 0
+        self.__current_prop_icon: Optional[SpriteNode] = None
 
         # Open/close callbacks.
         self.__on_open = on_open
         self.__on_close = on_close
 
-        self.__background: Optional[RectNode]
+        self.__background: Optional[RectNode] = None
 
     def update(self, dt: int) -> None:
         super().update(dt)
@@ -186,6 +187,7 @@ class PropEditorMenuNode(Node):
         self.__background = RectNode(
             x = 0.0,
             y = 0.0,
+            z = -100.0,
             width = self.__view_width,
             height = self.__view_height,
             color = (0x83, 0x94, 0xC8),
@@ -216,11 +218,15 @@ class PropEditorMenuNode(Node):
             self.__page_title.delete()
             self.__page_title = None
 
-        # Delete any pre-existent prop icons.
-        for prop_icon in self.__prop_entries:
-            prop_icon.delete()
+        if self.__current_prop_icon is not None:
+            self.__current_prop_icon.delete()
+            self.__current_prop_icon = None
 
-        self.__prop_entries = []
+        # Delete any pre-existent prop icons.
+        for prop_text in self.__prop_texts:
+            prop_text.delete()
+
+        self.__prop_texts = []
 
     def set_page(self, page: str) -> None:
         self.clear_page()
@@ -232,7 +238,7 @@ class PropEditorMenuNode(Node):
             batch = self.__batch
         )
 
-        self.__prop_entries = [TextNode(
+        self.__prop_texts = [TextNode(
             x = self.__view_width / 2 + ((index - self.__current_prop) * 50),
             y = 10,
             text = prop_name,
@@ -241,6 +247,19 @@ class PropEditorMenuNode(Node):
             align = "center",
             batch = self.__batch
         ) for index, prop_name in enumerate(self.__prop_names[page])]
+
+        current_page_name = list(self.__prop_names.keys())[self.__current_page]
+        current_prop_name = list(self.__prop_names.values())[self.__current_page][self.__current_prop]
+        icon = pyglet.resource.image(f"sprites/prop/{current_page_name}/{current_prop_name}/{current_prop_name}_icon.png")
+        icon.anchor_x = icon.width / 2
+        icon.anchor_y = icon.height / 2
+        self.__current_prop_icon = SpriteNode(
+            resource = icon,
+            x = self.__view_width / 2,
+            y = self.__view_height / 2,
+            z = 100.0,
+            batch = self.__batch
+        )
 
 class PropPlacementScene(Node):
     def __init__(
