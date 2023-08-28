@@ -362,19 +362,28 @@ class PropPlacementScene(Node):
         cursor_image = pyglet.resource.image("sprites/extras/battery/battery_open.png")
         cursor_image.anchor_x = cursor_image.width / 2
         cursor_image.anchor_y = 0
-        cursor_sprite = SpriteNode(
+        cursor_child = SpriteNode(
             resource = cursor_image,
+            batch = self.__scene.world_batch
+        )
+        cursor_child = RectNode(
+            x = cursor_position[0],
+            y = cursor_position[1],
+            width = self.__tile_size,
+            height = self.__tile_size,
+            anchor_x = self.__tile_size / 2,
+            anchor_y = self.__tile_size / 2,
+            color = (0xFF, 0xFF, 0x33, 0x7F),
             batch = self.__scene.world_batch
         )
         cam_target = PositionNode()
         self.__cursor = MapCursornode(
             tile_width = self.__tile_size,
             tile_height = self.__tile_size,
-            child = cursor_sprite,
+            child = cursor_child,
             cam_target = cam_target,
-            x = cursor_position[0],
-            y = cursor_position[1],
-            batch = self.__scene.world_batch
+            x = cursor_position[0] + self.__tile_size / 2,
+            y = cursor_position[1] + self.__tile_size / 2
         )
 
         self.__menu = PropEditorMenuNode(
@@ -430,9 +439,12 @@ class PropPlacementScene(Node):
                     if self.__menu.get_current_prop() not in list(self.__prop_maps.keys()):
                         self.__prop_maps[self.__menu.get_current_prop()] = set()
                     self.__prop_maps[self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
+                else:
+                    if self.__menu.get_current_prop() in list(self.__prop_maps.keys()):
+                        self.__prop_maps[self.__menu.get_current_prop()].discard(self.__cursor.get_map_position())
 
-                    # Refresh props to apply changes.
-                    self.__refresh_props()
+                # Refresh props to apply changes.
+                self.__refresh_props()
 
         if self.__scene is not None:
             self.__scene.update(dt)

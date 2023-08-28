@@ -17,8 +17,7 @@ class MapCursornode(PositionNode):
         cam_target_offset: tuple = (0.0, 8.0),
         child: Optional[PositionNode] = None,
         x: float = 0.0,
-        y: float = 0.0,
-        batch: Optional[pyglet.graphics.Batch] = None
+        y: float = 0.0
     ) -> None:
         super().__init__(
             x = x,
