@@ -86,12 +86,12 @@ class RugHaiSceneEditor:
             z_far = 1000
         )
 
-        # Benchmark measures render time.
-        self._window.clear()
-
         # Scale textures using nearest neighbor filtering.
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+
+        # Benchmark measures render time.
+        self._window.clear()
 
         # Upscaler handles maintaining the wanted output resolution.
         with self._upscaler:
@@ -106,10 +106,6 @@ class RugHaiSceneEditor:
         controllers.COLLISION_CONTROLLER.update(dt)
 
     def run(self) -> None:
-        # Scale textures using nearest neighbor filtering.
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-
         pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Builtins.TARGET_FPS])
         # pyglet.clock.schedule(self.update)
         pyglet.app.run()

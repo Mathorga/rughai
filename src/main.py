@@ -173,6 +173,10 @@ class RugHai:
             z_far = 1000
         )
 
+        # Scale textures using nearest neighbor filtering.
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+
         # Benchmark measures render time.
         with self._render_bench:
             self._window.clear()
@@ -199,10 +203,6 @@ class RugHai:
             controllers.COLLISION_CONTROLLER.update(dt)
 
     def run(self) -> None:
-        # Scale textures using nearest neighbor filtering.
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-
         pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Builtins.TARGET_FPS])
         # pyglet.clock.schedule(self.update)
         pyglet.app.run()

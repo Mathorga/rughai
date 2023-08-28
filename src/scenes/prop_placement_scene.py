@@ -16,7 +16,7 @@ from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
 
 from clouds_node import CloudsNode
-from map_cursor_node import MapCursornode
+from engine.map_cursor_node import MapCursornode
 
 class EditorAction(str, Enum):
     # Settings.

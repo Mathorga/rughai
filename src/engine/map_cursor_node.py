@@ -4,7 +4,6 @@ import pyglet
 import pyglet.math as pm
 
 from engine.node import PositionNode
-from engine.sprite_node import SpriteNode
 import engine.controllers as controllers
 
 class MapCursornode(PositionNode):
