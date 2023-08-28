@@ -440,8 +440,9 @@ class PropPlacementScene(Node):
                         self.__prop_maps[self.__menu.get_current_prop()] = set()
                     self.__prop_maps[self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
                 else:
-                    if self.__menu.get_current_prop() in list(self.__prop_maps.keys()):
-                        self.__prop_maps[self.__menu.get_current_prop()].discard(self.__cursor.get_map_position())
+                    # Delete anything in the current map position, regardless of the selected prop.
+                    for prop_set in list(self.__prop_maps.values()):
+                        prop_set.discard(self.__cursor.get_map_position())
 
                 # Refresh props to apply changes.
                 self.__refresh_props()
