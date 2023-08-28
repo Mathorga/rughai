@@ -89,6 +89,10 @@ class RugHaiSceneEditor:
         # Benchmark measures render time.
         self._window.clear()
 
+        # Scale textures using nearest neighbor filtering.
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+
         # Upscaler handles maintaining the wanted output resolution.
         with self._upscaler:
             self._active_scene.draw()
