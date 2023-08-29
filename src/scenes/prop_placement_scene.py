@@ -402,12 +402,6 @@ class PropPlacementScene(Node):
         )
         self.__action_sign.show()
 
-        # Clouds.
-        clouds = CloudsNode(
-            bounds = cam_bounds,
-            batch = self.__scene.world_batch
-        )
-
         # Fetch current prop maps.
         self.__prop_sets = PropLoader.fetch_prop_sets(
             source = f"propmaps/{scene_name}"
@@ -420,7 +414,6 @@ class PropPlacementScene(Node):
         self.__scene.add_children(tilemaps)
         self.__scene.add_child(cam_target, cam_target = True)
         self.__scene.add_child(self.__action_sign)
-        self.__scene.add_child(clouds)
         self.__scene.add_child(self.__cursor)
         self.__scene.add_child(self.__menu)
 
@@ -444,7 +437,7 @@ class PropPlacementScene(Node):
                 # Refresh props to apply changes.
                 self.__refresh_props()
                 PropLoader.save_prop_sets(
-                    dest = f"propmaps/${self.__scene_name}",
+                    dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
                     map_width = self.__tilemap_width,
                     map_height = self.__tilemap_height,
                     prop_sets = self.__prop_sets
