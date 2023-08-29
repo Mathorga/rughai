@@ -51,7 +51,7 @@ class RugHaiSceneEditor:
             window = self._window,
             view_width = SETTINGS[Builtins.VIEW_WIDTH],
             view_height = SETTINGS[Builtins.VIEW_HEIGHT],
-            source = sys.argv[1]
+            scene_name = sys.argv[1]
         )
 
     def __create_window(self) -> pyglet.window.Window:

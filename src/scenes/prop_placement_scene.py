@@ -319,12 +319,13 @@ class PropPlacementScene(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        source: str,
+        scene_name: str,
         on_ended: Optional[Callable[[dict], None]] = None
     ):
         super().__init__()
         self.__window = window
         self.__on_ended = on_ended
+        self.__scene_name = scene_name
 
         # Define the scene.
         self.__scene = SceneNode(
@@ -332,7 +333,7 @@ class PropPlacementScene(Node):
             view_width = view_width,
             view_height = view_height,
             cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
-            title = source
+            title = scene_name
         )
 
         self.__prop_names = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
@@ -340,18 +341,18 @@ class PropPlacementScene(Node):
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
-            source = f"tilemaps/{source}.tmx",
+            source = f"tilemaps/{scene_name}.tmx",
             batch = self.__scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
-        tilemap_width = tilemaps[0].map_width
-        tilemap_height = tilemaps[0].map_height
+        self.__tilemap_width = tilemaps[0].map_width
+        self.__tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
 
         # Cursor.
         cursor_position = (
-            (tilemap_width / 2) * self.__tile_size,
-            (tilemap_height / 2) * self.__tile_size
+            (self.__tilemap_width / 2) * self.__tile_size,
+            (self.__tilemap_height / 2) * self.__tile_size
         )
 
         # TODO Replace with lines.
@@ -408,8 +409,8 @@ class PropPlacementScene(Node):
         )
 
         # Fetch current prop maps.
-        self.__prop_maps = PropLoader.fetch_prop_maps(
-            source = f"propmaps/{source}"
+        self.__prop_sets = PropLoader.fetch_prop_sets(
+            source = f"propmaps/{scene_name}"
         )
         self.__props: List[PositionNode] = []
         self.__refresh_props()
@@ -432,16 +433,22 @@ class PropPlacementScene(Node):
             if controllers.INPUT_CONTROLLER.get_interaction():
                 if self.__action_sign.action == EditorAction.INSERT:
                     # Add the currently selected prop if the interaction button was pressed.
-                    if self.__menu.get_current_prop() not in list(self.__prop_maps.keys()):
-                        self.__prop_maps[self.__menu.get_current_prop()] = set()
-                    self.__prop_maps[self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
+                    if self.__menu.get_current_prop() not in list(self.__prop_sets.keys()):
+                        self.__prop_sets[self.__menu.get_current_prop()] = set()
+                    self.__prop_sets[self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
                 else:
                     # Delete anything in the current map position, regardless of the selected prop.
-                    for prop_set in list(self.__prop_maps.values()):
+                    for prop_set in list(self.__prop_sets.values()):
                         prop_set.discard(self.__cursor.get_map_position())
 
                 # Refresh props to apply changes.
                 self.__refresh_props()
+                PropLoader.save_prop_sets(
+                    dest = f"propmaps/${self.__scene_name}",
+                    map_width = self.__tilemap_width,
+                    map_height = self.__tilemap_height,
+                    prop_sets = self.__prop_sets
+                )
 
         if self.__scene is not None:
             self.__scene.update(dt)
@@ -458,8 +465,8 @@ class PropPlacementScene(Node):
         self.__props.clear()
 
         # Recreate all of them starting from prop maps.
-        for prop_name in list(self.__prop_maps.keys()):
-            for position in self.__prop_maps[prop_name]:
+        for prop_name in list(self.__prop_sets.keys()):
+            for position in self.__prop_sets[prop_name]:
                 self.__props.append(map_prop(
                     prop_name,
                     x = position[0] * self.__tile_size + self.__tile_size / 2,
