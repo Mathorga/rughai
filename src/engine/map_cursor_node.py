@@ -87,7 +87,7 @@ class MapCursornode(PositionNode):
             # Allow the player to look around even if they're rolling.
             self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
-            self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement().limit(1.0)
+            self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()
 
             # Trigger dialogs' next line.
             interact = controllers.INPUT_CONTROLLER.get_interaction()
@@ -96,8 +96,8 @@ class MapCursornode(PositionNode):
 
     def __move(self, dt):
         self.set_position((
-            self.x + self.__move_input.x * self.__tile_width,
-            self.y + self.__move_input.y * self.__tile_height
+            self.x + int(self.__move_input.x * self.__tile_width),
+            self.y + int(self.__move_input.y * self.__tile_height)
         ))
 
     def __update_child(self, dt):
