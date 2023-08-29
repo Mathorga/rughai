@@ -176,7 +176,6 @@ class PropEditorMenuNode(Node):
 
         # Elements in the current page.
         self.__prop_texts: List[TextNode] = []
-        # self.__prop_icons: List[SpriteNode] = []
 
         # Currently selected element.
         self.__current_prop: int = 0
@@ -275,8 +274,6 @@ class PropEditorMenuNode(Node):
         # Delete any pre-existent prop texts and icons.
         for prop_text in self.__prop_texts:
             prop_text.delete()
-        # for prop_icon in self.__prop_icons:
-        #     prop_icon.delete()
 
         self.__prop_texts = []
 
@@ -302,20 +299,19 @@ class PropEditorMenuNode(Node):
             batch = self.__batch
         ) for index, prop_name in enumerate(self.__prop_names[page])]
 
-        # self.__prop_icons = 
-
         current_page_name = list(self.__prop_names.keys())[self.__current_page]
-        current_prop_name = list(self.__prop_names.values())[self.__current_page][self.__current_prop]
-        icon = pyglet.resource.image(f"sprites/prop/{current_page_name}/{current_prop_name}/{current_prop_name}_icon.png")
-        icon.anchor_x = icon.width / 2
-        icon.anchor_y = icon.height / 2
-        self.__current_prop_icon = SpriteNode(
-            resource = icon,
-            x = self.__view_width / 2,
-            y = self.__view_height / 2,
-            z = 100.0,
-            batch = self.__batch
-        )
+        if len(list(self.__prop_names.values())[self.__current_page]) > 0:
+            current_prop_name = list(self.__prop_names.values())[self.__current_page][self.__current_prop]
+            icon = pyglet.resource.image(f"sprites/prop/{current_page_name}/{current_prop_name}/{current_prop_name}_icon.png")
+            icon.anchor_x = icon.width / 2
+            icon.anchor_y = icon.height / 2
+            self.__current_prop_icon = SpriteNode(
+                resource = icon,
+                x = self.__view_width / 2,
+                y = self.__view_height / 2,
+                z = 100.0,
+                batch = self.__batch
+            )
 
 class PropPlacementScene(Node):
     def __init__(
