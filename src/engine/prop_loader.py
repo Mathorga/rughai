@@ -156,7 +156,7 @@ class PropLoader:
             draw = ImageDraw.Draw(propmap)
             for position in prop_sets[prop_name]:
                 draw.point(
-                    (position[0], map_height - position[1]),
+                    (position[0], map_height - 1 - position[1]),
                     fill = (0xFF, 0xFF, 0x00, 0xFF)
                 )
 
