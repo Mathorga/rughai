@@ -9,6 +9,7 @@ from engine import controllers
 from engine.prop_loader import PropLoader, map_prop
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
+from engine.shapes.line_node import LineNode
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
@@ -409,7 +410,40 @@ class PropPlacementScene(Node):
         self.__props: List[PositionNode] = []
         self.__refresh_props()
 
-        self.__scene.set_cam_bounds(cam_bounds)
+        self.__bound_lines = [
+            LineNode(
+                x = 0.0,
+                y = 0.0,
+                delta_x = (self.__tilemap_width) * self.__tile_size,
+                delta_y = 0.0,
+                color = (0xFF, 0xFF, 0x00, 0x7F),
+                batch = self.__scene.world_batch
+            ),
+            LineNode(
+                x = self.__tilemap_width * self.__tile_size,
+                y = 0.0,
+                delta_x = 0.0,
+                delta_y = self.__tilemap_height * self.__tile_size,
+                color = (0xFF, 0xFF, 0x00, 0x7F),
+                batch = self.__scene.world_batch
+            ),
+            LineNode(
+                x = 0.0,
+                y = self.__tilemap_height * self.__tile_size,
+                delta_x = self.__tilemap_width * self.__tile_size,
+                delta_y = 0.0,
+                color = (0xFF, 0xFF, 0x00, 0x7F),
+                batch = self.__scene.world_batch
+            ),
+            LineNode(
+                x = 0.0,
+                y = 0.0,
+                delta_x = 0.0,
+                delta_y = self.__tilemap_height * self.__tile_size,
+                color = (0xFF, 0xFF, 0x00, 0x7F),
+                batch = self.__scene.world_batch
+            )
+        ]
 
         self.__scene.add_children(tilemaps)
         self.__scene.add_child(cam_target, cam_target = True)
