@@ -124,9 +124,9 @@ class TilemapNode(PositionNode):
         # Compute bounds.
         self.bounds = Bounds(
             bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * tileset.tile_height,
-            right = (map_width - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_width,
+            right = (map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_width,
             left = SETTINGS[Builtins.TILEMAP_BUFFER] * tileset.tile_width,
-            top = (map_height - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_height
+            top = (map_height - SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_height
         )
 
     def delete(self) -> None:
