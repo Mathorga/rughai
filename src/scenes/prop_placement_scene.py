@@ -220,6 +220,15 @@ class PropEditorMenuNode(Node):
     def get_current_prop(self) -> str:
         return self.__prop_names[list(self.__prop_names.keys())[self.__current_page]][self.__current_prop]
 
+    def get_current_image(self) -> pyglet.image.TextureRegion:
+        current_page_name = self.get_current_page()
+        current_prop_name = self.get_current_prop()
+        icon = pyglet.resource.image(f"sprites/prop/{current_page_name}/{current_prop_name}/{current_prop_name}_icon.png")
+        icon.anchor_x = icon.width / 2
+        icon.anchor_y = icon.height / 2
+
+        return icon
+
     def is_open(self) -> bool:
         return self.__open
     
@@ -300,12 +309,8 @@ class PropEditorMenuNode(Node):
             batch = self.__batch
         ) for index, prop_name in enumerate(self.__prop_names[page])]
 
-        current_page_name = list(self.__prop_names.keys())[self.__current_page]
         if len(list(self.__prop_names.values())[self.__current_page]) > 0:
-            current_prop_name = list(self.__prop_names.values())[self.__current_page][self.__current_prop]
-            icon = pyglet.resource.image(f"sprites/prop/{current_page_name}/{current_prop_name}/{current_prop_name}_icon.png")
-            icon.anchor_x = icon.width / 2
-            icon.anchor_y = icon.height / 2
+            icon = self.get_current_image()
             self.__current_prop_icon = SpriteNode(
                 resource = icon,
                 x = self.__view_width / 2,
@@ -517,3 +522,18 @@ class PropPlacementScene(Node):
     def __on_menu_close(self) -> None:
         self.__cursor.enable_controls()
         self.__action_sign.show()
+
+        # self.__cursor.set_child(
+        #     map_prop(
+        #         self.__menu.get_current_prop(),
+        #         x = self.__cursor.x,
+        #         y = self.__cursor.y,
+        #         batch = self.__scene.world_batch
+        #     )
+        #     # SpriteNode(
+        #     #     resource = self.__menu.get_current_image(),
+        #     #     x = self.__cursor.x,
+        #     #     y = self.__cursor.y,
+        #     #     batch = self.__scene.world_batch
+        #     # )
+        # )

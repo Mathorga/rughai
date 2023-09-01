@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 import pyglet
 
 from engine.collision.collision_shape import CollisionRect
@@ -50,6 +50,10 @@ class RTreeL(PositionNode):
             ],
             batch = batch
         )
+
+    def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
+        super().set_position(position, z)
+        self.prop_node.set_position(position, z)
 
     def update(self, dt: int) -> None:
         self.prop_node.update(dt)
