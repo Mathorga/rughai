@@ -16,7 +16,7 @@ class RTreeM(PositionNode):
     ) -> None:
         super().__init__(x, y, z)
 
-        self.__idle_0_anim = pyglet.image.Animation.from_image_sequence(sequence = [pyglet.resource.image("sprites/prop/rughai/tree_m/tree_m_idle_0.png")], duration = 1.0)
+        self.__idle_0_anim = pyglet.resource.animation(name = "sprites/prop/rughai/tree_m/tree_m_idle_0.gif")
         self.__idle_1_anim = pyglet.resource.animation(name = "sprites/prop/rughai/tree_m/tree_m_idle_1.gif")
         animation_set_anchor(
             animation = self.__idle_1_anim,
