@@ -38,19 +38,31 @@ def map_prop(
         #     batch = batch
         # )
         return IdlePropNode(
-            source = "prop/grass_0.json",
+            source = "prop/rughai/grass_0.json",
             x = x,
             y = y,
             batch = batch
         )
     elif prop_name == "r_grass_1" or prop_name == "grass_1":
-        return RGrass1(
+        # return RGrass1(
+        #     x = x,
+        #     y = y,
+        #     batch = batch
+        # )
+        return IdlePropNode(
+            source = "prop/rughai/grass_1.json",
             x = x,
             y = y,
             batch = batch
         )
     elif prop_name == "r_tree_l" or prop_name == "tree_l":
-        return RTreeL(
+        # return RTreeL(
+        #     x = x,
+        #     y = y,
+        #     batch = batch
+        # )
+        return IdlePropNode(
+            source = "prop/rughai/tree_l.json",
             x = x,
             y = y,
             batch = batch
@@ -159,7 +171,7 @@ class PropLoader:
                 size = (map_width, map_height)
             )
 
-            # TODO Populate the propmap.
+            # Populate the propmap.
             draw = ImageDraw.Draw(propmap)
             for position in prop_sets[prop_name]:
                 draw.point(
@@ -167,5 +179,5 @@ class PropLoader:
                     fill = (0xFF, 0xFF, 0x00, 0xFF)
                 )
 
-            # Save the generate propmap to file.
+            # Save the generated propmap to file.
             propmap.save(f"{dest}/{prop_name}.png")

@@ -89,6 +89,23 @@ class PropNode(PositionNode):
             self.__sprite.set_image(self.sec_idle_anims[random.randint(0, len(self.sec_idle_anims) - 1)])
 
 class IdlePropNode(PositionNode):
+    """
+        Generic idle prop node.
+        Takes the path to a json definition file as input.
+        The definition file is structured as follows:
+
+        sprites_dir: directory containing all the prop's sprites, relative to the pyglet resources dir.
+        idle_animations: array of all idle animation files. The first one is used as main, while all the othes as secondary.
+        idle_ratio: ratio between main and secondary idle animations.
+        intersect_animations: array of all intersect animation files.
+        interact_animations:
+        hit_animations:
+        anchor_x:
+        anchor_y:
+        collider:
+    }
+    """
+
     def __init__(
         self,
         source: str,
@@ -113,17 +130,19 @@ class IdlePropNode(PositionNode):
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
 
-        # Load all animations.
+        # Load all idle animations.
         if "sprites_dir" in data.keys():
-            abs_path = f"{pyglet.resource.path[0]}/{data['sprites_dir']}"
-            # Iterate over files in the source dir.
-            for file_name in os.listdir(abs_path):
-                file_path = os.path.join(abs_path, file_name)
-
-                # Make sure the current file is actually a file (and not a directory).
-                if os.path.isfile(file_path) and ".gif" in file_path:
-                    anim = pyglet.resource.animation(f"{data['sprites_dir']}/{file_name}")
+            if "idle_animations" in data.keys():
+                # Iterate over idle animation files in the source dir.
+                for idle_anim_name in data["idle_animations"]:
+                    anim = pyglet.resource.animation(f"{data['sprites_dir']}/{idle_anim_name}.gif")
                     self.__idle_animations.append(anim)
+
+            if "intersect_animations" in data.keys():
+                pass
+
+            if "interact_animations" in data.keys():
+                pass
 
         if "anchor_x" in data.keys() and "anchor_y" in data.keys():
             anchor_x = data["anchor_x"]
@@ -143,7 +162,7 @@ class IdlePropNode(PositionNode):
                 x = x,
                 y = y,
                 collision_type = CollisionType.STATIC,
-                tags = [collision_tags.PLAYER_COLLISION],
+                tags = data["collider"]["tags"],
                 shapes = [
                     CollisionRect(
                         x = x + data["collider"]["offset_x"],
