@@ -3,7 +3,7 @@ import pyglet
 
 from engine.node import PositionNode
 from engine.utils import animation_set_anchor
-from props.prop_node import IdlePropNode, PropNode
+from props.prop_node import PropNode
 
 class RGrass0(PositionNode):
     def __init__(
@@ -37,9 +37,6 @@ class RGrass0(PositionNode):
                 self.__idle_1_anim
             ],
             batch = batch
-        )
-        IdlePropNode(
-            source = "prop/grass_0.json"
         )
 
     def set_position(self, position: Tuple[float, float], z: Optional[float] = None):

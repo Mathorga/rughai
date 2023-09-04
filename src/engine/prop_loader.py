@@ -159,7 +159,7 @@ class PropLoader:
                 size = (map_width, map_height)
             )
 
-            # TODO Populate the propmap.
+            # Populate the propmap.
             draw = ImageDraw.Draw(propmap)
             for position in prop_sets[prop_name]:
                 draw.point(
@@ -167,5 +167,5 @@ class PropLoader:
                     fill = (0xFF, 0xFF, 0x00, 0xFF)
                 )
 
-            # Save the generate propmap to file.
+            # Save the generated propmap to file.
             propmap.save(f"{dest}/{prop_name}.png")
