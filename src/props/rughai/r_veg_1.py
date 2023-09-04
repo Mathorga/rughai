@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 import pyglet
 
 from engine.node import PositionNode
@@ -15,7 +15,7 @@ class RVeg1(PositionNode):
     ) -> None:
         super().__init__(x, y, z)
 
-        self.__idle_0_anim = pyglet.image.Animation.from_image_sequence([pyglet.resource.image("sprites/prop/rughai/veg_1/veg_1_idle_0.png")], 1.0)
+        self.__idle_0_anim = pyglet.resource.animation("sprites/prop/rughai/veg_1/veg_1_idle_0.gif")
         self.__idle_1_anim = pyglet.resource.animation("sprites/prop/rughai/veg_1/veg_1_idle_1.gif")
         animation_set_anchor(
             animation = self.__idle_1_anim,
@@ -38,6 +38,10 @@ class RVeg1(PositionNode):
             ],
             batch = batch
         )
+
+    def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
+        super().set_position(position, z)
+        self.prop_node.set_position(position, z)
 
     def update(self, dt: int) -> None:
         self.prop_node.update(dt)

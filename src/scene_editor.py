@@ -51,7 +51,7 @@ class RugHaiSceneEditor:
             window = self._window,
             view_width = SETTINGS[Builtins.VIEW_WIDTH],
             view_height = SETTINGS[Builtins.VIEW_HEIGHT],
-            source = sys.argv[1]
+            scene_name = sys.argv[1]
         )
 
     def __create_window(self) -> pyglet.window.Window:
@@ -86,6 +86,10 @@ class RugHaiSceneEditor:
             z_far = 1000
         )
 
+        # Scale textures using nearest neighbor filtering.
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+
         # Benchmark measures render time.
         self._window.clear()
 
@@ -102,10 +106,6 @@ class RugHaiSceneEditor:
         controllers.COLLISION_CONTROLLER.update(dt)
 
     def run(self) -> None:
-        # Scale textures using nearest neighbor filtering.
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-
         pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Builtins.TARGET_FPS])
         # pyglet.clock.schedule(self.update)
         pyglet.app.run()

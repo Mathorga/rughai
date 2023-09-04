@@ -262,7 +262,7 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Props.
-        props = PropLoader.fetch_props(
+        props = PropLoader.fetch_prop_list(
             "propmaps/r_0_0",
             batch = self._scene.world_batch
         )

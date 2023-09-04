@@ -7,8 +7,9 @@ from engine.shapes.shape_node import ShapeNode
 class RectNode(ShapeNode):
     def __init__(
         self,
-        x: float = 0,
-        y: float = 0,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
         width: int = 0,
         height: int = 0,
         anchor_x: float = 0,
@@ -19,6 +20,7 @@ class RectNode(ShapeNode):
         super().__init__(
             x = x,
             y = y,
+            z = z,
             color = color
         )
 
@@ -28,6 +30,7 @@ class RectNode(ShapeNode):
             width = width * GLOBALS[Builtins.SCALING],
             height = height * GLOBALS[Builtins.SCALING],
             color = color,
+            group = pyglet.graphics.Group(order = z),
             batch = batch
         )
         self.__shape.anchor_position = (anchor_x * GLOBALS[Builtins.SCALING], anchor_y * GLOBALS[Builtins.SCALING])

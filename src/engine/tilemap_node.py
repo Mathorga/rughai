@@ -78,16 +78,14 @@ class TilemapNode(PositionNode):
         self.map_width = map_width
         self.map_height = map_height
 
-        height = (self.map_height - SETTINGS[Builtins.TILEMAP_BUFFER] - 1) * tileset.tile_height
-        scaled_height = height * GLOBALS[Builtins.SCALING]
         self.__sprites = [
             DepthSprite(
-                img = self.__tileset.tiles[tex_index],
-                x = int(x + (index % self.map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tileset.tile_width * GLOBALS[Builtins.SCALING]),
-                y = int(y + scaled_height - ((index // self.map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tileset.tile_height) * GLOBALS[Builtins.SCALING]),
-                z = int(-((y + height - ((index // self.map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tileset.tile_height)) + z_offset)),
+                img = tileset.tiles[tex_index],
+                x = int(x + (index % map_width) * tileset.tile_width * GLOBALS[Builtins.SCALING]),
+                y = int(y + (map_height - 1 - (index // map_width)) * tileset.tile_height * GLOBALS[Builtins.SCALING]),
+                z = int(-((y + (map_height - 1 - (index // map_width)) * tileset.tile_height) + z_offset)),
                 batch = batch
-            ) for (index, tex_index) in enumerate(self.__map) if tex_index >= 0
+            ) for (index, tex_index) in enumerate(data) if tex_index >= 0
         ]
 
 
@@ -102,9 +100,9 @@ class TilemapNode(PositionNode):
                 self.grid_lines.append(
                     pyglet.shapes.Line(
                         x = -1000 * GLOBALS[Builtins.SCALING],
-                        y = i * self.__tileset.tile_height * GLOBALS[Builtins.SCALING],
+                        y = i * tileset.tile_height * GLOBALS[Builtins.SCALING],
                         x2 = 1000 * GLOBALS[Builtins.SCALING],
-                        y2 = i * self.__tileset.tile_height * GLOBALS[Builtins.SCALING],
+                        y2 = i * tileset.tile_height * GLOBALS[Builtins.SCALING],
                         width = 1,
                         batch = batch
                     )
@@ -115,9 +113,9 @@ class TilemapNode(PositionNode):
                 self.grid_lines.append(
                     pyglet.shapes.Line(
                         y = -1000 * GLOBALS[Builtins.SCALING],
-                        x = i * self.__tileset.tile_width * GLOBALS[Builtins.SCALING],
+                        x = i * tileset.tile_width * GLOBALS[Builtins.SCALING],
                         y2 = 1000 * GLOBALS[Builtins.SCALING],
-                        x2 = i * self.__tileset.tile_width * GLOBALS[Builtins.SCALING],
+                        x2 = i * tileset.tile_width * GLOBALS[Builtins.SCALING],
                         width = 1,
                         batch = batch
                     )
@@ -126,9 +124,9 @@ class TilemapNode(PositionNode):
         # Compute bounds.
         self.bounds = Bounds(
             bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * tileset.tile_height,
-            right = (map_width - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_width,
+            right = (map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_width,
             left = SETTINGS[Builtins.TILEMAP_BUFFER] * tileset.tile_width,
-            top = (map_height - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_height
+            top = (map_height - SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_height
         )
 
     def delete(self) -> None:

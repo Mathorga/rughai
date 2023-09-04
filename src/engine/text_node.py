@@ -7,17 +7,19 @@ from engine.node import PositionNode
 class TextNode(PositionNode):
     def __init__(
         self,
-        x: float = 0,
-        y: float = 0,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
         text: str = "_content_",
         align: str = "center",
         anchor_x: str = "center",
         anchor_y: str = "center",
-        width: float = SETTINGS[Builtins.VIEW_WIDTH],
+        width: float = 0.0,
         height: Optional[float] = None,
         color: tuple = (0x00, 0x00, 0x00, 0xFF),
         font_name: Optional[str] = None,
         font_size: int = 12,
+        multiline: bool = True,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -31,7 +33,8 @@ class TextNode(PositionNode):
             text = text,
             x = x * GLOBALS[Builtins.SCALING],
             y = y * GLOBALS[Builtins.SCALING],
-            multiline = True,
+            z = z,
+            multiline = multiline,
             width = width * GLOBALS[Builtins.SCALING],
             height = height * GLOBALS[Builtins.SCALING] if height is not None else None,
             font_name = font_name,
@@ -59,6 +62,12 @@ class TextNode(PositionNode):
 
     def set_opacity(self, opacity: float):
         self.label.opacity = opacity
+
+    def set_color(
+        self,
+        color: tuple = (0x00, 0x00, 0x00, 0xFF)
+    ) -> None:
+        self.label.color = color
 
     def set_text(self, text: str):
         self.label.text = text

@@ -1,21 +1,21 @@
-from typing import Optional
+from typing import Optional, Tuple
 import pyglet
 
 from engine.node import PositionNode
 from engine.utils import animation_set_anchor
-from props.prop_node import PropNode
+from props.prop_node import IdlePropNode, PropNode
 
 class RGrass0(PositionNode):
     def __init__(
         self,
-        x: float = 0,
-        y: float = 0,
-        z: float = 0,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
 
-        self.__idle_0_anim = pyglet.image.Animation.from_image_sequence([pyglet.resource.image("sprites/prop/rughai/grass_0/grass_0_idle_0.png")], 1.0)
+        self.__idle_0_anim = pyglet.resource.animation("sprites/prop/rughai/grass_0/grass_0_idle_0.gif")
         self.__idle_1_anim = pyglet.resource.animation("sprites/prop/rughai/grass_0/grass_0_idle_1.gif")
         animation_set_anchor(
             animation = self.__idle_1_anim,
@@ -38,6 +38,13 @@ class RGrass0(PositionNode):
             ],
             batch = batch
         )
+        IdlePropNode(
+            source = "prop/grass_0.json"
+        )
+
+    def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
+        super().set_position(position, z)
+        self.prop_node.set_position(position, z)
 
     def update(self, dt: int) -> None:
         self.prop_node.update(dt)

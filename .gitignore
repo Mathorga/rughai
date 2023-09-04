@@ -3,5 +3,8 @@
 *.stackdump
 *.spec
 
+# Mac specific.
+*.DS_Store
+
 /build
 /dist
