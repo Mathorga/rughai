@@ -98,19 +98,11 @@ class IdlePropNode(PositionNode):
         idle_animations: array of all idle animation files. The first one is used as main, while all the othes as secondary.
         idle_ratio: ratio between main and secondary idle animations.
         intersect_animations: array of all intersect animation files.
-        interact_animations": [],
-        hit_animations": [],
-        anchor_x": 8,
-        anchor_y": 0,
-        collider": {
-            "tags": ["player"],
-            "offset_x": 0,
-            "offset_y": 0,
-            "width": 8,
-            "height": 8,
-            "anchor_x": 4,
-            "anchor_y": 0
-        }
+        interact_animations:
+        hit_animations:
+        anchor_x:
+        anchor_y:
+        collider:
     }
     """
 
@@ -138,12 +130,19 @@ class IdlePropNode(PositionNode):
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
 
-        # Load all animations.
+        # Load all idle animations.
         if "sprites_dir" in data.keys():
-            # Iterate over idle animation files in the source dir.
-            for idle_anim_name in data["idle_animations"]:
-                anim = pyglet.resource.animation(f"{data['sprites_dir']}/{idle_anim_name}.gif")
-                self.__idle_animations.append(anim)
+            if "idle_animations" in data.keys():
+                # Iterate over idle animation files in the source dir.
+                for idle_anim_name in data["idle_animations"]:
+                    anim = pyglet.resource.animation(f"{data['sprites_dir']}/{idle_anim_name}.gif")
+                    self.__idle_animations.append(anim)
+
+            if "intersect_animations" in data.keys():
+                pass
+
+            if "interact_animations" in data.keys():
+                pass
 
         if "anchor_x" in data.keys() and "anchor_y" in data.keys():
             anchor_x = data["anchor_x"]
