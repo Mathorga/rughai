@@ -9,14 +9,5 @@
     "interact_animations": [],
     "hit_animations": [],
     "anchor_x": 8,
-    "anchor_y": 0,
-    "collider": {
-        "tags": ["player"],
-        "offset_x": 0,
-        "offset_y": 0,
-        "width": 8,
-        "height": 8,
-        "anchor_x": 4,
-        "anchor_y": 0
-    }
+    "anchor_y": 0
 }

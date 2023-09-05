@@ -96,7 +96,7 @@ class MapCursornode(PositionNode):
             if self.__move_modifier:
                 self.__move_input = self.__move_input * self.__fast_speed
 
-            # Trigger dialogs' next line.
+            # Trigger action.
             interact = controllers.INPUT_CONTROLLER.get_interaction()
             if interact:
                 controllers.INTERACTION_CONTROLLER.interact()
