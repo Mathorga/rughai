@@ -14,6 +14,7 @@ class MapCursornode(PositionNode):
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
+        fast_speed: int = 5,
         child: Optional[PositionNode] = None,
         x: float = 0.0,
         y: float = 0.0
@@ -25,11 +26,13 @@ class MapCursornode(PositionNode):
 
         self.__tile_width = tile_width
         self.__tile_height = tile_height
+        self.__fast_speed = fast_speed
 
         # Setup input handling.
         self.__controls_enabled = True
         self.__move_input = pm.Vec2()
         self.__look_input = pm.Vec2()
+        self.__move_modifier = False
 
         # Save child.
         self.__child = child
@@ -88,6 +91,10 @@ class MapCursornode(PositionNode):
             self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
             self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()
+
+            self.__move_modifier = controllers.INPUT_CONTROLLER.get_modifier()
+            if self.__move_modifier:
+                self.__move_input = self.__move_input * self.__fast_speed
 
             # Trigger dialogs' next line.
             interact = controllers.INPUT_CONTROLLER.get_interaction()

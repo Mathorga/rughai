@@ -109,8 +109,6 @@ class IdlePropNode(PositionNode):
     def __init__(
         self,
         source: str,
-        # Proportion between main and secondary animations.
-        main_to_sec: float = 0.99,
         # Animation duration.
         anim_duration: float = 1.0,
         x: float = 0.0,
@@ -121,7 +119,7 @@ class IdlePropNode(PositionNode):
         super().__init__(x, y, z)
 
         self.__source = source
-        self.main_to_sec = main_to_sec
+        self.idle_ratio = 0.9
         self.__idle_animations = []
 
         self.__collider: Optional[CollisionNode] = None
@@ -129,6 +127,10 @@ class IdlePropNode(PositionNode):
         data: dict
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
+
+        # Proportion between main and secondary animations.
+        if "idle_ratio" in data.keys():
+            self.idle_ratio = data["idle_ratio"]
 
         # Load all idle animations.
         if "sprites_dir" in data.keys():
@@ -220,7 +222,7 @@ class IdlePropNode(PositionNode):
 
     def update_animation(self):
         if self.__sprite is not None and len(self.sec_idle_anims) > 0:
-            if random.random() < self.main_to_sec:
+            if random.random() < self.idle_ratio:
                 self.__sprite.set_image(self.main_idle_anim)
             else:
                 self.__sprite.set_image(self.sec_idle_anims[random.randint(0, len(self.sec_idle_anims) - 1)])
