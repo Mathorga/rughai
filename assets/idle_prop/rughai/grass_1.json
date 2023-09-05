@@ -5,7 +5,9 @@
         "grass_1_idle_1"
     ],
     "idle_ratio": 0.99,
-    "intersect_animations": [],
+    "meet_in_animations": [],
+    "meeting_animations": [],
+    "meet_out_animations": [],
     "interact_animations": [],
     "hit_animations": [],
     "anchor_x": 8,

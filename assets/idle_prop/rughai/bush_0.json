@@ -2,12 +2,24 @@
     "sprites_dir": "sprites/prop/rughai/bush_0",
     "idle_animations": [
         "bush_0_idle_0",
-        "bush_0_idle_1"
+        "bush_0_idle_1",
+        "bush_0_idle_2"
     ],
     "idle_ratio": 0.9,
-    "intersect_animations": [],
+    "meet_in_animations": [],
+    "meeting_animations": [],
+    "meet_out_animations": [],
     "interact_animations": [],
     "hit_animations": [],
     "anchor_x": 12,
-    "anchor_y": 4
+    "anchor_y": 4,
+    "sensor": {
+        "tags": ["player_collision"],
+        "offset_x": 0,
+        "offset_y": 0,
+        "width": 8,
+        "height": 8,
+        "anchor_x": 4,
+        "anchor_y": 0
+    }
 }

@@ -96,13 +96,16 @@ class IdlePropNode(PositionNode):
 
         sprites_dir: directory containing all the prop's sprites, relative to the pyglet resources dir.
         idle_animations: array of all idle animation files. The first one is used as main, while all the othes as secondary.
-        idle_ratio: ratio between main and secondary idle animations.
         intersect_animations: array of all intersect animation files.
+        meet_in_animations: array of all entering animation files. One of these is played randomly when a triggering enter intersection happens.
+        meeting_animations: array of all during-meet animation files. One of these is played randomly during a triggering intersection, after meet_in and before meet_out.
+        meet_out_animations: array of all exiting animation files. One of these is played randomly when a triggering exit intersection happens.
         interact_animations:
         hit_animations:
         anchor_x:
         anchor_y:
         collider:
+        sensor:
     }
     """
 
@@ -119,8 +122,10 @@ class IdlePropNode(PositionNode):
         super().__init__(x, y, z)
 
         self.__source = source
-        self.idle_ratio = 0.9
-        self.__idle_animations = []
+        self.__idle_animations = {}
+        self.__meet_in_animations = {}
+        self.__meeting_animations = {}
+        self.__meet_out_animations = {}
 
         self.__collider: Optional[CollisionNode] = None
 
@@ -128,30 +133,39 @@ class IdlePropNode(PositionNode):
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
 
-        # Proportion between main and secondary animations.
-        if "idle_ratio" in data.keys():
-            self.idle_ratio = data["idle_ratio"]
-
         # Load all idle animations.
         if "sprites_dir" in data.keys():
+
             if "idle_animations" in data.keys():
-                # Iterate over idle animation files in the source dir.
-                for idle_anim_name in data["idle_animations"]:
-                    anim = pyglet.resource.animation(f"{data['sprites_dir']}/{idle_anim_name}.gif")
-                    self.__idle_animations.append(anim)
+                # Iterate over animation files in the source dir.
+                for animation in data["idle_animations"]:
+                    anim = pyglet.resource.animation(f"{data['sprites_dir']}/{animation['name']}.gif")
+                    self.__idle_animations[anim] = animation["weight"]
 
-            if "intersect_animations" in data.keys():
-                pass
+            if "meet_in_animations" in data.keys():
+                # Iterate over animation files in the source dir.
+                for animation in data["meet_in_animations"]:
+                    anim = pyglet.resource.animation(f"{data['sprites_dir']}/{animation['name']}.gif")
+                    self.__meet_in_animations[anim] = animation["weight"]
 
-            if "interact_animations" in data.keys():
-                pass
+            if "meeting_animations" in data.keys():
+                # Iterate over animation files in the source dir.
+                for animation in data["meeting_animations"]:
+                    anim = pyglet.resource.animation(f"{data['sprites_dir']}/{animation['name']}.gif")
+                    self.__meeting_animations[anim] = animation["weight"]
+
+            if "meet_out_animations" in data.keys():
+                # Iterate over animation files in the source dir.
+                for animation in data["meet_out_animations"]:
+                    anim = pyglet.resource.animation(f"{data['sprites_dir']}/{animation['name']}.gif")
+                    self.__meet_out_animations[anim] = animation["weight"]
 
         if "anchor_x" in data.keys() and "anchor_y" in data.keys():
             anchor_x = data["anchor_x"]
             anchor_y = data["anchor_y"]
 
             # Apply anchor to all animations.
-            for anim in self.__idle_animations:
+            for anim in list(self.__idle_animations.keys()) + list(self.__meet_in_animations.keys()) + list(self.__meeting_animations.keys()) + list(self.__meet_out_animations.keys()):
                 animation_set_anchor(
                     animation = anim,
                     x = anchor_x,
@@ -180,23 +194,17 @@ class IdlePropNode(PositionNode):
             controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 
         self.__sprite: Optional[SpriteNode] = None
-        self.main_idle_anim: Optional[pyglet.image.animation.Animation] = None
-        self.sec_idle_anims = []
         self.__anim_duration = anim_duration
         self.__elapsed_anim_time = 0.0
 
         if len(self.__idle_animations) > 0:
-            self.main_idle_anim = self.__idle_animations[0]
             # Sprite.
             self.__sprite = SpriteNode(
-                resource = self.main_idle_anim,
+                resource = list(self.__idle_animations.keys())[0],
                 x = x,
                 y = y,
                 batch = batch
             )
-
-        if len(self.__idle_animations) > 1:
-            self.sec_idle_anims = self.__idle_animations[1:]
 
     def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
         super().set_position(position, z)
@@ -221,8 +229,5 @@ class IdlePropNode(PositionNode):
             self.__collider.delete()
 
     def update_animation(self):
-        if self.__sprite is not None and len(self.sec_idle_anims) > 0:
-            if random.random() < self.idle_ratio:
-                self.__sprite.set_image(self.main_idle_anim)
-            else:
-                self.__sprite.set_image(self.sec_idle_anims[random.randint(0, len(self.sec_idle_anims) - 1)])
+        if self.__sprite is not None and len(self.__idle_animations) > 0:
+            self.__sprite.set_image(random.choices(list(self.__idle_animations.keys()), list(self.__idle_animations.values()))[0])
