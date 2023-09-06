@@ -22,12 +22,12 @@ class IdlePropNode(PositionNode):
         meet_in_animations: array of all entering animation files. One of these is played randomly when a triggering enter intersection happens.
         meeting_animations: array of all during-meet animation files. One of these is played randomly during a triggering intersection, after meet_in and before meet_out.
         meet_out_animations: array of all exiting animation files. One of these is played randomly when a triggering exit intersection happens.
-        interact_animations:
-        hit_animations:
-        anchor_x:
-        anchor_y:
-        collider:
-        sensor:
+        interact_animations: array of all interacting animation files. One of these is played randomly when a triggering interaction happens.
+        hit_animations: array of all hit animation files. One of these is played randomly when a hit happens.
+        anchor_x: x axis anchor for all animations.
+        anchor_y: y axis anchor for all animations.
+        collider: collider details. The collider defined here is responsible for actual (blocking) collisions.
+        sensor: sensor details. The collider defined here is responsible for all non-blocking collisions (interactions and meeting).
     }
     """
 
@@ -152,9 +152,10 @@ class IdlePropNode(PositionNode):
 
     def update(self, dt: float) -> None:
         self.__elapsed_anim_time += dt
-        if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
-            self.update_animation()
-            self.__elapsed_anim_time = 0.0
+        if self.__sprite is not None:
+            if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
+                self.update_animation()
+                self.__elapsed_anim_time = 0.0
 
     def delete(self) -> None:
         if self.__sprite is not None:
