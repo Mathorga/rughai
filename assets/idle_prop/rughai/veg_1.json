@@ -1,12 +1,12 @@
 {
-    "sprites_dir": "sprites/prop/rughai/grass_1",
+    "sprites_dir": "sprites/prop/rughai/veg_1",
     "idle_animations": [
         {
-            "name": "grass_1_idle_0",
+            "name": "veg_1_idle_0",
             "weight": 9
         },
         {
-            "name": "grass_1_idle_1",
+            "name": "veg_1_idle_1",
             "weight": 1
         }
     ],

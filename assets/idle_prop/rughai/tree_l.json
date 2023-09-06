@@ -1,10 +1,15 @@
 {
     "sprites_dir": "sprites/prop/rughai/tree_l",
     "idle_animations": [
-        "tree_l_idle_0",
-        "tree_l_idle_1"
+        {
+            "name": "tree_l_idle_0",
+            "weight": 9
+        },
+        {
+            "name": "tree_l_idle_1",
+            "weight": 1
+        }
     ],
-    "idle_ratio": 0.99,
     "meet_in_animations": [],
     "meeting_animations": [],
     "meet_out_animations": [],

@@ -5,10 +5,6 @@ from PIL import Image, ImageDraw
 
 from engine.node import PositionNode
 from props.prop_node import IdlePropNode
-from props.rughai.r_tree_m import RTreeM
-from props.rughai.r_tree_s import RTreeS
-from props.rughai.r_veg_0 import RVeg0
-from props.rughai.r_veg_1 import RVeg1
 
 def map_prop(
     prop_name: str,
@@ -16,58 +12,13 @@ def map_prop(
     y: float,
     batch: Optional[pyglet.graphics.Batch] = None
 ) -> Optional[PositionNode]:
-    if prop_name == "r_grass_0" or prop_name == "grass_0":
-        return IdlePropNode(
-            source = "idle_prop/rughai/grass_0.json",
-            x = x,
-            y = y,
-            batch = batch
-        )
-    # elif prop_name == "r_grass_1" or prop_name == "grass_1":
-    #     return IdlePropNode(
-    #         source = "idle_prop/rughai/grass_1.json",
-    #         x = x,
-    #         y = y,
-    #         batch = batch
-    #     )
-    # elif prop_name == "r_veg_0" or prop_name == "veg_0":
-    #     return RVeg0(
-    #         x = x,
-    #         y = y,
-    #         batch = batch
-    #     )
-    # elif prop_name == "r_veg_1" or prop_name == "veg_1":
-    #     return RVeg1(
-    #         x = x,
-    #         y = y,
-    #         batch = batch
-    #     )
-    # elif prop_name == "r_tree_l" or prop_name == "tree_l":
-    #     return IdlePropNode(
-    #         source = "idle_prop/rughai/tree_l.json",
-    #         x = x,
-    #         y = y,
-    #         batch = batch
-    #     )
-    # elif prop_name == "r_tree_m" or prop_name == "tree_m":
-    #     return RTreeM(
-    #         x = x,
-    #         y = y,
-    #         batch = batch
-    #     )
-    # elif prop_name == "r_tree_s" or prop_name == "tree_s":
-    #     return RTreeS(
-    #         x = x,
-    #         y = y,
-    #         batch = batch
-    #     )
-    # elif prop_name == "bush_0":
-    #     return IdlePropNode(
-    #         source = "idle_prop/rughai/bush_0.json",
-    #         x = x,
-    #         y = y,
-    #         batch = batch
-    #     )
+    # if prop_name in ("grass_0", "grass_1", "tree_s", "tree_m", "tree_l", "bush_0"):
+    return IdlePropNode(
+        source = f"idle_prop/rughai/{prop_name}.json",
+        x = x,
+        y = y,
+        batch = batch
+    )
 
 class PropLoader:
     @staticmethod
