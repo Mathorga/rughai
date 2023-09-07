@@ -156,7 +156,7 @@ class PropEditorMenuNode(Node):
         prop_names: Dict[str, List[str]],
         view_width: int,
         view_height: int,
-        open: bool = False,
+        start_open: bool = False,
         batch: Optional[pyglet.graphics.Batch] = None,
         on_open: Optional[Callable[[], None]] = None,
         on_close: Optional[Callable[[], None]] = None,
@@ -169,17 +169,17 @@ class PropEditorMenuNode(Node):
         self.__batch = batch
 
         # Flag, defines whether the menu is open or close.
-        self.__open = open
+        self.__open = start_open
 
         # Current page.
-        self.__current_page: int = 0
+        self.__current_page_index: int = 0
         self.__page_title: Optional[EditorMenuTitleNode] = None
 
         # Elements in the current page.
         self.__prop_texts: List[TextNode] = []
 
         # Currently selected element.
-        self.__current_prop: int = 0
+        self.__current_prop_index: int = 0
         self.__current_prop_icon: Optional[SpriteNode] = None
 
         # Open/close callbacks.
@@ -199,26 +199,26 @@ class PropEditorMenuNode(Node):
             # Only handle all other controls if open:
             # Page change.
             if controllers.INPUT_CONTROLLER.get_menu_page_left():
-                self.__current_page -= 1
-                self.__current_page = self.__current_page % len(self.__prop_names)
+                self.__current_page_index -= 1
+                self.__current_page_index = self.__current_page_index % len(self.__prop_names)
             if controllers.INPUT_CONTROLLER.get_menu_page_right():
-                self.__current_page += 1
-                self.__current_page = self.__current_page % len(self.__prop_names)
+                self.__current_page_index += 1
+                self.__current_page_index = self.__current_page_index % len(self.__prop_names)
 
             # Prop selection.
-            self.__current_prop += controllers.INPUT_CONTROLLER.get_cursor_movement().x
-            if self.__current_prop < 0:
-                self.__current_prop = 0
-            if self.__current_prop >= len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page]]):
-                self.__current_prop = len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page]]) - 1
+            self.__current_prop_index += controllers.INPUT_CONTROLLER.get_cursor_movement().x
+            if self.__current_prop_index < 0:
+                self.__current_prop_index = 0
+            if self.__current_prop_index >= len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page_index]]):
+                self.__current_prop_index = len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page_index]]) - 1
 
-            self.set_page(list(self.__prop_names.keys())[self.__current_page])
+            self.set_page(list(self.__prop_names.keys())[self.__current_page_index])
 
     def get_current_page(self) -> str:
-        return list(self.__prop_names.keys())[self.__current_page]
+        return list(self.__prop_names.keys())[self.__current_page_index]
 
     def get_current_prop(self) -> str:
-        return self.__prop_names[list(self.__prop_names.keys())[self.__current_page]][self.__current_prop]
+        return self.__prop_names[list(self.__prop_names.keys())[self.__current_page_index]][self.__current_prop_index]
 
     def get_current_image(self) -> pyglet.image.TextureRegion:
         current_page_name = self.get_current_page()
@@ -241,7 +241,7 @@ class PropEditorMenuNode(Node):
     def open(self) -> None:
         self.__open = True
 
-        self.set_page(list(self.__prop_names.keys())[self.__current_page])
+        self.set_page(list(self.__prop_names.keys())[self.__current_page_index])
 
         self.__background = RectNode(
             x = 0.0,
@@ -293,23 +293,23 @@ class PropEditorMenuNode(Node):
         self.__page_title = EditorMenuTitleNode(
             view_width = self.__view_width,
             view_height = self.__view_height,
-            text = list(self.__prop_names.keys())[self.__current_page],
+            text = list(self.__prop_names.keys())[self.__current_page_index],
             batch = self.__batch
         )
 
         self.__prop_texts = [TextNode(
-            x = self.__view_width / 2 + ((index - self.__current_prop) * 50),
+            x = self.__view_width / 2 + ((index - self.__current_prop_index) * 50),
             y = 10,
             width = self.__view_width,
             text = prop_name,
-            color = (0xFF, 0xFF, 0xFF, 0xFF) if self.__current_prop == index else (0x00, 0x00, 0x00, 0xFF),
+            color = (0xFF, 0xFF, 0xFF, 0xFF) if self.__current_prop_index == index else (0x00, 0x00, 0x00, 0xFF),
             font_name = "rughai",
             anchor_x = "center",
             align = "center",
             batch = self.__batch
         ) for index, prop_name in enumerate(self.__prop_names[page])]
 
-        if len(list(self.__prop_names.values())[self.__current_page]) > 0:
+        if len(list(self.__prop_names.values())[self.__current_page_index]) > 0:
             icon = self.get_current_image()
             self.__current_prop_icon = SpriteNode(
                 resource = icon,
@@ -393,7 +393,7 @@ class PropPlacementScene(Node):
             prop_names = self.__prop_names,
             view_width = view_width,
             view_height = view_height,
-            open = self.__in_menu,
+            start_open = self.__in_menu,
             batch = self.__scene.ui_batch,
             on_open = self.__on_menu_open,
             on_close = self.__on_menu_close
@@ -524,16 +524,16 @@ class PropPlacementScene(Node):
         self.__action_sign.show()
 
         # self.__cursor.set_child(
-        #     map_prop(
-        #         self.__menu.get_current_prop(),
-        #         x = self.__cursor.x,
-        #         y = self.__cursor.y,
-        #         batch = self.__scene.world_batch
-        #     )
-        #     # SpriteNode(
-        #     #     resource = self.__menu.get_current_image(),
+        #     # map_prop(
+        #     #     self.__menu.get_current_prop(),
         #     #     x = self.__cursor.x,
         #     #     y = self.__cursor.y,
         #     #     batch = self.__scene.world_batch
         #     # )
+        #     SpriteNode(
+        #         resource = self.__menu.get_current_image(),
+        #         x = self.__cursor.x,
+        #         y = self.__cursor.y,
+        #         batch = self.__scene.world_batch
+        #     )
         # )
