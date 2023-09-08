@@ -48,7 +48,6 @@ class IdlePropNode(PositionNode):
             "idle_animations": {},
             "meet_in_animations": {},
             "meeting_animations": {},
-            "meet_dyn_animations": {},
             "meet_out_animations": {},
             "hit_animations": {}
         }
