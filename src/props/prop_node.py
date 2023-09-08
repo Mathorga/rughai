@@ -20,7 +20,7 @@ class IdlePropNode(PositionNode):
         idle_animations: array of all idle animation files. The first one is used as main, while all the othes as secondary.
         intersect_animations: array of all intersect animation files.
         meet_in_animations: array of all entering animation files. One of these is played randomly when a triggering enter intersection happens.
-        meeting_animations: array of all during-meet animation files. One of these is played randomly during a triggering intersection, after meet_in and before meet_out.
+        meet_stat_animations: array of all during-meet animation files. One of these is played randomly during a triggering intersection, after meet_in and before meet_out.
         meet_out_animations: array of all exiting animation files. One of these is played randomly when a triggering exit intersection happens.
         interact_animations: array of all interacting animation files. One of these is played randomly when a triggering interaction happens.
         hit_animations: array of all hit animation files. One of these is played randomly when a hit happens.
@@ -47,7 +47,8 @@ class IdlePropNode(PositionNode):
         self.__animations = {
             "idle_animations": {},
             "meet_in_animations": {},
-            "meeting_animations": {},
+            "meet_stat_animations": {},
+            "meet_dyn_animations": {},
             "meet_out_animations": {},
             "hit_animations": {}
         }
@@ -85,48 +86,51 @@ class IdlePropNode(PositionNode):
                         y = anchor_y
                     )
 
-        # Collider.
-        if "collider" in data:
-            self.__collider = CollisionNode(
-                x = x,
-                y = y,
-                collision_type = CollisionType.STATIC,
-                tags = data["collider"]["tags"],
-                shapes = [
-                    CollisionRect(
-                        x = x + data["collider"]["offset_x"],
-                        y = y + data["collider"]["offset_y"],
-                        width = data["collider"]["width"],
-                        height = data["collider"]["height"],
-                        anchor_x = data["collider"]["anchor_x"],
-                        anchor_y = data["collider"]["anchor_y"],
-                        batch = batch
-                    )
-                ]
-            )
-            controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
+        # Colliders.
+        if "colliders" in data:
+            for collider in data["colliders"]:
+                self.__collider = CollisionNode(
+                    x = x,
+                    y = y,
+                    collision_type = CollisionType.STATIC,
+                    tags = collider["tags"],
+                    shapes = [
+                        CollisionRect(
+                            x = x + collider["offset_x"],
+                            y = y + collider["offset_y"],
+                            width = collider["width"],
+                            height = collider["height"],
+                            anchor_x = collider["anchor_x"],
+                            anchor_y = collider["anchor_y"],
+                            batch = batch
+                        )
+                    ]
+                )
+                controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 
-        # Sensor.
-        if "sensor" in data:
-            self.__sensor = CollisionNode(
-                x = x,
-                y = y,
-                collision_type = CollisionType.STATIC,
-                tags = data["sensor"]["tags"],
-                sensor = True,
-                shapes = [
-                    CollisionRect(
-                        x = x + data["sensor"]["offset_x"],
-                        y = y + data["sensor"]["offset_y"],
-                        width = data["sensor"]["width"],
-                        height = data["sensor"]["height"],
-                        anchor_x = data["sensor"]["anchor_x"],
-                        anchor_y = data["sensor"]["anchor_y"],
-                        batch = batch
-                    )
-                ]
-            )
-            controllers.COLLISION_CONTROLLER.add_collider(self.__sensor)
+        # Sensors.
+        if "sensors" in data:
+            for sensor in data["sensors"]:
+                self.__sensor = CollisionNode(
+                    x = x,
+                    y = y,
+                    collision_type = CollisionType.STATIC,
+                    tags = sensor["tags"],
+                    sensor = True,
+                    shapes = [
+                        CollisionRect(
+                            x = x + sensor["offset_x"],
+                            y = y + sensor["offset_y"],
+                            width = sensor["width"],
+                            height = sensor["height"],
+                            anchor_x = sensor["anchor_x"],
+                            anchor_y = sensor["anchor_y"],
+                            batch = batch
+                        )
+                    ],
+                    on_triggered = lambda enter: print(enter)
+                )
+                controllers.COLLISION_CONTROLLER.add_collider(self.__sensor)
 
         self.__sprite: Optional[SpriteNode] = None
         self.__anim_duration = anim_duration

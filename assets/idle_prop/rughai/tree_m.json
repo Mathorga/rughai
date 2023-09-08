@@ -11,19 +11,22 @@
         }
     ],
     "meet_in_animations": [],
-    "meeting_animations": [],
+    "meet_stat_animations": [],
+    "meet_dyn_animations": [],
     "meet_out_animations": [],
     "interact_animations": [],
     "hit_animations": [],
     "anchor_x": 8,
     "anchor_y": 4,
-    "collider": {
-        "tags": ["player_collision"],
-        "offset_x": 0,
-        "offset_y": 0,
-        "width": 8,
-        "height": 8,
-        "anchor_x": 4,
-        "anchor_y": 4
-    }
+    "colliders": [
+        {
+            "tags": ["player_collision"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 8,
+            "height": 8,
+            "anchor_x": 4,
+            "anchor_y": 4
+        }
+    ]
 }

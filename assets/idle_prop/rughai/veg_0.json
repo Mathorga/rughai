@@ -11,7 +11,8 @@
         }
     ],
     "meet_in_animations": [],
-    "meeting_animations": [],
+    "meet_stat_animations": [],
+    "meet_dyn_animations": [],
     "meet_out_animations": [],
     "interact_animations": [],
     "hit_animations": [],
