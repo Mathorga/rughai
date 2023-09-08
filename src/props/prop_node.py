@@ -162,8 +162,21 @@ class IdlePropNode(PositionNode):
         self.__elapsed_anim_time += dt
         if self.__sprite is not None:
             if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
-                self.update_animation()
+                self.__idle()
                 self.__elapsed_anim_time = 0.0
+
+    def __idle(self):
+        self.__set_animation("idle_animations")
+
+    def __meet_in(self) -> None:
+        self.__set_animation("meet_in_animations")
+
+    def __set_animation(self, key: str) -> None:
+        """
+        Sets a random animation from the given array key.
+        """
+        if self.__sprite is not None and key in self.__animations and len(self.__animations[key]) > 0:
+            self.__sprite.set_image(random.choices(list(self.__animations[key].keys()), list(self.__animations[key].values()))[0])
 
     def delete(self) -> None:
         if self.__sprite is not None:
@@ -176,7 +189,3 @@ class IdlePropNode(PositionNode):
         for sensor in self.__sensors:
             sensor.delete()
         self.__sensors.clear()
-
-    def update_animation(self):
-        if self.__sprite is not None and len(self.__animations["idle_animations"]) > 0:
-            self.__sprite.set_image(random.choices(list(self.__animations["idle_animations"].keys()), list(self.__animations["idle_animations"].values()))[0])
