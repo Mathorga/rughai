@@ -1,6 +1,6 @@
 import json
 import random
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 import pyglet
 
 from engine import controllers
@@ -20,7 +20,7 @@ class IdlePropNode(PositionNode):
         idle_animations: array of all idle animation files. The first one is used as main, while all the othes as secondary.
         intersect_animations: array of all intersect animation files.
         meet_in_animations: array of all entering animation files. One of these is played randomly when a triggering enter intersection happens.
-        meet_stat_animations: array of all during-meet animation files. One of these is played randomly during a triggering intersection, after meet_in and before meet_out.
+        meeting_animations: array of all during-meet animation files. One of these is played randomly during a triggering intersection, after meet_in and before meet_out.
         meet_out_animations: array of all exiting animation files. One of these is played randomly when a triggering exit intersection happens.
         interact_animations: array of all interacting animation files. One of these is played randomly when a triggering interaction happens.
         hit_animations: array of all hit animation files. One of these is played randomly when a hit happens.
@@ -47,14 +47,14 @@ class IdlePropNode(PositionNode):
         self.__animations = {
             "idle_animations": {},
             "meet_in_animations": {},
-            "meet_stat_animations": {},
+            "meeting_animations": {},
             "meet_dyn_animations": {},
             "meet_out_animations": {},
             "hit_animations": {}
         }
 
-        self.__collider: Optional[CollisionNode] = None
-        self.__sensor: Optional[CollisionNode] = None
+        self.__colliders: List[PositionNode] = []
+        self.__sensors: List[PositionNode] = []
 
         # Flags.
         self.__meeting = False
@@ -88,49 +88,51 @@ class IdlePropNode(PositionNode):
 
         # Colliders.
         if "colliders" in data:
-            for collider in data["colliders"]:
-                self.__collider = CollisionNode(
+            for collider_data in data["colliders"]:
+                collider = CollisionNode(
                     x = x,
                     y = y,
                     collision_type = CollisionType.STATIC,
-                    tags = collider["tags"],
+                    tags = collider_data["tags"],
                     shapes = [
                         CollisionRect(
-                            x = x + collider["offset_x"],
-                            y = y + collider["offset_y"],
-                            width = collider["width"],
-                            height = collider["height"],
-                            anchor_x = collider["anchor_x"],
-                            anchor_y = collider["anchor_y"],
+                            x = x + collider_data["offset_x"],
+                            y = y + collider_data["offset_y"],
+                            width = collider_data["width"],
+                            height = collider_data["height"],
+                            anchor_x = collider_data["anchor_x"],
+                            anchor_y = collider_data["anchor_y"],
                             batch = batch
                         )
                     ]
                 )
-                controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
+                self.__colliders.append(collider)
+                controllers.COLLISION_CONTROLLER.add_collider(collider)
 
         # Sensors.
         if "sensors" in data:
-            for sensor in data["sensors"]:
-                self.__sensor = CollisionNode(
+            for sensor_data in data["sensors"]:
+                sensor = CollisionNode(
                     x = x,
                     y = y,
                     collision_type = CollisionType.STATIC,
-                    tags = sensor["tags"],
+                    tags = sensor_data["tags"],
                     sensor = True,
                     shapes = [
                         CollisionRect(
-                            x = x + sensor["offset_x"],
-                            y = y + sensor["offset_y"],
-                            width = sensor["width"],
-                            height = sensor["height"],
-                            anchor_x = sensor["anchor_x"],
-                            anchor_y = sensor["anchor_y"],
+                            x = x + sensor_data["offset_x"],
+                            y = y + sensor_data["offset_y"],
+                            width = sensor_data["width"],
+                            height = sensor_data["height"],
+                            anchor_x = sensor_data["anchor_x"],
+                            anchor_y = sensor_data["anchor_y"],
                             batch = batch
                         )
                     ],
                     on_triggered = lambda enter: print(enter)
                 )
-                controllers.COLLISION_CONTROLLER.add_collider(self.__sensor)
+                self.__sensors.append(sensor)
+                controllers.COLLISION_CONTROLLER.add_collider(sensor)
 
         self.__sprite: Optional[SpriteNode] = None
         self.__anim_duration = anim_duration
@@ -151,11 +153,11 @@ class IdlePropNode(PositionNode):
         if self.__sprite is not None:
             self.__sprite.set_position(position, z)
 
-        if self.__collider is not None:
-            self.__collider.set_position(position, z)
+        for collider in self.__colliders:
+            collider.set_position(position, z)
 
-        if self.__sensor is not None:
-            self.__sensor.set_position(position, z)
+        for sensor in self.__sensors:
+            sensor.set_position(position, z)
 
     def update(self, dt: float) -> None:
         self.__elapsed_anim_time += dt
@@ -168,11 +170,13 @@ class IdlePropNode(PositionNode):
         if self.__sprite is not None:
             self.__sprite.delete()
 
-        if self.__collider is not None:
-            self.__collider.delete()
+        for collider in self.__colliders:
+            collider.delete()
+        self.__colliders.clear()
 
-        if self.__sensor is not None:
-            self.__sensor.delete()
+        for sensor in self.__sensors:
+            sensor.delete()
+        self.__sensors.clear()
 
     def update_animation(self):
         if self.__sprite is not None and len(self.__animations["idle_animations"]) > 0:
