@@ -1,11 +1,9 @@
 from enum import Enum
 import json
-import os
-from turtle import width
-from typing import Callable, Dict, List, Optional, Text, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 import pyglet
-from engine import controllers
 
+from engine import controllers
 from engine.prop_loader import PropLoader, map_prop
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
@@ -64,8 +62,9 @@ class ActionSign(PositionNode):
         else:
             self.action = EditorAction.INSERT
 
-        self.__label.set_text(self.__compute_text())
-        self.__label.set_color(self.__compute_color())
+        if self.__label is not None:
+            self.__label.set_text(self.__compute_text())
+            self.__label.set_color(self.__compute_color())
 
         # Toggle callback.
         if self.__on_toggle is not None:
