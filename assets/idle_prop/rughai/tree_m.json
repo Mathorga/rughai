@@ -16,7 +16,7 @@
     "interact_animations": [],
     "hit_animations": [],
     "anchor_x": 8,
-    "anchor_y": 0,
+    "anchor_y": 4,
     "collider": {
         "tags": ["player_collision"],
         "offset_x": 0,
@@ -24,6 +24,6 @@
         "width": 8,
         "height": 8,
         "anchor_x": 4,
-        "anchor_y": 0
+        "anchor_y": 4
     }
 }

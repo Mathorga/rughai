@@ -150,6 +150,9 @@ class IdlePropNode(PositionNode):
         if self.__collider is not None:
             self.__collider.set_position(position, z)
 
+        if self.__sensor is not None:
+            self.__sensor.set_position(position, z)
+
     def update(self, dt: float) -> None:
         self.__elapsed_anim_time += dt
         if self.__sprite is not None:
@@ -163,6 +166,9 @@ class IdlePropNode(PositionNode):
 
         if self.__collider is not None:
             self.__collider.delete()
+
+        if self.__sensor is not None:
+            self.__sensor.delete()
 
     def update_animation(self):
         if self.__sprite is not None and len(self.__animations["idle_animations"]) > 0:

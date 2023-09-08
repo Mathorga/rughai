@@ -502,7 +502,7 @@ class PropPlacementScene(Node):
                 self.__props.append(map_prop(
                     prop_name,
                     x = position[0] * self.__tile_size + self.__tile_size / 2,
-                    y = position[1] * self.__tile_size,
+                    y = position[1] * self.__tile_size + self.__tile_size / 2,
                     batch = self.__scene.world_batch
                 ))
 
@@ -523,17 +523,20 @@ class PropPlacementScene(Node):
         self.__cursor.enable_controls()
         self.__action_sign.show()
 
-        # self.__cursor.set_child(
-        #     # map_prop(
-        #     #     self.__menu.get_current_prop(),
-        #     #     x = self.__cursor.x,
-        #     #     y = self.__cursor.y,
-        #     #     batch = self.__scene.world_batch
-        #     # )
-        #     SpriteNode(
-        #         resource = self.__menu.get_current_image(),
-        #         x = self.__cursor.x,
-        #         y = self.__cursor.y,
-        #         batch = self.__scene.world_batch
-        #     )
-        # )
+        cursor_icon = map_prop(
+            self.__menu.get_current_prop(),
+            x = self.__cursor.x,
+            y = self.__cursor.y,
+            batch = self.__scene.world_batch
+        )
+
+        if cursor_icon is not None:
+            self.__cursor.set_child(
+                cursor_icon
+                # SpriteNode(
+                #     resource = self.__menu.get_current_image(),
+                #     x = self.__cursor.x,
+                #     y = self.__cursor.y,
+                #     batch = self.__scene.world_batch
+                # )
+            )

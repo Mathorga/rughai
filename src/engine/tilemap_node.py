@@ -104,6 +104,7 @@ class TilemapNode(PositionNode):
                         x2 = 1000 * GLOBALS[Builtins.SCALING],
                         y2 = i * tileset.tile_height * GLOBALS[Builtins.SCALING],
                         width = 1,
+                        color = (0xFF, 0xFF, 0xFF, 0x22),
                         batch = batch
                     )
                 )
@@ -117,6 +118,7 @@ class TilemapNode(PositionNode):
                         y2 = 1000 * GLOBALS[Builtins.SCALING],
                         x2 = i * tileset.tile_width * GLOBALS[Builtins.SCALING],
                         width = 1,
+                        color = (0xFF, 0xFF, 0xFF, 0x22),
                         batch = batch
                     )
                 )

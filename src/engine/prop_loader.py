@@ -51,7 +51,7 @@ class PropLoader:
                             prop = map_prop(
                                 file_name.split(".")[0],
                                 x = x * tile_width + tile_width / 2,
-                                y = (propmap.height - 1 - y) * tile_height,
+                                y = (propmap.height - 1 - y) * tile_height + tile_height / 2,
                                 batch = batch
                             )
 
@@ -85,7 +85,6 @@ class PropLoader:
 
                 for y in range(propmap.height):
                     for x in range(propmap.width):
-
                         # Only keep pixels with alpha greater than 50% (0x7F = 127).
                         if propmap_data[x, y][3] > 0x7F:
                             prop_list[file_name.split(".")[0]].add((x, propmap.height - 1 - y))
