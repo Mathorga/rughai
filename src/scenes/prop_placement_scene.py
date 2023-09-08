@@ -119,9 +119,9 @@ class EditorMenuTitleNode(PositionNode):
         )
 
         self.__left_arrow = TextNode(
-            x = self.x + 10,
+            x = self.x,
             y = self.y,
-            width = view_width,
+            width = view_width / 2,
             text = "< (Q/L)",
             align = "left",
             anchor_x = "center",
@@ -140,9 +140,9 @@ class EditorMenuTitleNode(PositionNode):
             batch = batch
         )
         self.__right_arrow = TextNode(
-            x = self.x - 10,
+            x = self.x,
             y = self.y,
-            width = view_width,
+            width = view_width / 2,
             text = "(E/R) >",
             align = "right",
             anchor_x = "center",
