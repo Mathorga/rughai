@@ -211,7 +211,7 @@ class PropEditorMenuNode(Node):
                 self.__current_page_index = self.__current_page_index % len(self.__prop_names)
 
             # Prop selection.
-            self.__current_prop_index += controllers.INPUT_CONTROLLER.get_cursor_movement().x
+            self.__current_prop_index -= controllers.INPUT_CONTROLLER.get_cursor_movement().y
             if self.__current_prop_index < 0:
                 self.__current_prop_index = 0
             if self.__current_prop_index >= len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page_index]]):
@@ -302,23 +302,27 @@ class PropEditorMenuNode(Node):
             batch = self.__batch
         )
 
-        self.__prop_texts = [TextNode(
-            x = self.__view_width / 2 + ((index - self.__current_prop_index) * 50),
-            y = 10,
-            width = self.__view_width,
-            text = prop_name,
-            color = (0xFF, 0xFF, 0xFF, 0xFF) if self.__current_prop_index == index else (0x00, 0x00, 0x00, 0xFF),
-            font_name = "rughai",
-            anchor_x = "center",
-            align = "center",
-            batch = self.__batch
-        ) for index, prop_name in enumerate(self.__prop_names[page])]
+        self.__prop_texts = [
+            TextNode(
+                # x = self.__view_width / 2 + ((index - self.__current_prop_index) * 50),
+                # y = 10,
+                x = 10,
+                y = self.__view_height / 2 - ((index - self.__current_prop_index) * 10),
+                width = self.__view_width,
+                text = prop_name,
+                color = (0xFF, 0xFF, 0xFF, 0xFF) if self.__current_prop_index == index else (0x00, 0x00, 0x00, 0xFF),
+                font_name = "rughai",
+                anchor_x = "left",
+                align = "left",
+                batch = self.__batch
+            ) for index, prop_name in enumerate(self.__prop_names[page])
+        ]
 
         if len(list(self.__prop_names.values())[self.__current_page_index]) > 0:
             icon = self.get_current_image()
             self.__current_prop_icon = SpriteNode(
                 resource = icon,
-                x = self.__view_width / 2,
+                x = self.__view_width * 3 / 5,
                 y = self.__view_height / 2,
                 z = 100.0,
                 batch = self.__batch
@@ -500,12 +504,15 @@ class PropPlacementScene(Node):
         # Recreate all of them starting from prop maps.
         for prop_name in list(self.__prop_sets.keys()):
             for position in self.__prop_sets[prop_name]:
-                self.__props.append(map_prop(
+                prop = map_prop(
                     prop_name,
                     x = position[0] * self.__tile_size + self.__tile_size / 2,
                     y = position[1] * self.__tile_size + self.__tile_size / 2,
                     batch = self.__scene.world_batch
-                ))
+                )
+
+                if prop is not None:
+                    self.__props.append(prop)
 
     def __load_prop_names(self, source: str) -> Dict[str, List[str]]:
         data: Dict[str, List[str]]
@@ -538,12 +545,13 @@ class PropPlacementScene(Node):
         self.__cursor.enable_controls()
         self.__action_sign.show()
 
-        cursor_icon = map_prop(
-            self.__menu.get_current_prop(),
-            x = self.__cursor.x,
-            y = self.__cursor.y,
-            batch = self.__scene.world_batch
-        )
+        if self.__action_sign.action == EditorAction.INSERT:
+            cursor_icon = map_prop(
+                self.__menu.get_current_prop(),
+                x = self.__cursor.x,
+                y = self.__cursor.y,
+                batch = self.__scene.world_batch
+            )
 
-        if cursor_icon is not None:
-            self.__cursor.set_child(cursor_icon)
+            if cursor_icon is not None:
+                self.__cursor.set_child(cursor_icon)
