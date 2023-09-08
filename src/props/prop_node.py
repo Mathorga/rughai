@@ -128,7 +128,7 @@ class IdlePropNode(PositionNode):
                             batch = batch
                         )
                     ],
-                    on_triggered = lambda enter: print(enter)
+                    on_triggered = lambda enter: self.__meet_in if enter else self.__meet_out
                 )
                 self.__sensors.append(sensor)
                 controllers.COLLISION_CONTROLLER.add_collider(sensor)
@@ -170,6 +170,9 @@ class IdlePropNode(PositionNode):
 
     def __meet_in(self) -> None:
         self.__set_animation("meet_in_animations")
+
+    def __meet_out(self) -> None:
+        self.__set_animation("meet_out_animations")
 
     def __set_animation(self, key: str) -> None:
         """

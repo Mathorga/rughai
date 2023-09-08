@@ -8,15 +8,29 @@
         {
             "name": "bush_0_idle_1",
             "weight": 1
-        },
+        }
+    ],
+    "meet_in_animations": [
         {
             "name": "bush_0_idle_2",
             "weight": 1
+        },
+        {
+            "name": "bush_0_idle_3",
+            "weight": 1
         }
     ],
-    "meet_in_animations": [],
     "meeting_animations": [],
-    "meet_out_animations": [],
+    "meet_out_animations": [
+        {
+            "name": "bush_0_idle_2",
+            "weight": 1
+        },
+        {
+            "name": "bush_0_idle_3",
+            "weight": 1
+        }
+    ],
     "interact_animations": [],
     "hit_animations": [],
     "anchor_x": 12,
