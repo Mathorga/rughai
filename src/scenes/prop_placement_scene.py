@@ -16,7 +16,6 @@ from engine.text_node import TextNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
 
-from clouds_node import CloudsNode
 from engine.map_cursor_node import MapCursornode
 
 class EditorAction(str, Enum):
@@ -30,6 +29,7 @@ class ActionSign(PositionNode):
         x: float = 0.0,
         y: float = 0.0,
         action: EditorAction = EditorAction.INSERT,
+        on_toggle: Optional[Callable[[EditorAction], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -41,6 +41,7 @@ class ActionSign(PositionNode):
         self.__label: Optional[TextNode] = None
 
         self.action = action
+        self.__on_toggle = on_toggle
         self.visible = True
 
     def __compute_text(self) -> str:
@@ -65,6 +66,10 @@ class ActionSign(PositionNode):
 
         self.__label.set_text(self.__compute_text())
         self.__label.set_color(self.__compute_color())
+
+        # Toggle callback.
+        if self.__on_toggle is not None:
+            self.__on_toggle(self.action)
 
     def hide(self) -> None:
         self.visible = False
@@ -361,29 +366,12 @@ class PropPlacementScene(Node):
             (self.__tilemap_height / 2) * self.__tile_size
         )
 
-        # TODO Replace with lines.
-        cursor_image = pyglet.resource.image("sprites/extras/battery/battery_open.png")
-        cursor_image.anchor_x = cursor_image.width / 2
-        cursor_image.anchor_y = 0
-        cursor_child = SpriteNode(
-            resource = cursor_image,
-            batch = self.__scene.world_batch
-        )
-        cursor_child = RectNode(
-            x = cursor_position[0],
-            y = cursor_position[1],
-            width = self.__tile_size,
-            height = self.__tile_size,
-            anchor_x = self.__tile_size / 2,
-            anchor_y = self.__tile_size / 2,
-            color = (0xFF, 0xFF, 0x33, 0x7F),
-            batch = self.__scene.world_batch
-        )
+        # Delete cursor child.
         cam_target = PositionNode()
         self.__cursor = MapCursornode(
             tile_width = self.__tile_size,
             tile_height = self.__tile_size,
-            child = cursor_child,
+            child = self.__get_del_cursor_child(),
             cam_target = cam_target,
             x = cursor_position[0] + self.__tile_size / 2,
             y = cursor_position[1] + self.__tile_size / 2
@@ -404,6 +392,7 @@ class PropPlacementScene(Node):
             x = self.__tile_size,
             y = view_height - self.__tile_size,
             action = EditorAction.DELETE,
+            on_toggle = self.__on_action_toggle,
             batch = self.__scene.ui_batch
         )
         self.__action_sign.show()
@@ -421,7 +410,7 @@ class PropPlacementScene(Node):
                 y = 0.0,
                 delta_x = (self.__tilemap_width) * self.__tile_size,
                 delta_y = 0.0,
-                color = (0xFF, 0xFF, 0x00, 0x7F),
+                color = (0xFF, 0x33, 0x00, 0x7F),
                 batch = self.__scene.world_batch
             ),
             LineNode(
@@ -429,7 +418,7 @@ class PropPlacementScene(Node):
                 y = 0.0,
                 delta_x = 0.0,
                 delta_y = self.__tilemap_height * self.__tile_size,
-                color = (0xFF, 0xFF, 0x00, 0x7F),
+                color = (0xFF, 0x33, 0x00, 0x7F),
                 batch = self.__scene.world_batch
             ),
             LineNode(
@@ -437,7 +426,7 @@ class PropPlacementScene(Node):
                 y = self.__tilemap_height * self.__tile_size,
                 delta_x = self.__tilemap_width * self.__tile_size,
                 delta_y = 0.0,
-                color = (0xFF, 0xFF, 0x00, 0x7F),
+                color = (0xFF, 0x33, 0x00, 0x7F),
                 batch = self.__scene.world_batch
             ),
             LineNode(
@@ -445,7 +434,7 @@ class PropPlacementScene(Node):
                 y = 0.0,
                 delta_x = 0.0,
                 delta_y = self.__tilemap_height * self.__tile_size,
-                color = (0xFF, 0xFF, 0x00, 0x7F),
+                color = (0xFF, 0x33, 0x00, 0x7F),
                 batch = self.__scene.world_batch
             )
         ]
@@ -489,6 +478,18 @@ class PropPlacementScene(Node):
         if self.__scene is not None:
             self.__scene.delete()
 
+    def __get_del_cursor_child(self) -> PositionNode:
+        return RectNode(
+            x = 0.0,
+            y = 0.0,
+            width = self.__tile_size,
+            height = self.__tile_size,
+            anchor_x = self.__tile_size / 2,
+            anchor_y = self.__tile_size / 2,
+            color = (0xFF, 0x33, 0x33, 0x7F),
+            batch = self.__scene.world_batch
+        )
+
     def __refresh_props(self) -> None:
         # Delete all existing props.
         for prop in self.__props:
@@ -515,6 +516,20 @@ class PropPlacementScene(Node):
 
         return data
 
+    def __on_action_toggle(self, action: EditorAction) -> None:
+        if action == EditorAction.DELETE:
+            self.__cursor.set_child(self.__get_del_cursor_child())
+        else:
+            cursor_icon = map_prop(
+                self.__menu.get_current_prop(),
+                x = self.__cursor.x,
+                y = self.__cursor.y,
+                batch = self.__scene.world_batch
+            )
+
+            if cursor_icon is not None:
+                self.__cursor.set_child(cursor_icon)
+
     def __on_menu_open(self) -> None:
         self.__cursor.disable_controls()
         self.__action_sign.hide()
@@ -531,12 +546,4 @@ class PropPlacementScene(Node):
         )
 
         if cursor_icon is not None:
-            self.__cursor.set_child(
-                cursor_icon
-                # SpriteNode(
-                #     resource = self.__menu.get_current_image(),
-                #     x = self.__cursor.x,
-                #     y = self.__cursor.y,
-                #     batch = self.__scene.world_batch
-                # )
-            )
+            self.__cursor.set_child(cursor_icon)
