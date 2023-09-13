@@ -1,0 +1,16 @@
+{
+    "sprites_dir": "sprites/prop/rughai/log_0",
+    "idle_animations": [
+        {
+            "name": "log_0_idle_0",
+            "weight": 1
+        }
+    ],
+    "meet_in_animations": [],
+    "meeting_animations": [],
+    "meet_out_animations": [],
+    "interact_animations": [],
+    "hit_animations": [],
+    "anchor_x": 4,
+    "anchor_y": 2
+}
