@@ -1,3 +1,4 @@
+import copy
 from enum import Enum
 import json
 from typing import Callable, Dict, List, Optional, Set, Tuple
@@ -468,7 +469,7 @@ class PropPlacementScene(Node):
 
                 # Add an entry in the prop sets history.
                 print("2", len(self.__prop_sets), self.__current_props_index)
-                self.__prop_sets.append(self.__prop_sets[self.__current_props_index].copy())
+                self.__prop_sets.append(copy.deepcopy(self.__prop_sets[self.__current_props_index]))
                 self.__current_props_index += 1
 
                 print("3", len(self.__prop_sets), self.__current_props_index)
