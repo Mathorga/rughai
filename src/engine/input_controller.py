@@ -196,6 +196,9 @@ class InputController:
     def get_start(self) -> bool:
         return self.key_presses.get(pyglet.window.key.ENTER, False)
 
+    def get_back(self) -> bool:
+        return self.key_presses.get(pyglet.window.key.BACKSPACE, False)
+
     def get_switch(self) -> bool:
         return self.key_presses.get(pyglet.window.key.TAB, False)
 
