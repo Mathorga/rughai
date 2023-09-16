@@ -496,9 +496,10 @@ class PropPlacementScene(Node):
                     prop_sets = self.__prop_sets[self.__current_props_index]
                 )
 
-            if controllers.INPUT_CONTROLLER.get_back():
+            if controllers.INPUT_CONTROLLER.get_ctrl_z():
                 self.__current_props_index -= 1
-                print("4", len(self.__prop_sets), self.__current_props_index)
+                if self.__current_props_index < 0:
+                    self.__current_props_index = 0
                 self.__refresh_props()
 
         if self.__scene is not None:
