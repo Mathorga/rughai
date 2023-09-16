@@ -464,18 +464,16 @@ class PropPlacementScene(Node):
         if not self.__menu.is_open():
             if controllers.INPUT_CONTROLLER.get_interaction():
                 # Clear history until the current index is reached.
-                print("1", len(self.__prop_sets), self.__current_props_index)
                 self.__prop_sets = self.__prop_sets[0:self.__current_props_index + 1]
 
                 # Add an entry in the prop sets history.
-                print("2", len(self.__prop_sets), self.__current_props_index)
                 self.__prop_sets.append(copy.deepcopy(self.__prop_sets[self.__current_props_index]))
-                self.__current_props_index += 1
 
-                print("3", len(self.__prop_sets), self.__current_props_index)
                 prop_sets_size = len(self.__prop_sets)
                 if prop_sets_size > 20:
                     self.__prop_sets = self.__prop_sets[prop_sets_size - 20:prop_sets_size]
+                else:
+                    self.__current_props_index += 1
 
                 if self.__action_sign.action == EditorAction.INSERT:
                     # Add the currently selected prop if the interaction button was pressed.
@@ -496,16 +494,15 @@ class PropPlacementScene(Node):
                     prop_sets = self.__prop_sets[self.__current_props_index]
                 )
 
-            if controllers.INPUT_CONTROLLER.get_undo():
-                self.__current_props_index -= 1
-                if self.__current_props_index < 0:
-                    self.__current_props_index = 0
-                self.__refresh_props()
-
             if controllers.INPUT_CONTROLLER.get_redo():
                 self.__current_props_index += 1
                 if self.__current_props_index > len(self.__prop_sets) - 1:
                     self.__current_props_index = len(self.__prop_sets) - 1
+                self.__refresh_props()
+            elif controllers.INPUT_CONTROLLER.get_undo():
+                self.__current_props_index -= 1
+                if self.__current_props_index < 0:
+                    self.__current_props_index = 0
                 self.__refresh_props()
 
         if self.__scene is not None:

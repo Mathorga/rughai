@@ -206,7 +206,7 @@ class InputController:
         return self.key_presses.get(pyglet.window.key.BACKSPACE, False)
 
     def get_redo(self) -> bool:
-        return self.get_modifier() and self.get_undo()
+        return self.get_shift() and self.get_undo()
 
     def get_switch(self) -> bool:
         return self.key_presses.get(pyglet.window.key.TAB, False)
