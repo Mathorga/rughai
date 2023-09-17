@@ -56,6 +56,8 @@ class IdlePropNode(PositionNode):
         self.__sensors: List[PositionNode] = []
 
         # Flags.
+        self.__meet_in_requested = False
+        self.__meet_out_requested = False
         self.__in_meet_in = False
         self.__in_meeting = False
         self.__in_meet_out = False
