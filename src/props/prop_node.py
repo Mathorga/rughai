@@ -56,8 +56,8 @@ class IdlePropNode(PositionNode):
         self.__sensors: List[PositionNode] = []
 
         # Flags.
-        self.__meet_in_requested = False
-        self.__meet_out_requested = False
+        # self.__meet_in_requested = False
+        # self.__meet_out_requested = False
         self.__in_meet_in = False
         self.__in_meeting = False
         self.__in_meet_out = False
@@ -152,7 +152,6 @@ class IdlePropNode(PositionNode):
 
     def __on_sensor_triggered(self, entered: bool) -> None:
         self.__in_meet_in = entered
-        self.__in_meeting = entered
         self.__in_meet_out = not entered
 
     def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
@@ -170,21 +169,37 @@ class IdlePropNode(PositionNode):
     def update(self, dt: float) -> None:
         self.__elapsed_anim_time += dt
         if self.__sprite is not None:
+            # Meet in and out are abrupt transitions: they happen even if the previous animation hasn't finished yet.
+            # On the othe  hand, meeting and idle are patient ones, since they wait for the previous one to finish before taking over.
+
+            # First check for abrupt transitions.
             if self.__in_meet_in:
                 self.__meet_in()
+                self.__in_meeting = True
                 self.__in_meet_in = False
             elif self.__in_meet_out:
                 self.__meet_out()
+                self.__in_meeting = False
                 self.__in_meet_out = False
-            if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
-                self.__idle()
-                self.__elapsed_anim_time = 0.0
+            else:
+                # If no abrupt transition took place, then check whether the previous animation finished.
+                # If so, then check for patient transitions.
+                if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
+                    if self.__in_meeting:
+                        self.__meeting()
+                    else:
+                        self.__idle()
+
+                    self.__elapsed_anim_time = 0.0
 
     def __idle(self):
         self.__set_animation("idle_animations")
 
     def __meet_in(self) -> None:
         self.__set_animation("meet_in_animations")
+
+    def __meeting(self) -> None:
+        self.__set_animation("meeting_animations")
 
     def __meet_out(self) -> None:
         self.__set_animation("meet_out_animations")

@@ -20,7 +20,16 @@
             "weight": 1
         }
     ],
-    "meeting_animations": [],
+    "meeting_animations": [
+        {
+            "name": "bush_0_idle_0",
+            "weight": 9
+        },
+        {
+            "name": "bush_0_idle_1",
+            "weight": 1
+        }
+    ],
     "meet_out_animations": [
         {
             "name": "bush_0_idle_2",
