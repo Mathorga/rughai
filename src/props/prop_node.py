@@ -56,7 +56,9 @@ class IdlePropNode(PositionNode):
         self.__sensors: List[PositionNode] = []
 
         # Flags.
-        self.__meeting = False
+        self.__in_meet_in = False
+        self.__in_meeting = False
+        self.__in_meet_out = False
 
         data: dict
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
@@ -128,7 +130,7 @@ class IdlePropNode(PositionNode):
                             batch = batch
                         )
                     ],
-                    on_triggered = lambda enter: self.__meet_in if enter else self.__meet_out
+                    on_triggered = self.__on_sensor_triggered
                 )
                 self.__sensors.append(sensor)
                 controllers.COLLISION_CONTROLLER.add_collider(sensor)
@@ -146,6 +148,11 @@ class IdlePropNode(PositionNode):
                 batch = batch
             )
 
+    def __on_sensor_triggered(self, entered: bool) -> None:
+        self.__in_meet_in = entered
+        self.__in_meeting = entered
+        self.__in_meet_out = not entered
+
     def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
         super().set_position(position, z)
 
@@ -161,6 +168,12 @@ class IdlePropNode(PositionNode):
     def update(self, dt: float) -> None:
         self.__elapsed_anim_time += dt
         if self.__sprite is not None:
+            if self.__in_meet_in:
+                self.__meet_in()
+                self.__in_meet_in = False
+            elif self.__in_meet_out:
+                self.__meet_out()
+                self.__in_meet_out = False
             if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
                 self.__idle()
                 self.__elapsed_anim_time = 0.0
