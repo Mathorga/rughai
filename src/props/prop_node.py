@@ -66,6 +66,13 @@ class IdlePropNode(PositionNode):
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
 
+        # Read global anchor point.
+        anchor_x: Optional[int]
+        anchor_y: Optional[int]
+        if "anchor_x" in data and "anchor_y" in data:
+            anchor_x = data["anchor_x"]
+            anchor_y = data["anchor_y"]
+
         # Load all animations.
         if "sprites_dir" in data.keys():
             # Iterate over animation types.
@@ -74,20 +81,19 @@ class IdlePropNode(PositionNode):
                     # Iterate over animation files in the source dir.
                     for animation in data[anim_key]:
                         anim = pyglet.resource.animation(f"{data['sprites_dir']}/{animation['name']}.gif")
+
+                        # Read animation-specific anchor point and fall to global if not defined.
+                        animation_anchor_x: Optional[int] = animation["anchor_x"] if "anchor_x" in animation else anchor_x
+                        animation_anchor_y: Optional[int] = animation["anchor_y"] if "anchor_y" in animation else anchor_y
+
+                        if animation_anchor_x is not None and animation_anchor_y is not None:
+                            animation_set_anchor(
+                                animation = anim,
+                                x = animation_anchor_x,
+                                y = animation_anchor_y
+                            )
+
                         self.__animations[anim_key][anim] = animation["weight"]
-
-        if "anchor_x" in data and "anchor_y" in data:
-            anchor_x = data["anchor_x"]
-            anchor_y = data["anchor_y"]
-
-            # Apply anchor to all animations.
-            for anim_key, animations in self.__animations.items():
-                for anim in animations:
-                    animation_set_anchor(
-                        animation = anim,
-                        x = anchor_x,
-                        y = anchor_y
-                    )
 
         # Colliders.
         if "colliders" in data:
