@@ -46,7 +46,7 @@
     "anchor_y": 4,
     "sensors": [
         {
-            "tags": ["player_interaction"],
+            "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
             "width": 8,
@@ -55,7 +55,7 @@
             "anchor_y": 4
         },
         {
-            "tags": ["player_interaction"],
+            "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
             "width": 8,
@@ -64,7 +64,7 @@
             "anchor_y": 4
         },
         {
-            "tags": ["player_interaction"],
+            "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
             "width": 8,
