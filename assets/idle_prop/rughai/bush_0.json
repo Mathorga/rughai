@@ -3,7 +3,9 @@
     "idle_animations": [
         {
             "name": "bush_0_idle_0",
-            "weight": 9
+            "weight": 9,
+            "anchor_x": 24,
+            "anchor_y": 8
         },
         {
             "name": "bush_0_idle_1",
