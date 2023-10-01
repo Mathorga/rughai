@@ -1,49 +1,66 @@
 {
-    "sprites_dir": "sprites/prop/rughai/bush_0",
-    "idle_animations": [
+    "animation_specs": [
         {
-            "name": "bush_0_idle_0",
-            "weight": 9,
-            "anchor_x": 24,
-            "anchor_y": 8
+            "path": "sprites/prop/rughai/bush_0/bush_0_idle_0.gif",
+            "name": "idle_0"
         },
         {
-            "name": "bush_0_idle_1",
-            "weight": 1
-        }
-    ],
-    "meet_in_animations": [
-        {
-            "name": "bush_0_idle_2",
-            "weight": 1
+            "path": "sprites/prop/rughai/bush_0/bush_0_idle_1.gif",
+            "name": "idle_1"
         },
         {
-            "name": "bush_0_idle_3",
-            "weight": 1
-        }
-    ],
-    "meeting_animations": [
-        {
-            "name": "bush_0_idle_0",
-            "weight": 9
+            "path": "sprites/prop/rughai/bush_0/bush_0_idle_2.gif",
+            "name": "idle_2"
         },
         {
-            "name": "bush_0_idle_1",
-            "weight": 1
+            "path": "sprites/prop/rughai/bush_0/bush_0_idle_3.gif",
+            "name": "idle_3"
         }
     ],
-    "meet_out_animations": [
-        {
-            "name": "bush_0_idle_2",
-            "weight": 1
-        },
-        {
-            "name": "bush_0_idle_3",
-            "weight": 1
-        }
-    ],
-    "interact_animations": [],
-    "hit_animations": [],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 9
+            },
+            {
+                "name": "idle_1",
+                "weight": 1
+            }
+        ],
+        "meet_in": [
+            {
+                "name": "idle_2",
+                "weight": 1
+            },
+            {
+                "name": "idle_3",
+                "weight": 1
+            }
+        ],
+        "meeting": [
+            {
+                "name": "idle_0",
+                "weight": 9
+            },
+            {
+                "name": "idle_1",
+                "weight": 1
+            }
+        ],
+        "meet_out": [
+            {
+                "name": "idle_2",
+                "weight": 1
+            },
+            {
+                "name": "idle_3",
+                "weight": 1
+            }
+        ],
+        "interact": [],
+        "hit": []
+    },
     "anchor_x": 12,
     "anchor_y": 4,
     "sensors": [

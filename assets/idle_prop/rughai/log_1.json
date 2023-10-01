@@ -1,16 +1,18 @@
 {
-    "sprites_dir": "sprites/prop/rughai/log_1",
-    "idle_animations": [
+    "animation_specs": [
         {
-            "name": "log_1_idle_0",
-            "weight": 1
+            "path": "sprites/prop/rughai/log_1/log_1_idle_0.gif",
+            "name": "idle_0"
         }
     ],
-    "meet_in_animations": [],
-    "meeting_animations": [],
-    "meet_out_animations": [],
-    "interact_animations": [],
-    "hit_animations": [],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 1
+            }
+        ]
+    },
     "anchor_x": 15,
     "anchor_y": 4
 }
