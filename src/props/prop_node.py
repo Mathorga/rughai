@@ -1,6 +1,6 @@
 import json
 import random
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 import pyglet
 
 from engine import controllers
@@ -16,18 +16,33 @@ class IdlePropNode(PositionNode):
         Takes the path to a json definition file as input.
         The definition file is structured as follows:
 
-        sprites_dir: directory containing all the prop's sprites, relative to the pyglet resources dir.
-        idle_animations: array of all idle animation files. The first one is used as main, while all the othes as secondary.
-        intersect_animations: array of all intersect animation files.
-        meet_in_animations: array of all entering animation files. One of these is played randomly when a triggering enter intersection happens.
-        meeting_animations: array of all during-meet animation files. One of these is played randomly during a triggering intersection, after meet_in and before meet_out.
-        meet_out_animations: array of all exiting animation files. One of these is played randomly when a triggering exit intersection happens.
-        interact_animations: array of all interacting animation files. One of these is played randomly when a triggering interaction happens.
-        hit_animations: array of all hit animation files. One of these is played randomly when a hit happens.
-        anchor_x: x axis anchor for all animations.
-        anchor_y: y axis anchor for all animations.
-        collider: collider details. The collider defined here is responsible for actual (blocking) collisions.
-        sensor: sensor details. The collider defined here is responsible for all non-blocking collisions (interactions and meeting).
+        animation_specs[array]: array of all animation definitions. Every element is structured as follows:
+            path[string]: a path to the animation file (starting from the application-defined assets directory).
+            name[string]: a name used to reference the single animation across the file.
+            anchor_x[int](optional): the x component of the animation-specific anchor point.
+            anchor_y[int](optional): the y component of the animation-specific anchor point.
+        animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact" and "hit". Every element in each category is defined as follows:
+            name[string]: the name of the animation name, as defined in animation_specs.
+            weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as:
+                1 / (category_weight_sum - animation_weight)
+        anchor_x[int](optional): x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
+        anchor_y[int](optional): y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
+        colliders[array](optional): array of all colliders (responsible for "blocking" collisions). Every element in defined as follows:
+            tags[array]: array of all collision tags the single collider reacts to.
+            offset_x[int]: horizontal displacement, relative to the prop's position.
+            offset_y[int]: vertical displacement, relative to the prop's position.
+            width[int]: collider width
+            height[int]: collider height
+            anchor_x[int]: x component of the collider's anchor point.
+            anchor_y[int]: y component of the collider's anchor point.
+        sensors[array](optional): array of all sensors (responsible for "non blocking" collisions). Every element in defined as follows:
+            tags[array]: array of all collision tags the single sensor reacts to.
+            offset_x[int]: horizontal displacement, relative to the prop's position.
+            offset_y[int]: vertical displacement, relative to the prop's position.
+            width[int]: sensor width
+            height[int]: sensor height
+            anchor_x[int]: x component of the sensor's anchor point.
+            anchor_y[int]: y component of the sensor's anchor point.
     }
     """
 
@@ -44,46 +59,65 @@ class IdlePropNode(PositionNode):
         super().__init__(x, y, z)
 
         self.__source = source
+        self.__animations_data: Dict[str, pyglet.image.animation.Animation] = {}
         self.__animations = {
-            "idle_animations": {},
-            "meet_in_animations": {},
-            "meeting_animations": {},
-            "meet_out_animations": {},
-            "hit_animations": {}
+            "idle": {},
+            "meet_in": {},
+            "meeting": {},
+            "meet_out": {},
+            "hit": {}
         }
 
         self.__colliders: List[PositionNode] = []
         self.__sensors: List[PositionNode] = []
 
         # Flags.
-        self.__meeting = False
+        # self.__meet_in_requested = False
+        # self.__meet_out_requested = False
+        self.__in_meet_in = False
+        self.__in_meeting = False
+        self.__in_meet_out = False
 
         data: dict
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
 
-        # Load all animations.
-        if "sprites_dir" in data.keys():
-            # Iterate over animation types.
-            for anim_key in self.__animations:
-                if anim_key in data:
-                    # Iterate over animation files in the source dir.
-                    for animation in data[anim_key]:
-                        anim = pyglet.resource.animation(f"{data['sprites_dir']}/{animation['name']}.gif")
-                        self.__animations[anim_key][anim] = animation["weight"]
-
+        # Read global anchor point.
+        anchor_x: Optional[int]
+        anchor_y: Optional[int]
         if "anchor_x" in data and "anchor_y" in data:
             anchor_x = data["anchor_x"]
             anchor_y = data["anchor_y"]
 
-            # Apply anchor to all animations.
-            for anim_key, animations in self.__animations.items():
-                for anim in animations:
+        # Load all animations.
+        if "animation_specs" in data.keys() and "animations" in data.keys():
+            for anim_spec in data["animation_specs"]:
+                # Every animation spec should at least include "name" and "path".
+                if not "name" in anim_spec and not "path" in anim_spec:
+                    continue
+
+                anim_ref = pyglet.resource.animation(anim_spec["path"])
+                self.__animations_data[anim_spec["name"]] = anim_ref
+
+                # Read animation-specific anchor point and fall to global if not defined.
+                anim_anchor_x: Optional[int] = anim_spec["anchor_x"] if "anchor_x" in anim_spec else anchor_x
+                anim_anchor_y: Optional[int] = anim_spec["anchor_y"] if "anchor_y" in anim_spec else anchor_y
+
+                if anim_anchor_x is not None and anim_anchor_y is not None:
                     animation_set_anchor(
-                        animation = anim,
-                        x = anchor_x,
-                        y = anchor_y
+                        animation = anim_ref,
+                        x = anim_anchor_x,
+                        y = anim_anchor_y
                     )
+
+            # Iterate over animation types.
+            for anim_key in self.__animations:
+                if anim_key in data["animations"]:
+                    # Read animation reference and store it accordingly.
+                    for anim_ref in data["animations"][anim_key]:
+                        if anim_ref["name"] in self.__animations_data.keys():
+                            animation = self.__animations_data[anim_ref["name"]]
+                            self.__animations[anim_key][animation] = anim_ref["weight"]
 
         # Colliders.
         if "colliders" in data:
@@ -128,7 +162,7 @@ class IdlePropNode(PositionNode):
                             batch = batch
                         )
                     ],
-                    on_triggered = lambda enter: self.__meet_in if enter else self.__meet_out
+                    on_triggered = self.__on_sensor_triggered
                 )
                 self.__sensors.append(sensor)
                 controllers.COLLISION_CONTROLLER.add_collider(sensor)
@@ -137,14 +171,18 @@ class IdlePropNode(PositionNode):
         self.__anim_duration = anim_duration
         self.__elapsed_anim_time = 0.0
 
-        if len(self.__animations["idle_animations"]) > 0:
+        if len(self.__animations["idle"]) > 0:
             # Sprite.
             self.__sprite = SpriteNode(
-                resource = list(self.__animations["idle_animations"].keys())[0],
+                resource = list(self.__animations["idle"].keys())[0],
                 x = x,
                 y = y,
                 batch = batch
             )
+
+    def __on_sensor_triggered(self, entered: bool) -> None:
+        self.__in_meet_in = entered
+        self.__in_meet_out = not entered
 
     def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
         super().set_position(position, z)
@@ -161,18 +199,40 @@ class IdlePropNode(PositionNode):
     def update(self, dt: float) -> None:
         self.__elapsed_anim_time += dt
         if self.__sprite is not None:
-            if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
-                self.__idle()
-                self.__elapsed_anim_time = 0.0
+            # Meet in and out are abrupt transitions: they happen even if the previous animation hasn't finished yet.
+            # On the othe  hand, meeting and idle are patient ones, since they wait for the previous one to finish before taking over.
+
+            # First check for abrupt transitions.
+            if self.__in_meet_in:
+                self.__meet_in()
+                self.__in_meeting = True
+                self.__in_meet_in = False
+            elif self.__in_meet_out:
+                self.__meet_out()
+                self.__in_meeting = False
+                self.__in_meet_out = False
+            else:
+                # If no abrupt transition took place, then check whether the previous animation finished.
+                # If so, then check for patient transitions.
+                if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
+                    if self.__in_meeting:
+                        self.__meeting()
+                    else:
+                        self.__idle()
+
+                    self.__elapsed_anim_time = 0.0
 
     def __idle(self):
-        self.__set_animation("idle_animations")
+        self.__set_animation("idle")
 
     def __meet_in(self) -> None:
-        self.__set_animation("meet_in_animations")
+        self.__set_animation("meet_in")
+
+    def __meeting(self) -> None:
+        self.__set_animation("meeting")
 
     def __meet_out(self) -> None:
-        self.__set_animation("meet_out_animations")
+        self.__set_animation("meet_out")
 
     def __set_animation(self, key: str) -> None:
         """

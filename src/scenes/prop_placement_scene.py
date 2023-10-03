@@ -1,6 +1,7 @@
+import copy
 from enum import Enum
 import json
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Set, Tuple
 import pyglet
 
 from engine import controllers
@@ -401,9 +402,16 @@ class PropPlacementScene(Node):
         self.__action_sign.show()
 
         # Fetch current prop maps.
-        self.__prop_sets = PropLoader.fetch_prop_sets(
-            source = f"propmaps/{scene_name}"
-        )
+        # self.__prop_sets = PropLoader.fetch_prop_sets(
+        #     source = f"propmaps/{scene_name}"
+        # )
+        self.__prop_sets: List[Dict[str, Set[Tuple[int, int]]]] = [
+            PropLoader.fetch_prop_sets(
+                source = f"propmaps/{scene_name}"
+            )
+        ]
+        self.__current_props_index = 0
+
         self.__props: List[PositionNode] = []
         self.__refresh_props()
 
@@ -455,14 +463,26 @@ class PropPlacementScene(Node):
     def update(self, dt) -> None:
         if not self.__menu.is_open():
             if controllers.INPUT_CONTROLLER.get_interaction():
+                # Clear history until the current index is reached.
+                self.__prop_sets = self.__prop_sets[0:self.__current_props_index + 1]
+
+                # Add an entry in the prop sets history.
+                self.__prop_sets.append(copy.deepcopy(self.__prop_sets[self.__current_props_index]))
+
+                prop_sets_size = len(self.__prop_sets)
+                if prop_sets_size > 20:
+                    self.__prop_sets = self.__prop_sets[prop_sets_size - 20:prop_sets_size]
+                else:
+                    self.__current_props_index += 1
+
                 if self.__action_sign.action == EditorAction.INSERT:
                     # Add the currently selected prop if the interaction button was pressed.
-                    if self.__menu.get_current_prop() not in list(self.__prop_sets.keys()):
-                        self.__prop_sets[self.__menu.get_current_prop()] = set()
-                    self.__prop_sets[self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
+                    if self.__menu.get_current_prop() not in list(self.__prop_sets[self.__current_props_index].keys()):
+                        self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()] = set()
+                    self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
                 else:
                     # Delete anything in the current map position, regardless of the selected prop.
-                    for prop_set in list(self.__prop_sets.values()):
+                    for prop_set in list(self.__prop_sets[self.__current_props_index].values()):
                         prop_set.discard(self.__cursor.get_map_position())
 
                 # Refresh props to apply changes.
@@ -471,8 +491,19 @@ class PropPlacementScene(Node):
                     dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
                     map_width = self.__tilemap_width,
                     map_height = self.__tilemap_height,
-                    prop_sets = self.__prop_sets
+                    prop_sets = self.__prop_sets[self.__current_props_index]
                 )
+
+            if controllers.INPUT_CONTROLLER.get_redo():
+                self.__current_props_index += 1
+                if self.__current_props_index > len(self.__prop_sets) - 1:
+                    self.__current_props_index = len(self.__prop_sets) - 1
+                self.__refresh_props()
+            elif controllers.INPUT_CONTROLLER.get_undo():
+                self.__current_props_index -= 1
+                if self.__current_props_index < 0:
+                    self.__current_props_index = 0
+                self.__refresh_props()
 
         if self.__scene is not None:
             self.__scene.update(dt)
@@ -501,8 +532,8 @@ class PropPlacementScene(Node):
         self.__props.clear()
 
         # Recreate all of them starting from prop maps.
-        for prop_name in list(self.__prop_sets.keys()):
-            for position in self.__prop_sets[prop_name]:
+        for prop_name in list(self.__prop_sets[self.__current_props_index].keys()):
+            for position in self.__prop_sets[self.__current_props_index][prop_name]:
                 prop = map_prop(
                     prop_name,
                     x = position[0] * self.__tile_size + self.__tile_size / 2,

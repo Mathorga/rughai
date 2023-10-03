@@ -1,20 +1,26 @@
 {
-    "sprites_dir": "sprites/prop/rughai/grass_1",
-    "idle_animations": [
+    "animation_specs": [
         {
-            "name": "grass_1_idle_0",
-            "weight": 9
+            "path": "sprites/prop/rughai/grass_1/grass_1_idle_0.gif",
+            "name": "idle_0"
         },
         {
-            "name": "grass_1_idle_1",
-            "weight": 1
+            "path": "sprites/prop/rughai/grass_1/grass_1_idle_1.gif",
+            "name": "idle_1"
         }
     ],
-    "meet_in_animations": [],
-    "meeting_animations": [],
-    "meet_out_animations": [],
-    "interact_animations": [],
-    "hit_animations": [],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 9
+            },
+            {
+                "name": "idle_1",
+                "weight": 1
+            }
+        ]
+    },
     "anchor_x": 8,
     "anchor_y": 2
 }

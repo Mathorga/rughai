@@ -1,16 +1,18 @@
 {
-    "sprites_dir": "sprites/prop/rughai/barrel_0",
-    "idle_animations": [
+    "animation_specs": [
         {
-            "name": "barrel_0_idle_0",
-            "weight": 1
+            "path": "sprites/prop/rughai/barrel_0/barrel_0_idle_0.gif",
+            "name": "idle_0"
         }
     ],
-    "meet_in_animations": [],
-    "meeting_animations": [],
-    "meet_out_animations": [],
-    "interact_animations": [],
-    "hit_animations": [],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 1
+            }
+        ]
+    },
     "anchor_x": 7,
     "anchor_y": 4
 }

@@ -193,8 +193,20 @@ class InputController:
             1 if w else 0 - 1 if s else 0
         )
 
+    def get_ctrl(self) -> bool:
+        return self[pyglet.window.key.LCTRL] or self[pyglet.window.key.LCOMMAND] or self[pyglet.window.key.RCTRL] or self[pyglet.window.key.RCOMMAND]
+
+    def get_shift(self) -> bool:
+        return self[pyglet.window.key.LSHIFT] or self[pyglet.window.key.RSHIFT]
+
     def get_start(self) -> bool:
         return self.key_presses.get(pyglet.window.key.ENTER, False)
+
+    def get_undo(self) -> bool:
+        return self.key_presses.get(pyglet.window.key.BACKSPACE, False)
+
+    def get_redo(self) -> bool:
+        return self.get_shift() and self.get_undo()
 
     def get_switch(self) -> bool:
         return self.key_presses.get(pyglet.window.key.TAB, False)
