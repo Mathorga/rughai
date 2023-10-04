@@ -1,5 +1,6 @@
 from typing import Callable, Optional
 import pyglet
+from constants import collision_tags
 from engine.collision.collision_controller import CollisionController
 from engine.door_node import DoorNode
 
@@ -100,7 +101,7 @@ class R_0_4(PlayableSceneNode):
             anchor_y = 0,
             scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
@@ -124,7 +125,7 @@ class R_0_4(PlayableSceneNode):
             anchor_y = 0,
             scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {

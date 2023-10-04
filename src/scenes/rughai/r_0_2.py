@@ -96,7 +96,7 @@ class R_0_2(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
@@ -118,7 +118,7 @@ class R_0_2(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
@@ -140,7 +140,7 @@ class R_0_2(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {

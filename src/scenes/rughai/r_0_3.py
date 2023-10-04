@@ -58,12 +58,12 @@ class R_0_3(PlayableSceneNode):
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
         bg = SpriteNode(
-            resource=pyglet.resource.image("bg.png"),
-            on_animation_end=lambda: None,
-            x=(tilemaps[0].map_width * self.__tile_size) // 2,
-            y=(tilemaps[0].map_height * self.__tile_size) // 2,
-            z=-500,
-            batch=self._scene.world_batch
+            resource = pyglet.resource.image("bg.png"),
+            on_animation_end = lambda: None,
+            x = (tilemaps[0].map_width * self.__tile_size) // 2,
+            y = (tilemaps[0].map_height * self.__tile_size) // 2,
+            z = -500,
+            batch = self._scene.world_batch
         )
 
         # Player.
@@ -96,7 +96,7 @@ class R_0_3(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
@@ -118,7 +118,7 @@ class R_0_3(PlayableSceneNode):
             anchor_x = 0,
             anchor_y = 0,
             tags = [collision_tags.PLAYER_INTERACTION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {

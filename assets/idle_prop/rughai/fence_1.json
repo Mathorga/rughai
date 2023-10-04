@@ -1,7 +1,7 @@
 {
     "animation_specs": [
         {
-            "path": "sprites/prop/rughai/barrel_0/barrel_0_idle_0.gif",
+            "path": "sprites/prop/rughai/fence_1/fence_1_idle_0.gif",
             "name": "idle_0"
         }
     ],
@@ -14,16 +14,16 @@
         ]
     },
     "anchor_x": 7,
-    "anchor_y": 4,
+    "anchor_y": 2,
     "colliders": [
         {
             "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
-            "width": 8,
-            "height": 8,
-            "anchor_x": 4,
-            "anchor_y": 4
+            "width": 16,
+            "height": 4,
+            "anchor_x": 8,
+            "anchor_y": 2
         }
     ]
 }

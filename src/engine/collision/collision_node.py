@@ -19,7 +19,7 @@ class CollisionNode(PositionNode):
         collision_type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
         shapes: List[CollisionShape] = [],
-        on_triggered: Optional[Callable[[bool], None]] = None
+        on_triggered: Optional[Callable[[List[str], bool], None]] = None
     ) -> None:
         super().__init__(x, y)
 
@@ -75,43 +75,6 @@ class CollisionNode(PositionNode):
         for shape in self.shapes:
             shape.set_velocity(velocity)
 
-    def sense(self, other):
-        assert isinstance(other, CollisionNode)
-
-        collision: Tuple[float, float] = (0.0, 0.0)
-        collisions: List[pm.Vec2] = []
-
-        # Make sure there's at least one matching tag.
-        # if other.tags == self.tags:
-        if bool(set(self.tags) & set(other.tags)):
-            overlap: bool = False
-            for shape in self.shapes:
-                for other_shape in other.shapes:
-                    overlap = shape.overlap(other_shape)
-                    if overlap:
-                        collisions.append(pm.Vec2(*collision))
-
-            if other not in self.collisions and overlap:
-                # Store the colliding sensor.
-                self.collisions.add(other)
-                other.collisions.add(self)
-
-                # Collision enter callback.
-                if self.on_triggered is not None:
-                    self.on_triggered(True)
-                if other.on_triggered is not None:
-                    other.on_triggered(True)
-            elif other in self.collisions and not overlap:
-                # Remove if not colliding anymore.
-                self.collisions.remove(other)
-                other.collisions.remove(self)
-
-                # Collision exit callback.
-                if self.on_triggered is not None:
-                    self.on_triggered(False)
-                if other.on_triggered is not None:
-                    other.on_triggered(False)
-
     def collide(self, other) -> Optional[CollisionHit]:
         assert isinstance(other, CollisionNode)
 
@@ -133,9 +96,9 @@ class CollisionNode(PositionNode):
 
                 # Collision enter callback.
                 if self.on_triggered is not None:
-                    self.on_triggered(True)
+                    self.on_triggered(other.tags, True)
                 if other.on_triggered is not None:
-                    other.on_triggered(True)
+                    other.on_triggered(self.tags, True)
             elif other in self.collisions and collision_hit is None:
                 # Remove if not colliding anymore.
                 self.collisions.remove(other)
@@ -143,8 +106,8 @@ class CollisionNode(PositionNode):
 
                 # Collision exit callback.
                 if self.on_triggered is not None:
-                    self.on_triggered(False)
+                    self.on_triggered(other.tags, False)
                 if other.on_triggered is not None:
-                    other.on_triggered(False)
+                    other.on_triggered(self.tags, False)
 
         return collision_hit
