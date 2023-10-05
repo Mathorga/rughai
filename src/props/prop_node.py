@@ -91,8 +91,8 @@ class IdlePropNode(PositionNode):
             self.__health_points = self.__max_health_points
 
         # Read global anchor point.
-        anchor_x: Optional[int]
-        anchor_y: Optional[int]
+        anchor_x: Optional[int] = None
+        anchor_y: Optional[int] = None
         if "anchor_x" in data and "anchor_y" in data:
             anchor_x = data["anchor_x"]
             anchor_y = data["anchor_y"]
@@ -119,13 +119,13 @@ class IdlePropNode(PositionNode):
                     )
 
             # Iterate over animation types.
-            for anim_key in self.__animations:
+            for anim_key, anim_content in self.__animations.items():
                 if anim_key in data["animations"]:
                     # Read animation reference and store it accordingly.
                     for anim_ref in data["animations"][anim_key]:
-                        if anim_ref["name"] in self.__animations_data.keys():
+                        if anim_ref["name"] in self.__animations_data:
                             animation = self.__animations_data[anim_ref["name"]]
-                            self.__animations[anim_key][animation] = anim_ref["weight"]
+                            anim_content[animation] = anim_ref["weight"]
 
         # Colliders.
         if "colliders" in data:
@@ -195,7 +195,7 @@ class IdlePropNode(PositionNode):
         """
 
         # Reduce health points if a damage occurred and health points were defined in the first place.
-        if collision_tags.DAMAGE and self.__max_health_points is not None:
+        if entered and collision_tags.DAMAGE in tags and self.__max_health_points is not None:
             self.__health_points -= 1
 
             if self.__health_points <= 0:
