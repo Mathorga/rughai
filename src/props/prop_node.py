@@ -9,6 +9,7 @@ from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.utils import animation_set_anchor
+from constants import collision_tags
 
 class IdlePropNode(PositionNode):
     """
@@ -21,12 +22,13 @@ class IdlePropNode(PositionNode):
             name[string]: a name used to reference the single animation across the file.
             anchor_x[int](optional): the x component of the animation-specific anchor point.
             anchor_y[int](optional): the y component of the animation-specific anchor point.
-        animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact" and "hit". Every element in each category is defined as follows:
+        animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit" and "destroy". Every element in each category is defined as follows:
             name[string]: the name of the animation name, as defined in animation_specs.
             weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as:
                 1 / (category_weight_sum - animation_weight)
         anchor_x[int](optional): x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
         anchor_y[int](optional): y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
+        health_points[int](optional): amount of damage the prop can take before breaking. If this is not set, then an infinite amount is used, aka the prop cannot be broken.
         colliders[array](optional): array of all colliders (responsible for "blocking" collisions). Every element in defined as follows:
             tags[array]: array of all collision tags the single collider reacts to.
             offset_x[int]: horizontal displacement, relative to the prop's position.
@@ -65,15 +67,14 @@ class IdlePropNode(PositionNode):
             "meet_in": {},
             "meeting": {},
             "meet_out": {},
-            "hit": {}
+            "hit": {},
+            "destroy": {}
         }
 
         self.__colliders: List[PositionNode] = []
         self.__sensors: List[PositionNode] = []
 
         # Flags.
-        # self.__meet_in_requested = False
-        # self.__meet_out_requested = False
         self.__in_meet_in = False
         self.__in_meeting = False
         self.__in_meet_out = False
@@ -81,6 +82,13 @@ class IdlePropNode(PositionNode):
         data: dict
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
+
+        # Read health points.
+        self.__max_health_points: Optional[int] = None
+        self.__health_points = 0
+        if "health_points" in data:
+            self.__max_health_points = data["health_points"]
+            self.__health_points = self.__max_health_points
 
         # Read global anchor point.
         anchor_x: Optional[int]
@@ -137,7 +145,8 @@ class IdlePropNode(PositionNode):
                             anchor_y = collider_data["anchor_y"],
                             batch = batch
                         )
-                    ]
+                    ],
+                    on_triggered = self.__on_collider_triggered
                 )
                 self.__colliders.append(collider)
                 controllers.COLLISION_CONTROLLER.add_collider(collider)
@@ -180,7 +189,25 @@ class IdlePropNode(PositionNode):
                 batch = batch
             )
 
-    def __on_sensor_triggered(self, entered: bool) -> None:
+    def __on_collider_triggered(self, tags: List[str], entered: bool) -> None:
+        """
+        Handles all colliders' trigger events.
+        """
+
+        # Reduce health points if a damage occurred and health points were defined in the first place.
+        if collision_tags.DAMAGE and self.__max_health_points is not None:
+            self.__health_points -= 1
+
+            if self.__health_points <= 0:
+                self.__destroy()
+            else:
+                self.__hit()
+
+    def __on_sensor_triggered(self, tags: List[str], entered: bool) -> None:
+        """
+        Handles all sensors' trigger events.
+        """
+
         self.__in_meet_in = entered
         self.__in_meet_out = not entered
 
@@ -234,10 +261,20 @@ class IdlePropNode(PositionNode):
     def __meet_out(self) -> None:
         self.__set_animation("meet_out")
 
+    def __interact(self) -> None:
+        self.__set_animation("interact")
+
+    def __hit(self) -> None:
+        self.__set_animation("hit")
+
+    def __destroy(self) -> None:
+        self.__set_animation("destroy")
+
     def __set_animation(self, key: str) -> None:
         """
         Sets a random animation from the given array key.
         """
+
         if self.__sprite is not None and key in self.__animations and len(self.__animations[key]) > 0:
             self.__sprite.set_image(random.choices(list(self.__animations[key].keys()), list(self.__animations[key].values()))[0])
 
