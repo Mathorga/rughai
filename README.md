@@ -38,31 +38,30 @@ You can change game settings by manually editing the `assets/settings.json` file
 Simple prop can be added by defining an appropriate json file.</br>
 Idle prop files are defined as follows:</br>
 
-`animation_specs[array]`: array of all animation definitions. Every element is structured as follows:</br>
-    `path[string]`: a path to the animation file (starting from the application-defined assets directory).</br>
-    `name[string]`: a name used to reference the single animation across the file.</br>
-    `anchor_x[int](optional)`: the x component of the animation-specific anchor point.</br>
-    `anchor_y[int](optional)`: the y component of the animation-specific anchor point.</br>
-`animations[object]`: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit" and "destroy". Every element in each category is defined as follows:</br>
-    `name[string]`: the name of the animation name, as defined in animation_specs.</br>
-    `weight[int]`: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as:</br>
-        1 / (category_weight_sum - animation_weight)</br>
-`anchor_x[int](optional)`: x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.</br>
-`anchor_y[int](optional)`: y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.</br>
-`health_points[int](optional)`: amount of damage the prop can take before breaking. If this is not set, then an infinite amount is used, aka the prop cannot be broken.</br>
-`colliders[array](optional)`: array of all colliders (responsible for "blocking" collisions). Every element in defined as follows:</br>
-    `tags[array]`: array of all collision tags the single collider reacts to.</br>
-    `offset_x[int]`: horizontal displacement, relative to the prop's position.</br>
-    `offset_y[int]`: vertical displacement, relative to the prop's position.</br>
-    `width[int]`: collider width</br>
-    `height[int]`: collider height</br>
-    `anchor_x[int]`: x component of the collider's anchor point.</br>
-    `anchor_y[int]`: y component of the collider's anchor point.</br>
-`sensors[array](optional)`: array of all sensors (responsible for "non blocking" collisions). Every element in defined as follows:</br>
-    `tags[array]`: array of all collision tags the single sensor reacts to.</br>
-    `offset_x[int]`: horizontal displacement, relative to the prop's position.</br>
-    `offset_y[int]`: vertical displacement, relative to the prop's position.</br>
-    `width[int]`: sensor width</br>
-    `height[int]`: sensor height</br>
-    `anchor_x[int]`: x component of the sensor's anchor point.</br>
-    `anchor_y[int]`: y component of the sensor's anchor point.</br>
+  * `animation_specs[array]`: array of all animation definitions. Every element is structured as follows:</br>
+    * `path[string]`: a path to the animation file (starting from the application-defined assets directory).</br>
+    * `name[string]`: a name used to reference the single animation across the file.</br>
+    * `anchor_x[int](optional)`: the x component of the animation-specific anchor point.</br>
+    * `anchor_y[int](optional)`: the y component of the animation-specific anchor point.</br>
+  * `animations[object]`: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit" and "destroy". Every element in each category is defined as follows:</br>
+    * `name[string]`: the name of the animation name, as defined in animation_specs.</br>
+    * `weight[int]`: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as 1 / (category_weight_sum - animation_weight)</br>
+  * `anchor_x[int](optional)`: x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.</br>
+  * `anchor_y[int](optional)`: y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.</br>
+  * `health_points[int](optional)`: amount of damage the prop can take before breaking. If this is not set, then an infinite amount is used, aka the prop cannot be broken.</br>
+  * `colliders[array](optional)`: array of all colliders (responsible for "blocking" collisions). Every element in defined as follows:</br>
+    * `tags[array]`: array of all collision tags the single collider reacts to.</br>
+    * `offset_x[int]`: horizontal displacement, relative to the prop's position.</br>
+    * `offset_y[int]`: vertical displacement, relative to the prop's position.</br>
+    * `width[int]`: collider width</br>
+    * `height[int]`: collider height</br>
+    * `anchor_x[int]`: x component of the collider's anchor point.</br>
+    * `anchor_y[int]`: y component of the collider's anchor point.</br>
+  * `sensors[array](optional)`: array of all sensors (responsible for "non blocking" collisions). Every element in defined as follows:</br>
+    * `tags[array]`: array of all collision tags the single sensor reacts to.</br>
+    * `offset_x[int]`: horizontal displacement, relative to the prop's position.</br>
+    * `offset_y[int]`: vertical displacement, relative to the prop's position.</br>
+    * `width[int]`: sensor width</br>
+    * `height[int]`: sensor height</br>
+    * `anchor_x[int]`: x component of the sensor's anchor point.</br>
+    * `anchor_y[int]`: y component of the sensor's anchor point.</br>
