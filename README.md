@@ -1,5 +1,5 @@
 <p align="center" width="100%">
-    <img width="66%" style="image-rendering:pixelated" src="/assets/sprites/menus/main/title_expo.png"> 
+    <img width="66%" style="image-rendering:pixelated" src="/assets/sprites/menus/main/title_expo.png">
 </p>
 Rughai is an action RPG game built entirely in Python.
 
@@ -37,7 +37,6 @@ You can change game settings by manually editing the `assets/settings.json` file
 ## Idle props
 Simple prop can be added by defining an appropriate json file.</br>
 Idle prop files are defined as follows:</br>
-
   * `animation_specs[array]`: array of all animation definitions. Every element is structured as follows:</br>
     * `path[string]`: a path to the animation file (starting from the application-defined assets directory).</br>
     * `name[string]`: a name used to reference the single animation across the file.</br>
@@ -65,3 +64,5 @@ Idle prop files are defined as follows:</br>
     * `height[int]`: sensor height</br>
     * `anchor_x[int]`: x component of the sensor's anchor point.</br>
     * `anchor_y[int]`: y component of the sensor's anchor point.</br>
+
+[Examples](/assets/idle_prop/rughai)</br>
