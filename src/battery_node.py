@@ -114,7 +114,5 @@ class BatteryNode(PositionNode):
 
     def delete(self) -> None:
         self.sprite.delete()
-        controllers.INTERACTION_CONTROLLER.remove_interactor(self.interaction)
         self.interaction.delete()
-        controllers.COLLISION_CONTROLLER.remove_collider(self.interaction_sensor)
         self.interaction_sensor.delete()

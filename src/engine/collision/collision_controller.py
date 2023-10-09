@@ -7,7 +7,6 @@ class CollisionController:
     # TODO Swept collisions.
     def __init__(self) -> None:
         self.__colliders: Dict[CollisionType, List[CollisionNode]] = {}
-        # self.__sensors: Dict[CollisionType, List[CollisionNode]] = {}
 
     def add_collider(
         self,
@@ -77,7 +76,4 @@ class CollisionController:
         Removes the given collider from the list, effectively preventing it from triggering collisions.
         """
 
-        if collider.sensor:
-            self.__sensors[collider.type].remove(collider)
-        else:
-            self.__colliders[collider.type].remove(collider)
+        self.__colliders[collider.type].remove(collider)

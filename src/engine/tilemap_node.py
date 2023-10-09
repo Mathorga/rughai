@@ -96,12 +96,12 @@ class TilemapNode(PositionNode):
         self.grid_lines = []
         if SETTINGS[Builtins.DEBUG] and SETTINGS[Builtins.SHOW_TILES_GRID]:
             # Horizontal lines.
-            for i in range(map_height):
+            for i in range(map_height + 1):
                 self.grid_lines.append(
                     pyglet.shapes.Line(
-                        x = -1000 * GLOBALS[Builtins.SCALING],
+                        x = 0,
                         y = i * tileset.tile_height * GLOBALS[Builtins.SCALING],
-                        x2 = 1000 * GLOBALS[Builtins.SCALING],
+                        x2 = map_width * tileset.tile_width * GLOBALS[Builtins.SCALING],
                         y2 = i * tileset.tile_height * GLOBALS[Builtins.SCALING],
                         width = 1,
                         color = (0xFF, 0xFF, 0xFF, 0x22),
@@ -110,12 +110,12 @@ class TilemapNode(PositionNode):
                 )
 
             # Vertical lines.
-            for i in range(map_width):
+            for i in range(map_width + 1):
                 self.grid_lines.append(
                     pyglet.shapes.Line(
-                        y = -1000 * GLOBALS[Builtins.SCALING],
+                        y = 0,
                         x = i * tileset.tile_width * GLOBALS[Builtins.SCALING],
-                        y2 = 1000 * GLOBALS[Builtins.SCALING],
+                        y2 = map_height * tileset.tile_height * GLOBALS[Builtins.SCALING],
                         x2 = i * tileset.tile_width * GLOBALS[Builtins.SCALING],
                         width = 1,
                         color = (0xFF, 0xFF, 0xFF, 0x22),

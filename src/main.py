@@ -98,6 +98,7 @@ class RugHai:
         print("scene_ended", bundle)
         if bundle["next_scene"]:
             controllers.COLLISION_CONTROLLER.clear()
+            controllers.INTERACTION_CONTROLLER.clear()
             self._active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:

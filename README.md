@@ -16,6 +16,7 @@ You can change game settings by manually editing the `assets/settings.json` file
 `debug` -> General debug settings, shows some useful features such as update time, render time and collisions.</br>
 `show_collisions` -> Specific debug setting, shows collisions, but only if debug is true</br>
 `show_tiles_grid` -> Specific debug setting, shows tilemap grid lines.</br>
+`free_cam_bounds` -> Specific debug setting, allows the player to see beyond camera bounds.</br>
 
 ### Texts
 `title` -> Game title: defines the title of the game window.</br>

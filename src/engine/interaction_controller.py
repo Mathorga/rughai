@@ -38,3 +38,6 @@ class InteractionController:
             self.active_interaction = None
 
         self.interactions.remove(interactor)
+
+    def clear(self) -> None:
+        self.interactions.clear()

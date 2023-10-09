@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 from constants import collision_tags
 import pyglet
 
@@ -44,7 +44,7 @@ class R_0_1(PlayableSceneNode):
         )
 
         # Define a tilemap.
-        tilemaps = TilemapNode.from_tmx_file(
+        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_1.tmx",
             batch = self._scene.world_batch
         )
@@ -85,7 +85,7 @@ class R_0_1(PlayableSceneNode):
             y = 32 * self.__tile_size,
             width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_COLLISION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -94,7 +94,7 @@ class R_0_1(PlayableSceneNode):
                         "next_scene": scenes.R_0_0,
                         "player_position": [
                             self._player.x,
-                            self.__tile_size
+                            (SETTINGS[Builtins.TILEMAP_BUFFER] + 1) * self.__tile_size
                         ]
                     }
                 ),
@@ -105,7 +105,7 @@ class R_0_1(PlayableSceneNode):
             y = 0,
             width = 10 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_COLLISION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -125,7 +125,7 @@ class R_0_1(PlayableSceneNode):
             y = -2 * self.__tile_size,
             width = 16 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_COLLISION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -172,7 +172,8 @@ class R_0_1(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        self._scene.set_cam_bounds(cam_bounds)
+        if not SETTINGS[Builtins.FREE_CAM_BOUNDS]:
+            self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)

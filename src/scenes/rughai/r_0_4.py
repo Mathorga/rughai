@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 import pyglet
 from constants import collision_tags
 from engine.collision.collision_controller import CollisionController
@@ -20,21 +20,15 @@ class R_0_4(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
-        collision_controller: CollisionController,
-        input_controller: InputController,
         view_width: int,
         view_height: int,
-        scaling: int = 1,
         bundle: Optional[dict] = None,
         on_ended: Optional[Callable[[dict], None]] = None
     ):
         super().__init__(
             window = window,
-            collision_controller = collision_controller,
-            input_controller = input_controller,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             bundle = bundle,
             on_ended = on_ended
         )
@@ -44,16 +38,14 @@ class R_0_4(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = "R_0_4",
             on_scene_end = self._on_scene_end
         )
 
         # Define a tilemap.
-        tilemaps = TilemapNode.from_tmx_file(
-            source = "tilemaps/rughai/r_0_4.tmx",
-            scaling = scaling,
+        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
+            source = "tilemaps/r_0_4.tmx",
             batch = self._scene.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -69,8 +61,7 @@ class R_0_4(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            z = 500,
-            scaling = scaling,
+            z = -500,
             batch = self._scene.world_batch
         )
 
@@ -81,25 +72,20 @@ class R_0_4(PlayableSceneNode):
         )
         cam_target = PositionNode()
         self._player = PlayerNode(
-            input_controller = input_controller,
-            collision_controller = collision_controller,
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            scaling = scaling,
             batch = self._scene.world_batch
         )
 
         # Place doors.
         south_door = DoorNode(
-            collision_controller = collision_controller,
             x = 19 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 31 * self.__tile_size,
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
@@ -116,14 +102,12 @@ class R_0_4(PlayableSceneNode):
             batch = self._scene.world_batch
         )
         north_door = DoorNode(
-            collision_controller = collision_controller,
             x = 20 * self.__tile_size,
             y = 50 * self.__tile_size,
             width = 7 * self.__tile_size,
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
@@ -148,25 +132,23 @@ class R_0_4(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 4,
-            scaling = scaling,
             batch = self._scene.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
-            scaling = scaling,
             batch = self._scene.ui_batch
         )
 
-        self._scene.set_cam_bounds(
-            Bounds(
-                top = tilemap_height * self.__tile_size,
-                bottom = 0,
-                left = 0,
-                right = tilemap_width * self.__tile_size
-            )
-        )
+        # self._scene.set_cam_bounds(
+        #     Bounds(
+        #         top = tilemap_height * self.__tile_size,
+        #         bottom = 0,
+        #         left = 0,
+        #         right = tilemap_width * self.__tile_size
+        #     )
+        # )
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
