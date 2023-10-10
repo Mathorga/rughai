@@ -8,6 +8,7 @@ class Builtins(str, Enum):
     DEBUG = "debug"
     SHOW_COLLISIONS = "show_collisions"
     SHOW_TILES_GRID = "show_tiles_grid"
+    FREE_CAM_BOUNDS = "free_cam_bounds"
     TITLE = "title"
     FONT_NAME = "font_name"
     VIEW_WIDTH = "view_width"
@@ -30,6 +31,7 @@ SETTINGS = {
     Builtins.DEBUG: True,
     Builtins.SHOW_COLLISIONS: True,
     Builtins.SHOW_TILES_GRID: True,
+    Builtins.FREE_CAM_BOUNDS: False,
 
     # Text settings.
     Builtins.TITLE: "",

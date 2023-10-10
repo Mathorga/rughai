@@ -81,11 +81,11 @@ class R_0_2(PlayableSceneNode):
         )
 
         # Duk.
-        duk = DukNode(
-            x = 10 * self.__tile_size,
-            y = 8 * self.__tile_size,
-            batch = self._scene.world_batch
-        )
+        # duk = DukNode(
+        #     x = 10 * self.__tile_size,
+        #     y = 8 * self.__tile_size,
+        #     batch = self._scene.world_batch
+        # )
 
         # Place doors.
         north_west_door = DoorNode(
@@ -186,13 +186,14 @@ class R_0_2(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        self._scene.set_cam_bounds(cam_bounds)
+        if not SETTINGS[Builtins.FREE_CAM_BOUNDS]:
+            self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target = True)
         self._scene.add_child(self._player)
-        self._scene.add_child(duk)
+        # self._scene.add_child(duk)
         self._scene.add_child(clouds)
         self._scene.add_children(props)
         self._scene.add_child(north_west_door)

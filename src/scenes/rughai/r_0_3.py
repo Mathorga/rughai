@@ -80,12 +80,12 @@ class R_0_3(PlayableSceneNode):
         )
 
         # Duk.
-        duk = DukNode(
-            x=10 * self.__tile_size,
-            y=8 * self.__tile_size,
-            scaling=scaling,
-            batch=self._scene.world_batch
-        )
+        # duk = DukNode(
+        #     x = 10 * self.__tile_size,
+        #     y = 8 * self.__tile_size,
+        #     scaling = scaling,
+        #     batch = self._scene.world_batch
+        # )
 
         # Place doors.
         north_west_door = DoorNode(
@@ -152,19 +152,19 @@ class R_0_3(PlayableSceneNode):
             batch = self._scene.ui_batch
         )
 
-        self._scene.set_cam_bounds(
-            Bounds(
-                top = tilemap_height * self.__tile_size,
-                bottom = 0,
-                right = tilemap_width * self.__tile_size
-            )
-        )
+        # self._scene.set_cam_bounds(
+        #     Bounds(
+        #         top = tilemap_height * self.__tile_size,
+        #         bottom = 0,
+        #         right = tilemap_width * self.__tile_size
+        #     )
+        # )
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
         self._scene.add_child(cam_target, cam_target=True)
         self._scene.add_child(self._player)
-        self._scene.add_child(duk)
+        # self._scene.add_child(duk)
         self._scene.add_child(north_west_door)
         self._scene.add_child(north_east_door)
         self._scene.add_child(energy_bar)

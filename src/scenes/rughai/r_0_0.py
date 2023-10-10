@@ -60,63 +60,63 @@ class R_0_0(PlayableSceneNode):
         walls: List[PositionNode] = [
             # House.
             WallNode(
-                x = self.__tile_size * 43,
+                x = self.__tile_size * 45,
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 6,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 44,
+                x = self.__tile_size * 46,
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 43,
+                x = self.__tile_size * 45,
                 y = self.__tile_size * 38,
                 width = self.__tile_size * 5,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 48,
+                x = self.__tile_size * 50,
                 y = self.__tile_size * 38,
                 width = self.__tile_size,
                 height = self.__tile_size * 3,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 49,
+                x = self.__tile_size * 51,
                 y = self.__tile_size * 40,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 53,
+                x = self.__tile_size * 55,
                 y = self.__tile_size * 34,
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 49,
+                x = self.__tile_size * 51,
                 y = self.__tile_size * 34,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 49,
+                x = self.__tile_size * 51,
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 47,
+                x = self.__tile_size * 49,
                 y = self.__tile_size * 32,
                 width = self.__tile_size * 2,
                 height = self.__tile_size,
@@ -125,42 +125,42 @@ class R_0_0(PlayableSceneNode):
 
             # Slopes.
             WallNode(
-                x = self.__tile_size * 62,
+                x = self.__tile_size * 64,
                 y = self.__tile_size * 29,
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 61,
+                x = self.__tile_size * 63,
                 y = self.__tile_size * 34,
                 width = self.__tile_size,
                 height = self.__tile_size * 8,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 62,
+                x = self.__tile_size * 64,
                 y = self.__tile_size * 41,
                 width = self.__tile_size,
                 height = self.__tile_size * 5,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 63,
+                x = self.__tile_size * 65,
                 y = self.__tile_size * 29,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 66,
+                x = self.__tile_size * 68,
                 y = self.__tile_size * 27,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
                 batch = self._scene.world_batch
             ),
             WallNode(
-                x = self.__tile_size * 66,
+                x = self.__tile_size * 68,
                 y = self.__tile_size * 25,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
@@ -196,11 +196,11 @@ class R_0_0(PlayableSceneNode):
 
         # Place doors.
         south_door = DoorNode(
-            x = 19 * self.__tile_size,
+            x = 40 * self.__tile_size,
             y = 0,
-            width = 31 * self.__tile_size,
+            width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_COLLISION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -220,7 +220,7 @@ class R_0_0(PlayableSceneNode):
             y = 27 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_COLLISION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -269,7 +269,7 @@ class R_0_0(PlayableSceneNode):
 
         # Stan Lee.
         stan_lee = StanLeeNode(
-            x = self.__tile_size * 46,
+            x = self.__tile_size * 48,
             y = self.__tile_size * 35,
             world_batch = self._scene.world_batch,
             ui_batch = self._scene.ui_batch
@@ -281,7 +281,8 @@ class R_0_0(PlayableSceneNode):
             batch = self._scene.world_batch
         )
 
-        self._scene.set_cam_bounds(cam_bounds)
+        if not SETTINGS[Builtins.FREE_CAM_BOUNDS]:
+            self._scene.set_cam_bounds(cam_bounds)
 
         self._scene.add_child(bg)
         self._scene.add_children(tilemaps)
