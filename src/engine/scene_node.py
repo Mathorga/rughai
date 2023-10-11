@@ -49,17 +49,17 @@ class SceneNode(Node):
         view_width: int,
         view_height: int,
         title: Optional[str] = None,
+        on_scene_start: Optional[Callable[[], None]] = None,
         on_scene_end: Optional[Callable[[], None]] = None,
         cam_speed: float = 10.0,
         curtain_speed: int = 200,
-        cam_bounds: Optional[Bounds] = None,
-        on_curtain_opened: Optional[Callable[[], None]] = None
+        cam_bounds: Optional[Bounds] = None
     ):
         self.__view_width = view_width
         self.__view_height = view_height
 
         self.__on_scene_end = on_scene_end
-        self.__on_curtain_opened = on_curtain_opened
+        self.__on_scene_start = on_scene_start
         self.world_batch = pyglet.graphics.Batch()
         self.ui_batch = pyglet.graphics.Batch()
 
@@ -126,8 +126,8 @@ class SceneNode(Node):
                 self.__curtain_opacity = 0x00
 
                 # The curtain is fully opened, so call parent to notify.
-                if self.__on_curtain_opened is not None:
-                    self.__on_curtain_opened()
+                if self.__on_scene_start is not None:
+                    self.__on_scene_start()
 
             if self.__curtain is not None:
                 self.__curtain.set_opacity(int(self.__curtain_opacity))

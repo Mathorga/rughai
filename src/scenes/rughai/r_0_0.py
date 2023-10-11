@@ -43,8 +43,8 @@ class R_0_0(PlayableSceneNode):
             view_height = view_height,
             cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = "R_0_0",
-            on_scene_end = self._on_scene_end,
-            on_curtain_opened = self._on_scene_start,
+            on_scene_start = self._on_scene_start,
+            on_scene_end = self._on_scene_end
         )
 
         # Define a tilemap.
@@ -202,7 +202,7 @@ class R_0_0(PlayableSceneNode):
             width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_COLLISION],
-            on_triggered = lambda tags, entered:
+            on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
@@ -222,7 +222,7 @@ class R_0_0(PlayableSceneNode):
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
             tags = [collision_tags.PLAYER_COLLISION],
-            on_triggered = lambda tags, entered:
+            on_triggered = lambda entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
