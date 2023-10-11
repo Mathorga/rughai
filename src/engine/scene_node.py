@@ -1,4 +1,3 @@
-from turtle import width
 from typing import Callable, Optional, Sequence, Tuple, Union
 import pyglet
 import pyglet.math as pm
@@ -17,10 +16,10 @@ class Bounds:
         left: Optional[int] = None,
         right: Optional[int] = None
     ) -> None:
-        self.top = top if top != None else None
-        self.bottom = bottom if bottom != None else None
-        self.left = left if left != None else None
-        self.right = right if right != None else None
+        self.top = top if top is not None else None
+        self.bottom = bottom if bottom is not None else None
+        self.left = left if left is not None else None
+        self.right = right if right is not None else None
 
     def get_width(self) -> int:
         assert self.right is not None and self.left is not None
@@ -161,13 +160,13 @@ class SceneNode(Node):
 
             if self.__cam_bounds is not None:
                 # Apply bounds to camera movement by limiting updated position.
-                if self.__cam_bounds.top != None and self.__cam_bounds.top * GLOBALS[Builtins.SCALING] < updated_y + self.__view_height * GLOBALS[Builtins.SCALING]:
+                if self.__cam_bounds.top is not None and self.__cam_bounds.top * GLOBALS[Builtins.SCALING] < updated_y + self.__view_height * GLOBALS[Builtins.SCALING]:
                     updated_y = self.__cam_bounds.top * GLOBALS[Builtins.SCALING] - self.__view_height * GLOBALS[Builtins.SCALING]
-                if self.__cam_bounds.bottom != None and self.__cam_bounds.bottom * GLOBALS[Builtins.SCALING] > updated_y:
+                if self.__cam_bounds.bottom is not None and self.__cam_bounds.bottom * GLOBALS[Builtins.SCALING] > updated_y:
                     updated_y = self.__cam_bounds.bottom * GLOBALS[Builtins.SCALING]
-                if self.__cam_bounds.left != None and self.__cam_bounds.left * GLOBALS[Builtins.SCALING] > updated_x:
+                if self.__cam_bounds.left is not None and self.__cam_bounds.left * GLOBALS[Builtins.SCALING] > updated_x:
                     updated_x = self.__cam_bounds.left * GLOBALS[Builtins.SCALING]
-                if self.__cam_bounds.right != None and self.__cam_bounds.right * GLOBALS[Builtins.SCALING] < updated_x + self.__view_width * GLOBALS[Builtins.SCALING]:
+                if self.__cam_bounds.right is not None and self.__cam_bounds.right * GLOBALS[Builtins.SCALING] < updated_x + self.__view_width * GLOBALS[Builtins.SCALING]:
                     updated_x = self.__cam_bounds.right * GLOBALS[Builtins.SCALING] - self.__view_width * GLOBALS[Builtins.SCALING]
 
             # Actually update camera position.
