@@ -68,7 +68,7 @@ class PlayerNode(PositionNode):
         self.__sprint_anim.frames[-1].duration = None
 
         # Setup input handling.
-        self.__controls_enabled = True
+        self.__controls_enabled = False
         self.__move_input = pyglet.math.Vec2()
         self.__look_input = pyglet.math.Vec2()
 

@@ -42,6 +42,10 @@ class PlayableSceneNode(Node):
             # Pass a package containing all useful information for the next room.
             self._on_ended(self._bundle)
 
+    def _on_scene_start(self) -> None:
+        if self._player is not None:
+            self._player.enable_controls()
+
     def draw(self) -> None:
         if self._scene is not None:
             self._scene.draw()

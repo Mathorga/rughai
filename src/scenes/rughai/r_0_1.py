@@ -40,7 +40,8 @@ class R_0_1(PlayableSceneNode):
             view_height = view_height,
             cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = "R_0_1",
-            on_scene_end = self._on_scene_end
+            on_scene_end = self._on_scene_end,
+            on_curtain_opened = self._on_scene_start
         )
 
         # Define a tilemap.
