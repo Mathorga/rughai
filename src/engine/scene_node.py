@@ -253,7 +253,6 @@ class SceneNode(Node):
     ):
         self.__cam_bounds = bounds
 
-
     def end(self):
         self.__curtain_opening = False
         self.__curtain_closing = True
