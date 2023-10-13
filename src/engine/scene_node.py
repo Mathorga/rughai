@@ -8,6 +8,9 @@ from engine.node import Node, PositionNode
 from engine.shapes.rect_node import RectNode
 from engine.text_node import TextNode
 
+# Defines at which point the scene should be considered started while the curtain is opening.
+SCENE_START_THRESHOLD = 0x80
+
 class Bounds:
     def __init__(
         self,
@@ -121,13 +124,14 @@ class SceneNode(Node):
         if self.__curtain_opening:
             self.__curtain_opacity -= self.__curtain_speed * 0.5 * dt
 
-            if self.__curtain_opacity <= 0x00:
-                self.__curtain_opening = False
-                self.__curtain_opacity = 0x00
-
+            if self.__curtain_opacity <= SCENE_START_THRESHOLD:
                 # The curtain is fully opened, so call parent to notify.
                 if self.__on_scene_start is not None:
                     self.__on_scene_start()
+
+            if self.__curtain_opacity <= 0x00:
+                self.__curtain_opening = False
+                self.__curtain_opacity = 0x00
 
             if self.__curtain is not None:
                 self.__curtain.set_opacity(int(self.__curtain_opacity))
@@ -252,7 +256,6 @@ class SceneNode(Node):
         bounds: Bounds
     ):
         self.__cam_bounds = bounds
-
 
     def end(self):
         self.__curtain_opening = False

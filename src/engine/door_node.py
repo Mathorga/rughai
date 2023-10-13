@@ -16,7 +16,7 @@ class DoorNode(PositionNode):
         anchor_x: float = 0,
         anchor_y: float = 0,
         tags: List[str] = [],
-        on_triggered: Optional[Callable[[bool], None]] = None,
+        on_triggered: Optional[Callable[[List[str], bool], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)

@@ -202,7 +202,7 @@ class R_0_0(PlayableSceneNode):
             width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_COLLISION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
@@ -222,7 +222,7 @@ class R_0_0(PlayableSceneNode):
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
             tags = [collision_tags.PLAYER_COLLISION],
-            on_triggered = lambda entered:
+            on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
