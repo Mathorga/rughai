@@ -184,7 +184,7 @@ class R_0_0(PlayableSceneNode):
 
         # Player.
         player_position = (
-            bundle["player_position"][0] if bundle else 25 * self.__tile_size,
+            bundle["player_position"][0] if bundle else 50 * self.__tile_size,
             bundle["player_position"][1] if bundle else 25 * self.__tile_size,
         )
         cam_target = PositionNode()
@@ -210,7 +210,7 @@ class R_0_0(PlayableSceneNode):
                         "next_scene": scenes.R_0_1,
                         "player_position": [
                             self._player.x,
-                            25 * self.__tile_size
+                            30 * self.__tile_size
                         ]
                     }
                 ),
