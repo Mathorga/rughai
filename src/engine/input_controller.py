@@ -102,7 +102,6 @@ class InputController:
 
     def __exit__(self, exception_type, exception_value, traceback):
         self.key_presses.clear()
-        pass
 
     # ----------------------------------------------------------------------
     # Getters.
@@ -216,3 +215,6 @@ class InputController:
 
     def get_menu_page_right(self) -> bool:
         return self.key_presses.get(pyglet.window.key.E, False)
+
+    def get_l2(self) -> bool:
+        return self[pyglet.window.key.LSHIFT] or self.buttons.get("lefttrigger", (0.0)) > 0.5

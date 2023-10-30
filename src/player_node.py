@@ -50,6 +50,13 @@ class PlayerNode(PositionNode):
         # ATK state animations.
         self.__atk_idle_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_idle.gif")
         self.__atk_0_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_0.gif")
+        self.__atk_0_load_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_load.gif")
+        self.__atk_0_hold_0_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_hold_0.gif")
+        self.__atk_0_hold_1_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_hold_1.gif")
+        self.__atk_0_hold_2_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_hold_2.gif")
+        self.__atk_0_shoot_0_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_shoot_0.gif")
+        self.__atk_0_shoot_1_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_shoot_1.gif")
+        self.__atk_0_shoot_2_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_shoot_2.gif")
 
         # Aim sprite distance, defines the distance at which the sprite floats.
         self.__aim_sprite_distance = 10.0
@@ -82,6 +89,10 @@ class PlayerNode(PositionNode):
         # Atk flags
         self.__main_atk_ing = False
         self.__main_atk_ed = False
+        self.__aiming = False
+        self.__loading = False
+        self.__shoot_ing = False
+        self.__shoot_ed = False
 
         self.__run_threshold = run_threshold
 
@@ -236,8 +247,8 @@ class PlayerNode(PositionNode):
             # Allow the player to look around even if they're rolling.
             self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
-            # All other input should be fetched if not rolling.
-            if self.__sprint_ing or self.__main_atk_ing:
+            # All other input should only be fetched when not rolling or attacking.
+            if self.__sprint_ing or self.__main_atk_ing or self.__aiming:
                 return
 
             self.__move_input = controllers.INPUT_CONTROLLER.get_movement().limit(1.0)
@@ -246,6 +257,8 @@ class PlayerNode(PositionNode):
             self.__sprint_ing = controllers.INPUT_CONTROLLER.get_sprint()
             if self.__sprint_ing:
                 self.__sprint_ed = True
+
+            self.__aiming = controllers.INPUT_CONTROLLER.get_l2()
 
             self.__main_atk_ing = controllers.INPUT_CONTROLLER.get_main_atk()
             if self.__main_atk_ing:
@@ -329,7 +342,9 @@ class PlayerNode(PositionNode):
 
         # Update sprite image based on current speed.
         image_to_show = None
-        if self.__sprint_ing:
+        if self.__aiming:
+            image_to_show = self.__atk_0_hold_0_anim
+        elif self.__sprint_ing:
             image_to_show = self.__sprint_anim
         elif self.__main_atk_ing:
             image_to_show = self.__atk_0_anim
