@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 import pyglet
 
-from engine.settings import GLOBALS, SETTINGS, Builtins
+from engine.settings import GLOBALS, Builtins
 from engine.node import PositionNode
 
 class TextNode(PositionNode):
@@ -33,7 +33,7 @@ class TextNode(PositionNode):
             text = text,
             x = x * GLOBALS[Builtins.SCALING],
             y = y * GLOBALS[Builtins.SCALING],
-            z = z,
+            z = int(z),
             multiline = multiline,
             width = width * GLOBALS[Builtins.SCALING],
             height = height * GLOBALS[Builtins.SCALING] if height is not None else None,

@@ -78,6 +78,7 @@ class DialogNode(PositionNode):
             font_name = SETTINGS[Builtins.FONT_NAME],
             x = SETTINGS[Builtins.VIEW_WIDTH] - 16,
             y = 16,
+            multiline = False,
             batch = ui_batch
         )
 
