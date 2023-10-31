@@ -71,3 +71,26 @@ Idle prop files are defined as follows:</br>
     * `anchor_y[int]`: y component of the sensor's anchor point.</br>
 
 [Examples](/assets/idle_prop/rughai)</br>
+
+## Animations
+All animations can be defined via a simple json definition file.</br>
+Animation files are defined as follows:</br>
+
+    name[string]: name of the animation.
+    path[string]: path to the animation file (starting from the application-defined assets directory).
+    anchor_x[int](optional): the x component of the animation anchor point.
+    anchor_y[int](optional): the y component of the animation anchor point.
+    center_x[bool](optional): whether the animation should be centered on the x axis. If present, this overrides the "anchor_x" parameter.
+    center_y[bool](optional): whether the animation should be centered on the y axis. If present, this overrides the "anchor_y" parameter.
+    duration[float](optional): the duration of each animation frame.
+    loop[bool](optional): whether the animation should loop or not.
+  * `name[string]`: name of the animation.</br>
+  * `path[string]`: path to the animation file (starting from the application-defined assets directory).</br>
+  * `anchor_x[int](optional)`: the x component of the animation anchor point.</br>
+  * `anchor_y[int](optional)`: the y component of the animation anchor point.</br>
+  * `center_x[bool](optional)`: whether the animation should be centered on the x axis. If present, this overrides the "anchor_x" parameter.</br>
+  * `center_y[int](optional)`: whether the animation should be centered on the y axis. If present, this overrides the "anchor_y" parameter.</br>
+  * `duration[int](optional)`: the duration of each animation frame.</br>
+  * `loop[int](optional)`: whether the animation should loop or not.</br>
+
+[Examples](/assets/sprites/iryo/animations)</br>

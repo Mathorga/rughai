@@ -1,0 +1,7 @@
+{
+    "name": "iryo_roll",
+    "path": "sprites/iryo/iryo_roll.gif",
+    "center_x": true,
+    "duration": 0.08,
+    "loop": false
+}

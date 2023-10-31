@@ -216,5 +216,5 @@ class InputController:
     def get_menu_page_right(self) -> bool:
         return self.key_presses.get(pyglet.window.key.E, False)
 
-    def get_l2(self) -> bool:
-        return self[pyglet.window.key.LSHIFT] or self.buttons.get("lefttrigger", (0.0)) > 0.5
+    def get_aim(self) -> bool:
+        return self[pyglet.window.key.LCTRL] or self.buttons.get("lefttrigger", (0.0)) > 0.5

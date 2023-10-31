@@ -235,7 +235,7 @@ def sweep_circle_rect() -> Optional[CollisionHit]:
 
 
 
-def animation_set_anchor(
+def set_animation_anchor(
     animation: pyglet.image.animation.Animation,
     x: float,
     y: float
@@ -244,17 +244,20 @@ def animation_set_anchor(
         frame.image.anchor_x = x
         frame.image.anchor_y = y
 
-def center_anim(anim: pyglet.image.animation.Animation):
-    for frame in anim.frames:
-        frame.image.anchor_x = anim.get_max_width() / 2
-        frame.image.anchor_y = 0
+def x_center_animation(animation: pyglet.image.animation.Animation):
+    for frame in animation.frames:
+        frame.image.anchor_x = animation.get_max_width() / 2
 
-def scale_anim(anim: pyglet.image.animation.Animation, scale: float):
-    for frame in anim.frames:
+def y_center_animation(animation: pyglet.image.animation.Animation):
+    for frame in animation.frames:
+        frame.image.anchor_y = animation.get_max_height() / 2
+
+def scale_animation(animation: pyglet.image.animation.Animation, scale: float):
+    for frame in animation.frames:
         frame.image.scale = scale
 
-def set_anim_duration(anim: pyglet.image.animation.Animation, duration: float):
-    for frame in anim.frames:
+def set_animation_duration(animation: pyglet.image.animation.Animation, duration: float):
+    for frame in animation.frames:
         frame.duration = duration
 
 def remap(x, x_min, x_max, y_min, y_max):

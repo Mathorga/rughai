@@ -17,7 +17,7 @@ class DukNode(PositionNode):
         super().__init__(x, y)
 
         self.__idle_animation = pyglet.resource.animation("sprites/rughai/wilds/duk/duk_idle.gif")
-        utils.animation_set_anchor(
+        utils.set_animation_anchor(
             animation = self.__idle_animation,
             x = self.__idle_animation.get_max_width() / 2,
             y = 0

@@ -8,7 +8,7 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.utils import animation_set_anchor
+from engine.utils import set_animation_anchor
 from constants import collision_tags
 
 class IdlePropNode(PositionNode):
@@ -112,7 +112,7 @@ class IdlePropNode(PositionNode):
                 anim_anchor_y: Optional[int] = anim_spec["anchor_y"] if "anchor_y" in anim_spec else anchor_y
 
                 if anim_anchor_x is not None and anim_anchor_y is not None:
-                    animation_set_anchor(
+                    set_animation_anchor(
                         animation = anim_ref,
                         x = anim_anchor_x,
                         y = anim_anchor_y

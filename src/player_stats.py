@@ -102,7 +102,8 @@ class PlayerStats():
         self.health = self.max_health
         self.energy = self.max_energy
         self.speed = 0.0
-        self.dir = 0.0
+        self.move_dir = 0.0
+        self.look_dir = 0.0
 
     def compute_stat(
         self,

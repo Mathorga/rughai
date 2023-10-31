@@ -3,6 +3,7 @@ This file contains the class needed to implement a general animation.
 """
 
 import json
+from typing import Any, Dict
 import pyglet
 
 from engine import utils
@@ -17,32 +18,54 @@ class Animation:
     path[string]: path to the animation file (starting from the application-defined assets directory).
     anchor_x[int](optional): the x component of the animation anchor point.
     anchor_y[int](optional): the y component of the animation anchor point.
+    center_x[bool](optional): whether the animation should be centered on the x axis. If present, this overrides the "anchor_x" parameter.
+    center_y[bool](optional): whether the animation should be centered on the y axis. If present, this overrides the "anchor_y" parameter.
+    duration[float](optional): the duration of each animation frame.
+    loop[bool](optional): whether the animation should loop or not.
     """
 
     def __init__(
         self,
         source: str,
     ) -> None:
-        self.__source = source
+        # Store the source path.
+        self.source = source
 
         # Read source file.
-        source_data: dict = {}
+        self.source_data: Dict[str, Any] = {}
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
-            source_data = json.load(content)
+            self.source_data = json.load(content)
 
         # Make sure all mandatory fields are present in the definition file.
-        assert "path" in source_data.keys() and "name" in source_data.keys()
+        assert "path" in self.source_data.keys() and "name" in self.source_data.keys()
 
         # Read animation name.
-        self.name = source_data["name"]
+        self.name = self.source_data["name"]
 
         # Read animation path.
-        self.animation = pyglet.resource.animation(source_data["path"])
+        self.animation = pyglet.resource.animation(self.source_data["path"])
 
         # Set animation anchor if defined.
-        if "anchor_x" in source_data.keys() and "anchor_y" in source_data.keys():
-            utils.animation_set_anchor(
+        if "anchor_x" in self.source_data.keys() and "anchor_y" in self.source_data.keys():
+            utils.set_animation_anchor(
                 animation = self.animation,
-                x = source_data["anchor_x"],
-                y = source_data["anchor_y"]
+                x = self.source_data["anchor_x"],
+                y = self.source_data["anchor_y"]
             )
+
+        if "center_x" in self.source_data.keys() and self.source_data["center_x"] is True:
+            utils.x_center_animation(animation = self.animation)
+
+        if "center_y" in self.source_data.keys() and self.source_data["center_y"] is True:
+            utils.y_center_animation(animation = self.animation)
+
+        # Set duration if defined.
+        if "duration" in self.source_data.keys():
+            utils.set_animation_duration(
+                animation = self.animation,
+                duration = self.source_data["duration"]
+            )
+
+        # Set not looping if so specified.
+        if "loop" in self.source_data.keys() and self.source_data["loop"] is False:
+            self.animation.frames[-1].duration = None

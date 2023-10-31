@@ -9,6 +9,7 @@ import pyglet
 import pyglet.math as pm
 
 from constants import collision_tags
+from engine.animation import Animation
 
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
@@ -42,14 +43,13 @@ class PlayerNode(PositionNode):
         )
 
         # IDLE state animations.
-        self.__idle_anim = pyglet.resource.animation("sprites/iryo/iryo_idle.gif")
-        self.__walk_anim = pyglet.resource.animation("sprites/iryo/iryo_walk.gif")
-        self.__run_anim = pyglet.resource.animation("sprites/iryo/iryo_run.gif")
-        self.__sprint_anim = pyglet.resource.animation("sprites/iryo/iryo_roll.gif")
+        self.__idle_anim = Animation(source = "sprites/iryo/animations/iryo_idle.json")
+        self.__walk_anim = Animation(source = "sprites/iryo/animations/iryo_walk.json")
+        self.__run_anim = Animation(source = "sprites/iryo/animations/iryo_run.json")
+        self.__sprint_anim = Animation(source = "sprites/iryo/animations/iryo_roll.json")
 
         # ATK state animations.
-        self.__atk_idle_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_idle.gif")
-        self.__atk_0_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_0.gif")
+        self.__atk_idle_anim = Animation(source = "sprites/iryo/animations/iryo_atk_idle.json")
         self.__atk_0_load_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_load.gif")
         self.__atk_0_hold_0_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_hold_0.gif")
         self.__atk_0_hold_1_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_hold_1.gif")
@@ -61,18 +61,6 @@ class PlayerNode(PositionNode):
         # Aim sprite distance, defines the distance at which the sprite floats.
         self.__aim_sprite_distance = 10.0
         self.__interactor_distance = 5.0
-
-        # Center animations.
-        utils.center_anim(self.__idle_anim)
-        utils.center_anim(self.__walk_anim)
-        utils.center_anim(self.__run_anim)
-        utils.center_anim(self.__sprint_anim)
-        utils.center_anim(self.__atk_idle_anim)
-        utils.center_anim(self.__atk_0_anim)
-        self.__atk_0_anim.frames[-1].duration = None
-
-        utils.set_anim_duration(self.__sprint_anim, 0.08)
-        self.__sprint_anim.frames[-1].duration = None
 
         # Setup input handling.
         self.__controls_enabled = False
@@ -87,8 +75,6 @@ class PlayerNode(PositionNode):
         self.__sprint_ed = False
 
         # Atk flags
-        self.__main_atk_ing = False
-        self.__main_atk_ed = False
         self.__aiming = False
         self.__loading = False
         self.__shoot_ing = False
@@ -106,7 +92,7 @@ class PlayerNode(PositionNode):
         self.__hor_facing: int = 1
 
         self.__sprite = SpriteNode(
-            resource = self.__idle_anim,
+            resource = self.__idle_anim.animation,
             on_animation_end = self.on_sprite_animation_end,
             x = x,
             y = y,
@@ -223,9 +209,6 @@ class PlayerNode(PositionNode):
         if self.__sprint_ing:
             self.__sprint_ing = False
 
-        if self.__main_atk_ing:
-            self.__main_atk_ing = False
-
     def disable_controls(self) -> None:
         """
         Disables user controls over the player and stops all existing inputs.
@@ -242,36 +225,43 @@ class PlayerNode(PositionNode):
 
         self.__controls_enabled = True
 
+    def get_aim_dir(self) -> float:
+        """
+        Computes the right aim direction according to the current aim state: look direction when aiming, move direction when not aiming.
+        """
+
+        return self.__stats.look_dir if self.__aiming else self.__stats.move_dir
+
     def __fetch_input(self):
         if self.__controls_enabled:
             # Allow the player to look around even if they're rolling.
             self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
+            self.__aiming = controllers.INPUT_CONTROLLER.get_aim()
+
             # All other input should only be fetched when not rolling or attacking.
-            if self.__sprint_ing or self.__main_atk_ing or self.__aiming:
+            if self.__sprint_ing:
                 return
 
             self.__move_input = controllers.INPUT_CONTROLLER.get_movement().limit(1.0)
-            self.__slow = controllers.INPUT_CONTROLLER.get_modifier()
 
             self.__sprint_ing = controllers.INPUT_CONTROLLER.get_sprint()
             if self.__sprint_ing:
                 self.__sprint_ed = True
 
-            self.__aiming = controllers.INPUT_CONTROLLER.get_l2()
+            self.__slow = controllers.INPUT_CONTROLLER.get_modifier() or self.__aiming
 
-            self.__main_atk_ing = controllers.INPUT_CONTROLLER.get_main_atk()
-            if self.__main_atk_ing:
-                self.__main_atk_ed = True
-
-            # Trigger dialogs' next line.
+            # Interaction.
             interact = controllers.INPUT_CONTROLLER.get_interaction()
             if interact:
                 controllers.INTERACTION_CONTROLLER.interact()
 
     def __update_dir(self):
         if self.__move_input.mag > 0.0:
-            self.__stats.dir = self.__move_input.heading
+            self.__stats.move_dir = self.__move_input.heading
+
+        if self.__look_input.mag > 0.0:
+            self.__stats.look_dir = self.__look_input.heading
 
     def __update_stats(self, dt):
         walk_speed = self.__stats.max_speed * 0.5
@@ -288,16 +278,9 @@ class PlayerNode(PositionNode):
                 self.__sprint_ed = False
             else:
                 self.__stats.speed -= roll_accel * dt
-        elif self.__main_atk_ing:
-            # Main attacking.
-            if self.__main_atk_ed:
-                self.__update_dir()
-
-                self.__stats.speed = 0.0
-                self.__main_atk_ed = False
         else:
+            self.__update_dir()
             if self.__move_input.mag > 0.0:
-                self.__stats.dir = self.__move_input.heading
                 self.__stats.speed += self.__stats.accel * dt
             else:
                 self.__stats.speed -= self.__stats.accel * dt
@@ -314,7 +297,7 @@ class PlayerNode(PositionNode):
 
     def __compute_velocity(self, dt) -> pm.Vec2:
         # Define a vector from speed and direction.
-        return pm.Vec2.from_polar(self.__stats.speed * dt, self.__stats.dir)
+        return pm.Vec2.from_polar(self.__stats.speed * dt, self.__stats.move_dir)
 
     def __move(self, dt):
         # Apply movement after collision.
@@ -329,7 +312,7 @@ class PlayerNode(PositionNode):
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
-        dir_cos = math.cos(self.__stats.dir)
+        dir_cos = math.cos(self.get_aim_dir())
         dir_len = abs(dir_cos)
         if dir_len > 0.1:
             self.__hor_facing = int(math.copysign(1.0, dir_cos))
@@ -345,16 +328,14 @@ class PlayerNode(PositionNode):
         if self.__aiming:
             image_to_show = self.__atk_0_hold_0_anim
         elif self.__sprint_ing:
-            image_to_show = self.__sprint_anim
-        elif self.__main_atk_ing:
-            image_to_show = self.__atk_0_anim
+            image_to_show = self.__sprint_anim.animation
         else:
             if self.__stats.speed <= 0:
-                image_to_show = self.__idle_anim
+                image_to_show = self.__idle_anim.animation
             elif self.__stats.speed < self.__stats.max_speed * self.__run_threshold:
-                image_to_show = self.__walk_anim
+                image_to_show = self.__walk_anim.animation
             else:
-                image_to_show = self.__run_anim
+                image_to_show = self.__run_anim.animation
         
         # if image_to_show != None and self.__sprite.get_image() != image_to_show:
         self.__sprite.set_image(image_to_show)
@@ -373,7 +354,7 @@ class PlayerNode(PositionNode):
         self.__update_interactor(dt)
 
     def __update_aim(self, dt):
-        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.__stats.dir)
+        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.get_aim_dir())
         self.__aim_sprite.set_position(
             position = (
                 self.x + self.__aim_sprite_offset[0] + aim_vec.x,
@@ -398,7 +379,7 @@ class PlayerNode(PositionNode):
         self.__cam_target.update(dt)
 
     def __update_interactor(self, dt):
-        aim_vec = pyglet.math.Vec2.from_polar(self.__interactor_distance, self.__stats.dir)
+        aim_vec = pyglet.math.Vec2.from_polar(self.__interactor_distance, self.get_aim_dir())
         self.__interactor.set_position(
             position = (
                 self.x + aim_vec.x,
