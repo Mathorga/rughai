@@ -79,7 +79,7 @@ class IdlePropNode(PositionNode):
         self.__in_meeting = False
         self.__in_meet_out = False
 
-        data: dict
+        data: dict = {}
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
 
