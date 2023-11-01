@@ -43,20 +43,20 @@ class PlayerNode(PositionNode):
         )
 
         # IDLE state animations.
-        self.__idle_anim = Animation(source = "sprites/iryo/animations/iryo_idle.json")
-        self.__walk_anim = Animation(source = "sprites/iryo/animations/iryo_walk.json")
-        self.__run_anim = Animation(source = "sprites/iryo/animations/iryo_run.json")
-        self.__sprint_anim = Animation(source = "sprites/iryo/animations/iryo_roll.json")
+        self.__idle_anim = Animation(source = "sprites/iryo/iryo_idle.json")
+        self.__walk_anim = Animation(source = "sprites/iryo/iryo_walk.json")
+        self.__run_anim = Animation(source = "sprites/iryo/iryo_run.json")
+        self.__sprint_anim = Animation(source = "sprites/iryo/iryo_roll.json")
 
         # ATK state animations.
-        self.__atk_idle_anim = Animation(source = "sprites/iryo/animations/iryo_atk_idle.json")
-        self.__atk_0_load_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_load.gif")
-        self.__atk_0_hold_0_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_hold_0.gif")
-        self.__atk_0_hold_1_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_hold_1.gif")
-        self.__atk_0_hold_2_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_hold_2.gif")
-        self.__atk_0_shoot_0_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_shoot_0.gif")
-        self.__atk_0_shoot_1_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_shoot_1.gif")
-        self.__atk_0_shoot_2_anim = pyglet.resource.animation("sprites/iryo/iryo_atk_shoot_2.gif")
+        self.__atk_idle_anim = Animation(source = "sprites/iryo/iryo_atk_idle.json")
+        self.__atk_load_anim = Animation(source = "sprites/iryo/iryo_atk_load.json")
+        self.__atk_hold_0_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0.json")
+        self.__atk_hold_1_anim = Animation(source = "sprites/iryo/iryo_atk_hold_1.json")
+        self.__atk_hold_2_anim = Animation(source = "sprites/iryo/iryo_atk_hold_2.json")
+        self.__atk_shoot_0_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_0.json")
+        self.__atk_shoot_1_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_1.json")
+        self.__atk_shoot_2_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_2.json")
 
         # Aim sprite distance, defines the distance at which the sprite floats.
         self.__aim_sprite_distance = 10.0
@@ -326,7 +326,7 @@ class PlayerNode(PositionNode):
         # Update sprite image based on current speed.
         image_to_show = None
         if self.__aiming:
-            image_to_show = self.__atk_0_hold_0_anim
+            image_to_show = self.__atk_hold_0_anim
         elif self.__sprint_ing:
             image_to_show = self.__sprint_anim.animation
         else:
