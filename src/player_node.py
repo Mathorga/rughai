@@ -326,7 +326,7 @@ class PlayerNode(PositionNode):
         # Update sprite image based on current speed.
         image_to_show = None
         if self.__aiming:
-            image_to_show = self.__atk_hold_0_anim
+            image_to_show = self.__atk_hold_0_anim.animation
         elif self.__sprint_ing:
             image_to_show = self.__sprint_anim.animation
         else:
