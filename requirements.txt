@@ -2,5 +2,4 @@
 pyglet==2.0.7
 
 # Pixel information retrieval from image file.
-# TODO try and use pyglet for this too.
-pillow==9.5.0
+pillow==10.1.0

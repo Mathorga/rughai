@@ -46,11 +46,15 @@ class Animation:
         self.animation = pyglet.resource.animation(self.source_data["path"])
 
         # Set animation anchor if defined.
-        if "anchor_x" in self.source_data.keys() and "anchor_y" in self.source_data.keys():
-            utils.set_animation_anchor(
+        if "anchor_x" in self.source_data.keys():
+            utils.set_animation_anchor_x(
                 animation = self.animation,
-                x = self.source_data["anchor_x"],
-                y = self.source_data["anchor_y"]
+                anchor = self.source_data["anchor_x"],
+            )
+        if "anchor_y" in self.source_data.keys():
+            utils.set_animation_anchor_y(
+                animation = self.animation,
+                anchor = self.source_data["anchor_y"],
             )
 
         if "center_x" in self.source_data.keys() and self.source_data["center_x"] is True:
