@@ -80,8 +80,8 @@ Animation files are defined as follows:</br>
   * `anchor_x[int](optional)`: the x component of the animation anchor point.</br>
   * `anchor_y[int](optional)`: the y component of the animation anchor point.</br>
   * `center_x[bool](optional)`: whether the animation should be centered on the x axis. If present, this overrides the "anchor_x" parameter.</br>
-  * `center_y[int](optional)`: whether the animation should be centered on the y axis. If present, this overrides the "anchor_y" parameter.</br>
-  * `duration[int](optional)`: the duration of each animation frame.</br>
-  * `loop[int](optional)`: whether the animation should loop or not.</br>
+  * `center_y[bool](optional)`: whether the animation should be centered on the y axis. If present, this overrides the "anchor_y" parameter.</br>
+  * `duration[float](optional)`: the duration of each animation frame.</br>
+  * `loop[bool](optional)`: whether the animation should loop or not.</br>
 
 [Examples](/assets/sprites/iryo/animations)</br>
