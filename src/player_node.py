@@ -75,6 +75,7 @@ class PlayerNode(PositionNode):
         self.__sprint_ed = False
 
         # Atk flags
+        self.__loading = False
         self.__aiming = False
         self.__loading = False
         self.__shoot_ing = False
@@ -209,6 +210,10 @@ class PlayerNode(PositionNode):
         if self.__sprint_ing:
             self.__sprint_ing = False
 
+        if self.__loading:
+            self.__loading = False
+            self.__aiming = True
+
     def disable_controls(self) -> None:
         """
         Disables user controls over the player and stops all existing inputs.
@@ -230,17 +235,23 @@ class PlayerNode(PositionNode):
         Computes the right aim direction according to the current aim state: look direction when aiming, move direction when not aiming.
         """
 
-        return self.__stats.look_dir if self.__aiming else self.__stats.move_dir
+        return self.__stats.look_dir if self.__aiming or self.__loading else self.__stats.move_dir
 
     def __fetch_input(self):
         if self.__controls_enabled:
             # Allow the player to look around even if they're rolling.
             self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
-            self.__aiming = controllers.INPUT_CONTROLLER.get_aim()
+            aim_input = controllers.INPUT_CONTROLLER.get_aim()
+            if aim_input:
+                if not self.__loading and not self.__aiming:
+                    self.__loading = True
+            else:
+                self.__loading = False
+                self.__aiming = False
 
             # All other input should only be fetched when not rolling or attacking.
-            if self.__sprint_ing:
+            if self.__sprint_ing or self.__loading:
                 return
 
             self.__move_input = controllers.INPUT_CONTROLLER.get_movement().limit(1.0)
@@ -260,6 +271,9 @@ class PlayerNode(PositionNode):
         if self.__move_input.mag > 0.0:
             self.__stats.move_dir = self.__move_input.heading
 
+            if not self.__loading and not self.__aiming:
+                self.__stats.look_dir = self.__stats.move_dir
+
         if self.__look_input.mag > 0.0:
             self.__stats.look_dir = self.__look_input.heading
 
@@ -268,7 +282,9 @@ class PlayerNode(PositionNode):
         roll_speed = self.__stats.max_speed * 2.0
         roll_accel = self.__stats.accel * 0.5
 
-        if self.__sprint_ing:
+        if self.__loading:
+            self.__stats.speed = 0.0
+        elif self.__sprint_ing:
             # Sprinting.
             if self.__sprint_ed:
                 # Update direction in order to correctly orient sprints.
@@ -325,7 +341,9 @@ class PlayerNode(PositionNode):
 
         # Update sprite image based on current speed.
         image_to_show = None
-        if self.__aiming:
+        if self.__loading:
+            image_to_show = self.__atk_load_anim.animation
+        elif self.__aiming:
             image_to_show = self.__atk_hold_0_anim.animation
         elif self.__sprint_ing:
             image_to_show = self.__sprint_anim.animation

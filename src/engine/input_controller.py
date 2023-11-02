@@ -217,4 +217,4 @@ class InputController:
         return self.key_presses.get(pyglet.window.key.E, False)
 
     def get_aim(self) -> bool:
-        return self[pyglet.window.key.TAB] or self.buttons.get("lefttrigger", (0.0)) > 0.5
+        return self[pyglet.window.key.RCTRL] or self.buttons.get("lefttrigger", (0.0)) > 0.5
