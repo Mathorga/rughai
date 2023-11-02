@@ -10,8 +10,14 @@ Rughai is an action RPG game built entirely in Python.
 `python3 -O .\src\main.py`
 
 ## Compile to executable (using Nuitka)
+In order to compile to executable you first need to install Nuitka:</br>
 `pip3 install nuitka`</br>
+
+Then you can launch the compile command:</br>
 `python3 -m nuitka .\src\main.py --standalone --include-data-dir=./assets=.`
+
+You can then find the compiled version of the game inside the main_dist:</br>
+`.\main_dist\main.exe`
 
 ## Settings
 You can change game settings by manually editing the [assets/settings.json](/assets/settings.json) file:</br>
