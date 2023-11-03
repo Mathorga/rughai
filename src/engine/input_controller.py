@@ -1,5 +1,7 @@
 import pyglet
 
+from engine.settings import GLOBALS, Builtins
+
 class InputController:
     def __init__(
         self,
@@ -173,8 +175,8 @@ class InputController:
 
         stick = self.sticks.get("rightstick", (0.0, 0.0))
         return pyglet.math.Vec2(
-            (self[pyglet.window.key.RIGHT] - self[pyglet.window.key.LEFT]) + stick[0],
-            (self[pyglet.window.key.UP] - self[pyglet.window.key.DOWN]) + stick[1]
+            (self[pyglet.window.key.L] - self[pyglet.window.key.J]) + stick[0],
+            (self[pyglet.window.key.I] - self[pyglet.window.key.K]) + stick[1]
         )
 
     def get_cursor_movement(self) -> pyglet.math.Vec2:
@@ -217,4 +219,4 @@ class InputController:
         return self.key_presses.get(pyglet.window.key.E, False)
 
     def get_aim(self) -> bool:
-        return self[pyglet.window.key.RCTRL] or self.buttons.get("lefttrigger", (0.0)) > 0.5
+        return self[pyglet.window.key.N] or self.buttons.get("lefttrigger", 0.0) > 0.5
