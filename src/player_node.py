@@ -271,11 +271,11 @@ class PlayerNode(PositionNode):
         if self.__move_input.mag > 0.0:
             self.__stats.move_dir = self.__move_input.heading
 
-            if not self.__loading and not self.__aiming:
-                self.__stats.look_dir = self.__stats.move_dir
-
         if self.__look_input.mag > 0.0:
             self.__stats.look_dir = self.__look_input.heading
+        else:
+            if not self.__loading and not self.__aiming:
+                self.__stats.look_dir = self.__stats.move_dir
 
     def __update_stats(self, dt):
         walk_speed = self.__stats.max_speed * 0.5
@@ -391,7 +391,9 @@ class PlayerNode(PositionNode):
         self.__shadow_sprite.update(dt)
 
     def __update_cam_target(self, dt):
-        cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
+        # Automatically go to cam target distance if loading or aiming.
+        cam_target_distance = self.__cam_target_distance if self.__loading or self.__aiming else self.__cam_target_distance * self.__look_input.mag
+        cam_target_vec = pyglet.math.Vec2.from_polar(cam_target_distance, self.__stats.look_dir)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
         self.__cam_target.update(dt)
