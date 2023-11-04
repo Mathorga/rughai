@@ -15,7 +15,6 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine import utils
 from engine.settings import SETTINGS, Builtins
 
 import engine.controllers as controllers
