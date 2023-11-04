@@ -52,6 +52,7 @@ class PlayerNode(PositionNode):
         self.__atk_idle_anim = Animation(source = "sprites/iryo/iryo_atk_idle.json")
         self.__atk_load_anim = Animation(source = "sprites/iryo/iryo_atk_load.json")
         self.__atk_hold_0_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0.json")
+        self.__atk_hold_0_walk_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0_walk.json")
         self.__atk_hold_1_anim = Animation(source = "sprites/iryo/iryo_atk_hold_1.json")
         self.__atk_hold_2_anim = Animation(source = "sprites/iryo/iryo_atk_hold_2.json")
         self.__atk_shoot_0_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_0.json")
@@ -353,7 +354,10 @@ class PlayerNode(PositionNode):
         elif self.__loading:
             image_to_show = self.__atk_load_anim.animation
         elif self.__aiming:
-            image_to_show = self.__atk_hold_0_anim.animation
+            if self.__stats.speed <= 0:
+                image_to_show = self.__atk_hold_0_anim.animation
+            else:
+                image_to_show = self.__atk_hold_0_walk_anim.animation
         elif self.__sprint_ing:
             image_to_show = self.__sprint_anim.animation
         else:
