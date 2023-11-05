@@ -7,6 +7,7 @@ from typing import Optional
 
 import pyglet
 import pyglet.math as pm
+from aim_node import AimNode
 
 from constants import collision_tags
 from engine.animation import Animation
@@ -101,18 +102,11 @@ class PlayerNode(PositionNode):
             batch = batch
         )
 
-        # Aim sprite image.
-        target_image = pyglet.resource.image("sprites/target.png")
-        target_image.anchor_x = target_image.width / 2
-        target_image.anchor_y = target_image.height / 2
-
-        # Aim sprite offset, defines the offset from self.x and self.y, respectively.
-        self.__aim_sprite_offset = (0.0, 8.0)
-
-        self.__aim_sprite = SpriteNode(
-            resource = target_image,
-            x = x,
-            y = y,
+        # Aim target.
+        self.__aim = AimNode(
+            x = self.x,
+            y = self.y,
+            offset_y = 8.0,
             batch = batch
         )
 
@@ -384,15 +378,13 @@ class PlayerNode(PositionNode):
         self.__update_interactor(dt)
 
     def __update_aim(self, dt):
-        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.get_aim_dir())
-        self.__aim_sprite.set_position(
-            position = (
-                self.x + self.__aim_sprite_offset[0] + aim_vec.x,
-                self.y + self.__aim_sprite_offset[1] + aim_vec.y
-            ),
-            z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
-        )
-        self.__aim_sprite.update(dt)
+        """
+        Updates the aim sign.
+        """
+
+        self.__aim.set_direction(direction = self.get_aim_dir())
+        self.__aim.set_position(position = self.get_position())
+        self.__aim.update(dt = dt)
 
     def __update_shadow(self, dt):
         self.__shadow_sprite.set_position(
