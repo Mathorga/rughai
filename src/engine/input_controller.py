@@ -1,5 +1,7 @@
 import pyglet
 
+from engine.settings import GLOBALS, Builtins
+
 class InputController:
     def __init__(
         self,
@@ -125,7 +127,7 @@ class InputController:
         Returns whether the interact button was pressed or not, either on controller or keyboard.
         """
 
-        return self.key_presses.get(pyglet.window.key.L, False) or self.button_presses.get("a", False)
+        return self.key_presses.get(pyglet.window.key.H, False) or self.button_presses.get("a", False)
 
     def get_main_atk(self) -> bool:
         """
@@ -166,6 +168,15 @@ class InputController:
             (self[pyglet.window.key.W] - self[pyglet.window.key.S]) + stick[1]
         )
 
+    def get_view_input(self) -> bool:
+        """
+        Returns whether there's any view input or not, regardless its resulting magnitude.
+        """
+
+        stick = self.sticks.get("rightstick", (0.0, 0.0))
+        stick_vec = pyglet.math.Vec2(stick[0], stick[1])
+        return self[pyglet.window.key.L] or self[pyglet.window.key.J] or self[pyglet.window.key.I] or self[pyglet.window.key.K] or stick_vec.mag > 0.0
+
     def get_view_movement(self) -> pyglet.math.Vec2:
         """
         Returns the camera movement vector from keyboard and controller.
@@ -173,8 +184,8 @@ class InputController:
 
         stick = self.sticks.get("rightstick", (0.0, 0.0))
         return pyglet.math.Vec2(
-            (self[pyglet.window.key.RIGHT] - self[pyglet.window.key.LEFT]) + stick[0],
-            (self[pyglet.window.key.UP] - self[pyglet.window.key.DOWN]) + stick[1]
+            (self[pyglet.window.key.L] - self[pyglet.window.key.J]) + stick[0],
+            (self[pyglet.window.key.I] - self[pyglet.window.key.K]) + stick[1]
         )
 
     def get_cursor_movement(self) -> pyglet.math.Vec2:
@@ -217,4 +228,11 @@ class InputController:
         return self.key_presses.get(pyglet.window.key.E, False)
 
     def get_aim(self) -> bool:
-        return self[pyglet.window.key.RCTRL] or self.buttons.get("lefttrigger", (0.0)) > 0.5
+        return self[pyglet.window.key.N] or self.buttons.get("lefttrigger", 0.0) > 0.5
+
+    def get_draw(self) -> bool:
+        """
+        Returns whether the draw button was pressed or not, either on controller or keyboard.
+        """
+
+        return self[pyglet.window.key.SPACE] or self.buttons.get("b", False)

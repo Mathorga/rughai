@@ -7,6 +7,7 @@ from typing import Optional
 
 import pyglet
 import pyglet.math as pm
+from aim_node import AimNode
 
 from constants import collision_tags
 from engine.animation import Animation
@@ -15,7 +16,6 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine import utils
 from engine.settings import SETTINGS, Builtins
 
 import engine.controllers as controllers
@@ -52,6 +52,7 @@ class PlayerNode(PositionNode):
         self.__atk_idle_anim = Animation(source = "sprites/iryo/iryo_atk_idle.json")
         self.__atk_load_anim = Animation(source = "sprites/iryo/iryo_atk_load.json")
         self.__atk_hold_0_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0.json")
+        self.__atk_hold_0_walk_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0_walk.json")
         self.__atk_hold_1_anim = Animation(source = "sprites/iryo/iryo_atk_hold_1.json")
         self.__atk_hold_2_anim = Animation(source = "sprites/iryo/iryo_atk_hold_2.json")
         self.__atk_shoot_0_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_0.json")
@@ -80,6 +81,7 @@ class PlayerNode(PositionNode):
         self.__loading = False
         self.__shoot_ing = False
         self.__shoot_ed = False
+        self.__drawing = False
 
         self.__run_threshold = run_threshold
 
@@ -100,18 +102,11 @@ class PlayerNode(PositionNode):
             batch = batch
         )
 
-        # Aim sprite image.
-        target_image = pyglet.resource.image("sprites/target.png")
-        target_image.anchor_x = target_image.width / 2
-        target_image.anchor_y = target_image.height / 2
-
-        # Aim sprite offset, defines the offset from self.x and self.y, respectively.
-        self.__aim_sprite_offset = (0.0, 8.0)
-
-        self.__aim_sprite = SpriteNode(
-            resource = target_image,
-            x = x,
-            y = y,
+        # Aim target.
+        self.__aim = AimNode(
+            x = self.x,
+            y = self.y,
+            offset_y = 8.0,
             batch = batch
         )
 
@@ -239,33 +234,38 @@ class PlayerNode(PositionNode):
 
     def __fetch_input(self):
         if self.__controls_enabled:
-            # Allow the player to look around even if they're rolling.
+            # Check whether there's any aim input or not.
+            aiming = controllers.INPUT_CONTROLLER.get_view_input()
+
+            # Get actual aim input.
             self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
-            aim_input = controllers.INPUT_CONTROLLER.get_aim()
-            if aim_input:
+            if aiming:
                 if not self.__loading and not self.__aiming:
                     self.__loading = True
             else:
                 self.__loading = False
                 self.__aiming = False
+                self.__drawing = False
 
-            # All other input should only be fetched when not rolling or attacking.
-            if self.__sprint_ing or self.__loading:
-                return
+            if self.__aiming:
+                self.__drawing = controllers.INPUT_CONTROLLER.get_draw()
 
-            self.__move_input = controllers.INPUT_CONTROLLER.get_movement().limit(1.0)
+            if not self.__sprint_ing and not self.__loading:
+                self.__move_input = controllers.INPUT_CONTROLLER.get_movement().limit(1.0)
 
-            self.__sprint_ing = controllers.INPUT_CONTROLLER.get_sprint()
-            if self.__sprint_ing:
-                self.__sprint_ed = True
+            if not self.__loading and not self.__aiming and not self.__sprint_ing:
+                self.__sprint_ing = controllers.INPUT_CONTROLLER.get_sprint()
+                if self.__sprint_ing:
+                    self.__sprint_ed = True
 
             self.__slow = controllers.INPUT_CONTROLLER.get_modifier() or self.__aiming
 
-            # Interaction.
-            interact = controllers.INPUT_CONTROLLER.get_interaction()
-            if interact:
-                controllers.INTERACTION_CONTROLLER.interact()
+            if not self.__loading and not self.__aiming:
+                # Interaction.
+                interact = controllers.INPUT_CONTROLLER.get_interaction()
+                if interact:
+                    controllers.INTERACTION_CONTROLLER.interact()
 
     def __update_dir(self):
         if self.__move_input.mag > 0.0:
@@ -283,6 +283,7 @@ class PlayerNode(PositionNode):
         roll_accel = self.__stats.accel * 0.5
 
         if self.__loading:
+            self.__update_dir()
             self.__stats.speed = 0.0
         elif self.__sprint_ing:
             # Sprinting.
@@ -341,10 +342,15 @@ class PlayerNode(PositionNode):
 
         # Update sprite image based on current speed.
         image_to_show = None
-        if self.__loading:
+        if self.__drawing:
+            image_to_show = self.__atk_hold_1_anim.animation
+        elif self.__loading:
             image_to_show = self.__atk_load_anim.animation
         elif self.__aiming:
-            image_to_show = self.__atk_hold_0_anim.animation
+            if self.__stats.speed <= 0:
+                image_to_show = self.__atk_hold_0_anim.animation
+            else:
+                image_to_show = self.__atk_hold_0_walk_anim.animation
         elif self.__sprint_ing:
             image_to_show = self.__sprint_anim.animation
         else:
@@ -372,15 +378,13 @@ class PlayerNode(PositionNode):
         self.__update_interactor(dt)
 
     def __update_aim(self, dt):
-        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.get_aim_dir())
-        self.__aim_sprite.set_position(
-            position = (
-                self.x + self.__aim_sprite_offset[0] + aim_vec.x,
-                self.y + self.__aim_sprite_offset[1] + aim_vec.y
-            ),
-            z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
-        )
-        self.__aim_sprite.update(dt)
+        """
+        Updates the aim sign.
+        """
+
+        self.__aim.set_direction(direction = self.get_aim_dir())
+        self.__aim.set_position(position = self.get_position())
+        self.__aim.update(dt = dt)
 
     def __update_shadow(self, dt):
         self.__shadow_sprite.set_position(
@@ -393,6 +397,7 @@ class PlayerNode(PositionNode):
     def __update_cam_target(self, dt):
         # Automatically go to cam target distance if loading or aiming.
         cam_target_distance = self.__cam_target_distance if self.__loading or self.__aiming else self.__cam_target_distance * self.__look_input.mag
+
         cam_target_vec = pyglet.math.Vec2.from_polar(cam_target_distance, self.__stats.look_dir)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
