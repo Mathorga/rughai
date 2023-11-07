@@ -54,6 +54,7 @@ class PlayerNode(PositionNode):
         self.__atk_hold_0_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0.json")
         self.__atk_hold_0_walk_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0_walk.json")
         self.__atk_hold_1_anim = Animation(source = "sprites/iryo/iryo_atk_hold_1.json")
+        self.__atk_hold_1_walk_anim = Animation(source = "sprites/iryo/iryo_atk_hold_1_walk.json")
         self.__atk_hold_2_anim = Animation(source = "sprites/iryo/iryo_atk_hold_2.json")
         self.__atk_shoot_0_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_0.json")
         self.__atk_shoot_1_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_1.json")
@@ -278,6 +279,7 @@ class PlayerNode(PositionNode):
                 self.__stats.look_dir = self.__stats.move_dir
 
     def __update_stats(self, dt):
+        aim_speed = self.__stats.max_speed * 0.2
         walk_speed = self.__stats.max_speed * 0.5
         roll_speed = self.__stats.max_speed * 2.0
         roll_accel = self.__stats.accel * 0.5
@@ -285,6 +287,9 @@ class PlayerNode(PositionNode):
         if self.__loading:
             self.__update_dir()
             self.__stats.speed = 0.0
+        elif self.__drawing:
+            self.__update_dir()
+            self.__stats.speed = aim_speed
         elif self.__sprint_ing:
             # Sprinting.
             if self.__sprint_ed:
@@ -343,7 +348,10 @@ class PlayerNode(PositionNode):
         # Update sprite image based on current speed.
         image_to_show = None
         if self.__drawing:
-            image_to_show = self.__atk_hold_1_anim.animation
+            if self.__stats.speed <= 0:
+                image_to_show = self.__atk_hold_1_anim.animation
+            else:
+                image_to_show = self.__atk_hold_1_walk_anim.animation
         elif self.__loading:
             image_to_show = self.__atk_load_anim.animation
         elif self.__aiming:
