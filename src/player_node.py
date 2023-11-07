@@ -60,8 +60,6 @@ class PlayerNode(PositionNode):
         self.__atk_shoot_1_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_1.json")
         self.__atk_shoot_2_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_2.json")
 
-        # Aim sprite distance, defines the distance at which the sprite floats.
-        self.__aim_sprite_distance = 10.0
         self.__interactor_distance = 5.0
 
         # Setup input handling.
@@ -345,7 +343,7 @@ class PlayerNode(PositionNode):
         # Flip sprite if moving to the left.
         self.__sprite.set_scale(x_scale = self.__hor_facing)
 
-        # Update sprite image based on current speed.
+        # Update sprite image based on current state.
         image_to_show = None
         if self.__drawing:
             if self.__stats.speed <= 0:
