@@ -171,10 +171,10 @@ class PlayerNode(PositionNode):
 
     def delete(self) -> None:
         self.__sprite.delete()
-        self.__aim_sprite.delete()
         self.__shadow_sprite.delete()
         self.__collider.delete()
         self.__interactor.delete()
+        self.__aim.delete()
 
     def draw(self):
         # Draw collider out of batch.
@@ -182,7 +182,7 @@ class PlayerNode(PositionNode):
 
         self.__shadow_sprite.draw()
         self.__sprite.draw()
-        self.__aim_sprite.draw()
+        self.__aim.draw()
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -285,9 +285,6 @@ class PlayerNode(PositionNode):
         if self.__loading:
             self.__update_dir()
             self.__stats.speed = 0.0
-        elif self.__drawing:
-            self.__update_dir()
-            self.__stats.speed = aim_speed
         elif self.__sprint_ing:
             # Sprinting.
             if self.__sprint_ed:
@@ -305,6 +302,9 @@ class PlayerNode(PositionNode):
             else:
                 self.__stats.speed -= self.__stats.accel * dt
 
+        if self.__drawing:
+            # Clamp speed between 0 and aim speed.
+            self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, aim_speed)
         if self.__sprint_ing:
             # Clamp speed between 0 and roll speed.
             self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, roll_speed)

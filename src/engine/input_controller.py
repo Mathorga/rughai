@@ -1,7 +1,5 @@
 import pyglet
 
-from engine.settings import GLOBALS, Builtins
-
 class InputController:
     def __init__(
         self,
