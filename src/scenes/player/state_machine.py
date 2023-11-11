@@ -33,4 +33,12 @@ class StateMachine:
         states: Optional[Dict[str, State]] = None,
     ) -> None:
         self.states: Optional[Dict[str, State]] = states
-        
+        self.current_state: Optional[State] = None
+
+    def set_state(self, key: str) -> None:
+        """
+        Sets the state associated to the provided [key].
+        """
+
+        if key in self.states.keys():
+            self.current_state = self.states[key]
