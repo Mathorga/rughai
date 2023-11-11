@@ -12,7 +12,7 @@ from engine.wall_node import WallNode
 from engine.settings import SETTINGS, Builtins
 
 from constants import collision_tags
-from player_node import PlayerNode
+from scenes.player.player_node import PlayerNode
 from clouds_node import CloudsNode
 import constants.events as events
 import constants.scenes as scenes

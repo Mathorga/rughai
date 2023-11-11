@@ -3,7 +3,7 @@ import pyglet
 
 from engine.node import Node
 from engine.scene_node import SceneNode
-from player_node import PlayerNode
+from scenes.player.player_node import PlayerNode
 
 
 class PlayableSceneNode(Node):
