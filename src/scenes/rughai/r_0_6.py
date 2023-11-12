@@ -12,7 +12,7 @@ from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
 
-from scenes.player.player_node import PlayerNode
+from player_node import PlayerNode
 import constants.events as events
 import constants.scenes as scenes
 

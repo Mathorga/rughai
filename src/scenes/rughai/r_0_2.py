@@ -12,7 +12,7 @@ from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Builtins
 
-from scenes.player.player_node import PlayerNode
+from player_node import PlayerNode
 from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
