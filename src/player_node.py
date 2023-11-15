@@ -1,9 +1,10 @@
 """
-Module containing the main player class.
+Module containing the main player's classes.
 """
 
+from enum import Enum
 import math
-from typing import Optional
+from typing import Dict, Optional
 
 import pyglet
 import pyglet.math as pm
@@ -14,11 +15,12 @@ from engine.animation import Animation
 
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
-from engine.node import PositionNode
+from engine.node import Node, PositionNode
 from engine.sprite_node import SpriteNode
 from engine.settings import SETTINGS, Builtins
 
 import engine.controllers as controllers
+from engine.state_machine import State, StateMachine
 from player_stats import PlayerStats
 
 class PlayerNode(PositionNode):
@@ -42,30 +44,14 @@ class PlayerNode(PositionNode):
             y = y
         )
 
-        # IDLE state animations.
-        self.__idle_anim = Animation(source = "sprites/iryo/iryo_idle.json")
-        self.__walk_anim = Animation(source = "sprites/iryo/iryo_walk.json")
-        self.__run_anim = Animation(source = "sprites/iryo/iryo_run.json")
-        self.__sprint_anim = Animation(source = "sprites/iryo/iryo_roll.json")
+        self.__state_machine = PlayerStateMachine(player = self)
 
-        # ATK state animations.
-        self.__atk_idle_anim = Animation(source = "sprites/iryo/iryo_atk_idle.json")
-        self.__atk_load_anim = Animation(source = "sprites/iryo/iryo_atk_load.json")
-        self.__atk_hold_0_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0.json")
-        self.__atk_hold_0_walk_anim = Animation(source = "sprites/iryo/iryo_atk_hold_0_walk.json")
-        self.__atk_hold_1_anim = Animation(source = "sprites/iryo/iryo_atk_hold_1.json")
-        self.__atk_hold_1_walk_anim = Animation(source = "sprites/iryo/iryo_atk_hold_1_walk.json")
-        self.__atk_hold_2_anim = Animation(source = "sprites/iryo/iryo_atk_hold_2.json")
-        self.__atk_shoot_0_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_0.json")
-        self.__atk_shoot_1_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_1.json")
-        self.__atk_shoot_2_anim = Animation(source = "sprites/iryo/iryo_atk_shoot_2.json")
-
-        self.__interactor_distance = 5.0
+        self.interactor_distance = 5.0
 
         # Setup input handling.
         self.__controls_enabled = False
         self.__move_input = pyglet.math.Vec2()
-        self.__look_input = pyglet.math.Vec2()
+        self.__aim_input = pyglet.math.Vec2()
 
         # Movement flags.
         self.__slow = False
@@ -84,7 +70,7 @@ class PlayerNode(PositionNode):
 
         self.__run_threshold = run_threshold
 
-        self.__stats = PlayerStats(
+        self.stats = PlayerStats(
             vitality = 5,
             resistance = 5,
             odds = 5,
@@ -213,7 +199,7 @@ class PlayerNode(PositionNode):
         Disables user controls over the player and stops all existing inputs.
         """
 
-        self.__look_input = pm.Vec2()
+        self.__aim_input = pm.Vec2()
         self.__move_input = pm.Vec2()
         self.__controls_enabled = False
 
@@ -224,12 +210,15 @@ class PlayerNode(PositionNode):
 
         self.__controls_enabled = True
 
+    def set_animation(self, animation: Animation) -> None:
+        self.__sprite.set_image(animation.content)
+
     def get_aim_dir(self) -> float:
         """
         Computes the right aim direction according to the current aim state: look direction when aiming, move direction when not aiming.
         """
 
-        return self.__stats.look_dir if self.__aiming or self.__loading else self.__stats.move_dir
+        return self.stats.look_dir if self.__aiming or self.__loading else self.stats.move_dir
 
     def __fetch_input(self):
         if self.__controls_enabled:
@@ -237,7 +226,7 @@ class PlayerNode(PositionNode):
             aiming = controllers.INPUT_CONTROLLER.get_view_input()
 
             # Get actual aim input.
-            self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
+            self.__aim_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
 
             if aiming:
                 if not self.__loading and not self.__aiming:
@@ -268,56 +257,56 @@ class PlayerNode(PositionNode):
 
     def __update_dir(self):
         if self.__move_input.mag > 0.0:
-            self.__stats.move_dir = self.__move_input.heading
+            self.stats.move_dir = self.__move_input.heading
 
-        if self.__look_input.mag > 0.0:
-            self.__stats.look_dir = self.__look_input.heading
+        if self.__aim_input.mag > 0.0:
+            self.stats.look_dir = self.__aim_input.heading
         else:
             if not self.__loading and not self.__aiming:
-                self.__stats.look_dir = self.__stats.move_dir
+                self.stats.look_dir = self.stats.move_dir
 
     def __update_stats(self, dt):
-        aim_speed = self.__stats.max_speed * 0.2
-        walk_speed = self.__stats.max_speed * 0.5
-        roll_speed = self.__stats.max_speed * 2.0
-        roll_accel = self.__stats.accel * 0.5
+        aim_speed = self.stats.max_speed * 0.2
+        walk_speed = self.stats.max_speed * 0.5
+        roll_speed = self.stats.max_speed * 2.0
+        roll_accel = self.stats.accel * 0.5
 
         if self.__loading:
             self.__update_dir()
-            self.__stats.speed = 0.0
+            self.stats.speed = 0.0
         elif self.__sprint_ing:
             # Sprinting.
             if self.__sprint_ed:
                 # Update direction in order to correctly orient sprints.
                 self.__update_dir()
 
-                self.__stats.speed = roll_speed
+                self.stats.speed = roll_speed
                 self.__sprint_ed = False
             else:
-                self.__stats.speed -= roll_accel * dt
+                self.stats.speed -= roll_accel * dt
         else:
             self.__update_dir()
             if self.__move_input.mag > 0.0:
-                self.__stats.speed += self.__stats.accel * dt
+                self.stats.speed += self.stats.accel * dt
             else:
-                self.__stats.speed -= self.__stats.accel * dt
+                self.stats.speed -= self.stats.accel * dt
 
         if self.__drawing:
             # Clamp speed between 0 and aim speed.
-            self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, aim_speed)
+            self.stats.speed = pm.clamp(self.stats.speed, 0.0, aim_speed)
         if self.__sprint_ing:
             # Clamp speed between 0 and roll speed.
-            self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, roll_speed)
+            self.stats.speed = pm.clamp(self.stats.speed, 0.0, roll_speed)
         elif self.__slow:
             # Clamp speed between 0 and walk speed.
-            self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, walk_speed)
+            self.stats.speed = pm.clamp(self.stats.speed, 0.0, walk_speed)
         else:
             # Clamp speed between 0 and max speed.
-            self.__stats.speed = pm.clamp(self.__stats.speed, 0.0, self.__stats.max_speed)
+            self.stats.speed = pm.clamp(self.stats.speed, 0.0, self.stats.max_speed)
 
     def __compute_velocity(self, dt) -> pm.Vec2:
         # Define a vector from speed and direction.
-        return pm.Vec2.from_polar(self.__stats.speed * dt, self.__stats.move_dir)
+        return pm.Vec2.from_polar(self.stats.speed * dt, self.stats.move_dir)
 
     def __move(self, dt):
         # Apply movement after collision.
@@ -346,23 +335,23 @@ class PlayerNode(PositionNode):
         # Update sprite image based on current state.
         image_to_show = None
         if self.__drawing:
-            if self.__stats.speed <= 0:
+            if self.stats.speed <= 0:
                 image_to_show = self.__atk_hold_1_anim.animation
             else:
                 image_to_show = self.__atk_hold_1_walk_anim.animation
         elif self.__loading:
             image_to_show = self.__atk_load_anim.animation
         elif self.__aiming:
-            if self.__stats.speed <= 0:
+            if self.stats.speed <= 0:
                 image_to_show = self.__atk_hold_0_anim.animation
             else:
                 image_to_show = self.__atk_hold_0_walk_anim.animation
         elif self.__sprint_ing:
             image_to_show = self.__sprint_anim.animation
         else:
-            if self.__stats.speed <= 0:
+            if self.stats.speed <= 0:
                 image_to_show = self.__idle_anim.animation
-            elif self.__stats.speed < self.__stats.max_speed * self.__run_threshold:
+            elif self.stats.speed < self.stats.max_speed * self.__run_threshold:
                 image_to_show = self.__walk_anim.animation
             else:
                 image_to_show = self.__run_anim.animation
@@ -402,15 +391,15 @@ class PlayerNode(PositionNode):
 
     def __update_cam_target(self, dt):
         # Automatically go to cam target distance if loading or aiming.
-        cam_target_distance = self.__cam_target_distance if self.__loading or self.__aiming else self.__cam_target_distance * self.__look_input.mag
+        cam_target_distance = self.__cam_target_distance if self.__loading or self.__aiming else self.__cam_target_distance * self.__aim_input.mag
 
-        cam_target_vec = pyglet.math.Vec2.from_polar(cam_target_distance, self.__stats.look_dir)
+        cam_target_vec = pyglet.math.Vec2.from_polar(cam_target_distance, self.stats.look_dir)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
         self.__cam_target.update(dt)
 
     def __update_interactor(self, dt):
-        aim_vec = pyglet.math.Vec2.from_polar(self.__interactor_distance, self.get_aim_dir())
+        aim_vec = pyglet.math.Vec2.from_polar(self.interactor_distance, self.get_aim_dir())
         self.__interactor.set_position(
             position = (
                 self.x + aim_vec.x,
@@ -425,3 +414,85 @@ class PlayerNode(PositionNode):
 
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()
+
+class PlayerStates(str, Enum):
+    IDLE = "idle",
+    WALK = "walk",
+    RUN = "run",
+    ROLL = "roll",
+    AIM = "aim"
+
+class PlayerState(State):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        self.actor: PlayerNode = actor
+
+class PlayerIdleState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_idle.json")
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+
+    def update(self, dt: float) -> Optional[str]:
+        # Check for state changes.
+        if controllers.INPUT_CONTROLLER.get_view_movement().mag > 0.0:
+            return PlayerStates.AIM
+
+        if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
+            return PlayerStates.WALK
+
+        if controllers.INPUT_CONTROLLER.get_sprint():
+            return PlayerStates.ROLL
+
+class PlayerWalkState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_walk.json")
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+
+    def update(self, dt: float) -> Optional[str]:
+        # Read player input.
+        move_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_movement()
+
+        # Set player stats.
+        walk_speed = self.actor.stats.max_speed * 0.5
+        if move_input.mag > 0.0:
+            self.actor.stats.move_dir = move_input.heading
+            self.actor.stats.look_dir = move_input.heading
+            self.actor.stats.speed += self.actor.stats.accel * dt
+        self.actor.stats.speed = pm.clamp(self.actor.stats.speed, 0.0, walk_speed)
+
+        # TODO Move the player.
+
+        # Check for state changes.
+        if controllers.INPUT_CONTROLLER.get_view_movement().mag > 0.0:
+            return PlayerStates.AIM
+
+        if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
+            return PlayerStates.WALK
+
+        if controllers.INPUT_CONTROLLER.get_sprint():
+            return PlayerStates.ROLL
+
+class PlayerStateMachine(StateMachine):
+    def __init__(
+        self,
+        player: PlayerNode
+    ) -> None:
+        pass

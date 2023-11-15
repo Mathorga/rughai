@@ -43,33 +43,33 @@ class Animation:
         self.name = self.source_data["name"]
 
         # Read animation path.
-        self.animation = pyglet.resource.animation(self.source_data["path"])
+        self.content = pyglet.resource.animation(self.source_data["path"])
 
         # Set animation anchor if defined.
         if "anchor_x" in self.source_data.keys():
             utils.set_animation_anchor_x(
-                animation = self.animation,
+                animation = self.content,
                 anchor = self.source_data["anchor_x"],
             )
         if "anchor_y" in self.source_data.keys():
             utils.set_animation_anchor_y(
-                animation = self.animation,
+                animation = self.content,
                 anchor = self.source_data["anchor_y"],
             )
 
         if "center_x" in self.source_data.keys() and self.source_data["center_x"] is True:
-            utils.x_center_animation(animation = self.animation)
+            utils.x_center_animation(animation = self.content)
 
         if "center_y" in self.source_data.keys() and self.source_data["center_y"] is True:
-            utils.y_center_animation(animation = self.animation)
+            utils.y_center_animation(animation = self.content)
 
         # Set duration if defined.
         if "duration" in self.source_data.keys():
             utils.set_animation_duration(
-                animation = self.animation,
+                animation = self.content,
                 duration = self.source_data["duration"]
             )
 
         # Set not looping if so specified.
         if "loop" in self.source_data.keys() and self.source_data["loop"] is False:
-            self.animation.frames[-1].duration = None
+            self.content.frames[-1].duration = None

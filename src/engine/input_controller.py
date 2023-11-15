@@ -166,15 +166,6 @@ class InputController:
             (self[pyglet.window.key.W] - self[pyglet.window.key.S]) + stick[1]
         )
 
-    def get_view_input(self) -> bool:
-        """
-        Returns whether there's any view input or not, regardless its resulting magnitude.
-        """
-
-        stick = self.sticks.get("rightstick", (0.0, 0.0))
-        stick_vec = pyglet.math.Vec2(stick[0], stick[1])
-        return self[pyglet.window.key.L] or self[pyglet.window.key.J] or self[pyglet.window.key.I] or self[pyglet.window.key.K] or stick_vec.mag > 0.0
-
     def get_view_movement(self) -> pyglet.math.Vec2:
         """
         Returns the camera movement vector from keyboard and controller.
