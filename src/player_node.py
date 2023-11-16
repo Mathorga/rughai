@@ -308,12 +308,12 @@ class PlayerNode(PositionNode):
         # Define a vector from speed and direction.
         return pm.Vec2.from_polar(self.stats.speed * dt, self.stats.move_dir)
 
-    def __move(self, dt):
+    def move(self, dt: float) -> None:
         # Apply movement after collision.
         self.set_position(self.__collider.get_position())
 
         # Compute velocity.
-        velocity = self.__compute_velocity(dt)
+        velocity: pyglet.math.Vec2 = self.__compute_velocity(dt)
 
         # Apply the computed velocity to all colliders.
         self.__collider.set_velocity((round(velocity.x, 5), round(velocity.y, 5)))
@@ -478,7 +478,8 @@ class PlayerWalkState(PlayerState):
             self.actor.stats.speed += self.actor.stats.accel * dt
         self.actor.stats.speed = pm.clamp(self.actor.stats.speed, 0.0, walk_speed)
 
-        # TODO Move the player.
+        # Move the player.
+        self.actor.move()
 
         # Check for state changes.
         if controllers.INPUT_CONTROLLER.get_view_movement().mag > 0.0:
