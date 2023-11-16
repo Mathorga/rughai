@@ -23,6 +23,13 @@ import engine.controllers as controllers
 from engine.state_machine import State, StateMachine
 from player_stats import PlayerStats
 
+class PlayerStates(str, Enum):
+    IDLE = "idle",
+    WALK = "walk",
+    RUN = "run",
+    ROLL = "roll",
+    AIM = "aim"
+
 class PlayerNode(PositionNode):
     """
     Main player class.
@@ -44,7 +51,12 @@ class PlayerNode(PositionNode):
             y = y
         )
 
-        self.__state_machine = PlayerStateMachine(player = self)
+        self.__state_machine = StateMachine(
+            states = {
+                PlayerStates.IDLE: PlayerIdleState(actor = self),
+                PlayerStates.WALK: PlayerWalkState(actor = self)
+            }
+        )
 
         self.interactor_distance = 5.0
 
@@ -415,13 +427,6 @@ class PlayerNode(PositionNode):
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()
 
-class PlayerStates(str, Enum):
-    IDLE = "idle",
-    WALK = "walk",
-    RUN = "run",
-    ROLL = "roll",
-    AIM = "aim"
-
 class PlayerState(State):
     def __init__(
         self,
@@ -471,12 +476,12 @@ class PlayerWalkState(PlayerState):
         move_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_movement()
 
         # Set player stats.
-        walk_speed = self.actor.stats.max_speed * 0.5
+        speed: float = self.actor.stats.max_speed * 0.5
         if move_input.mag > 0.0:
             self.actor.stats.move_dir = move_input.heading
             self.actor.stats.look_dir = move_input.heading
             self.actor.stats.speed += self.actor.stats.accel * dt
-        self.actor.stats.speed = pm.clamp(self.actor.stats.speed, 0.0, walk_speed)
+        self.actor.stats.speed = pm.clamp(self.actor.stats.speed, 0.0, speed)
 
         # Move the player.
         self.actor.move()
@@ -490,10 +495,3 @@ class PlayerWalkState(PlayerState):
 
         if controllers.INPUT_CONTROLLER.get_sprint():
             return PlayerStates.ROLL
-
-class PlayerStateMachine(StateMachine):
-    def __init__(
-        self,
-        player: PlayerNode
-    ) -> None:
-        pass
