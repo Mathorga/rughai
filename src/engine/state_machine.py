@@ -16,7 +16,7 @@ class StateMachine:
         states: Optional[Dict[str, State]]
     ) -> None:
         self.__states: Dict[str, State] = states if states is not None else {}
-        self.__current_key: Optional[str] = None
+        self.__current_key: Optional[str] = list(self.__states.keys())[0] if len(self.__states) > 0 else None
 
     def transition(self, new_key: str) -> None:
         # End the current state if present.
