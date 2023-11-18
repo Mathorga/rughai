@@ -24,11 +24,14 @@ from engine.state_machine import State, StateMachine
 from player_stats import PlayerStats
 
 class PlayerStates(str, Enum):
-    IDLE = "idle",
-    WALK = "walk",
-    RUN = "run",
-    ROLL = "roll",
+    IDLE = "idle"
+    WALK = "walk"
+    RUN = "run"
+    ROLL = "roll"
     AIM = "aim"
+    AIM_WALK = "aim_walk"
+    DRAW = "draw"
+    SHOOT = "shoot"
 
 class PlayerNode(PositionNode):
     """
@@ -449,6 +452,41 @@ class PlayerRollState(PlayerState):
 
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_roll.json")
+        self.__startup: bool = False
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+        self.__startup = True
+
+    def update(self, dt: float) -> Optional[str]:
+        if self.__startup:
+            self.actor.stats.speed = self.actor.stats.max_speed * 2
+            self.__startup = False
+        else:
+            self.actor.stats.speed -= (self.actor.stats.accel / 2) * dt
+
+        # Move the player.
+        self.actor.move(dt = dt)
+
+        # Check for state changes.
+        if self.actor.stats.speed <= 0.0:
+            return PlayerStates.IDLE
+
+    def on_animation_end(self) -> Optional[str]:
+        if self.actor.stats.speed <= 0.0:
+            return PlayerStates.IDLE
+        else:
+            return PlayerStates.WALK
+
+class PlayerAimState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_hold_0json")
         self.__startup: bool = False
 
     def start(self) -> None:
