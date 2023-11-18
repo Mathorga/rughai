@@ -276,7 +276,7 @@ class PlayerNode(PositionNode):
         )
         self.__shadow_sprite.update(dt)
 
-    def __update_cam_target(self, dt):
+    def __update_cam_target(self, dt: float):
         # Automatically go to cam target distance if loading or aiming.
         cam_target_distance = self.__cam_target_distance if self.__loading or self.__aiming else self.__cam_target_distance * self.__aim_input.mag
 
@@ -284,6 +284,8 @@ class PlayerNode(PositionNode):
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
         self.__cam_target.update(dt)
+
+    # def set_cam_target_position(self, )
 
     def __update_interactor(self, dt):
         aim_vec = pyglet.math.Vec2.from_polar(self.interactor_distance, self.get_aim_dir())
