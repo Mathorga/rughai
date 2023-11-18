@@ -28,6 +28,7 @@ class PlayerStates(str, Enum):
     WALK = "walk"
     RUN = "run"
     ROLL = "roll"
+    LOAD = "load"
     AIM = "aim"
     AIM_WALK = "aim_walk"
     DRAW = "draw"
@@ -58,7 +59,10 @@ class PlayerNode(PositionNode):
                 PlayerStates.IDLE: PlayerIdleState(actor = self),
                 PlayerStates.WALK: PlayerWalkState(actor = self),
                 PlayerStates.RUN: PlayerRunState(actor = self),
-                PlayerStates.ROLL: PlayerRollState(actor = self)
+                PlayerStates.ROLL: PlayerRollState(actor = self),
+                PlayerStates.LOAD: PlayerLoadState(actor = self),
+                PlayerStates.AIM: PlayerAimState(actor = self),
+                PlayerStates.AIM_WALK: PlayerAimState(actor = self)
             }
         )
 
@@ -180,14 +184,6 @@ class PlayerNode(PositionNode):
         self.__interactor.delete()
         self.__aim.delete()
 
-    def draw(self):
-        # Draw collider out of batch.
-        self.__collider.draw()
-
-        self.__shadow_sprite.draw()
-        self.__sprite.draw()
-        self.__aim.draw()
-
     def update(self, dt) -> None:
         self.__state_machine.update(dt = dt)
 
@@ -196,12 +192,6 @@ class PlayerNode(PositionNode):
 
     def on_sprite_animation_end(self):
         self.__state_machine.on_animation_end()
-        # if self.__sprint_ing:
-        #     self.__sprint_ing = False
-
-        # if self.__loading:
-        #     self.__loading = False
-        #     self.__aiming = True
 
     def disable_controls(self) -> None:
         """
@@ -337,8 +327,8 @@ class PlayerIdleState(PlayerState):
 
     def update(self, dt: float) -> Optional[str]:
         # Check for state changes.
-        if controllers.INPUT_CONTROLLER.get_view_movement().mag > 0.0:
-            return PlayerStates.AIM
+        if controllers.INPUT_CONTROLLER.get_aim().mag > 0.0:
+            return PlayerStates.LOAD
 
         if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
             return PlayerStates.WALK
@@ -384,8 +374,8 @@ class PlayerWalkState(PlayerState):
         self.actor.move(dt = dt)
 
         # Check for state changes.
-        if controllers.INPUT_CONTROLLER.get_view_movement().mag > 0.0:
-            return PlayerStates.AIM
+        if controllers.INPUT_CONTROLLER.get_aim().mag > 0.0:
+            return PlayerStates.LOAD
 
         if controllers.INPUT_CONTROLLER.get_sprint():
             return PlayerStates.ROLL
@@ -434,8 +424,8 @@ class PlayerRunState(PlayerState):
         self.actor.move(dt = dt)
 
         # Check for state changes.
-        if controllers.INPUT_CONTROLLER.get_view_movement().mag > 0.0:
-            return PlayerStates.AIM
+        if controllers.INPUT_CONTROLLER.get_aim().mag > 0.0:
+            return PlayerStates.LOAD
 
         if controllers.INPUT_CONTROLLER.get_sprint():
             return PlayerStates.ROLL
@@ -478,6 +468,22 @@ class PlayerRollState(PlayerState):
         else:
             return PlayerStates.WALK
 
+class PlayerLoadState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_load.json")
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+
+    def on_animation_end(self) -> str | None:
+        return PlayerStates.AIM
+
 class PlayerAimState(PlayerState):
     def __init__(
         self,
@@ -486,29 +492,15 @@ class PlayerAimState(PlayerState):
         super().__init__(actor)
 
         # Animations.
-        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_hold_0json")
-        self.__startup: bool = False
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_hold_0.json")
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
-        self.__startup = True
 
     def update(self, dt: float) -> Optional[str]:
-        if self.__startup:
-            self.actor.stats.speed = self.actor.stats.max_speed * 2
-            self.__startup = False
-        else:
-            self.actor.stats.speed -= (self.actor.stats.accel / 2) * dt
-
-        # Move the player.
-        self.actor.move(dt = dt)
-
         # Check for state changes.
-        if self.actor.stats.speed <= 0.0:
-            return PlayerStates.IDLE
+        if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
+            return PlayerStates.AIM_WALK
 
-    def on_animation_end(self) -> Optional[str]:
-        if self.actor.stats.speed <= 0.0:
+        if controllers.INPUT_CONTROLLER.get_aim().mag <= 0.0:
             return PlayerStates.IDLE
-        else:
-            return PlayerStates.WALK
