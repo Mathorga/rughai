@@ -187,28 +187,18 @@ class PlayerNode(PositionNode):
 
     def update(self, dt) -> None:
         self.__state_machine.update(dt = dt)
-        # # Fetch input.
-        # self.__fetch_input()
-
-        # # Update stats based on input.
-        # self.__update_stats(dt)
-
-        # # Compute and apply movement to self's x and y coords.
-        # self.__move(dt)
-
-        # # Update collider.
-        # # self.__update_collider(dt)
 
         # Update sprites accordingly.
         self.__update_sprites(dt)
 
     def on_sprite_animation_end(self):
-        if self.__sprint_ing:
-            self.__sprint_ing = False
+        self.__state_machine.on_animation_end()
+        # if self.__sprint_ing:
+        #     self.__sprint_ing = False
 
-        if self.__loading:
-            self.__loading = False
-            self.__aiming = True
+        # if self.__loading:
+        #     self.__loading = False
+        #     self.__aiming = True
 
     def disable_controls(self) -> None:
         """
@@ -235,90 +225,6 @@ class PlayerNode(PositionNode):
         """
 
         return self.stats.look_dir if self.__aiming or self.__loading else self.stats.move_dir
-
-    # def __fetch_input(self):
-    #     if self.__controls_enabled:
-    #         # Check whether there's any aim input or not.
-    #         aiming = controllers.INPUT_CONTROLLER.get_view_input()
-
-    #         # Get actual aim input.
-    #         self.__aim_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
-
-    #         if aiming:
-    #             if not self.__loading and not self.__aiming:
-    #                 self.__loading = True
-    #         else:
-    #             self.__loading = False
-    #             self.__aiming = False
-    #             self.__drawing = False
-
-    #         if self.__aiming:
-    #             self.__drawing = controllers.INPUT_CONTROLLER.get_draw()
-
-    #         if not self.__sprint_ing and not self.__loading:
-    #             self.__move_input = controllers.INPUT_CONTROLLER.get_movement().limit(1.0)
-
-    #         if not self.__loading and not self.__aiming and not self.__sprint_ing:
-    #             self.__sprint_ing = controllers.INPUT_CONTROLLER.get_sprint()
-    #             if self.__sprint_ing:
-    #                 self.__sprint_ed = True
-
-    #         self.__slow = controllers.INPUT_CONTROLLER.get_modifier() or self.__aiming
-
-    #         if not self.__loading and not self.__aiming:
-    #             # Interaction.
-    #             interact = controllers.INPUT_CONTROLLER.get_interaction()
-    #             if interact:
-    #                 controllers.INTERACTION_CONTROLLER.interact()
-
-    # def __update_dir(self):
-    #     if self.__move_input.mag > 0.0:
-    #         self.stats.move_dir = self.__move_input.heading
-
-    #     if self.__aim_input.mag > 0.0:
-    #         self.stats.look_dir = self.__aim_input.heading
-    #     else:
-    #         if not self.__loading and not self.__aiming:
-    #             self.stats.look_dir = self.stats.move_dir
-
-    # def __update_stats(self, dt):
-    #     aim_speed = self.stats.max_speed * 0.2
-    #     walk_speed = self.stats.max_speed * 0.5
-    #     roll_speed = self.stats.max_speed * 2.0
-    #     roll_accel = self.stats.accel * 0.5
-
-    #     if self.__loading:
-    #         self.__update_dir()
-    #         self.stats.speed = 0.0
-    #     elif self.__sprint_ing:
-    #         # Sprinting.
-    #         if self.__sprint_ed:
-    #             # Update direction in order to correctly orient sprints.
-    #             self.__update_dir()
-
-    #             self.stats.speed = roll_speed
-    #             self.__sprint_ed = False
-    #         else:
-    #             self.stats.speed -= roll_accel * dt
-    #     else:
-    #         self.__update_dir()
-    #         if self.__move_input.mag > 0.0:
-    #             self.stats.speed += self.stats.accel * dt
-    #         else:
-    #             self.stats.speed -= self.stats.accel * dt
-
-    #     if self.__drawing:
-    #         # Clamp speed between 0 and aim speed.
-    #         self.stats.speed = pm.clamp(self.stats.speed, 0.0, aim_speed)
-    #     if self.__sprint_ing:
-    #         # Clamp speed between 0 and roll speed.
-    #         self.stats.speed = pm.clamp(self.stats.speed, 0.0, roll_speed)
-    #     elif self.__slow:
-    #         # Clamp speed between 0 and walk speed.
-    #         self.stats.speed = pm.clamp(self.stats.speed, 0.0, walk_speed)
-    #     else:
-    #         # Clamp speed between 0 and max speed.
-    #         self.stats.speed = pm.clamp(self.stats.speed, 0.0, self.stats.max_speed)
 
     def __compute_velocity(self, dt) -> pm.Vec2:
         # Define a vector from speed and direction.
@@ -409,6 +315,9 @@ class PlayerState(State):
         actor: PlayerNode
     ) -> None:
         self.actor: PlayerNode = actor
+
+    def onAnimationEnd(self) -> None:
+        pass
 
 class PlayerIdleState(PlayerState):
     def __init__(
@@ -559,3 +468,7 @@ class PlayerRollState(PlayerState):
         # Check for state changes.
         if self.actor.stats.speed <= 0.0:
             return PlayerStates.IDLE
+
+    def on_animation_end(self) -> Optional[str]:
+        # TODO
+        return super().on_animation_end()

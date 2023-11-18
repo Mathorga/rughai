@@ -4,6 +4,12 @@ class State:
     def start(self) -> None:
         pass
 
+    def on_animation_end(self) -> Optional[str]:
+        pass
+
+    def on_collision(self, enter: bool) -> Optional[str]:
+        pass
+
     def update(self, dt: float) -> Optional[str]:
         pass
 
@@ -18,7 +24,33 @@ class StateMachine:
         self.__states: Dict[str, State] = states if states is not None else {}
         self.__current_key: Optional[str] = list(self.__states.keys())[0] if len(self.__states) > 0 else None
 
-    def transition(self, new_key: str) -> None:
+    def get_current_state(self) -> Optional[State]:
+        """
+        Returns the current state of the state machine.
+        """
+        if self.__current_key is None:
+            return None
+
+        return self.__states[self.__current_key]
+
+    def on_animation_end(self) -> Optional[str]:
+        current_state: Optional[State] = self.get_current_state()
+        if current_state is None:
+            return
+
+        self.transition(current_state.on_animation_end())
+
+    def on_collision(self, enter: bool) -> Optional[str]:
+        current_state: Optional[State] = self.get_current_state()
+        if current_state is None:
+            return
+
+        self.transition(current_state.on_collision(enter = enter))
+
+    def transition(self, new_key: Optional[str]) -> None:
+        if new_key is None:
+            return
+
         # End the current state if present.
         if self.__current_key is not None:
             self.__states[self.__current_key].end()
@@ -35,7 +67,4 @@ class StateMachine:
             return
 
         # Call the current state's update method.
-        new_key: Optional[str] = self.__states[self.__current_key].update(dt = dt)
-
-        if new_key is not None:
-            self.transition(new_key = new_key)
+        self.transition(self.__states[self.__current_key].update(dt = dt))
