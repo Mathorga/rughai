@@ -470,5 +470,7 @@ class PlayerRollState(PlayerState):
             return PlayerStates.IDLE
 
     def on_animation_end(self) -> Optional[str]:
-        # TODO
-        return super().on_animation_end()
+        if self.actor.stats.speed <= 0.0:
+            return PlayerStates.IDLE
+        else:
+            return PlayerStates.WALK
