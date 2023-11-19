@@ -42,7 +42,6 @@ class PlayerNode(PositionNode):
     def __init__(
         self,
         cam_target: PositionNode,
-        cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
         x: float = 0,
         y: float = 0,
@@ -62,31 +61,11 @@ class PlayerNode(PositionNode):
                 PlayerStates.ROLL: PlayerRollState(actor = self),
                 PlayerStates.LOAD: PlayerLoadState(actor = self),
                 PlayerStates.AIM: PlayerAimState(actor = self),
-                PlayerStates.AIM_WALK: PlayerAimState(actor = self)
+                PlayerStates.AIM_WALK: PlayerAimWalkState(actor = self)
             }
         )
 
         self.interactor_distance = 5.0
-
-        # Setup input handling.
-        self.__controls_enabled = False
-        self.__move_input = pyglet.math.Vec2()
-        self.__aim_input = pyglet.math.Vec2()
-
-        # Movement flags.
-        self.__slow = False
-
-        # Sprinting flags.
-        self.__sprint_ing = False
-        self.__sprint_ed = False
-
-        # Atk flags
-        self.__loading = False
-        self.__aiming = False
-        self.__loading = False
-        self.__shoot_ing = False
-        self.__shoot_ed = False
-        self.__drawing = False
 
         self.run_threshold = 0.75
 
@@ -171,7 +150,8 @@ class PlayerNode(PositionNode):
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
 
-        self.__cam_target_distance = cam_target_distance
+        self.__cam_target_distance = 50.0
+        self.__cam_target_distance_mag = 0.0
         self.__cam_target_offset = cam_target_offset
         self.__cam_target = cam_target
         self.__cam_target.x = x + cam_target_offset[0]
@@ -212,13 +192,6 @@ class PlayerNode(PositionNode):
     def set_animation(self, animation: Animation) -> None:
         self.__sprite.set_image(animation.content)
 
-    def get_aim_dir(self) -> float:
-        """
-        Computes the right aim direction according to the current aim state: look direction when aiming, move direction when not aiming.
-        """
-
-        return self.stats.look_dir if self.__aiming or self.__loading else self.stats.move_dir
-
     def __compute_velocity(self, dt) -> pm.Vec2:
         # Define a vector from speed and direction.
         return pm.Vec2.from_polar(self.stats.speed * dt, self.stats.move_dir)
@@ -236,7 +209,7 @@ class PlayerNode(PositionNode):
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
-        dir_cos = math.cos(self.get_aim_dir())
+        dir_cos = math.cos(self.stats.look_dir)
         dir_len = abs(dir_cos)
         if dir_len > 0.1:
             self.__hor_facing = int(math.copysign(1.0, dir_cos))
@@ -264,7 +237,7 @@ class PlayerNode(PositionNode):
         Updates the aim sign.
         """
 
-        self.__aim.set_direction(direction = self.get_aim_dir())
+        self.__aim.set_direction(direction = self.stats.look_dir)
         self.__aim.set_position(position = self.get_position())
         self.__aim.update(dt = dt)
 
@@ -276,9 +249,19 @@ class PlayerNode(PositionNode):
         )
         self.__shadow_sprite.update(dt)
 
+    def set_cam_target_distance_mag(self, mag: float) -> None:
+        """
+        Sets the magnitude (between 0 and 1) for cam target distance.
+        """
+
+        if mag < 0 or mag > 1:
+            return
+
+        self.__cam_target_distance_mag = mag
+
     def __update_cam_target(self, dt: float):
         # Automatically go to cam target distance if loading or aiming.
-        cam_target_distance = self.__cam_target_distance if self.__loading or self.__aiming else self.__cam_target_distance * self.__aim_input.mag
+        cam_target_distance = self.__cam_target_distance * self.__cam_target_distance_mag
 
         cam_target_vec = pyglet.math.Vec2.from_polar(cam_target_distance, self.stats.look_dir)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
@@ -288,7 +271,7 @@ class PlayerNode(PositionNode):
     # def set_cam_target_position(self, )
 
     def __update_interactor(self, dt):
-        aim_vec = pyglet.math.Vec2.from_polar(self.interactor_distance, self.get_aim_dir())
+        aim_vec = pyglet.math.Vec2.from_polar(self.interactor_distance, self.stats.look_dir)
         self.__interactor.set_position(
             position = (
                 self.x + aim_vec.x,
@@ -402,7 +385,7 @@ class PlayerRunState(PlayerState):
         self.actor.set_animation(self.__animation)
 
     def update(self, dt: float) -> Optional[str]:
-        # Read player input.
+        # Read input.
         move_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_movement()
 
         target_speed: float = 0.0
@@ -483,6 +466,13 @@ class PlayerLoadState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
+    def update(self, dt: float) -> str | None:
+        # Read input.
+        aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim()
+
+        # Set aim direction.
+        self.actor.stats.look_dir = aim_input.heading
+
     def on_animation_end(self) -> str | None:
         return PlayerStates.AIM
 
@@ -500,7 +490,65 @@ class PlayerAimState(PlayerState):
         self.actor.set_animation(self.__animation)
 
     def update(self, dt: float) -> Optional[str]:
+        # Read input.
+        aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim()
+
+        self.actor.set_cam_target_distance_mag(mag = aim_input.mag)
+
+        # Set aim direction.
+        self.actor.stats.look_dir = aim_input.heading
+
         # Check for state changes.
+        if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
+            return PlayerStates.AIM_WALK
+
+        if controllers.INPUT_CONTROLLER.get_aim().mag <= 0.0:
+            return PlayerStates.IDLE
+
+    def end(self) -> None:
+        # self.actor.set_cam_target_distance_mag(mag = 0.0)
+        pass
+
+class PlayerAimWalkState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_hold_0_walk.json")
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+
+    def update(self, dt: float) -> Optional[str]:
+        # Read input.
+        aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim()
+        move_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_movement()
+
+        self.actor.set_cam_target_distance_mag(mag = aim_input.mag)
+
+        # Set aim direction.
+        self.actor.stats.look_dir = aim_input.heading
+        self.actor.stats.move_dir = move_input.heading
+
+        target_speed: float = self.actor.stats.max_speed / 2
+
+        # Set player stats.
+        if self.actor.stats.speed < target_speed:
+            self.actor.stats.speed += self.actor.stats.accel * dt
+        else:
+            self.actor.stats.speed -= self.actor.stats.accel * dt
+        self.actor.stats.speed = pm.clamp(self.actor.stats.speed, 0.0, self.actor.stats.max_speed)
+
+        # Move the player.
+        self.actor.move(dt = dt)
+
+        # Check for state changes.
+        if move_input.mag <= 0:
+            return PlayerStates.AIM
+
         if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
             return PlayerStates.AIM_WALK
 
