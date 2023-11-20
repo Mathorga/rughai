@@ -1,6 +1,9 @@
 from typing import Dict, Optional
 
 class State:
+    def __init__(self) -> None:
+        self.input_enabled = True
+
     def start(self) -> None:
         pass
 
@@ -14,6 +17,12 @@ class State:
         pass
 
     def end(self) -> None:
+        pass
+
+    def enable_input(self) -> None:
+        pass
+
+    def disable_input(self) -> None:
         pass
 
 class StateMachine:
@@ -68,3 +77,17 @@ class StateMachine:
 
         # Call the current state's update method.
         self.transition(self.__states[self.__current_key].update(dt = dt))
+
+    def enable_input(self) -> None:
+        # Just return if there's no current state.
+        if self.__current_key is None:
+            return
+
+        self.__states[self.__current_key].enable_input()
+
+    def disable_input(self) -> None:
+        # Just return if there's no current state.
+        if self.__current_key is None:
+            return
+
+        self.__states[self.__current_key].disable_input()

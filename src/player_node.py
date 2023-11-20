@@ -182,12 +182,16 @@ class PlayerNode(PositionNode):
         self.__move_input = pm.Vec2()
         self.__controls_enabled = False
 
+        self.__state_machine.disable_input()
+
     def enable_controls(self) -> None:
         """
         Enables user controls over the player.
         """
 
         self.__controls_enabled = True
+
+        self.__state_machine.enable_input()
 
     def set_animation(self, animation: Animation) -> None:
         self.__sprite.set_image(animation.content)
@@ -292,6 +296,8 @@ class PlayerState(State):
         self,
         actor: PlayerNode
     ) -> None:
+        super().__init__()
+
         self.actor: PlayerNode = actor
 
     def onAnimationEnd(self) -> None:
@@ -306,19 +312,35 @@ class PlayerIdleState(PlayerState):
 
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_idle.json")
+        self.__move_input: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__aim_input: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__sprint: bool = False
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
+    def __fetch_input(self) -> None:
+        """
+        Reads all necessary inputs.
+        """
+
+        if self.input_enabled:
+            self.__move_input = controllers.INPUT_CONTROLLER.get_movement()
+            self.__aim_input = controllers.INPUT_CONTROLLER.get_aim()
+            self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
+
     def update(self, dt: float) -> Optional[str]:
+        # Read inputs.
+        self.__fetch_input()
+
         # Check for state changes.
-        if controllers.INPUT_CONTROLLER.get_aim().mag > 0.0:
+        if self.__aim_input.mag > 0.0:
             return PlayerStates.LOAD
 
-        if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
+        if self.__move_input.mag > 0.0:
             return PlayerStates.WALK
 
-        if controllers.INPUT_CONTROLLER.get_sprint():
+        if self.__sprint:
             return PlayerStates.ROLL
 
 class PlayerWalkState(PlayerState):
