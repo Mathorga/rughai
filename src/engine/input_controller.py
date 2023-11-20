@@ -166,7 +166,7 @@ class InputController:
             (self[pyglet.window.key.W] - self[pyglet.window.key.S]) + stick[1]
         )
 
-    def get_view_movement(self) -> pyglet.math.Vec2:
+    def get_aim(self) -> pyglet.math.Vec2:
         """
         Returns the camera movement vector from keyboard and controller.
         """
@@ -215,9 +215,6 @@ class InputController:
 
     def get_menu_page_right(self) -> bool:
         return self.key_presses.get(pyglet.window.key.E, False)
-
-    def get_aim(self) -> bool:
-        return self[pyglet.window.key.N] or self.buttons.get("lefttrigger", 0.0) > 0.5
 
     def get_draw(self) -> bool:
         """

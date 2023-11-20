@@ -29,7 +29,7 @@ class Animation:
         source: str,
     ) -> None:
         # Store the source path.
-        self.source = source
+        self.source: str = source
 
         # Read source file.
         self.source_data: Dict[str, Any] = {}
@@ -40,10 +40,10 @@ class Animation:
         assert "path" in self.source_data.keys() and "name" in self.source_data.keys()
 
         # Read animation name.
-        self.name = self.source_data["name"]
+        self.name: str = self.source_data["name"]
 
         # Read animation path.
-        self.content = pyglet.resource.animation(self.source_data["path"])
+        self.content: pyglet.image.animation.Animation = pyglet.resource.animation(self.source_data["path"])
 
         # Set animation anchor if defined.
         if "anchor_x" in self.source_data.keys():
