@@ -53,7 +53,7 @@ class PlayerNode(PositionNode):
             y = y
         )
 
-        self.__state_machine = StateMachine(
+        self.__state_machine = PlayerStateMachine(
             states = {
                 PlayerStates.IDLE: PlayerIdleState(actor = self),
                 PlayerStates.WALK: PlayerWalkState(actor = self),
@@ -291,6 +291,21 @@ class PlayerNode(PositionNode):
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()
 
+class PlayerStateMachine(StateMachine):
+    def enable_input(self) -> None:
+        # Just return if there's no current state.
+        if self.current_key is None:
+            return
+
+        self.states[self.current_key].enable_input()
+
+    def disable_input(self) -> None:
+        # Just return if there's no current state.
+        if self.current_key is None:
+            return
+
+        self.states[self.current_key].disable_input()
+
 class PlayerState(State):
     def __init__(
         self,
@@ -298,10 +313,17 @@ class PlayerState(State):
     ) -> None:
         super().__init__()
 
+        self.input_enabled: bool = True
         self.actor: PlayerNode = actor
 
     def onAnimationEnd(self) -> None:
         pass
+
+    def enable_input(self) -> None:
+        self.input_enabled = True
+
+    def disable_input(self) -> None:
+        self.input_enabled = False
 
 class PlayerIdleState(PlayerState):
     def __init__(
