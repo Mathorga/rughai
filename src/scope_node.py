@@ -5,9 +5,9 @@ from engine.node import PositionNode
 from engine.settings import SETTINGS, Builtins
 from engine.sprite_node import SpriteNode
 
-class AimNode(PositionNode):
+class ScopeNode(PositionNode):
     """
-    Aim sign class.
+    Scope sign class.
     """
 
     def __init__(
@@ -63,7 +63,7 @@ class AimNode(PositionNode):
     ) -> None:
         self.direction = direction
 
-class ShootAimNode(PositionNode):
+class AimingScopeNode(PositionNode):
     """
     Aim sign class.
     """
@@ -88,28 +88,25 @@ class ShootAimNode(PositionNode):
         self.__aim_sprite_offset = (offset_x, offset_y)
 
         # Aim sprite distance, defines the distance at which the sprite floats.
-        self.__aim_sprite_distance = 10.0
+        self.__aim_sprite_distance: float = 10.0
 
-        self.__sprites = [
-            SpriteNode(
-                resource = aim_image,
-                x = x,
-                y = y,
-                batch = batch
-            ),
-            SpriteNode(
-                resource = aim_image,
-                x = x,
-                y = y,
-                batch = batch
-            ),
-            SpriteNode(
-                resource = aim_image,
-                x = x,
-                y = y,
-                batch = batch
+        # Number of adjacent sprites to draw.
+        self.__sprites_num: int = 15
+
+        # Distance between each sprite.
+        self.__sprites_delta: float = 0.05
+
+        self.__sprites = []
+
+        for i in range(self.__sprites_num):
+            self.__sprites.append(
+                SpriteNode(
+                    resource = aim_image,
+                    x = x,
+                    y = y,
+                    batch = batch
+                )
             )
-        ]
 
         self.direction = 0.0
 
@@ -122,11 +119,10 @@ class ShootAimNode(PositionNode):
 
         aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.direction)
         for index, sprite in enumerate(self.__sprites):
-            print(index)
             sprite.set_position(
                 position = (
-                    self.x + self.__aim_sprite_offset[0] + (aim_vec.x * (index + 1)),
-                    self.y + self.__aim_sprite_offset[1] + (aim_vec.y * (index + 1))
+                    self.x + self.__aim_sprite_offset[0] + aim_vec.x + aim_vec.x * self.__sprites_delta * (index + 1),
+                    self.y + self.__aim_sprite_offset[1] + aim_vec.y + aim_vec.y * self.__sprites_delta * (index + 1)
                 ),
                 z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
             )
