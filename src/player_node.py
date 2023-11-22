@@ -4,7 +4,7 @@ Module containing the main player's classes.
 
 from enum import Enum
 import math
-from typing import Dict, Optional
+from typing import Optional
 
 import pyglet
 import pyglet.math as pm
@@ -15,7 +15,7 @@ from engine.animation import Animation
 
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
-from engine.node import Node, PositionNode
+from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.settings import SETTINGS, Builtins
 
@@ -182,18 +182,12 @@ class PlayerNode(PositionNode):
         Disables user controls over the player and stops all existing inputs.
         """
 
-        self.__aim_input = pm.Vec2()
-        self.__move_input = pm.Vec2()
-        self.__controls_enabled = False
-
         self.__state_machine.disable_input()
 
     def enable_controls(self) -> None:
         """
         Enables user controls over the player.
         """
-
-        self.__controls_enabled = True
 
         self.__state_machine.enable_input()
 
