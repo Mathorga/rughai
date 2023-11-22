@@ -65,7 +65,7 @@ class PlayerNode(PositionNode):
                 PlayerStates.AIM_WALK: PlayerAimWalkState(actor = self),
                 PlayerStates.DRAW: PlayerDrawState(actor = self),
                 PlayerStates.DRAW_WALK: PlayerDrawWalkState(actor = self),
-                # PlayerStates.SHOOT: PlayerShootState(actor = self),
+                PlayerStates.SHOOT: PlayerShootState(actor = self)
             }
         )
 
@@ -772,5 +772,38 @@ class PlayerDrawWalkState(PlayerState):
             return PlayerStates.IDLE
 
         if not self.__draw:
-            # return PlayerStates.SHOOT
-            pass
+            return PlayerStates.SHOOT
+
+class PlayerShootState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_shoot_1.json")
+
+        # Input.
+        self.__aim: bool = False
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+
+    def __fetch_input(self) -> None:
+        """
+        Reads all necessary inputs.
+        """
+
+        if self.input_enabled:
+            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
+
+    def update(self, dt: float) -> Optional[str]:
+        # Read input.
+        self.__fetch_input()
+
+    def on_animation_end(self) -> Optional[str]:
+        if not self.__aim:
+            return PlayerStates.IDLE
+        else:
+            return PlayerStates.AIM
