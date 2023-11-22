@@ -301,14 +301,22 @@ class PlayerStateMachine(StateMachine):
         if self.current_key is None:
             return
 
-        self.states[self.current_key].enable_input()
+        # Retrieve the current state.
+        current_state: State = self.states[self.current_key]
+
+        if isinstance(current_state, PlayerState):
+            current_state.enable_input()
 
     def disable_input(self) -> None:
         # Just return if there's no current state.
         if self.current_key is None:
             return
 
-        self.states[self.current_key].disable_input()
+        # Retrieve the current state.
+        current_state: State = self.states[self.current_key]
+
+        if isinstance(current_state, PlayerState):
+            current_state.disable_input()
 
 class PlayerState(State):
     def __init__(
@@ -572,6 +580,7 @@ class PlayerAimState(PlayerState):
 
         # Input.
         self.__move: bool = False
+        self.__aim: bool = False
         self.__aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
         self.__draw: bool = False
 
@@ -585,6 +594,7 @@ class PlayerAimState(PlayerState):
 
         if self.input_enabled:
             self.__move = controllers.INPUT_CONTROLLER.get_movement()
+            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
             self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
             self.__draw = controllers.INPUT_CONTROLLER.get_draw()
 
@@ -601,7 +611,7 @@ class PlayerAimState(PlayerState):
         if self.__move:
             return PlayerStates.AIM_WALK
 
-        if self.__aim_vec.mag <= 0.0:
+        if not self.__aim:
             return PlayerStates.IDLE
 
         if self.__draw:
@@ -712,7 +722,7 @@ class PlayerDrawState(PlayerState):
             return PlayerStates.IDLE
 
         if not self.__draw:
-            return PlayerStates.AIM
+            return PlayerStates.SHOOT
 
 class PlayerDrawWalkState(PlayerState):
     def __init__(
