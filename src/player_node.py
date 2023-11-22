@@ -592,7 +592,7 @@ class PlayerAimState(PlayerState):
         # Read input.
         self.__fetch_input()
 
-        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
+        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag * 0.75)
 
         # Set aim direction.
         self.actor.stats.look_dir = self.__aim_vec.heading
@@ -639,7 +639,7 @@ class PlayerAimWalkState(PlayerState):
         # Read input.
         self.__fetch_input()
 
-        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
+        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag * 0.75)
 
         # Set aim direction.
         self.actor.stats.look_dir = self.__aim_vec.heading
