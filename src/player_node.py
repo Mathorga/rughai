@@ -8,7 +8,7 @@ from typing import Optional
 
 import pyglet
 import pyglet.math as pm
-from aim_node import AimNode
+from aim_node import AimNode, ShootAimNode
 
 from constants import collision_tags
 from engine.animation import Animation
@@ -54,6 +54,7 @@ class PlayerNode(PositionNode):
             y = y
         )
 
+        # State machine.
         self.__state_machine = PlayerStateMachine(
             states = {
                 PlayerStates.IDLE: PlayerIdleState(actor = self),
@@ -82,6 +83,8 @@ class PlayerNode(PositionNode):
 
         self.__hor_facing: int = 1
 
+        # Shooting magnitude: defines how strong the shot will be.
+        self.__shoot_mag: float = 0.0
 
         # Animations.
         self.__sprite = SpriteNode(
@@ -93,7 +96,7 @@ class PlayerNode(PositionNode):
         )
 
         # Aim target.
-        self.__aim = AimNode(
+        self.__aim = ShootAimNode(
             x = self.x,
             y = self.y,
             offset_y = 8.0,
