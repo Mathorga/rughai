@@ -32,6 +32,7 @@ class PlayerStates(str, Enum):
     AIM = "aim"
     AIM_WALK = "aim_walk"
     DRAW = "draw"
+    DRAW_WALK = "draw_walk"
     SHOOT = "shoot"
 
 class PlayerNode(PositionNode):
@@ -53,7 +54,7 @@ class PlayerNode(PositionNode):
             y = y
         )
 
-        self.__state_machine = StateMachine(
+        self.__state_machine = PlayerStateMachine(
             states = {
                 PlayerStates.IDLE: PlayerIdleState(actor = self),
                 PlayerStates.WALK: PlayerWalkState(actor = self),
@@ -61,7 +62,10 @@ class PlayerNode(PositionNode):
                 PlayerStates.ROLL: PlayerRollState(actor = self),
                 PlayerStates.LOAD: PlayerLoadState(actor = self),
                 PlayerStates.AIM: PlayerAimState(actor = self),
-                PlayerStates.AIM_WALK: PlayerAimWalkState(actor = self)
+                PlayerStates.AIM_WALK: PlayerAimWalkState(actor = self),
+                PlayerStates.DRAW: PlayerDrawState(actor = self),
+                PlayerStates.DRAW_WALK: PlayerDrawWalkState(actor = self),
+                # PlayerStates.SHOOT: PlayerShootState(actor = self),
             }
         )
 
@@ -291,6 +295,21 @@ class PlayerNode(PositionNode):
     def get_bounding_box(self):
         return self.__sprite.get_bounding_box()
 
+class PlayerStateMachine(StateMachine):
+    def enable_input(self) -> None:
+        # Just return if there's no current state.
+        if self.current_key is None:
+            return
+
+        self.states[self.current_key].enable_input()
+
+    def disable_input(self) -> None:
+        # Just return if there's no current state.
+        if self.current_key is None:
+            return
+
+        self.states[self.current_key].disable_input()
+
 class PlayerState(State):
     def __init__(
         self,
@@ -298,10 +317,17 @@ class PlayerState(State):
     ) -> None:
         super().__init__()
 
+        self.input_enabled: bool = True
         self.actor: PlayerNode = actor
 
     def onAnimationEnd(self) -> None:
         pass
+
+    def enable_input(self) -> None:
+        self.input_enabled = True
+
+    def disable_input(self) -> None:
+        self.input_enabled = False
 
 class PlayerIdleState(PlayerState):
     def __init__(
@@ -312,8 +338,10 @@ class PlayerIdleState(PlayerState):
 
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_idle.json")
-        self.__move_input: pyglet.math.Vec2 = pyglet.math.Vec2()
-        self.__aim_input: pyglet.math.Vec2 = pyglet.math.Vec2()
+
+        # Input.
+        self.__move: bool = False
+        self.__aim: bool = False
         self.__sprint: bool = False
 
     def start(self) -> None:
@@ -325,8 +353,8 @@ class PlayerIdleState(PlayerState):
         """
 
         if self.input_enabled:
-            self.__move_input = controllers.INPUT_CONTROLLER.get_movement()
-            self.__aim_input = controllers.INPUT_CONTROLLER.get_aim()
+            self.__move = controllers.INPUT_CONTROLLER.get_movement()
+            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
             self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
 
     def update(self, dt: float) -> Optional[str]:
@@ -334,10 +362,10 @@ class PlayerIdleState(PlayerState):
         self.__fetch_input()
 
         # Check for state changes.
-        if self.__aim_input.mag > 0.0:
+        if self.__aim:
             return PlayerStates.LOAD
 
-        if self.__move_input.mag > 0.0:
+        if self.__move:
             return PlayerStates.WALK
 
         if self.__sprint:
@@ -353,21 +381,38 @@ class PlayerWalkState(PlayerState):
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_walk.json")
 
+        # Input.
+        self.__move_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__aim: bool = False
+        self.__shift: bool = False
+        self.__sprint: bool = False
+
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
+    def __fetch_input(self) -> None:
+        """
+        Reads all necessary inputs.
+        """
+
+        if self.input_enabled:
+            self.__move_vec = controllers.INPUT_CONTROLLER.get_movement_vec()
+            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
+            self.__shift = controllers.INPUT_CONTROLLER.get_shift()
+            self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
+
     def update(self, dt: float) -> Optional[str]:
-        # Read player input.
-        move_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_movement()
+        # Read inputs.
+        self.__fetch_input()
 
         target_speed: float = 0.0
-        if move_input.mag > 0.0:
+        if self.__move_vec.mag > 0.0:
             # Only set dirs if there's any move input.
-            self.actor.stats.move_dir = move_input.heading
-            self.actor.stats.look_dir = move_input.heading
+            self.actor.stats.move_dir = self.__move_vec.heading
+            self.actor.stats.look_dir = self.__move_vec.heading
 
             target_speed = self.actor.stats.max_speed
-            if controllers.INPUT_CONTROLLER.get_shift():
+            if self.__shift:
                 target_speed = target_speed / 2
 
         # Set player stats.
@@ -381,10 +426,10 @@ class PlayerWalkState(PlayerState):
         self.actor.move(dt = dt)
 
         # Check for state changes.
-        if controllers.INPUT_CONTROLLER.get_aim().mag > 0.0:
+        if self.__aim:
             return PlayerStates.LOAD
 
-        if controllers.INPUT_CONTROLLER.get_sprint():
+        if self.__sprint:
             return PlayerStates.ROLL
 
         if self.actor.stats.speed <= 0.0:
@@ -403,21 +448,38 @@ class PlayerRunState(PlayerState):
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_run.json")
 
+        # Input.
+        self.__move_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__aim: bool = False
+        self.__shift: bool = False
+        self.__sprint: bool = False
+
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
+    def __fetch_input(self) -> None:
+        """
+        Reads all necessary inputs.
+        """
+
+        if self.input_enabled:
+            self.__move_vec = controllers.INPUT_CONTROLLER.get_movement_vec()
+            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
+            self.__shift = controllers.INPUT_CONTROLLER.get_shift()
+            self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
+
     def update(self, dt: float) -> Optional[str]:
-        # Read input.
-        move_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_movement()
+        # Read inputs.
+        self.__fetch_input()
 
         target_speed: float = 0.0
-        if move_input.mag > 0.0:
+        if self.__move_vec.mag > 0.0:
             # Only set dirs if there's any move input.
-            self.actor.stats.move_dir = move_input.heading
-            self.actor.stats.look_dir = move_input.heading
+            self.actor.stats.move_dir = self.__move_vec.heading
+            self.actor.stats.look_dir = self.__move_vec.heading
 
             target_speed = self.actor.stats.max_speed
-            if controllers.INPUT_CONTROLLER.get_shift():
+            if self.__shift:
                 target_speed = target_speed / 2
 
         # Set player stats.
@@ -431,10 +493,10 @@ class PlayerRunState(PlayerState):
         self.actor.move(dt = dt)
 
         # Check for state changes.
-        if controllers.INPUT_CONTROLLER.get_aim().mag > 0.0:
+        if self.__aim:
             return PlayerStates.LOAD
 
-        if controllers.INPUT_CONTROLLER.get_sprint():
+        if self.__sprint:
             return PlayerStates.ROLL
 
         if self.actor.stats.speed <= self.actor.stats.max_speed * self.actor.run_threshold:
@@ -490,7 +552,7 @@ class PlayerLoadState(PlayerState):
 
     def update(self, dt: float) -> str | None:
         # Read input.
-        aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim()
+        aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim_vec()
 
         # Set aim direction.
         self.actor.stats.look_dir = aim_input.heading
@@ -508,28 +570,42 @@ class PlayerAimState(PlayerState):
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_hold_0.json")
 
+        # Input.
+        self.__move: bool = False
+        self.__aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__draw: bool = False
+
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
+    def __fetch_input(self) -> None:
+        """
+        Reads all necessary inputs.
+        """
+
+        if self.input_enabled:
+            self.__move = controllers.INPUT_CONTROLLER.get_movement()
+            self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
+            self.__draw = controllers.INPUT_CONTROLLER.get_draw()
+
     def update(self, dt: float) -> Optional[str]:
         # Read input.
-        aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim()
+        self.__fetch_input()
 
-        self.actor.set_cam_target_distance_mag(mag = aim_input.mag)
+        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
 
         # Set aim direction.
-        self.actor.stats.look_dir = aim_input.heading
+        self.actor.stats.look_dir = self.__aim_vec.heading
 
         # Check for state changes.
-        if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
+        if self.__move:
             return PlayerStates.AIM_WALK
 
-        if controllers.INPUT_CONTROLLER.get_aim().mag <= 0.0:
+        if self.__aim_vec.mag <= 0.0:
             return PlayerStates.IDLE
 
-    def end(self) -> None:
-        # self.actor.set_cam_target_distance_mag(mag = 0.0)
-        pass
+        if self.__draw:
+            return PlayerStates.DRAW
 
 class PlayerAimWalkState(PlayerState):
     def __init__(
@@ -541,19 +617,33 @@ class PlayerAimWalkState(PlayerState):
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_hold_0_walk.json")
 
+        # Input.
+        self.__move_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__draw: bool = False
+
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
+    def __fetch_input(self) -> None:
+        """
+        Reads all necessary inputs.
+        """
+
+        if self.input_enabled:
+            self.__move_vec = controllers.INPUT_CONTROLLER.get_movement_vec()
+            self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
+            self.__draw = controllers.INPUT_CONTROLLER.get_draw()
+
     def update(self, dt: float) -> Optional[str]:
         # Read input.
-        aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim()
-        move_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_movement()
+        self.__fetch_input()
 
-        self.actor.set_cam_target_distance_mag(mag = aim_input.mag)
+        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
 
         # Set aim direction.
-        self.actor.stats.look_dir = aim_input.heading
-        self.actor.stats.move_dir = move_input.heading
+        self.actor.stats.look_dir = self.__aim_vec.heading
+        self.actor.stats.move_dir = self.__move_vec.heading
 
         target_speed: float = self.actor.stats.max_speed / 2
 
@@ -568,11 +658,119 @@ class PlayerAimWalkState(PlayerState):
         self.actor.move(dt = dt)
 
         # Check for state changes.
-        if move_input.mag <= 0:
+        if self.__move_vec.mag <= 0:
             return PlayerStates.AIM
 
-        if controllers.INPUT_CONTROLLER.get_movement().mag > 0.0:
-            return PlayerStates.AIM_WALK
-
-        if controllers.INPUT_CONTROLLER.get_aim().mag <= 0.0:
+        if self.__aim_vec.mag <= 0.0:
             return PlayerStates.IDLE
+
+        if self.__draw:
+            return PlayerStates.DRAW
+
+class PlayerDrawState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_hold_1.json")
+
+        # Input.
+        self.__move: bool = False
+        self.__aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__draw: bool = False
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+
+    def __fetch_input(self) -> None:
+        """
+        Reads all necessary inputs.
+        """
+
+        if self.input_enabled:
+            self.__move = controllers.INPUT_CONTROLLER.get_movement()
+            self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
+            self.__draw = controllers.INPUT_CONTROLLER.get_draw()
+
+    def update(self, dt: float) -> Optional[str]:
+        # Read input.
+        self.__fetch_input()
+
+        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
+
+        # Set aim direction.
+        self.actor.stats.look_dir = self.__aim_vec.heading
+
+        # Check for state changes.
+        if self.__move:
+            return PlayerStates.DRAW_WALK
+
+        if self.__aim_vec.mag <= 0.0:
+            return PlayerStates.IDLE
+
+        if not self.__draw:
+            return PlayerStates.AIM
+
+class PlayerDrawWalkState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_hold_1_walk.json")
+
+        # Input.
+        self.__move_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
+        self.__draw: bool = False
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+
+    def __fetch_input(self) -> None:
+        """
+        Reads all necessary inputs.
+        """
+
+        if self.input_enabled:
+            self.__move_vec = controllers.INPUT_CONTROLLER.get_movement_vec()
+            self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
+            self.__draw = controllers.INPUT_CONTROLLER.get_draw()
+
+    def update(self, dt: float) -> Optional[str]:
+        # Read input.
+        self.__fetch_input()
+
+        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
+
+        # Set aim direction.
+        self.actor.stats.look_dir = self.__aim_vec.heading
+        self.actor.stats.move_dir = self.__move_vec.heading
+
+        target_speed: float = self.actor.stats.max_speed / 4
+
+        # Set player stats.
+        if self.actor.stats.speed < target_speed:
+            self.actor.stats.speed += self.actor.stats.accel * dt
+        else:
+            self.actor.stats.speed -= self.actor.stats.accel * dt
+        self.actor.stats.speed = pm.clamp(self.actor.stats.speed, 0.0, self.actor.stats.max_speed)
+
+        # Move the player.
+        self.actor.move(dt = dt)
+
+        # Check for state changes.
+        if self.__move_vec.mag <= 0:
+            return PlayerStates.DRAW
+
+        if self.__aim_vec.mag <= 0.0:
+            return PlayerStates.IDLE
+
+        if not self.__draw:
+            # return PlayerStates.SHOOT
+            pass
