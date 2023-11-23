@@ -8,7 +8,7 @@ from typing import Optional
 
 import pyglet
 import pyglet.math as pm
-from aim_node import AimNode
+from scope_node import ScopeNode, AimingScopeNode
 
 from constants import collision_tags
 from engine.animation import Animation
@@ -54,6 +54,7 @@ class PlayerNode(PositionNode):
             y = y
         )
 
+        # State machine.
         self.__state_machine = PlayerStateMachine(
             states = {
                 PlayerStates.IDLE: PlayerIdleState(actor = self),
@@ -82,6 +83,8 @@ class PlayerNode(PositionNode):
 
         self.__hor_facing: int = 1
 
+        # Shooting magnitude: defines how strong the shot will be.
+        self.__shoot_mag: float = 0.0
 
         # Animations.
         self.__sprite = SpriteNode(
@@ -93,7 +96,7 @@ class PlayerNode(PositionNode):
         )
 
         # Aim target.
-        self.__aim = AimNode(
+        self.__scope = AimingScopeNode(
             x = self.x,
             y = self.y,
             offset_y = 8.0,
@@ -166,7 +169,7 @@ class PlayerNode(PositionNode):
         self.__shadow_sprite.delete()
         self.__collider.delete()
         self.__interactor.delete()
-        self.__aim.delete()
+        self.__scope.delete()
 
     def update(self, dt) -> None:
         self.__state_machine.update(dt = dt)
@@ -239,9 +242,9 @@ class PlayerNode(PositionNode):
         Updates the aim sign.
         """
 
-        self.__aim.set_direction(direction = self.stats.look_dir)
-        self.__aim.set_position(position = self.get_position())
-        self.__aim.update(dt = dt)
+        self.__scope.set_direction(direction = self.stats.look_dir)
+        self.__scope.set_position(position = self.get_position())
+        self.__scope.update(dt = dt)
 
     def __update_shadow(self, dt):
         self.__shadow_sprite.set_position(
