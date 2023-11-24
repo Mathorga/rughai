@@ -24,6 +24,12 @@ class StateMachine:
         self.states: Dict[str, State] = states if states is not None else {}
         self.current_key: Optional[str] = list(self.states.keys())[0] if len(self.states) > 0 else None
 
+        current_state: Optional[State] = self.get_current_state()
+        if current_state is None:
+            return
+
+        current_state.start()
+
     def get_current_state(self) -> Optional[State]:
         """
         Returns the current state of the state machine.
@@ -32,6 +38,14 @@ class StateMachine:
             return None
 
         return self.states[self.current_key]
+
+    def set_state(self, key: str) -> None:
+        """
+        Sets as current state the one with the given key, if present.
+        """
+
+        if key in self.states:
+            self.current_key = key
 
     def on_animation_end(self) -> Optional[str]:
         current_state: Optional[State] = self.get_current_state()

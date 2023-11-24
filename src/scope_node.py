@@ -14,7 +14,7 @@ class ScopeStates(str, Enum):
 
 class ScopeNode(PositionNode):
     """
-    Aim sign class.
+    Player scope class.
     """
 
     def __init__(
@@ -30,13 +30,6 @@ class ScopeNode(PositionNode):
 
         self.batch: Optional[pyglet.graphics.Batch] = batch
 
-        # State machine.
-        self.__state_machine = ScopeStateMachine(
-            states = {
-                ScopeStates.IDLE: ScopeIdleState(actor = self)
-            }
-        )
-
         # Aim sprite offset, defines the offset from self.x and self.y, respectively.
         self.sprite_offset: Tuple[float, float] = (offset_x, offset_y)
 
@@ -44,6 +37,14 @@ class ScopeNode(PositionNode):
         self.sprite_distance: float = 10.0
 
         self.direction = 0.0
+
+        # State machine.
+        self.__state_machine = ScopeStateMachine(
+            states = {
+                ScopeStates.IDLE: ScopeIdleState(actor = self),
+                ScopeStates.LOAD: ScopeLoadState(actor = self)
+            }
+        )
 
     def update(self, dt: float) -> None:
         super().update(dt)
@@ -59,21 +60,14 @@ class ScopeNode(PositionNode):
 
         self.__state_machine.set_position(position = position, z = z)
 
-        # aim_vec = pyglet.math.Vec2.from_polar(self.sprite_distance, self.direction)
-        # for index, sprite in enumerate(self.__sprites):
-        #     sprite.set_position(
-        #         position = (
-        #             self.x + self.sprite_offset[0] + aim_vec.x + aim_vec.x * self.__sprites_delta * (index + 1),
-        #             self.y + self.sprite_offset[1] + aim_vec.y + aim_vec.y * self.__sprites_delta * (index + 1)
-        #         ),
-        #         z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
-        #     )
-
     def set_direction(
         self,
         direction: float
     ) -> None:
         self.direction = direction
+
+    def load(self) -> None:
+        self.__state_machine.set_state(ScopeStates.LOAD)
 
 class ScopeStateMachine(StateMachine):
     def set_position(
@@ -136,20 +130,29 @@ class ScopeIdleState(ScopeState):
     ) -> None:
         super().__init__(actor)
 
+        self.__animation: Animation = Animation(source = "sprites/scope/scope_idle.json")
+        self.__sprite: Optional[SpriteNode] = None
+
+    def start(self) -> None:
         # State sprite.
-        animation: Animation = Animation(source = "sprites/scope/scope_idle.json")
-        self.__sprite: SpriteNode = SpriteNode(
-            resource = animation.content,
-            x = actor.x,
-            y = actor.y,
-            batch = actor.batch
+        self.__sprite = SpriteNode(
+            resource = self.__animation.content,
+            x = self.actor.x,
+            y = self.actor.y,
+            batch = self.actor.batch
         )
+
+    def end(self) -> None:
+        self.__sprite.delete()
 
     def set_position(
         self,
         position: Tuple[float, float],
         z: Optional[float] = None
     ) -> None:
+        if self.__sprite is None:
+            return
+
         aim_vec = pyglet.math.Vec2.from_polar(self.actor.sprite_distance, self.actor.direction)
         self.__sprite.set_position(
             position = (
@@ -158,3 +161,53 @@ class ScopeIdleState(ScopeState):
             ),
             z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
         )
+
+class ScopeLoadState(ScopeState):
+    def __init__(
+        self,
+        actor: ScopeNode
+    ) -> None:
+        super().__init__(actor)
+
+        # State sprite.
+        self.__animation: Animation = Animation(source = "sprites/scope/scope_idle.json")
+
+        # Number of adjacent sprites to draw.
+        self.__sprites_num: int = 15
+
+        # Distance between each sprite.
+        self.__sprites_delta: float = 0.05
+
+        self.__sprites: List[SpriteNode] = []
+
+    def start(self) -> None:
+        for i in range(self.__sprites_num):
+            self.__sprites.append(
+                SpriteNode(
+                    resource = self.__animation.content,
+                    x = self.actor.x,
+                    y = self.actor.y,
+                    batch = self.actor.batch
+                )
+            )
+
+    def end(self) -> None:
+        for i in range(self.__sprites_num):
+            self.__sprites[i].delete()
+
+    def set_position(
+        self,
+        position: Tuple[float, float],
+        z: Optional[float] = None
+    ) -> None:
+        super().set_position(position = position, z = z)
+
+        aim_vec = pyglet.math.Vec2.from_polar(self.actor.sprite_distance, self.actor.direction)
+        for index, sprite in enumerate(self.__sprites):
+            sprite.set_position(
+                position = (
+                    self.x + self.actor.sprite_offset[0] + aim_vec.x + aim_vec.x * self.__sprites_delta * (index + 1),
+                    self.y + self.actor.sprite_offset[1] + aim_vec.y + aim_vec.y * self.__sprites_delta * (index + 1)
+                ),
+                z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
+            )
