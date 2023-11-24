@@ -1,69 +1,18 @@
-from typing import Optional, Tuple
+from enum import Enum
+from typing import List, Optional, Tuple
 import pyglet
+from engine.animation import Animation
 
 from engine.node import PositionNode
 from engine.settings import SETTINGS, Builtins
 from engine.sprite_node import SpriteNode
+from engine.state_machine import State, StateMachine
+
+class ScopeStates(str, Enum):
+    IDLE = "idle"
+    LOAD = "load"
 
 class ScopeNode(PositionNode):
-    """
-    Scope sign class.
-    """
-
-    def __init__(
-        self,
-        x: float = 0,
-        y: float = 0,
-        z: float = 0,
-        offset_x: float = 0.0,
-        offset_y: float = 0.0,
-        batch: Optional[pyglet.graphics.Batch] = None
-    ) -> None:
-        super().__init__(x, y, z)
-
-        # Aim sprite image.
-        aim_image = pyglet.resource.image("sprites/target.png")
-        aim_image.anchor_x = aim_image.width / 2
-        aim_image.anchor_y = aim_image.height / 2
-
-        # Aim sprite offset, defines the offset from self.x and self.y, respectively.
-        self.__aim_sprite_offset = (offset_x, offset_y)
-
-        # Aim sprite distance, defines the distance at which the sprite floats.
-        self.__aim_sprite_distance = 10.0
-
-        self.__aim_sprite = SpriteNode(
-            resource = aim_image,
-            x = x,
-            y = y,
-            batch = batch
-        )
-
-        self.direction = 0.0
-
-    def set_position(
-        self,
-        position: Tuple[float, float],
-        z: Optional[float] = None
-    ) -> None:
-        super().set_position(position = position, z = z)
-
-        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.direction)
-        self.__aim_sprite.set_position(
-            position = (
-                self.x + self.__aim_sprite_offset[0] + aim_vec.x,
-                self.y + self.__aim_sprite_offset[1] + aim_vec.y
-            ),
-            z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
-        )
-
-    def set_direction(
-        self,
-        direction: float
-    ) -> None:
-        self.direction = direction
-
-class AimingScopeNode(PositionNode):
     """
     Aim sign class.
     """
@@ -79,36 +28,27 @@ class AimingScopeNode(PositionNode):
     ) -> None:
         super().__init__(x, y, z)
 
-        # Aim sprite image.
-        aim_image = pyglet.resource.image("sprites/target.png")
-        aim_image.anchor_x = aim_image.width / 2
-        aim_image.anchor_y = aim_image.height / 2
+        self.batch: Optional[pyglet.graphics.Batch] = batch
+
+        # State machine.
+        self.__state_machine = ScopeStateMachine(
+            states = {
+                ScopeStates.IDLE: ScopeIdleState(actor = self)
+            }
+        )
 
         # Aim sprite offset, defines the offset from self.x and self.y, respectively.
-        self.__aim_sprite_offset = (offset_x, offset_y)
+        self.sprite_offset: Tuple[float, float] = (offset_x, offset_y)
 
-        # Aim sprite distance, defines the distance at which the sprite floats.
-        self.__aim_sprite_distance: float = 10.0
-
-        # Number of adjacent sprites to draw.
-        self.__sprites_num: int = 15
-
-        # Distance between each sprite.
-        self.__sprites_delta: float = 0.05
-
-        self.__sprites = []
-
-        for i in range(self.__sprites_num):
-            self.__sprites.append(
-                SpriteNode(
-                    resource = aim_image,
-                    x = x,
-                    y = y,
-                    batch = batch
-                )
-            )
+        # Sprite distance, defines the distance at which the sprite floats.
+        self.sprite_distance: float = 10.0
 
         self.direction = 0.0
+
+    def update(self, dt: float) -> None:
+        super().update(dt)
+
+        self.__state_machine.update(dt = dt)
 
     def set_position(
         self,
@@ -117,18 +57,104 @@ class AimingScopeNode(PositionNode):
     ) -> None:
         super().set_position(position = position, z = z)
 
-        aim_vec = pyglet.math.Vec2.from_polar(self.__aim_sprite_distance, self.direction)
-        for index, sprite in enumerate(self.__sprites):
-            sprite.set_position(
-                position = (
-                    self.x + self.__aim_sprite_offset[0] + aim_vec.x + aim_vec.x * self.__sprites_delta * (index + 1),
-                    self.y + self.__aim_sprite_offset[1] + aim_vec.y + aim_vec.y * self.__sprites_delta * (index + 1)
-                ),
-                z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
-            )
+        self.__state_machine.set_position(position = position, z = z)
+
+        # aim_vec = pyglet.math.Vec2.from_polar(self.sprite_distance, self.direction)
+        # for index, sprite in enumerate(self.__sprites):
+        #     sprite.set_position(
+        #         position = (
+        #             self.x + self.sprite_offset[0] + aim_vec.x + aim_vec.x * self.__sprites_delta * (index + 1),
+        #             self.y + self.sprite_offset[1] + aim_vec.y + aim_vec.y * self.__sprites_delta * (index + 1)
+        #         ),
+        #         z = self.y + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
+        #     )
 
     def set_direction(
         self,
         direction: float
     ) -> None:
         self.direction = direction
+
+class ScopeStateMachine(StateMachine):
+    def set_position(
+        self,
+        position: Tuple[float, float],
+        z: Optional[float] = None
+    ) -> None:
+        if self.current_key is None:
+            return
+
+        # Retrieve the current state.
+        current_state: State = self.states[self.current_key]
+
+        if isinstance(current_state, ScopeState):
+            current_state.set_position(position = position, z = z)
+
+    def set_direction(
+        self,
+        direction: float
+    ) -> None:
+        if self.current_key is None:
+            return
+
+        # Retrieve the current state.
+        current_state: State = self.states[self.current_key]
+
+        if isinstance(current_state, ScopeState):
+            current_state.set_direction(direction = direction)
+
+class ScopeState(State):
+    def __init__(
+        self,
+        actor: ScopeNode
+    ) -> None:
+        super().__init__()
+
+        self.input_enabled: bool = True
+        self.actor: ScopeNode = actor
+
+    def onAnimationEnd(self) -> None:
+        pass
+
+    def set_position(
+        self,
+        position: Tuple[float, float],
+        z: Optional[float] = None
+    ) -> None:
+        pass
+
+    def set_direction(
+        self,
+        direction: float
+    ) -> None:
+        pass
+
+class ScopeIdleState(ScopeState):
+    def __init__(
+        self,
+        actor: ScopeNode
+    ) -> None:
+        super().__init__(actor)
+
+        # State sprite.
+        animation: Animation = Animation(source = "sprites/scope/scope_idle.json")
+        self.__sprite: SpriteNode = SpriteNode(
+            resource = animation.content,
+            x = actor.x,
+            y = actor.y,
+            batch = actor.batch
+        )
+
+    def set_position(
+        self,
+        position: Tuple[float, float],
+        z: Optional[float] = None
+    ) -> None:
+        aim_vec = pyglet.math.Vec2.from_polar(self.actor.sprite_distance, self.actor.direction)
+        self.__sprite.set_position(
+            position = (
+                position[0] + self.actor.sprite_offset[0] + aim_vec.x + aim_vec.x,
+                position[1] + self.actor.sprite_offset[1] + aim_vec.y + aim_vec.y
+            ),
+            z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
+        )

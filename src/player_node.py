@@ -8,7 +8,7 @@ from typing import Optional
 
 import pyglet
 import pyglet.math as pm
-from scope_node import ScopeNode, AimingScopeNode
+from scope_node import ScopeNode
 
 from constants import collision_tags
 from engine.animation import Animation
@@ -96,7 +96,7 @@ class PlayerNode(PositionNode):
         )
 
         # Aim target.
-        self.__scope = AimingScopeNode(
+        self.__scope = ScopeNode(
             x = self.x,
             y = self.y,
             offset_y = 8.0,

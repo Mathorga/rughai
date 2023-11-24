@@ -15,6 +15,8 @@ class Animation:
     The definition file is structured as follows:
 
     name[string]: name of the animation.
+    rows[int](optional): number of rows in the given file (only used if the defined file is a spritesheet (png))
+    columns[int](optional): number of columns in the given file (only used if the defined file is a spritesheet (png))
     path[string]: path to the animation file (starting from the application-defined assets directory).
     anchor_x[int](optional): the x component of the animation anchor point.
     anchor_y[int](optional): the y component of the animation anchor point.
@@ -43,7 +45,15 @@ class Animation:
         self.name: str = self.source_data["name"]
 
         # Read animation path.
-        self.content: pyglet.image.animation.Animation = pyglet.resource.animation(self.source_data["path"])
+        path: str = self.source_data["path"]
+        self.content: pyglet.image.animation.Animation
+        if path.split(".")[1] == "gif":
+            self.content = pyglet.resource.animation(path)
+        else:
+            assert "rows" in self.source_data.keys() and "columns" in self.source_data.keys()
+            image_sheet = pyglet.resource.image(path)
+            image_grid = pyglet.image.ImageGrid(image_sheet, rows = self.source_data["rows"], columns = self.source_data["columns"])
+            self.content = pyglet.image.Animation.from_image_sequence(image_grid, duration = 0.1)
 
         # Set animation anchor if defined.
         if "anchor_x" in self.source_data.keys():
