@@ -289,6 +289,9 @@ class PlayerNode(PositionNode):
     def load_scope(self) -> None:
         self.__scope.load()
 
+    def unload_scope(self) -> None:
+        self.__scope.unload()
+
     def __update_collider(self, dt):
         self.__collider.update(dt)
 
@@ -587,6 +590,9 @@ class PlayerAimState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
         self.actor.load_scope()
+
+    def end(self) -> None:
+        self.actor.unload_scope()
 
     def __fetch_input(self) -> None:
         """

@@ -69,6 +69,9 @@ class ScopeNode(PositionNode):
     def load(self) -> None:
         self.__state_machine.set_state(ScopeStates.LOAD)
 
+    def unload(self) -> None:
+        self.__state_machine.set_state(ScopeStates.IDLE)
+
 class ScopeStateMachine(StateMachine):
     def set_position(
         self,
