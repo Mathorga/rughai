@@ -47,6 +47,9 @@ class StateMachine:
         if key in self.states:
             self.current_key = key
 
+            # Call the new state's start method.
+            self.states[self.current_key].start()
+
     def on_animation_end(self) -> Optional[str]:
         current_state: Optional[State] = self.get_current_state()
         if current_state is None:
