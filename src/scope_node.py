@@ -5,7 +5,6 @@ from engine.animation import Animation
 
 from engine.node import PositionNode
 from engine.settings import SETTINGS, Builtins
-from engine.shapes.circle_node import CircleNode
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
 
@@ -39,8 +38,35 @@ class ScopeNode(PositionNode):
 
         self.direction = 0.0
 
+        # State sprite.
+        self.animations: List[Animation] = [
+            Animation(source = "sprites/scope/scope_load_0.json"),
+            Animation(source = "sprites/scope/scope_load_0.json"),
+            Animation(source = "sprites/scope/scope_load_1.json"),
+            Animation(source = "sprites/scope/scope_load_2.json"),
+            Animation(source = "sprites/scope/scope_load_3.json"),
+            Animation(source = "sprites/scope/scope_load_4.json")
+        ]
+
+        self.animations.reverse()
+
+        # Distance between each sprite.
+        self.sprites_delta: float = 0.0
+
+        # Create sprites.
+        self.sprites: List[SpriteNode] = []
+        for animation in self.animations:
+            self.sprites.append(
+                SpriteNode(
+                    resource = animation.content,
+                    x = x,
+                    y = y,
+                    batch = batch
+                )
+            )
+
         # State machine.
-        self.__state_machine = ScopeStateMachine(
+        self.__state_machine = StateMachine(
             states = {
                 ScopeStates.IDLE: ScopeIdleState(actor = self),
                 ScopeStates.LOAD: ScopeLoadState(actor = self)
@@ -59,7 +85,15 @@ class ScopeNode(PositionNode):
     ) -> None:
         super().set_position(position = position, z = z)
 
-        self.__state_machine.set_position(position = position, z = z)
+        aim_vec = pyglet.math.Vec2.from_polar(self.sprite_distance, self.direction)
+        for index, sprite in enumerate(self.sprites):
+            sprite.set_position(
+                position = (
+                    position[0] + self.sprite_offset[0] + aim_vec.x + aim_vec.x * self.sprites_delta * (index + 1),
+                    position[1] + self.sprite_offset[1] + aim_vec.y + aim_vec.y * self.sprites_delta * (index + 1)
+                ),
+                z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
+            )
 
     def set_direction(
         self,
@@ -73,33 +107,12 @@ class ScopeNode(PositionNode):
     def unload(self) -> None:
         self.__state_machine.set_state(ScopeStates.IDLE)
 
-class ScopeStateMachine(StateMachine):
-    def set_position(
-        self,
-        position: Tuple[float, float],
-        z: Optional[float] = None
-    ) -> None:
-        if self.current_key is None:
-            return
+    def delete(self) -> None:
+        # Delete all sprites.
+        for sprite in self.sprites:
+            sprite.delete()
 
-        # Retrieve the current state.
-        current_state: State = self.states[self.current_key]
-
-        if isinstance(current_state, ScopeState):
-            current_state.set_position(position = position, z = z)
-
-    def set_direction(
-        self,
-        direction: float
-    ) -> None:
-        if self.current_key is None:
-            return
-
-        # Retrieve the current state.
-        current_state: State = self.states[self.current_key]
-
-        if isinstance(current_state, ScopeState):
-            current_state.set_direction(direction = direction)
+        self.sprites.clear()
 
 class ScopeState(State):
     def __init__(
@@ -108,24 +121,7 @@ class ScopeState(State):
     ) -> None:
         super().__init__()
 
-        self.input_enabled: bool = True
         self.actor: ScopeNode = actor
-
-    def onAnimationEnd(self) -> None:
-        pass
-
-    def set_position(
-        self,
-        position: Tuple[float, float],
-        z: Optional[float] = None
-    ) -> None:
-        pass
-
-    def set_direction(
-        self,
-        direction: float
-    ) -> None:
-        pass
 
 class ScopeIdleState(ScopeState):
     def __init__(
@@ -134,37 +130,13 @@ class ScopeIdleState(ScopeState):
     ) -> None:
         super().__init__(actor)
 
-        self.__animation: Animation = Animation(source = "sprites/scope/scope_idle.json")
-        self.__sprite: Optional[SpriteNode] = None
+        # Distance between each sprite.
+        self.__target_delta: float = 0.0
+        self.__delta_speed: float = 0.01
 
-    def start(self) -> None:
-        # State sprite.
-        self.__sprite = SpriteNode(
-            resource = self.__animation.content,
-            x = self.actor.x,
-            y = self.actor.y,
-            batch = self.actor.batch
-        )
-
-    def end(self) -> None:
-        self.__sprite.delete()
-
-    def set_position(
-        self,
-        position: Tuple[float, float],
-        z: Optional[float] = None
-    ) -> None:
-        if self.__sprite is None:
-            return
-
-        aim_vec = pyglet.math.Vec2.from_polar(self.actor.sprite_distance, self.actor.direction)
-        self.__sprite.set_position(
-            position = (
-                position[0] + self.actor.sprite_offset[0] + aim_vec.x,
-                position[1] + self.actor.sprite_offset[1] + aim_vec.y
-            ),
-            z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
-        )
+    def update(self, dt: float) -> Optional[str]:
+        if self.actor.sprites_delta > self.__target_delta:
+            self.actor.sprites_delta = self.actor.sprites_delta - self.__delta_speed
 
 class ScopeLoadState(ScopeState):
     def __init__(
@@ -173,50 +145,10 @@ class ScopeLoadState(ScopeState):
     ) -> None:
         super().__init__(actor)
 
-        # State sprite.
-        self.__animations: List[Animation] = [
-            Animation(source = "sprites/scope/scope_load_0.json"),
-            Animation(source = "sprites/scope/scope_load_0.json"),
-            Animation(source = "sprites/scope/scope_load_1.json"),
-            Animation(source = "sprites/scope/scope_load_2.json"),
-            Animation(source = "sprites/scope/scope_load_3.json"),
-            Animation(source = "sprites/scope/scope_load_4.json"),
-            # Animation(source = "sprites/scope/scope_load_5.json")
-        ]
-
         # Distance between each sprite.
-        self.__sprites_delta: float = 0.1
+        self.__target_delta: float = 0.15
+        self.__delta_speed: float = 0.01
 
-        self.__sprites: List[SpriteNode] = []
-
-    def start(self) -> None:
-        for animation in self.__animations:
-            self.__sprites.append(
-                SpriteNode(
-                    resource = animation.content,
-                    x = self.actor.x,
-                    y = self.actor.y,
-                    batch = self.actor.batch
-                )
-            )
-
-    def end(self) -> None:
-        for sprite in self.__sprites:
-            sprite.delete()
-
-        self.__sprites.clear()
-
-    def set_position(
-        self,
-        position: Tuple[float, float],
-        z: Optional[float] = None
-    ) -> None:
-        aim_vec = pyglet.math.Vec2.from_polar(self.actor.sprite_distance, self.actor.direction)
-        for index, sprite in enumerate(self.__sprites):
-            sprite.set_position(
-                position = (
-                    position[0] + self.actor.sprite_offset[0] + aim_vec.x + aim_vec.x * self.__sprites_delta * (index + 1),
-                    position[1] + self.actor.sprite_offset[1] + aim_vec.y + aim_vec.y * self.__sprites_delta * (index + 1)
-                ),
-                z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
-            )
+    def update(self, dt: float) -> Optional[str]:
+        if self.actor.sprites_delta < self.__target_delta:
+            self.actor.sprites_delta = self.actor.sprites_delta + self.__delta_speed
