@@ -5,6 +5,7 @@ from engine.animation import Animation
 
 from engine.node import PositionNode
 from engine.settings import SETTINGS, Builtins
+from engine.shapes.circle_node import CircleNode
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
 
@@ -159,8 +160,8 @@ class ScopeIdleState(ScopeState):
         aim_vec = pyglet.math.Vec2.from_polar(self.actor.sprite_distance, self.actor.direction)
         self.__sprite.set_position(
             position = (
-                position[0] + self.actor.sprite_offset[0] + aim_vec.x + aim_vec.x,
-                position[1] + self.actor.sprite_offset[1] + aim_vec.y + aim_vec.y
+                position[0] + self.actor.sprite_offset[0] + aim_vec.x,
+                position[1] + self.actor.sprite_offset[1] + aim_vec.y
             ),
             z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
         )
@@ -173,21 +174,26 @@ class ScopeLoadState(ScopeState):
         super().__init__(actor)
 
         # State sprite.
-        self.__animation: Animation = Animation(source = "sprites/scope/scope_idle.json")
-
-        # Number of adjacent sprites to draw.
-        self.__sprites_num: int = 15
+        self.__animations: List[Animation] = [
+            Animation(source = "sprites/scope/scope_load_0.json"),
+            Animation(source = "sprites/scope/scope_load_0.json"),
+            Animation(source = "sprites/scope/scope_load_1.json"),
+            Animation(source = "sprites/scope/scope_load_2.json"),
+            Animation(source = "sprites/scope/scope_load_3.json"),
+            Animation(source = "sprites/scope/scope_load_4.json"),
+            # Animation(source = "sprites/scope/scope_load_5.json")
+        ]
 
         # Distance between each sprite.
-        self.__sprites_delta: float = 0.15
+        self.__sprites_delta: float = 0.1
 
         self.__sprites: List[SpriteNode] = []
 
     def start(self) -> None:
-        for i in range(self.__sprites_num):
+        for animation in self.__animations:
             self.__sprites.append(
                 SpriteNode(
-                    resource = self.__animation.content,
+                    resource = animation.content,
                     x = self.actor.x,
                     y = self.actor.y,
                     batch = self.actor.batch
@@ -195,8 +201,8 @@ class ScopeLoadState(ScopeState):
             )
 
     def end(self) -> None:
-        for i in range(self.__sprites_num):
-            self.__sprites[i].delete()
+        for sprite in self.__sprites:
+            sprite.delete()
 
         self.__sprites.clear()
 
