@@ -357,6 +357,7 @@ class PlayerIdleState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.unload_scope()
 
     def __fetch_input(self) -> None:
         """
@@ -590,9 +591,6 @@ class PlayerAimState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
         self.actor.load_scope()
-
-    def end(self) -> None:
-        self.actor.unload_scope()
 
     def __fetch_input(self) -> None:
         """

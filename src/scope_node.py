@@ -179,13 +179,12 @@ class ScopeLoadState(ScopeState):
         self.__sprites_num: int = 15
 
         # Distance between each sprite.
-        self.__sprites_delta: float = 0.5
+        self.__sprites_delta: float = 0.15
 
         self.__sprites: List[SpriteNode] = []
 
     def start(self) -> None:
         for i in range(self.__sprites_num):
-            print(self.__sprites)
             self.__sprites.append(
                 SpriteNode(
                     resource = self.__animation.content,
@@ -199,6 +198,8 @@ class ScopeLoadState(ScopeState):
         for i in range(self.__sprites_num):
             self.__sprites[i].delete()
 
+        self.__sprites.clear()
+
     def set_position(
         self,
         position: Tuple[float, float],
@@ -206,7 +207,6 @@ class ScopeLoadState(ScopeState):
     ) -> None:
         aim_vec = pyglet.math.Vec2.from_polar(self.actor.sprite_distance, self.actor.direction)
         for index, sprite in enumerate(self.__sprites):
-            print(index)
             sprite.set_position(
                 position = (
                     position[0] + self.actor.sprite_offset[0] + aim_vec.x + aim_vec.x * self.__sprites_delta * (index + 1),

@@ -45,6 +45,10 @@ class StateMachine:
         """
 
         if key in self.states:
+            # End current state if any.
+            if self.current_key is not None:
+                self.states[self.current_key].end()
+
             self.current_key = key
 
             # Call the new state's start method.
