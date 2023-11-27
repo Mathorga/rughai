@@ -1,6 +1,6 @@
 {
-    "name": "scope_idle",
-    "path": "sprites/scope/scope_idle.png",
+    "name": "scope_load_1",
+    "path": "sprites/scope/scope_load_1.png",
     "rows": 1,
     "columns": 1,
     "center_x": true,

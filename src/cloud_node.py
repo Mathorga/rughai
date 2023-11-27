@@ -33,7 +33,11 @@ class CloudNode(PositionNode):
 
         # Load fragment source from file.
         fragment_source: str
-        with open(file = os.path.join(pyglet.resource.path[0], "../shaders/cloud.frag"), mode = "r", encoding = "UTF8") as file:
+        with open(
+            file = os.path.join(pyglet.resource.path[0], "../shaders/cloud.frag"),
+            mode = "r",
+            encoding = "UTF8"
+        ) as file:
             fragment_source = file.read()
 
         # Create shader program from vector and fragment.

@@ -54,22 +54,6 @@ class PlayerNode(PositionNode):
             y = y
         )
 
-        # State machine.
-        self.__state_machine = PlayerStateMachine(
-            states = {
-                PlayerStates.IDLE: PlayerIdleState(actor = self),
-                PlayerStates.WALK: PlayerWalkState(actor = self),
-                PlayerStates.RUN: PlayerRunState(actor = self),
-                PlayerStates.ROLL: PlayerRollState(actor = self),
-                PlayerStates.LOAD: PlayerLoadState(actor = self),
-                PlayerStates.AIM: PlayerAimState(actor = self),
-                PlayerStates.AIM_WALK: PlayerAimWalkState(actor = self),
-                PlayerStates.DRAW: PlayerDrawState(actor = self),
-                PlayerStates.DRAW_WALK: PlayerDrawWalkState(actor = self),
-                PlayerStates.SHOOT: PlayerShootState(actor = self)
-            }
-        )
-
         self.interactor_distance = 5.0
 
         self.run_threshold = 0.75
@@ -163,6 +147,22 @@ class PlayerNode(PositionNode):
         self.__cam_target = cam_target
         self.__cam_target.x = x + cam_target_offset[0]
         self.__cam_target.y = y + cam_target_offset[1]
+
+        # State machine.
+        self.__state_machine = PlayerStateMachine(
+            states = {
+                PlayerStates.IDLE: PlayerIdleState(actor = self),
+                PlayerStates.WALK: PlayerWalkState(actor = self),
+                PlayerStates.RUN: PlayerRunState(actor = self),
+                PlayerStates.ROLL: PlayerRollState(actor = self),
+                PlayerStates.LOAD: PlayerLoadState(actor = self),
+                PlayerStates.AIM: PlayerAimState(actor = self),
+                PlayerStates.AIM_WALK: PlayerAimWalkState(actor = self),
+                PlayerStates.DRAW: PlayerDrawState(actor = self),
+                PlayerStates.DRAW_WALK: PlayerDrawWalkState(actor = self),
+                PlayerStates.SHOOT: PlayerShootState(actor = self)
+            }
+        )
 
     def delete(self) -> None:
         self.__sprite.delete()
@@ -286,6 +286,12 @@ class PlayerNode(PositionNode):
 
         self.__interactor.update(dt)
 
+    def load_scope(self) -> None:
+        self.__scope.load()
+
+    def unload_scope(self) -> None:
+        self.__scope.unload()
+
     def __update_collider(self, dt):
         self.__collider.update(dt)
 
@@ -351,6 +357,7 @@ class PlayerIdleState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.unload_scope()
 
     def __fetch_input(self) -> None:
         """
@@ -583,6 +590,7 @@ class PlayerAimState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.load_scope()
 
     def __fetch_input(self) -> None:
         """
