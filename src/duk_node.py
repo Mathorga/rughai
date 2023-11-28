@@ -11,12 +11,11 @@ class DukNode(PositionNode):
         self,
         x: float = 0,
         y: float = 0,
-        scaling: int = 1,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
 
-        self.__idle_animation = pyglet.resource.animation("sprites/rughai/wilds/duk/duk_idle.gif")
+        self.__idle_animation: pyglet.image.animation.Animation = pyglet.resource.animation("sprites/rughai/wilds/duk/duk_idle.gif")
         utils.set_animation_anchor(
             animation = self.__idle_animation,
             x = self.__idle_animation.get_max_width() / 2,
@@ -41,11 +40,10 @@ class DukNode(PositionNode):
         shader_program["hit"] = False
         shader_program["dead"] = False
 
-        self.sprite = SpriteNode(
+        self.sprite: SpriteNode = SpriteNode(
             resource = self.__idle_animation,
             x = x,
             y = y,
-            scaling = scaling,
             on_animation_end = lambda : None,
             shader = shader_program,
             samplers_2d = {
