@@ -76,6 +76,7 @@ class SpriteNode(PositionNode):
         if isinstance(self.sprite.image, pyglet.image.animation.Animation):
             if self.sprite.image != image or (self.sprite.image is not None and self.sprite.frame_index >= len(self.sprite.image.frames) - 1):
                 self.sprite.image = image
+                self.sprite.frame_index = 0
         else:
             if self.sprite.image != image:
                 self.sprite.image = image

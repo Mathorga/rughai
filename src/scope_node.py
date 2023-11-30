@@ -132,11 +132,11 @@ class ScopeIdleState(ScopeState):
 
         # Distance between each sprite.
         self.__target_delta: float = 0.0
-        self.__delta_speed: float = 0.01
+        self.__delta_speed: float = 1.5
 
     def update(self, dt: float) -> Optional[str]:
         if self.actor.sprites_delta > self.__target_delta:
-            self.actor.sprites_delta = self.actor.sprites_delta - self.__delta_speed
+            self.actor.sprites_delta = self.actor.sprites_delta - self.__delta_speed * dt
 
 class ScopeLoadState(ScopeState):
     def __init__(
@@ -147,8 +147,8 @@ class ScopeLoadState(ScopeState):
 
         # Distance between each sprite.
         self.__target_delta: float = 0.15
-        self.__delta_speed: float = 0.01
+        self.__delta_speed: float = 2.0
 
     def update(self, dt: float) -> Optional[str]:
         if self.actor.sprites_delta < self.__target_delta:
-            self.actor.sprites_delta = self.actor.sprites_delta + self.__delta_speed
+            self.actor.sprites_delta = self.actor.sprites_delta + self.__delta_speed * dt

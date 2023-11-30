@@ -68,16 +68,23 @@ class StateMachine:
 
         self.transition(current_state.on_collision(enter = enter))
 
-    def transition(self, new_key: Optional[str]) -> None:
-        if new_key is None:
+    def transition(self, key: Optional[str]) -> None:
+        """
+        Sets a new state from the provided key.
+        No state is set if [key] is null.
+        """
+
+        if key is None:
             return
+
+        print("SET_STATE", key)
 
         # End the current state if present.
         if self.current_key is not None:
             self.states[self.current_key].end()
 
         # Update the current state.
-        self.current_key = new_key
+        self.current_key = key
 
         # Start the new current state.
         self.states[self.current_key].start()

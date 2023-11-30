@@ -591,6 +591,7 @@ class PlayerAimState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
         self.actor.load_scope()
+        print("GINORO")
 
     def __fetch_input(self) -> None:
         """
