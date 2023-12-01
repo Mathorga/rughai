@@ -73,7 +73,7 @@ class PlayerNode(PositionNode):
         self.__hor_facing: int = 1
 
         # Shooting magnitude: defines how strong the shot will be.
-        self.__shoot_mag: float = 0.0
+        self.shoot_mag: float = 0.0
 
         # Animations.
         self.__sprite = SpriteNode(
@@ -615,9 +615,6 @@ class PlayerAimState(PlayerState):
 
         self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag * 0.75)
 
-        # Set aim direction.
-        self.actor.stats.look_dir = self.__aim_vec.heading
-
         # Check for state changes.
         if self.__move:
             return PlayerStates.AIM_WALK
@@ -627,6 +624,9 @@ class PlayerAimState(PlayerState):
 
         if self.__draw:
             return PlayerStates.DRAW
+
+        # Set aim direction.
+        self.actor.stats.look_dir = self.__aim_vec.heading
 
 class PlayerAimWalkState(PlayerState):
     def __init__(
@@ -643,8 +643,8 @@ class PlayerAimWalkState(PlayerState):
         self.__aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
         self.__draw: bool = False
 
-    def start(self) -> None:
-        self.actor.set_animation(self.__animation)
+    def end(self) -> None:
+        self.actor.set_cam_target_distance_mag(mag = 0.0)
 
     def __fetch_input(self) -> None:
         """
@@ -662,8 +662,7 @@ class PlayerAimWalkState(PlayerState):
 
         self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag * 0.75)
 
-        # Set aim direction.
-        self.actor.stats.look_dir = self.__aim_vec.heading
+        # Set move direction.
         self.actor.stats.move_dir = self.__move_vec.heading
 
         target_speed: float = self.actor.stats.max_speed / 2
@@ -687,6 +686,9 @@ class PlayerAimWalkState(PlayerState):
 
         if self.__draw:
             return PlayerStates.DRAW
+
+        # Set aim direction.
+        self.actor.stats.look_dir = self.__aim_vec.heading
 
 class PlayerDrawState(PlayerState):
     def __init__(
@@ -725,11 +727,16 @@ class PlayerDrawState(PlayerState):
         # Set aim direction.
         self.actor.stats.look_dir = self.__aim_vec.heading
 
+        # Build shoot magnitude.
+        self.actor.shoot_mag = self.actor.shoot_mag + dt
+
         # Check for state changes.
         if self.__move:
             return PlayerStates.DRAW_WALK
 
         if self.__aim_vec.mag <= 0.0:
+            # Reset shoot magnitude.
+            self.actor.shoot_mag = 0.0
             return PlayerStates.IDLE
 
         if not self.__draw:
@@ -785,11 +792,16 @@ class PlayerDrawWalkState(PlayerState):
         # Move the player.
         self.actor.move(dt = dt)
 
+        # Build shoot magnitude.
+        self.actor.shoot_mag = self.actor.shoot_mag + dt
+
         # Check for state changes.
         if self.__move_vec.mag <= 0:
             return PlayerStates.DRAW
 
         if self.__aim_vec.mag <= 0.0:
+            # Reset shoot magnitude.
+            self.actor.shoot_mag = 0.0
             return PlayerStates.IDLE
 
         if not self.__draw:
@@ -815,10 +827,15 @@ class PlayerShootState(PlayerState):
         scenes.ACTIVE_SCENE.add_child(ArrowNode(
             x = self.actor.x + self.actor.scope_offset[0],
             y = self.actor.y + self.actor.scope_offset[1],
-            speed = 500.0,
+            speed = self.actor.shoot_mag * 100.0,
             direction = self.actor.stats.look_dir,
             batch = self.actor.batch
         ))
+
+    def end(self) -> None:
+        # Reset shoot magnitude.
+        self.actor.shoot_mag = 0.0
+        self.actor.set_cam_target_distance_mag(mag = 0.0)
 
     def __fetch_input(self) -> None:
         """

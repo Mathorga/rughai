@@ -34,6 +34,9 @@ class ArrowNode(PositionNode):
         self.direction: float = direction
         self.speed: float = speed
 
+        # Sprite distance, defines the distance at which the sprite floats.
+        self.sprite_distance: float = 1.0
+
         # Animation handlers.
         self.animations: List[Animation] = [
             Animation(source = "sprites/scope/scope_load_0.json"),
@@ -79,7 +82,7 @@ class ArrowNode(PositionNode):
     ) -> None:
         super().set_position(position = position, z = z)
 
-        aim_vec = pyglet.math.Vec2.from_polar(1.0, self.direction)
+        aim_vec = pyglet.math.Vec2.from_polar(self.sprite_distance, self.direction)
         for index, sprite in enumerate(self.sprites):
             sprite.set_position(
                 position = (
@@ -102,5 +105,9 @@ class ArrowFlyState(ArrowState):
     def update(self, dt: float) -> Optional[str]:
         # Define a vector from speed and direction.
         movement: pm.Vec2 = pm.Vec2.from_polar(self.actor.speed * dt, self.actor.direction)
+
+        # Fetch current actor position.
         actor_position: Tuple[float, float] = self.actor.get_position()
+
+        # Update the current position.
         self.actor.set_position((actor_position[0] + movement.x, actor_position[1] + movement.y))
