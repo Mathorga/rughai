@@ -77,8 +77,6 @@ class StateMachine:
         if key is None:
             return
 
-        print("SET_STATE", key)
-
         # End the current state if present.
         if self.current_key is not None:
             self.states[self.current_key].end()

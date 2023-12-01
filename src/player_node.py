@@ -8,9 +8,11 @@ from typing import Optional
 
 import pyglet
 import pyglet.math as pm
+from duk_node import DukNode
+from props.prop_node import IdlePropNode
 from scope_node import ScopeNode
 
-from constants import collision_tags
+from constants import collision_tags, scenes
 from engine.animation import Animation
 
 from engine.collision.collision_node import CollisionNode, CollisionType
@@ -53,6 +55,8 @@ class PlayerNode(PositionNode):
             x = x,
             y = y
         )
+
+        self.batch = batch
 
         self.interactor_distance = 5.0
 
@@ -562,14 +566,14 @@ class PlayerLoadState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
-    def update(self, dt: float) -> str | None:
+    def update(self, dt: float) -> Optional[str]:
         # Read input.
         aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim_vec()
 
         # Set aim direction.
         self.actor.stats.look_dir = aim_input.heading
 
-    def on_animation_end(self) -> str | None:
+    def on_animation_end(self) -> Optional[str]:
         return PlayerStates.AIM
 
 class PlayerAimState(PlayerState):
@@ -591,7 +595,6 @@ class PlayerAimState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
         self.actor.load_scope()
-        print("GINORO")
 
     def __fetch_input(self) -> None:
         """
@@ -805,6 +808,14 @@ class PlayerShootState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+
+        # Create a projectile.
+        scenes.ACTIVE_SCENE.add_child(IdlePropNode(
+            x = self.actor.x,
+            y = self.actor.y,
+            source = "idle_prop/rughai/bush_0.json",
+            batch = self.actor.batch
+        ))
 
     def __fetch_input(self) -> None:
         """
