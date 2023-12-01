@@ -40,7 +40,7 @@ class R_0_5(PlayableSceneNode):
         )
 
         # Define the scene.
-        self._scene = SceneNode(
+        scenes.ACTIVE_SCENE = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
@@ -54,7 +54,7 @@ class R_0_5(PlayableSceneNode):
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_5.tmx",
             scaling = scaling,
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -71,7 +71,7 @@ class R_0_5(PlayableSceneNode):
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
             z = 500,
             scaling = scaling,
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Player.
@@ -87,7 +87,7 @@ class R_0_5(PlayableSceneNode):
             x = player_position[0],
             y = player_position[1],
             scaling = scaling,
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Place doors.
@@ -113,7 +113,7 @@ class R_0_5(PlayableSceneNode):
                         ]
                     }
                 ),
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
         north_door = DoorNode(
             collision_controller = collision_controller,
@@ -137,7 +137,7 @@ class R_0_5(PlayableSceneNode):
                         ]
                     }
                 ),
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Define energy bars.
@@ -149,17 +149,17 @@ class R_0_5(PlayableSceneNode):
             x = 4,
             y = view_height - 4,
             scaling = scaling,
-            batch = self._scene.ui_batch
+            batch = scenes.ACTIVE_SCENE.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
             scaling = scaling,
-            batch = self._scene.ui_batch
+            batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
-        self._scene.set_cam_bounds(
+        scenes.ACTIVE_SCENE.set_cam_bounds(
             Bounds(
                 top = tilemap_height * self.__tile_size,
                 bottom = 0,
@@ -168,11 +168,11 @@ class R_0_5(PlayableSceneNode):
             )
         )
 
-        self._scene.add_child(bg)
-        self._scene.add_children(tilemaps)
-        self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(self._player)
-        self._scene.add_child(south_door)
-        self._scene.add_child(north_door)
-        self._scene.add_child(energy_bar)
-        self._scene.add_child(health_bar)
+        scenes.ACTIVE_SCENE.add_child(bg)
+        scenes.ACTIVE_SCENE.add_children(tilemaps)
+        scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
+        scenes.ACTIVE_SCENE.add_child(self._player)
+        scenes.ACTIVE_SCENE.add_child(south_door)
+        scenes.ACTIVE_SCENE.add_child(north_door)
+        scenes.ACTIVE_SCENE.add_child(energy_bar)
+        scenes.ACTIVE_SCENE.add_child(health_bar)

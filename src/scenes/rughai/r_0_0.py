@@ -37,7 +37,7 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Define the scene.
-        self._scene = SceneNode(
+        scenes.ACTIVE_SCENE = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
@@ -50,7 +50,7 @@ class R_0_0(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_0.tmx",
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -65,63 +65,63 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 6,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 46,
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 45,
                 y = self.__tile_size * 38,
                 width = self.__tile_size * 5,
                 height = self.__tile_size,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 50,
                 y = self.__tile_size * 38,
                 width = self.__tile_size,
                 height = self.__tile_size * 3,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 51,
                 y = self.__tile_size * 40,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 55,
                 y = self.__tile_size * 34,
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 51,
                 y = self.__tile_size * 34,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 51,
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 49,
                 y = self.__tile_size * 32,
                 width = self.__tile_size * 2,
                 height = self.__tile_size,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
 
             # Slopes.
@@ -130,42 +130,42 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 29,
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 63,
                 y = self.__tile_size * 34,
                 width = self.__tile_size,
                 height = self.__tile_size * 8,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 64,
                 y = self.__tile_size * 41,
                 width = self.__tile_size,
                 height = self.__tile_size * 5,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 65,
                 y = self.__tile_size * 29,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 68,
                 y = self.__tile_size * 27,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 68,
                 y = self.__tile_size * 25,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
-                batch = self._scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             )
         ]
 
@@ -179,7 +179,7 @@ class R_0_0(PlayableSceneNode):
             x = (tilemap_width * self.__tile_size) // 2,
             y = (tilemap_height * self.__tile_size) // 2,
             z = -500,
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Player.
@@ -192,7 +192,7 @@ class R_0_0(PlayableSceneNode):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Place doors.
@@ -214,7 +214,7 @@ class R_0_0(PlayableSceneNode):
                         ]
                     }
                 ),
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
         east_door = DoorNode(
             x = (tilemap_width - 2) * self.__tile_size,
@@ -234,7 +234,7 @@ class R_0_0(PlayableSceneNode):
                         ]
                     }
                 ),
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Define energy bars.
@@ -246,60 +246,60 @@ class R_0_0(PlayableSceneNode):
             x = 4,
             y = view_height - 4,
             z = 500,
-            batch = self._scene.ui_batch
+            batch = scenes.ACTIVE_SCENE.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
             z = 500,
-            batch = self._scene.ui_batch
+            batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
         # Clouds.
         clouds = CloudsNode(
             bounds = cam_bounds,
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Props.
         props = PropLoader.fetch_prop_list(
             "propmaps/r_0_0",
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Stan Lee.
         stan_lee = StanLeeNode(
             x = self.__tile_size * 48,
             y = self.__tile_size * 35,
-            world_batch = self._scene.world_batch,
-            ui_batch = self._scene.ui_batch
+            world_batch = scenes.ACTIVE_SCENE.world_batch,
+            ui_batch = scenes.ACTIVE_SCENE.ui_batch
         )
         self.battery = BatteryNode(
             x = self.__tile_size * 58,
             y = self.__tile_size * 35,
             on_interaction = self.delete_battery,
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         if not SETTINGS[Builtins.FREE_CAM_BOUNDS]:
-            self._scene.set_cam_bounds(cam_bounds)
+            scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
-        self._scene.add_child(bg)
-        self._scene.add_children(tilemaps)
-        self._scene.add_children(walls)
-        self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(clouds)
-        self._scene.add_children(props)
-        self._scene.add_child(stan_lee)
-        self._scene.add_child(self.battery)
-        self._scene.add_child(self._player)
-        self._scene.add_child(south_door)
-        self._scene.add_child(east_door)
-        self._scene.add_child(energy_bar)
-        self._scene.add_child(health_bar)
+        scenes.ACTIVE_SCENE.add_child(bg)
+        scenes.ACTIVE_SCENE.add_children(tilemaps)
+        scenes.ACTIVE_SCENE.add_children(walls)
+        scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
+        scenes.ACTIVE_SCENE.add_child(clouds)
+        scenes.ACTIVE_SCENE.add_children(props)
+        scenes.ACTIVE_SCENE.add_child(stan_lee)
+        scenes.ACTIVE_SCENE.add_child(self.battery)
+        scenes.ACTIVE_SCENE.add_child(self._player)
+        scenes.ACTIVE_SCENE.add_child(south_door)
+        scenes.ACTIVE_SCENE.add_child(east_door)
+        scenes.ACTIVE_SCENE.add_child(energy_bar)
+        scenes.ACTIVE_SCENE.add_child(health_bar)
 
     def delete_battery(self) -> None:
-        if self._scene is not None:
-            self._scene.remove_child(self.battery)
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.remove_child(self.battery)
         self.battery.delete()

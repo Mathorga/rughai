@@ -12,7 +12,7 @@ class Node:
 
     def update(
             self,
-            dt: int
+            dt: float
         ) -> None:
         """
         Updates the whole object.
@@ -20,8 +20,8 @@ class Node:
 
         Parameters
         ----------
-        dt: int
-            Time (in ms) since the last frame was calculated.
+        dt: float
+            Time (in s) since the last frame was calculated.
         """
 
         pass

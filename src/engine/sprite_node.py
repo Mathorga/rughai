@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Tuple, Union
+from typing import Callable, Dict, Optional, Tuple, Union
 import pyglet
 from engine.depth_sprite import DepthSprite
 
@@ -10,7 +10,7 @@ class SpriteNode(PositionNode):
         self,
         resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
         batch: Optional[pyglet.graphics.Batch] = None,
-        on_animation_end = None,
+        on_animation_end: Optional[Callable] = None,
         x: float = 0,
         y: float = 0,
         z: Optional[float] = None,
@@ -76,6 +76,7 @@ class SpriteNode(PositionNode):
         if isinstance(self.sprite.image, pyglet.image.animation.Animation):
             if self.sprite.image != image or (self.sprite.image is not None and self.sprite.frame_index >= len(self.sprite.image.frames) - 1):
                 self.sprite.image = image
+                self.sprite.frame_index = 0
         else:
             if self.sprite.image != image:
                 self.sprite.image = image
