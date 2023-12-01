@@ -240,4 +240,4 @@ class InputController:
         Returns whether the draw button was pressed or not, either on controller or keyboard.
         """
 
-        return self[pyglet.window.key.SPACE] or self.buttons.get("b", False)
+        return self[pyglet.window.key.SPACE] or self.triggers.get("righttrigger", 0.0) > 0.0

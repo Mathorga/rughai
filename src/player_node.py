@@ -4,10 +4,11 @@ Module containing the main player's classes.
 
 from enum import Enum
 import math
-from typing import Optional
+from typing import Optional, Tuple
 
 import pyglet
 import pyglet.math as pm
+from arrow_node import ArrowNode
 from duk_node import DukNode
 from props.prop_node import IdlePropNode
 from scope_node import ScopeNode
@@ -83,11 +84,12 @@ class PlayerNode(PositionNode):
             batch = batch
         )
 
-        # Aim target.
+        # Scope.
+        self.scope_offset: Tuple[float, float] = (0.0, 8.0)
         self.__scope = ScopeNode(
             x = self.x,
             y = self.y,
-            offset_y = 8.0,
+            offset_y = self.scope_offset[1],
             batch = batch
         )
 
@@ -810,10 +812,11 @@ class PlayerShootState(PlayerState):
         self.actor.set_animation(self.__animation)
 
         # Create a projectile.
-        scenes.ACTIVE_SCENE.add_child(IdlePropNode(
-            x = self.actor.x,
-            y = self.actor.y,
-            source = "idle_prop/rughai/bush_0.json",
+        scenes.ACTIVE_SCENE.add_child(ArrowNode(
+            x = self.actor.x + self.actor.scope_offset[0],
+            y = self.actor.y + self.actor.scope_offset[1],
+            speed = 500.0,
+            direction = self.actor.stats.look_dir,
             batch = self.actor.batch
         ))
 
