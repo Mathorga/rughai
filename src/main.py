@@ -40,9 +40,6 @@ class RugHai:
 
         # Controllers.
         controllers.create_controllers(window = self._window)
-        # self._collision_controller = CollisionController()
-        # self._input_controller = InputController(window = self._window)
-        # self._dialog_controller = DialogController()
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
