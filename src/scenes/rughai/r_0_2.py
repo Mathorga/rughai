@@ -35,7 +35,7 @@ class R_0_2(PlayableSceneNode):
         )
 
         # Define the scene.
-        self._scene = SceneNode(
+        scenes.ACTIVE_SCENE = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
@@ -47,7 +47,7 @@ class R_0_2(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_2.tmx",
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -64,7 +64,7 @@ class R_0_2(PlayableSceneNode):
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
             z = -500,
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Player.
@@ -77,7 +77,7 @@ class R_0_2(PlayableSceneNode):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Duk.
@@ -108,7 +108,7 @@ class R_0_2(PlayableSceneNode):
                         ]
                     }
                 ),
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
         north_east_door = DoorNode(
             x = 32 * self.__tile_size,
@@ -130,7 +130,7 @@ class R_0_2(PlayableSceneNode):
                         ]
                     }
                 ),
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
         south_door = DoorNode(
             x = 19 * self.__tile_size,
@@ -152,7 +152,7 @@ class R_0_2(PlayableSceneNode):
                         ]
                     }
                 ),
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Define energy bars.
@@ -164,40 +164,40 @@ class R_0_2(PlayableSceneNode):
             x = 4,
             y = view_height - 4,
             z = 500,
-            batch = self._scene.ui_batch
+            batch = scenes.ACTIVE_SCENE.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
             z = 500,
-            batch = self._scene.ui_batch
+            batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
         # Clouds.
         clouds = CloudsNode(
             bounds = cam_bounds,
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Props.
         props = PropLoader.fetch_prop_list(
             "propmaps/r_0_2",
-            batch = self._scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         if not SETTINGS[Builtins.FREE_CAM_BOUNDS]:
-            self._scene.set_cam_bounds(cam_bounds)
+            scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
-        self._scene.add_child(bg)
-        self._scene.add_children(tilemaps)
-        self._scene.add_child(cam_target, cam_target = True)
-        self._scene.add_child(self._player)
+        scenes.ACTIVE_SCENE.add_child(bg)
+        scenes.ACTIVE_SCENE.add_children(tilemaps)
+        scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
+        scenes.ACTIVE_SCENE.add_child(self._player)
         # self._scene.add_child(duk)
-        self._scene.add_child(clouds)
-        self._scene.add_children(props)
-        self._scene.add_child(north_west_door)
-        self._scene.add_child(north_east_door)
-        self._scene.add_child(south_door)
-        self._scene.add_child(energy_bar)
-        self._scene.add_child(health_bar)
+        scenes.ACTIVE_SCENE.add_child(clouds)
+        scenes.ACTIVE_SCENE.add_children(props)
+        scenes.ACTIVE_SCENE.add_child(north_west_door)
+        scenes.ACTIVE_SCENE.add_child(north_east_door)
+        scenes.ACTIVE_SCENE.add_child(south_door)
+        scenes.ACTIVE_SCENE.add_child(energy_bar)
+        scenes.ACTIVE_SCENE.add_child(health_bar)

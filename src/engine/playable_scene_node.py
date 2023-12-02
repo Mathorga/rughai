@@ -1,5 +1,6 @@
 from typing import Callable, Optional
 import pyglet
+from constants import scenes
 
 from engine.node import Node
 from engine.scene_node import SceneNode
@@ -23,15 +24,15 @@ class PlayableSceneNode(Node):
         # The bundle containing instructions for the next scene.
         self._bundle: dict
 
-        self._scene: Optional[SceneNode]
+        scenes.ACTIVE_SCENE: Optional[SceneNode]
 
         # Player.
         self._player: PlayerNode
 
     def on_door_triggered(self, entered: bool, bundle: dict):
         if entered:
-            if self._scene is not None:
-                self._scene.end()
+            if scenes.ACTIVE_SCENE is not None:
+                scenes.ACTIVE_SCENE.end()
                 self._bundle = bundle
 
             if self._player is not None:
@@ -47,13 +48,13 @@ class PlayableSceneNode(Node):
             self._player.enable_controls()
 
     def draw(self) -> None:
-        if self._scene is not None:
-            self._scene.draw()
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.draw()
 
     def update(self, dt) -> None:
-        if self._scene is not None:
-            self._scene.update(dt)
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.update(dt)
 
     def delete(self) -> None:
-        if self._scene is not None:
-            self._scene.delete()
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.delete()

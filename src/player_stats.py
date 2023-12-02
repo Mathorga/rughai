@@ -57,8 +57,8 @@ class PlayerStats():
         self.accel = self.compute_stat(
             mod = self.vitality,
             max_mod = 25,
-            min_value = 150.0,
-            max_value = 600.0,
+            min_value = 100.0,
+            max_value = 400.0,
             variation = self.vitality_variation
         )
         self.attack = self.compute_stat(

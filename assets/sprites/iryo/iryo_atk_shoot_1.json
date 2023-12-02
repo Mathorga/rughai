@@ -1,5 +1,5 @@
 {
     "name": "iryo_atk_shoot_1",
     "path": "sprites/iryo/iryo_atk_shoot_1.gif",
-    "anchor_x": 10
+    "center_x": true
 }

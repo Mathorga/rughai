@@ -1,3 +1,4 @@
+from typing import Dict, Tuple
 import pyglet
 
 class InputController:
@@ -10,16 +11,16 @@ class InputController:
         self.__threshold = threshold
 
         # Keyboard.
-        self.keys = {}
-        self.key_presses = {}
-        self.key_releases = {}
+        self.keys: Dict = {}
+        self.key_presses: Dict = {}
+        self.key_releases: Dict = {}
 
         # Controller.
-        self.buttons = {}
-        self.button_presses = {}
-        self.button_releases = {}
-        self.sticks = {}
-        self.triggers = {}
+        self.buttons: Dict = {}
+        self.button_presses: Dict = {}
+        self.button_releases: Dict = {}
+        self.sticks: Dict = {}
+        self.triggers: Dict = {}
 
         self.__window.push_handlers(self)
 
@@ -155,32 +156,46 @@ class InputController:
 
         return self.triggers.get("righttrigger", 0.0) > 0.0
 
-    def get_movement(self) -> pyglet.math.Vec2:
+    def get_movement(self) -> bool:
+        """
+        Returns whether there's any move input or not, regardless its resulting magnitude.
+        """
+
+        stick: Tuple[float, float] = self.sticks.get("leftstick", (0.0, 0.0))
+        stick_vec: pyglet.math.Vec2 = pyglet.math.Vec2(stick[0], stick[1])
+        return self[pyglet.window.key.D] or self[pyglet.window.key.A] or self[pyglet.window.key.W] or self[pyglet.window.key.S] or stick_vec.mag > 0.0
+
+    def get_aim(self) -> bool:
+        """
+        Returns whether there's any aim input or not, regardless its resulting magnitude.
+        """
+
+        stick: Tuple[float, float] = self.sticks.get("rightstick", (0.0, 0.0))
+        stick_vec: pyglet.math.Vec2 = pyglet.math.Vec2(stick[0], stick[1])
+        return self[pyglet.window.key.L] or self[pyglet.window.key.J] or self[pyglet.window.key.I] or self[pyglet.window.key.K] or stick_vec.mag > 0.0
+
+    def get_movement_vec(self) -> pyglet.math.Vec2:
         """
         Returns the movement vector from keyboard and controller.
         """
 
-        stick = self.sticks.get("leftstick", (0.0, 0.0))
+        stick: Tuple[float, float] = self.sticks.get("leftstick", (0.0, 0.0))
         return pyglet.math.Vec2(
             (self[pyglet.window.key.D] - self[pyglet.window.key.A]) + stick[0],
             (self[pyglet.window.key.W] - self[pyglet.window.key.S]) + stick[1]
         )
 
-    def get_view_input(self) -> bool:
-        """
-        Returns whether there's any view input or not, regardless its resulting magnitude.
-        """
-
-        stick = self.sticks.get("rightstick", (0.0, 0.0))
-        stick_vec = pyglet.math.Vec2(stick[0], stick[1])
-        return self[pyglet.window.key.L] or self[pyglet.window.key.J] or self[pyglet.window.key.I] or self[pyglet.window.key.K] or stick_vec.mag > 0.0
-
-    def get_view_movement(self) -> pyglet.math.Vec2:
+    def get_aim_vec(self) -> pyglet.math.Vec2:
         """
         Returns the camera movement vector from keyboard and controller.
         """
 
-        stick = self.sticks.get("rightstick", (0.0, 0.0))
+        stick: Tuple[float, float] = self.sticks.get("rightstick", (0.0, 0.0))
+        stick_vec: pyglet.math.Vec2 = pyglet.math.Vec2(stick[0], stick[1])
+        keyboard_vec: pyglet.math.Vec2 = pyglet.math.Vec2(
+            self[pyglet.window.key.L] - self[pyglet.window.key.J],
+            self[pyglet.window.key.I] - self[pyglet.window.key.K]
+        ).from_magnitude(1.0)
         return pyglet.math.Vec2(
             (self[pyglet.window.key.L] - self[pyglet.window.key.J]) + stick[0],
             (self[pyglet.window.key.I] - self[pyglet.window.key.K]) + stick[1]
@@ -225,12 +240,9 @@ class InputController:
     def get_menu_page_right(self) -> bool:
         return self.key_presses.get(pyglet.window.key.E, False)
 
-    def get_aim(self) -> bool:
-        return self[pyglet.window.key.N] or self.buttons.get("lefttrigger", 0.0) > 0.5
-
     def get_draw(self) -> bool:
         """
         Returns whether the draw button was pressed or not, either on controller or keyboard.
         """
 
-        return self[pyglet.window.key.SPACE] or self.buttons.get("b", False)
+        return self[pyglet.window.key.SPACE] or self.triggers.get("righttrigger", 0.0) > 0.0

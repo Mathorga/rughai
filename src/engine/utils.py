@@ -5,6 +5,13 @@ import pyglet.math as pm
 
 EPSILON = 1e-8
 
+def scale(val: float, src: Tuple[float, float], dst: Tuple[float, float]) -> float:
+    """
+    Scale the given value from the scale of src to the scale of dst.
+    """
+
+    return ((val - src[0]) / (src[1]-src[0])) * (dst[1]-dst[0]) + dst[0]
+
 class Rect:
     def __init__(
         self,

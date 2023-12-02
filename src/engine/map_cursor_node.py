@@ -88,7 +88,7 @@ class MapCursornode(PositionNode):
     def __fetch_input(self):
         if self.__controls_enabled:
             # Allow the player to look around even if they're rolling.
-            self.__look_input = controllers.INPUT_CONTROLLER.get_view_movement().limit(1.0)
+            self.__look_input = controllers.INPUT_CONTROLLER.get_aim_vec().limit(1.0)
 
             self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()
 

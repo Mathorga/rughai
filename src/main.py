@@ -7,6 +7,8 @@ from engine.benchmark import Benchmark
 from engine.upscaler import Upscaler
 from engine.settings import GLOBALS, SETTINGS, Builtins, load_settings
 
+import constants.scenes as scenes
+
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
 from scenes.rughai.r_0_2 import R_0_2
@@ -14,8 +16,6 @@ from scenes.rughai.r_0_3 import R_0_3
 from scenes.rughai.r_0_4 import R_0_4
 from scenes.rughai.r_0_5 import R_0_5
 from scenes.rughai.r_0_6 import R_0_6
-
-import constants.scenes as scenes
 
 class RugHai:
     """
@@ -40,9 +40,6 @@ class RugHai:
 
         # Controllers.
         controllers.create_controllers(window = self._window)
-        # self._collision_controller = CollisionController()
-        # self._input_controller = InputController(window = self._window)
-        # self._dialog_controller = DialogController()
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
@@ -51,7 +48,6 @@ class RugHai:
             self._window.width // SETTINGS[Builtins.VIEW_WIDTH],
             self._window.height // SETTINGS[Builtins.VIEW_HEIGHT]
         )
-
 
         self._upscaler = Upscaler(
             window = self._window,
@@ -71,7 +67,7 @@ class RugHai:
         )
 
         # Create a scene.
-        self._active_scene = R_0_0(
+        self.__active_scene = R_0_0(
             window = self._window,
             view_width = SETTINGS[Builtins.VIEW_WIDTH],
             view_height = SETTINGS[Builtins.VIEW_HEIGHT],
@@ -99,10 +95,10 @@ class RugHai:
         if bundle["next_scene"]:
             controllers.COLLISION_CONTROLLER.clear()
             controllers.INTERACTION_CONTROLLER.clear()
-            self._active_scene.delete()
+            self.__active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
-                self._active_scene = R_0_0(
+                self.__active_scene = R_0_0(
                     window = self._window,
                     view_width = SETTINGS[Builtins.VIEW_WIDTH],
                     view_height = SETTINGS[Builtins.VIEW_HEIGHT],
@@ -110,7 +106,7 @@ class RugHai:
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_1:
-                self._active_scene = R_0_1(
+                self.__active_scene = R_0_1(
                     window = self._window,
                     view_width = SETTINGS[Builtins.VIEW_WIDTH],
                     view_height = SETTINGS[Builtins.VIEW_HEIGHT],
@@ -118,7 +114,7 @@ class RugHai:
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_2:
-                self._active_scene = R_0_2(
+                self.__active_scene = R_0_2(
                     window = self._window,
                     view_width = SETTINGS[Builtins.VIEW_WIDTH],
                     view_height = SETTINGS[Builtins.VIEW_HEIGHT],
@@ -126,7 +122,7 @@ class RugHai:
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_3:
-                self._active_scene = R_0_3(
+                self.__active_scene = R_0_3(
                     window = self._window,
                     view_width = SETTINGS[Builtins.VIEW_WIDTH],
                     view_height = SETTINGS[Builtins.VIEW_HEIGHT],
@@ -134,7 +130,7 @@ class RugHai:
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_4:
-                self._active_scene = R_0_4(
+                self.__active_scene = R_0_4(
                     window = self._window,
                     view_width = SETTINGS[Builtins.VIEW_WIDTH],
                     view_height = SETTINGS[Builtins.VIEW_HEIGHT],
@@ -142,7 +138,7 @@ class RugHai:
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_5:
-                self._active_scene = R_0_5(
+                self.__active_scene = R_0_5(
                     window = self._window,
                     view_width = SETTINGS[Builtins.VIEW_WIDTH],
                     view_height = SETTINGS[Builtins.VIEW_HEIGHT],
@@ -150,7 +146,7 @@ class RugHai:
                     on_ended = self.__on_scene_end
                 )
             elif bundle["next_scene"] == scenes.R_0_6:
-                self._active_scene = R_0_6(
+                self.__active_scene = R_0_6(
                     window = self._window,
                     view_width = SETTINGS[Builtins.VIEW_WIDTH],
                     view_height = SETTINGS[Builtins.VIEW_HEIGHT],
@@ -184,7 +180,7 @@ class RugHai:
 
             # Upscaler handles maintaining the wanted output resolution.
             with self._upscaler:
-                self._active_scene.draw()
+                self.__active_scene.draw()
 
                 if SETTINGS[Builtins.DEBUG]:
                     self._render_bench.draw()
@@ -198,7 +194,7 @@ class RugHai:
         with self._update_bench:
             # InputController makes sure every input is handled correctly.
             with controllers.INPUT_CONTROLLER:
-                self._active_scene.update(dt)
+                self.__active_scene.update(dt)
 
             # Compute collisions through collision manager.
             controllers.COLLISION_CONTROLLER.update(dt)
