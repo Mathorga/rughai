@@ -578,10 +578,10 @@ class PlayerLoadState(PlayerState):
 
     def update(self, dt: float) -> Optional[str]:
         # Read input.
-        aim_input: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim_vec()
+        aim_vec: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim_vec()
 
         # Set aim direction.
-        self.actor.stats.look_dir = aim_input.heading
+        self.actor.stats.look_dir = aim_vec.heading
 
     def on_animation_end(self) -> Optional[str]:
         return PlayerStates.AIM

@@ -180,10 +180,13 @@ class InputController:
         """
 
         stick: Tuple[float, float] = self.sticks.get("leftstick", (0.0, 0.0))
-        return pyglet.math.Vec2(
-            (self[pyglet.window.key.D] - self[pyglet.window.key.A]) + stick[0],
-            (self[pyglet.window.key.W] - self[pyglet.window.key.S]) + stick[1]
-        )
+        stick_vec: pyglet.math.Vec2 = pyglet.math.Vec2(stick[0], stick[1])
+        keyboard_vec: pyglet.math.Vec2 = pyglet.math.Vec2(
+            self[pyglet.window.key.D] - self[pyglet.window.key.A],
+            self[pyglet.window.key.W] - self[pyglet.window.key.S]
+        ).from_magnitude(1.0)
+
+        return (stick_vec + keyboard_vec).normalize()
 
     def get_aim_vec(self) -> pyglet.math.Vec2:
         """
@@ -196,10 +199,8 @@ class InputController:
             self[pyglet.window.key.L] - self[pyglet.window.key.J],
             self[pyglet.window.key.I] - self[pyglet.window.key.K]
         ).from_magnitude(1.0)
-        return pyglet.math.Vec2(
-            (self[pyglet.window.key.L] - self[pyglet.window.key.J]) + stick[0],
-            (self[pyglet.window.key.I] - self[pyglet.window.key.K]) + stick[1]
-        )
+
+        return (stick_vec + keyboard_vec).normalize()
 
     def get_cursor_movement(self) -> pyglet.math.Vec2:
         """
