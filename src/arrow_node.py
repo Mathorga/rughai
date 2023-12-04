@@ -2,8 +2,12 @@ from enum import Enum
 from typing import List, Optional, Tuple
 import pyglet
 import pyglet.math as pm
+from constants import collision_tags, scenes
+from engine import controllers
 
 from engine.animation import Animation
+from engine.collision.collision_node import CollisionNode, CollisionType
+from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.settings import SETTINGS, Builtins
 from engine.sprite_node import SpriteNode
@@ -62,11 +66,33 @@ class ArrowNode(PositionNode):
                 )
             )
 
+        # Collider.
+        self.__collider = CollisionNode(
+            x = x,
+            y = y,
+            sensor = True,
+            collision_type = CollisionType.DYNAMIC,
+            tags = [collision_tags.PLAYER_COLLISION],
+            on_triggered = self.on_collision,
+            shapes = [
+                CollisionRect(
+                    x = x,
+                    y = y,
+                    anchor_x = 3,
+                    anchor_y = 3,
+                    width = 6,
+                    height = 6,
+                    batch = batch
+                )
+            ]
+        )
+        controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
+
         # State machine.
         self.__state_machine = StateMachine(
             states = {
                 ArrowStates.FLY: ArrowFlyState(actor = self),
-                ArrowStates.HIT: ArrowFlyState(actor = self)
+                ArrowStates.HIT: ArrowHitState(actor = self)
             }
         )
 
@@ -74,6 +100,11 @@ class ArrowNode(PositionNode):
         super().update(dt)
 
         self.__state_machine.update(dt = dt)
+
+        self.set_position(self.__collider.get_position())
+
+    def set_velocity(self, velocity: Tuple[float, float]) -> None:
+        self.__collider.set_velocity(velocity = velocity)
 
     def set_position(
         self,
@@ -92,6 +123,17 @@ class ArrowNode(PositionNode):
                 z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
             )
 
+    def on_collision(self, tags: List[str], enter: bool) -> None:
+        self.__state_machine.on_collision(enter = enter)
+
+    def delete(self) -> None:
+        for sprite in self.sprites:
+            sprite.delete()
+
+        controllers.COLLISION_CONTROLLER.remove_collider(self.__collider)
+
+        self.__collider.delete()
+
 class ArrowState(State):
     def __init__(
         self,
@@ -106,8 +148,20 @@ class ArrowFlyState(ArrowState):
         # Define a vector from speed and direction.
         movement: pm.Vec2 = pm.Vec2.from_polar(self.actor.speed * dt, self.actor.direction)
 
-        # Fetch current actor position.
-        actor_position: Tuple[float, float] = self.actor.get_position()
+        self.actor.set_velocity((movement.x, movement.y))
 
-        # Update the current position.
-        self.actor.set_position((actor_position[0] + movement.x, actor_position[1] + movement.y))
+        # # Fetch current actor position.
+        # actor_position: Tuple[float, float] = self.actor.get_position()
+
+        # # Update the current position.
+        # self.actor.set_position((actor_position[0] + movement.x, actor_position[1] + movement.y))
+
+    def on_collision(self, enter: bool) -> Optional[str]:
+        print("COLLISION", enter)
+        if enter:
+            return ArrowStates.HIT
+
+class ArrowHitState(ArrowState):
+    def start(self) -> None:
+        scenes.ACTIVE_SCENE.remove_child(self.actor)
+        self.actor.delete()
