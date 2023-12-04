@@ -576,7 +576,6 @@ class PlayerLoadState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
-    def update(self, dt: float) -> Optional[str]:
         # Read input.
         aim_vec: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim_vec()
 
