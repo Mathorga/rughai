@@ -113,7 +113,7 @@ class ArrowNode(PositionNode):
     ) -> None:
         super().set_position(position = position, z = z)
 
-        aim_vec = pyglet.math.Vec2.from_polar(self.sprite_distance, self.direction)
+        aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2.from_polar(self.sprite_distance, self.direction)
         for index, sprite in enumerate(self.sprites):
             sprite.set_position(
                 position = (
@@ -150,18 +150,12 @@ class ArrowFlyState(ArrowState):
 
         self.actor.set_velocity((movement.x, movement.y))
 
-        # # Fetch current actor position.
-        # actor_position: Tuple[float, float] = self.actor.get_position()
-
-        # # Update the current position.
-        # self.actor.set_position((actor_position[0] + movement.x, actor_position[1] + movement.y))
-
     def on_collision(self, enter: bool) -> Optional[str]:
-        print("COLLISION", enter)
         if enter:
             return ArrowStates.HIT
 
 class ArrowHitState(ArrowState):
     def start(self) -> None:
-        scenes.ACTIVE_SCENE.remove_child(self.actor)
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.remove_child(self.actor)
         self.actor.delete()

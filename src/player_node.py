@@ -833,13 +833,14 @@ class PlayerShootState(PlayerState):
         self.actor.set_animation(self.__animation)
 
         # Create a projectile.
-        scenes.ACTIVE_SCENE.add_child(ArrowNode(
-            x = self.actor.x + self.actor.scope_offset[0],
-            y = self.actor.y + self.actor.scope_offset[1],
-            speed = scale(self.actor.get_shoot_mag(), (0.0, 1.0), (100.0, 500.0)),
-            direction = self.actor.stats.look_dir,
-            batch = self.actor.batch
-        ))
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.add_child(ArrowNode(
+                x = self.actor.x + self.actor.scope_offset[0],
+                y = self.actor.y + self.actor.scope_offset[1],
+                speed = scale(self.actor.get_shoot_mag(), (0.0, 1.0), (100.0, 500.0)),
+                direction = self.actor.stats.look_dir,
+                batch = self.actor.batch
+            ))
 
     def end(self) -> None:
         # Reset shoot magnitude.
