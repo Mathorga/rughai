@@ -1,0 +1,26 @@
+{
+    "animation_specs": [
+        {
+            "path": "sprites/prop/rughai/grass_2/grass_2_idle_0.gif",
+            "name": "idle_0"
+        },
+        {
+            "path": "sprites/prop/rughai/grass_2/grass_2_idle_1.gif",
+            "name": "idle_1"
+        }
+    ],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 9
+            },
+            {
+                "name": "idle_1",
+                "weight": 1
+            }
+        ]
+    },
+    "anchor_x": 8,
+    "anchor_y": 4
+}
