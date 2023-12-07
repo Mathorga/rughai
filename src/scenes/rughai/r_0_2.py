@@ -186,8 +186,7 @@ class R_0_2(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
-        if not SETTINGS[Builtins.FREE_CAM_BOUNDS]:
-            scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
+        scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
         scenes.ACTIVE_SCENE.add_child(bg)
         scenes.ACTIVE_SCENE.add_children(tilemaps)
