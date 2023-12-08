@@ -10,6 +10,8 @@ import pyglet
 import pyglet.math as pm
 from arrow_node import ArrowNode
 from duk_node import DukNode
+from engine import utils
+from engine.loading_indicator_node import LoadingIndicatorNode
 from engine.utils import scale
 from props.prop_node import IdlePropNode
 from scope_node import ScopeNode
@@ -94,6 +96,25 @@ class PlayerNode(PositionNode):
             x = self.x,
             y = self.y,
             offset_y = self.scope_offset[1],
+            batch = batch
+        )
+
+        # Draw loading indicator.
+        draw_background: pyglet.image.TextureRegion = pyglet.resource.image("sprites/loading_background.png")
+        draw_foreground: pyglet.image.TextureRegion = pyglet.resource.image("sprites/loading_foreground.png")
+        draw_background.anchor_x = draw_background.width / 2
+        draw_background.anchor_y = draw_background.height / 2 - 16
+        draw_foreground.anchor_x = draw_foreground.width / 2
+        draw_foreground.anchor_y = draw_foreground.height / 2 - 16
+        self.draw_indicator: LoadingIndicatorNode = LoadingIndicatorNode(
+            foreground_sprite_res = draw_foreground,
+            background_sprite_res = draw_background,
+            x = self.x,
+            y = self.y,
+            # On MacOS this maps to 0.0 for some reason.
+            # starting_value = 0.54736,
+            # On MacOS this maps to 1.0 for some reason.
+            # starting_value = 0.5551,
             batch = batch
         )
 
@@ -235,11 +256,13 @@ class PlayerNode(PositionNode):
         # Flip sprite if moving to the left.
         self.__sprite.set_scale(x_scale = self.__hor_facing)
 
-        # Update aim sprite.
-        self.__update_aim(dt)
+        # Update scope.
+        self.__update_scope(dt)
 
         # Update shadow sprite.
         self.__update_shadow(dt)
+
+        self.__update_draw_indicator(dt)
 
         # Update camera target.
         self.__update_cam_target(dt)
@@ -247,9 +270,9 @@ class PlayerNode(PositionNode):
         # Update interactor.
         self.__update_interactor(dt)
 
-    def __update_aim(self, dt):
+    def __update_scope(self, dt):
         """
-        Updates the aim sign.
+        Updates the scope sign.
         """
 
         self.__scope.set_direction(direction = self.stats.look_dir)
@@ -264,13 +287,26 @@ class PlayerNode(PositionNode):
         )
         self.__shadow_sprite.update(dt)
 
+    def __update_draw_indicator(self, dt):
+        """
+        Updates the draw indicator.
+        """
+
+        draw_indicator_value = pm.clamp(
+            num = self.draw_time,
+            min_val = 0.0,
+            max_val = self.stats.min_draw_time
+        )
+        self.draw_indicator.set_value(value = draw_indicator_value / self.stats.min_draw_time)
+        self.draw_indicator.set_position(position = self.get_position())
+        self.draw_indicator.update(dt = dt)
+
     def set_cam_target_distance_mag(self, mag: float) -> None:
         """
         Sets the magnitude (between 0 and 1) for cam target distance.
         """
 
-        if mag < 0 or mag > 1:
-            return
+        assert mag >= 0.0 and mag <= 1.0, "Value out of range"
 
         self.__cam_target_distance_mag = mag
 
@@ -308,6 +344,11 @@ class PlayerNode(PositionNode):
     def set_shoot_mag(self, mag: float) -> None:
         if mag >= 0.0 and mag <= 1.0:
             self.__shoot_mag = mag
+
+    def set_draw_value(self, draw_value: float) -> None:
+        assert draw_value >= 0.0 and draw_value <= 1.0, "Value out of range"
+
+        self.draw_indicator.set_value(value = draw_value)
 
     def __update_collider(self, dt):
         self.__collider.update(dt)

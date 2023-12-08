@@ -57,12 +57,12 @@ class Upscaler:
         width: int,
         height: int
     ):
-        self.window = window
-        self.width = width
-        self.height = height
+        self.window: pyglet.window.Window = window
+        self.width: int = width
+        self.height: int = height
 
         # On retina Macs everything is rendered 4x-zoomed for some reason. compensate for this using a platform scaling.
-        self.platform_scaling = 0.25 if "macOS" in GLOBALS[Builtins.PLATFORM] else 1
+        self.platform_scaling: float = 0.25 if "macOS" in GLOBALS[Builtins.PLATFORM] else 1.0
 
         self._target_area = (0, 0, 0, 0, 0)
         self._aspect = (0, 0)
