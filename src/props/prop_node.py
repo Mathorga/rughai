@@ -238,14 +238,13 @@ class IdlePropNode(PositionNode):
                 self.__meet_out()
                 self.__in_meeting = False
                 self.__in_meet_out = False
+            elif self.__in_meeting:
+                self.__meeting()
             else:
                 # If no abrupt transition took place, then check whether the previous animation finished.
                 # If so, then check for patient transitions.
                 if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
-                    if self.__in_meeting:
-                        self.__meeting()
-                    else:
-                        self.__idle()
+                    self.__idle()
 
                     self.__elapsed_anim_time = 0.0
 
