@@ -76,6 +76,9 @@ class PlayerNode(PositionNode):
         # Shooting magnitude: defines how strong the shot will be (must be between 0 and 1).
         self.__shoot_mag: float = 0.0
 
+        # Current draw time (in seconds).
+        self.draw_time: float = 0.0
+
         # Animations.
         self.__sprite = SpriteNode(
             resource = Animation(source = "sprites/iryo/iryo_idle.json").content,
@@ -602,6 +605,7 @@ class PlayerAimState(PlayerState):
         self.__draw: bool = False
 
     def start(self) -> None:
+        self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
         self.actor.load_scope()
 
@@ -651,6 +655,7 @@ class PlayerAimWalkState(PlayerState):
         self.__draw: bool = False
 
     def start(self) -> None:
+        self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
 
     def __fetch_input(self) -> None:
@@ -729,6 +734,9 @@ class PlayerDrawState(PlayerState):
         # Read input.
         self.__fetch_input()
 
+        # Update draw time.
+        self.actor.draw_time = self.actor.draw_time + dt
+
         self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
 
         # Set aim direction.
@@ -748,7 +756,10 @@ class PlayerDrawState(PlayerState):
             return PlayerStates.IDLE
 
         if not self.__draw:
-            return PlayerStates.SHOOT
+            if self.actor.draw_time > self.actor.stats.min_draw_time:
+                return PlayerStates.SHOOT
+            else:
+                return PlayerStates.AIM
 
 class PlayerDrawWalkState(PlayerState):
     def __init__(
@@ -782,6 +793,9 @@ class PlayerDrawWalkState(PlayerState):
         # Read input.
         self.__fetch_input()
 
+        # Update draw time.
+        self.actor.draw_time = self.actor.draw_time + dt
+
         self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
 
         # Set aim direction.
@@ -814,7 +828,10 @@ class PlayerDrawWalkState(PlayerState):
             return PlayerStates.IDLE
 
         if not self.__draw:
-            return PlayerStates.SHOOT
+            if self.actor.draw_time > self.actor.stats.min_draw_time:
+                return PlayerStates.SHOOT
+            else:
+                return PlayerStates.AIM_WALK
 
 class PlayerShootState(PlayerState):
     def __init__(
