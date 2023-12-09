@@ -1,3 +1,4 @@
+from enum import Enum
 import json
 import random
 from typing import Dict, List, Optional, Tuple
@@ -8,8 +9,18 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
+from engine.state_machine import State, StateMachine
 from engine.utils import set_animation_anchor
 from constants import collision_tags
+
+class IdlePropStates(str, Enum):
+    IDLE = "idle"
+    MEET_IN = "meet_in"
+    MEETING = "meeting"
+    MEET_OUT = "meet_out"
+    INTERACT = "interact"
+    HIT = "hit"
+    DESTROY = "destroy"
 
 class IdlePropNode(PositionNode):
     """
@@ -62,7 +73,7 @@ class IdlePropNode(PositionNode):
 
         self.__source = source
         self.__animations_data: Dict[str, pyglet.image.animation.Animation] = {}
-        self.__animations = {
+        self.animations = {
             "idle": {},
             "meet_in": {},
             "meeting": {},
@@ -119,7 +130,7 @@ class IdlePropNode(PositionNode):
                     )
 
             # Iterate over animation types.
-            for anim_key, anim_content in self.__animations.items():
+            for anim_key, anim_content in self.animations.items():
                 if anim_key in data["animations"]:
                     # Read animation reference and store it accordingly.
                     for anim_ref in data["animations"][anim_key]:
@@ -180,14 +191,27 @@ class IdlePropNode(PositionNode):
         self.__anim_duration = anim_duration
         self.__elapsed_anim_time = 0.0
 
-        if len(self.__animations["idle"]) > 0:
+        if len(self.animations["idle"]) > 0:
             # Sprite.
             self.__sprite = SpriteNode(
-                resource = list(self.__animations["idle"].keys())[0],
+                resource = list(self.animations["idle"].keys())[0],
                 x = x,
                 y = y,
                 batch = batch
             )
+
+        # State machine.
+        self.__state_machine = StateMachine(
+            states = {
+                IdlePropStates.IDLE: IdlePropIdleState(actor = self),
+                IdlePropStates.MEET_IN: IdlePropIdleState(actor = self),
+                IdlePropStates.MEETING: IdlePropIdleState(actor = self),
+                IdlePropStates.MEET_OUT: IdlePropIdleState(actor = self),
+                IdlePropStates.INTERACT: IdlePropIdleState(actor = self),
+                IdlePropStates.HIT: IdlePropIdleState(actor = self),
+                IdlePropStates.DESTROY: IdlePropIdleState(actor = self)
+            }
+        )
 
     def __on_collider_triggered(self, tags: List[str], entered: bool) -> None:
         """
@@ -224,6 +248,8 @@ class IdlePropNode(PositionNode):
             sensor.set_position(position, z)
 
     def update(self, dt: float) -> None:
+        # self.__state_machine.update(dt = dt)
+
         self.__elapsed_anim_time += dt
         if self.__sprite is not None:
             # Meet in and out are abrupt transitions: they happen even if the previous animation hasn't finished yet.
@@ -249,33 +275,33 @@ class IdlePropNode(PositionNode):
                     self.__elapsed_anim_time = 0.0
 
     def __idle(self):
-        self.__set_animation("idle")
+        self.set_animation("idle")
 
     def __meet_in(self) -> None:
-        self.__set_animation("meet_in")
+        self.set_animation("meet_in")
 
     def __meeting(self) -> None:
-        self.__set_animation("meeting")
+        self.set_animation("meeting")
 
     def __meet_out(self) -> None:
-        self.__set_animation("meet_out")
+        self.set_animation("meet_out")
 
     def __interact(self) -> None:
-        self.__set_animation("interact")
+        self.set_animation("interact")
 
     def __hit(self) -> None:
-        self.__set_animation("hit")
+        self.set_animation("hit")
 
     def __destroy(self) -> None:
-        self.__set_animation("destroy")
+        self.set_animation("destroy")
 
-    def __set_animation(self, key: str) -> None:
+    def set_animation(self, key: str) -> None:
         """
         Sets a random animation from the given array key.
         """
 
-        if self.__sprite is not None and key in self.__animations and len(self.__animations[key]) > 0:
-            self.__sprite.set_image(random.choices(list(self.__animations[key].keys()), list(self.__animations[key].values()))[0])
+        if self.__sprite is not None and key in self.animations and len(self.animations[key]) > 0:
+            self.__sprite.set_image(random.choices(list(self.animations[key].keys()), list(self.animations[key].values()))[0])
 
     def delete(self) -> None:
         if self.__sprite is not None:
@@ -288,3 +314,26 @@ class IdlePropNode(PositionNode):
         for sensor in self.__sensors:
             sensor.delete()
         self.__sensors.clear()
+
+
+class IdlePropState(State):
+    def __init__(
+        self,
+        actor: IdlePropNode
+    ) -> None:
+        super().__init__()
+
+        self.actor: IdlePropNode = actor
+
+    def onAnimationEnd(self) -> None:
+        pass
+
+class IdlePropIdleState(IdlePropState):
+    def start(self) -> None:
+        self.actor.set_animation("idle")
+
+    def on_collision(self, enter: bool) -> Optional[str]:
+        if enter:
+            return IdlePropStates.MEET_IN
+        else:
+            return IdlePropStates.MEET_OUT

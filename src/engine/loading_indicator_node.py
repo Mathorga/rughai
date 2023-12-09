@@ -16,10 +16,24 @@ class LoadingIndicatorNode(PositionNode):
         x: float = 0.0,
         y: float = 0.0,
         z: float = 0.0,
+        offset_x: float = 0.0,
+        offset_y: float = 0.0,
+        background_color: Tuple[float, float, float, float] = (0.0, 0.0, 0.0, 1.0),
+        foreground_color: Tuple[float, float, float, float] = (1.0, 1.0, 1.0, 1.0),
         starting_value: float = 1.0,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
+
+        # Center all sprites.
+        foreground_sprite_res.anchor_x = foreground_sprite_res.width / 2 + offset_x
+        foreground_sprite_res.anchor_y = foreground_sprite_res.height / 2 + offset_y
+        if background_sprite_res is not None:
+            background_sprite_res.anchor_x = background_sprite_res.width / 2 + offset_x
+            background_sprite_res.anchor_y = background_sprite_res.height / 2 + offset_y
+        if frame_sprite_res is not None:
+            frame_sprite_res.anchor_x = frame_sprite_res.width / 2 + offset_x
+            frame_sprite_res.anchor_y = frame_sprite_res.height / 2 + offset_y
 
         # Load fragment source from file.
         fragment_source: str
@@ -32,7 +46,7 @@ class LoadingIndicatorNode(PositionNode):
         self.shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
         # Pass non sampler uniforms.
-        self.shader_program["value"] = starting_value
+        # self.shader_program["value"] = starting_value
 
         self.foreground_sprite: SpriteNode = SpriteNode(
             resource = foreground_sprite_res,
@@ -43,13 +57,21 @@ class LoadingIndicatorNode(PositionNode):
             batch = batch
         )
 
-        self.background_sprite: SpriteNode = SpriteNode(
+        self.background_sprite: Optional[SpriteNode] = SpriteNode(
             resource = background_sprite_res,
             x = x,
             y = y,
             z = y - 1,
             batch = batch
-        )
+        ) if background_sprite_res is not None else None
+
+        self.frame_sprite: Optional[SpriteNode] = SpriteNode(
+            resource = frame_sprite_res,
+            x = x,
+            y = y,
+            z = y + 1,
+            batch = batch
+        ) if frame_sprite_res is not None else None
 
     def set_position(
         self,
@@ -59,11 +81,25 @@ class LoadingIndicatorNode(PositionNode):
         super().set_position(position, z)
 
         self.foreground_sprite.set_position(position = position, z = z if z is not None else position[1])
-        self.background_sprite.set_position(position = position, z = (z if z is not None else position[1]) - 1)
+
+        if self.background_sprite is not None:
+            self.background_sprite.set_position(position = position, z = (z if z is not None else position[1]) - 1)
+
+        if self.frame_sprite is not None:
+            self.frame_sprite.set_position(position = position, z = (z if z is not None else position[1]) + 1)
 
     def set_value(self, value: float) -> None:
         assert value >= 0.0 and value <= 0.0, "Value out of range"
 
-        # self.foreground_sprite.set_scale(x_scale = value)
+        self.foreground_sprite.set_scale(x_scale = value)
 
-        self.shader_program["value"] = value
+        # self.shader_program["value"] = value
+
+    def delete(self) -> None:
+        self.foreground_sprite.delete()
+
+        if self.background_sprite is not None:
+            self.background_sprite.delete()
+
+        if self.frame_sprite is not None:
+            self.frame_sprite.delete()

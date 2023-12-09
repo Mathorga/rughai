@@ -9,11 +9,8 @@ from typing import Optional, Tuple
 import pyglet
 import pyglet.math as pm
 from arrow_node import ArrowNode
-from duk_node import DukNode
-from engine import utils
 from engine.loading_indicator_node import LoadingIndicatorNode
 from engine.utils import scale
-from props.prop_node import IdlePropNode
 from scope_node import ScopeNode
 
 from constants import collision_tags, scenes
@@ -100,21 +97,12 @@ class PlayerNode(PositionNode):
         )
 
         # Draw loading indicator.
-        draw_background: pyglet.image.TextureRegion = pyglet.resource.image("sprites/loading_background.png")
-        draw_foreground: pyglet.image.TextureRegion = pyglet.resource.image("sprites/loading_foreground.png")
-        draw_background.anchor_x = draw_background.width / 2
-        draw_background.anchor_y = draw_background.height / 2 - 16
-        draw_foreground.anchor_x = draw_foreground.width / 2
-        draw_foreground.anchor_y = draw_foreground.height / 2 - 16
         self.draw_indicator: LoadingIndicatorNode = LoadingIndicatorNode(
-            foreground_sprite_res = draw_foreground,
-            background_sprite_res = draw_background,
+            foreground_sprite_res = pyglet.resource.image("sprites/loading_foreground.png"),
+            background_sprite_res = pyglet.resource.image("sprites/loading_background.png"),
             x = self.x,
             y = self.y,
-            # On MacOS this maps to 0.0 for some reason.
-            # starting_value = 0.54736,
-            # On MacOS this maps to 1.0 for some reason.
-            # starting_value = 0.5551,
+            offset_y = 4.0,
             batch = batch
         )
 
@@ -201,6 +189,7 @@ class PlayerNode(PositionNode):
         self.__collider.delete()
         self.__interactor.delete()
         self.__scope.delete()
+        self.draw_indicator.delete()
 
     def update(self, dt) -> None:
         self.__state_machine.update(dt = dt)
@@ -345,11 +334,6 @@ class PlayerNode(PositionNode):
         if mag >= 0.0 and mag <= 1.0:
             self.__shoot_mag = mag
 
-    def set_draw_value(self, draw_value: float) -> None:
-        assert draw_value >= 0.0 and draw_value <= 1.0, "Value out of range"
-
-        self.draw_indicator.set_value(value = draw_value)
-
     def __update_collider(self, dt):
         self.__collider.update(dt)
 
@@ -414,6 +398,7 @@ class PlayerIdleState(PlayerState):
         self.__sprint: bool = False
 
     def start(self) -> None:
+        self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
         self.actor.unload_scope()
 
@@ -793,7 +778,7 @@ class PlayerDrawState(PlayerState):
 
         if self.__aim_vec.mag <= 0.0:
             # Reset shoot magnitude.
-            self.actor.__shoot_mag = 0.0
+            self.actor.set_shoot_mag(0.0)
             return PlayerStates.IDLE
 
         if not self.__draw:
@@ -865,7 +850,7 @@ class PlayerDrawWalkState(PlayerState):
 
         if self.__aim_vec.mag <= 0.0:
             # Reset shoot magnitude.
-            self.actor.__shoot_mag = 0.0
+            self.actor.set_shoot_mag(0.0)
             return PlayerStates.IDLE
 
         if not self.__draw:
