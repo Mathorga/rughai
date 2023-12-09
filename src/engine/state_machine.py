@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 class State:
     def start(self) -> None:
@@ -7,7 +7,7 @@ class State:
     def on_animation_end(self) -> Optional[str]:
         pass
 
-    def on_collision(self, enter: bool) -> Optional[str]:
+    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
         pass
 
     def update(self, dt: float) -> Optional[str]:
@@ -54,19 +54,19 @@ class StateMachine:
             # Call the new state's start method.
             self.states[self.current_key].start()
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> None:
         current_state: Optional[State] = self.get_current_state()
         if current_state is None:
             return
 
         self.transition(current_state.on_animation_end())
 
-    def on_collision(self, enter: bool) -> Optional[str]:
+    def on_collision(self, tags: List[str], enter: bool) -> None:
         current_state: Optional[State] = self.get_current_state()
         if current_state is None:
             return
 
-        self.transition(current_state.on_collision(enter = enter))
+        self.transition(current_state.on_collision(tags = tags, enter = enter))
 
     def transition(self, key: Optional[str]) -> None:
         """

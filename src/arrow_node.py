@@ -165,7 +165,7 @@ class ArrowFlyState(ArrowState):
         if position[0] < scene_bounds.left or position[0] > scene_bounds.right or position[1] < scene_bounds.bottom or position[1] > scene_bounds.top:
             return ArrowStates.OUT
 
-    def on_collision(self, enter: bool) -> Optional[str]:
+    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
         if enter:
             return ArrowStates.HIT
 
