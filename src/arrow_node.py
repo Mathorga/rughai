@@ -74,7 +74,10 @@ class ArrowNode(PositionNode):
             y = y,
             sensor = True,
             collision_type = CollisionType.DYNAMIC,
-            tags = [collision_tags.PLAYER_COLLISION],
+            tags = [
+                collision_tags.PLAYER_COLLISION,
+                collision_tags.DAMAGE
+            ],
             on_triggered = self.on_collision,
             shapes = [
                 CollisionRect(
@@ -134,7 +137,7 @@ class ArrowNode(PositionNode):
             print("ERROR")
 
     def on_collision(self, tags: List[str], enter: bool) -> None:
-        self.__state_machine.on_collision(enter = enter)
+        self.__state_machine.on_collision(tags = tags, enter = enter)
 
     def delete(self) -> None:
         controllers.COLLISION_CONTROLLER.remove_collider(self.__collider)
