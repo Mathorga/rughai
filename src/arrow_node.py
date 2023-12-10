@@ -76,6 +76,7 @@ class ArrowNode(PositionNode):
             collision_type = CollisionType.DYNAMIC,
             tags = [
                 collision_tags.PLAYER_COLLISION,
+                collision_tags.PLAYER_SENSE,
                 collision_tags.DAMAGE
             ],
             on_triggered = self.on_collision,
@@ -133,7 +134,7 @@ class ArrowNode(PositionNode):
                         ),
                         z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
                     )
-        except:
+        except Exception:
             print("ERROR")
 
     def on_collision(self, tags: List[str], enter: bool) -> None:
@@ -169,7 +170,7 @@ class ArrowFlyState(ArrowState):
             return ArrowStates.OUT
 
     def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if enter:
+        if collision_tags.PLAYER_COLLISION in tags and enter:
             return ArrowStates.HIT
 
 class ArrowHitState(ArrowState):

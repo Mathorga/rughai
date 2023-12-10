@@ -123,7 +123,11 @@ class PlayerNode(PositionNode):
             x = x,
             y = y,
             collision_type = CollisionType.DYNAMIC,
-            tags = [collision_tags.PLAYER_COLLISION],
+            tags = [
+                collision_tags.PLAYER_COLLISION,
+                collision_tags.PLAYER_SENSE,
+                collision_tags.DAMAGE
+            ],
             shapes = [
                 CollisionRect(
                     x = x,
