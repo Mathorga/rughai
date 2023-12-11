@@ -462,7 +462,7 @@ class PropPlacementScene(Node):
 
     def update(self, dt) -> None:
         if not self.__menu.is_open():
-            if controllers.INPUT_CONTROLLER.get_interaction():
+            if controllers.INPUT_CONTROLLER.get_sprint():
                 # Clear history until the current index is reached.
                 self.__prop_sets = self.__prop_sets[0:self.__current_props_index + 1]
 

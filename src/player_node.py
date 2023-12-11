@@ -9,9 +9,8 @@ from typing import Optional, Tuple
 import pyglet
 import pyglet.math as pm
 from arrow_node import ArrowNode
-from duk_node import DukNode
+from engine.loading_indicator_node import LoadingIndicatorNode
 from engine.utils import scale
-from props.prop_node import IdlePropNode
 from scope_node import ScopeNode
 
 from constants import collision_tags, scenes
@@ -76,6 +75,9 @@ class PlayerNode(PositionNode):
         # Shooting magnitude: defines how strong the shot will be (must be between 0 and 1).
         self.__shoot_mag: float = 0.0
 
+        # Current draw time (in seconds).
+        self.draw_time: float = 0.0
+
         # Animations.
         self.__sprite = SpriteNode(
             resource = Animation(source = "sprites/iryo/iryo_idle.json").content,
@@ -91,6 +93,16 @@ class PlayerNode(PositionNode):
             x = self.x,
             y = self.y,
             offset_y = self.scope_offset[1],
+            batch = batch
+        )
+
+        # Draw loading indicator.
+        self.draw_indicator: LoadingIndicatorNode = LoadingIndicatorNode(
+            foreground_sprite_res = pyglet.resource.image("sprites/loading_foreground.png"),
+            background_sprite_res = pyglet.resource.image("sprites/loading_background.png"),
+            x = self.x,
+            y = self.y,
+            offset_y = 4.0,
             batch = batch
         )
 
@@ -111,7 +123,11 @@ class PlayerNode(PositionNode):
             x = x,
             y = y,
             collision_type = CollisionType.DYNAMIC,
-            tags = [collision_tags.PLAYER_COLLISION],
+            tags = [
+                collision_tags.PLAYER_COLLISION,
+                collision_tags.PLAYER_SENSE,
+                collision_tags.DAMAGE
+            ],
             shapes = [
                 CollisionRect(
                     x = x,
@@ -177,6 +193,7 @@ class PlayerNode(PositionNode):
         self.__collider.delete()
         self.__interactor.delete()
         self.__scope.delete()
+        self.draw_indicator.delete()
 
     def update(self, dt) -> None:
         self.__state_machine.update(dt = dt)
@@ -232,11 +249,13 @@ class PlayerNode(PositionNode):
         # Flip sprite if moving to the left.
         self.__sprite.set_scale(x_scale = self.__hor_facing)
 
-        # Update aim sprite.
-        self.__update_aim(dt)
+        # Update scope.
+        self.__update_scope(dt)
 
         # Update shadow sprite.
         self.__update_shadow(dt)
+
+        self.__update_draw_indicator(dt)
 
         # Update camera target.
         self.__update_cam_target(dt)
@@ -244,9 +263,9 @@ class PlayerNode(PositionNode):
         # Update interactor.
         self.__update_interactor(dt)
 
-    def __update_aim(self, dt):
+    def __update_scope(self, dt):
         """
-        Updates the aim sign.
+        Updates the scope sign.
         """
 
         self.__scope.set_direction(direction = self.stats.look_dir)
@@ -261,13 +280,26 @@ class PlayerNode(PositionNode):
         )
         self.__shadow_sprite.update(dt)
 
+    def __update_draw_indicator(self, dt):
+        """
+        Updates the draw indicator.
+        """
+
+        draw_indicator_value = pm.clamp(
+            num = self.draw_time,
+            min_val = 0.0,
+            max_val = self.stats.min_draw_time
+        )
+        self.draw_indicator.set_value(value = draw_indicator_value / self.stats.min_draw_time)
+        self.draw_indicator.set_position(position = self.get_position())
+        self.draw_indicator.update(dt = dt)
+
     def set_cam_target_distance_mag(self, mag: float) -> None:
         """
         Sets the magnitude (between 0 and 1) for cam target distance.
         """
 
-        if mag < 0 or mag > 1:
-            return
+        assert mag >= 0.0 and mag <= 1.0, "Value out of range"
 
         self.__cam_target_distance_mag = mag
 
@@ -370,6 +402,7 @@ class PlayerIdleState(PlayerState):
         self.__sprint: bool = False
 
     def start(self) -> None:
+        self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
         self.actor.unload_scope()
 
@@ -602,6 +635,7 @@ class PlayerAimState(PlayerState):
         self.__draw: bool = False
 
     def start(self) -> None:
+        self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
         self.actor.load_scope()
 
@@ -651,6 +685,7 @@ class PlayerAimWalkState(PlayerState):
         self.__draw: bool = False
 
     def start(self) -> None:
+        self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
 
     def __fetch_input(self) -> None:
@@ -729,6 +764,9 @@ class PlayerDrawState(PlayerState):
         # Read input.
         self.__fetch_input()
 
+        # Update draw time.
+        self.actor.draw_time = self.actor.draw_time + dt
+
         self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
 
         # Set aim direction.
@@ -744,11 +782,14 @@ class PlayerDrawState(PlayerState):
 
         if self.__aim_vec.mag <= 0.0:
             # Reset shoot magnitude.
-            self.actor.__shoot_mag = 0.0
+            self.actor.set_shoot_mag(0.0)
             return PlayerStates.IDLE
 
         if not self.__draw:
-            return PlayerStates.SHOOT
+            if self.actor.draw_time > self.actor.stats.min_draw_time:
+                return PlayerStates.SHOOT
+            else:
+                return PlayerStates.AIM
 
 class PlayerDrawWalkState(PlayerState):
     def __init__(
@@ -782,6 +823,9 @@ class PlayerDrawWalkState(PlayerState):
         # Read input.
         self.__fetch_input()
 
+        # Update draw time.
+        self.actor.draw_time = self.actor.draw_time + dt
+
         self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
 
         # Set aim direction.
@@ -810,11 +854,14 @@ class PlayerDrawWalkState(PlayerState):
 
         if self.__aim_vec.mag <= 0.0:
             # Reset shoot magnitude.
-            self.actor.__shoot_mag = 0.0
+            self.actor.set_shoot_mag(0.0)
             return PlayerStates.IDLE
 
         if not self.__draw:
-            return PlayerStates.SHOOT
+            if self.actor.draw_time > self.actor.stats.min_draw_time:
+                return PlayerStates.SHOOT
+            else:
+                return PlayerStates.AIM_WALK
 
 class PlayerShootState(PlayerState):
     def __init__(

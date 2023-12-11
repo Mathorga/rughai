@@ -162,7 +162,7 @@ class SceneNode(Node):
             updated_x = self.__camera.position[0] + camera_movement.x
             updated_y = self.__camera.position[1] + camera_movement.y
 
-            if self.__cam_bounds is not None:
+            if self.__cam_bounds is not None and not SETTINGS[Builtins.FREE_CAM_BOUNDS]:
                 # Apply bounds to camera movement by limiting updated position.
                 if self.__cam_bounds.top is not None and self.__cam_bounds.top * GLOBALS[Builtins.SCALING] < updated_y + self.__view_height * GLOBALS[Builtins.SCALING]:
                     updated_y = self.__cam_bounds.top * GLOBALS[Builtins.SCALING] - self.__view_height * GLOBALS[Builtins.SCALING]
@@ -192,14 +192,6 @@ class SceneNode(Node):
 
         # Update camera.
         self.__update_camera(dt)
-
-    # def __get_cam_bounding_box(self):
-    #     return (
-    #         self.__camera.position[0],
-    #         self.__camera.position[1],
-    #         self.__view_width * GLOBALS[Builtins.SCALING],
-    #         self.__view_height * GLOBALS[Builtins.SCALING],
-    #     ) if self.__camera is not None else None
 
     def add_child(
         self,
@@ -251,10 +243,13 @@ class SceneNode(Node):
         self.__curtain = None
         self.__camera = None
 
+    def get_cam_bounds(self) -> Bounds:
+        return self.__cam_bounds
+
     def set_cam_bounds(
         self,
         bounds: Bounds
-    ):
+    ) -> None:
         self.__cam_bounds = bounds
 
     def end(self):

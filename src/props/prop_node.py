@@ -1,3 +1,4 @@
+from enum import Enum
 import json
 import random
 from typing import Dict, List, Optional, Tuple
@@ -8,8 +9,18 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
+from engine.state_machine import State, StateMachine
 from engine.utils import set_animation_anchor
 from constants import collision_tags
+
+class IdlePropStates(str, Enum):
+    IDLE = "idle"
+    MEET_IN = "meet_in"
+    MEETING = "meeting"
+    MEET_OUT = "meet_out"
+    INTERACT = "interact"
+    HIT = "hit"
+    DESTROY = "destroy"
 
 class IdlePropNode(PositionNode):
     """
@@ -60,9 +71,9 @@ class IdlePropNode(PositionNode):
     ) -> None:
         super().__init__(x, y, z)
 
-        self.__source = source
+        self.source = source
         self.__animations_data: Dict[str, pyglet.image.animation.Animation] = {}
-        self.__animations = {
+        self.animations = {
             "idle": {},
             "meet_in": {},
             "meeting": {},
@@ -74,21 +85,16 @@ class IdlePropNode(PositionNode):
         self.__colliders: List[PositionNode] = []
         self.__sensors: List[PositionNode] = []
 
-        # Flags.
-        self.__in_meet_in = False
-        self.__in_meeting = False
-        self.__in_meet_out = False
-
         data: dict = {}
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
 
         # Read health points.
-        self.__max_health_points: Optional[int] = None
-        self.__health_points = 0
+        self.max_health_points: Optional[int] = None
+        self.health_points = 0
         if "health_points" in data:
-            self.__max_health_points = data["health_points"]
-            self.__health_points = self.__max_health_points
+            self.max_health_points = data["health_points"]
+            self.health_points = self.max_health_points
 
         # Read global anchor point.
         anchor_x: Optional[int] = None
@@ -119,7 +125,7 @@ class IdlePropNode(PositionNode):
                     )
 
             # Iterate over animation types.
-            for anim_key, anim_content in self.__animations.items():
+            for anim_key, anim_content in self.animations.items():
                 if anim_key in data["animations"]:
                     # Read animation reference and store it accordingly.
                     for anim_ref in data["animations"][anim_key]:
@@ -176,46 +182,52 @@ class IdlePropNode(PositionNode):
                 self.__sensors.append(sensor)
                 controllers.COLLISION_CONTROLLER.add_collider(sensor)
 
-        self.__sprite: Optional[SpriteNode] = None
-        self.__anim_duration = anim_duration
-        self.__elapsed_anim_time = 0.0
+        self.sprite: Optional[SpriteNode] = None
+        self.anim_duration = anim_duration
 
-        if len(self.__animations["idle"]) > 0:
+        if len(self.animations["idle"]) > 0:
             # Sprite.
-            self.__sprite = SpriteNode(
-                resource = list(self.__animations["idle"].keys())[0],
+            self.sprite = SpriteNode(
+                resource = list(self.animations["idle"].keys())[0],
+                on_animation_end = self.__on_animation_end,
                 x = x,
                 y = y,
                 batch = batch
             )
+
+        # State machine.
+        self.__state_machine = StateMachine(
+            states = {
+                IdlePropStates.IDLE: IdlePropIdleState(actor = self),
+                IdlePropStates.MEET_IN: IdlePropMeetInState(actor = self),
+                IdlePropStates.MEETING: IdlePropMeetingState(actor = self),
+                IdlePropStates.MEET_OUT: IdlePropMeetOutState(actor = self),
+                # TODO
+                # IdlePropStates.INTERACT: IdlePropInteractState(actor = self),
+                # IdlePropStates.HIT: IdlePropHitState(actor = self),
+                # IdlePropStates.DESTROY: IdlePropDestroyState(actor = self)
+            }
+        )
 
     def __on_collider_triggered(self, tags: List[str], entered: bool) -> None:
         """
         Handles all colliders' trigger events.
         """
 
-        # Reduce health points if a damage occurred and health points were defined in the first place.
-        if entered and collision_tags.DAMAGE in tags and self.__max_health_points is not None:
-            self.__health_points -= 1
-
-            if self.__health_points <= 0:
-                self.__destroy()
-            else:
-                self.__hit()
+        self.__state_machine.on_collision(tags = tags, enter = entered)
 
     def __on_sensor_triggered(self, tags: List[str], entered: bool) -> None:
         """
         Handles all sensors' trigger events.
         """
 
-        self.__in_meet_in = entered
-        self.__in_meet_out = not entered
+        self.__state_machine.on_collision(tags = tags, enter = entered)
 
     def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
         super().set_position(position, z)
 
-        if self.__sprite is not None:
-            self.__sprite.set_position(position, z)
+        if self.sprite is not None:
+            self.sprite.set_position(position, z)
 
         for collider in self.__colliders:
             collider.set_position(position, z)
@@ -224,63 +236,25 @@ class IdlePropNode(PositionNode):
             sensor.set_position(position, z)
 
     def update(self, dt: float) -> None:
-        self.__elapsed_anim_time += dt
-        if self.__sprite is not None:
-            # Meet in and out are abrupt transitions: they happen even if the previous animation hasn't finished yet.
-            # On the othe  hand, meeting and idle are patient ones, since they wait for the previous one to finish before taking over.
+        self.__state_machine.update(dt = dt)
 
-            # First check for abrupt transitions.
-            if self.__in_meet_in:
-                self.__meet_in()
-                self.__in_meeting = True
-                self.__in_meet_in = False
-            elif self.__in_meet_out:
-                self.__meet_out()
-                self.__in_meeting = False
-                self.__in_meet_out = False
-            else:
-                # If no abrupt transition took place, then check whether the previous animation finished.
-                # If so, then check for patient transitions.
-                if self.__elapsed_anim_time > self.__anim_duration and self.__sprite.get_frame_index() <= 0:
-                    if self.__in_meeting:
-                        self.__meeting()
-                    else:
-                        self.__idle()
+    def __on_animation_end(self) -> None:
+        self.__state_machine.on_animation_end()
 
-                    self.__elapsed_anim_time = 0.0
-
-    def __idle(self):
-        self.__set_animation("idle")
-
-    def __meet_in(self) -> None:
-        self.__set_animation("meet_in")
-
-    def __meeting(self) -> None:
-        self.__set_animation("meeting")
-
-    def __meet_out(self) -> None:
-        self.__set_animation("meet_out")
-
-    def __interact(self) -> None:
-        self.__set_animation("interact")
-
-    def __hit(self) -> None:
-        self.__set_animation("hit")
-
-    def __destroy(self) -> None:
-        self.__set_animation("destroy")
-
-    def __set_animation(self, key: str) -> None:
+    def set_animation(self, key: str) -> None:
         """
         Sets a random animation from the given array key.
         """
 
-        if self.__sprite is not None and key in self.__animations and len(self.__animations[key]) > 0:
-            self.__sprite.set_image(random.choices(list(self.__animations[key].keys()), list(self.__animations[key].values()))[0])
+        if self.sprite is not None:
+            if key in self.animations and len(self.animations[key]) > 0:
+                self.sprite.set_image(random.choices(list(self.animations[key].keys()), list(self.animations[key].values()))[0])
+            else:
+                self.__on_animation_end()
 
     def delete(self) -> None:
-        if self.__sprite is not None:
-            self.__sprite.delete()
+        if self.sprite is not None:
+            self.sprite.delete()
 
         for collider in self.__colliders:
             collider.delete()
@@ -289,3 +263,93 @@ class IdlePropNode(PositionNode):
         for sensor in self.__sensors:
             sensor.delete()
         self.__sensors.clear()
+
+
+class IdlePropState(State):
+    def __init__(
+        self,
+        actor: IdlePropNode
+    ) -> None:
+        super().__init__()
+
+        self.actor: IdlePropNode = actor
+
+    def hit(self) -> Optional[str]:
+        # Reduce health points if a damage occurred and health points were defined in the first place.
+        if self.actor.max_health_points is not None:
+            self.actor.health_points -= 1
+
+            if self.actor.health_points <= 0:
+                return IdlePropStates.DESTROY
+            else:
+                return IdlePropStates.HIT
+
+class IdlePropIdleState(IdlePropState):
+    def __init__(self, actor: IdlePropNode) -> None:
+        super().__init__(actor)
+        self.__elapsed_anim_time: float = 0.0
+
+    def start(self) -> None:
+        self.actor.set_animation("idle")
+
+    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
+        if collision_tags.DAMAGE in tags and enter:
+            return self.hit()
+        else:
+            if enter:
+                return IdlePropStates.MEET_IN
+            else:
+                return IdlePropStates.MEET_OUT
+
+    def update(self, dt: float) -> str | None:
+        self.__elapsed_anim_time += dt
+
+        if self.__elapsed_anim_time > self.actor.anim_duration and self.actor.sprite.get_frame_index() <= 0:
+            self.actor.set_animation("idle")
+
+            self.__elapsed_anim_time = 0.0
+
+class IdlePropMeetInState(IdlePropState):
+    def start(self) -> None:
+        self.actor.set_animation("meet_in")
+
+    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
+        if collision_tags.DAMAGE in tags and enter:
+            return self.hit()
+
+    def on_animation_end(self) -> Optional[str]:
+        return IdlePropStates.MEETING
+
+class IdlePropMeetingState(IdlePropState):
+    def __init__(self, actor: IdlePropNode) -> None:
+        super().__init__(actor)
+        self.__elapsed_anim_time: float = 0.0
+
+    def start(self) -> None:
+        self.actor.set_animation("meeting")
+
+    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
+        if collision_tags.DAMAGE in tags and enter:
+            return self.hit()
+        else:
+            if not enter:
+                return IdlePropStates.MEET_OUT
+
+    def update(self, dt: float) -> str | None:
+        self.__elapsed_anim_time += dt
+
+        if self.__elapsed_anim_time > self.actor.anim_duration and self.actor.sprite.get_frame_index() <= 0:
+            self.actor.set_animation("meeting")
+
+            self.__elapsed_anim_time = 0.0
+
+class IdlePropMeetOutState(IdlePropState):
+    def start(self) -> None:
+        self.actor.set_animation("meet_out")
+
+    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
+        if collision_tags.DAMAGE in tags and enter:
+            return self.hit()
+
+    def on_animation_end(self) -> Optional[str]:
+        return IdlePropStates.IDLE

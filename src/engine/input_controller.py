@@ -207,14 +207,14 @@ class InputController:
         Returns the movement vector from keyboard and controller.
         """
 
-        w = self.key_presses.get(pyglet.window.key.W, False)
-        a = self.key_presses.get(pyglet.window.key.A, False)
-        s = self.key_presses.get(pyglet.window.key.S, False)
-        d = self.key_presses.get(pyglet.window.key.D, False)
+        up = self.key_presses.get(pyglet.window.key.W, False) or self.key_presses.get(pyglet.window.key.UP)
+        left = self.key_presses.get(pyglet.window.key.A, False) or self.key_presses.get(pyglet.window.key.LEFT)
+        down = self.key_presses.get(pyglet.window.key.S, False) or self.key_presses.get(pyglet.window.key.DOWN)
+        right = self.key_presses.get(pyglet.window.key.D, False) or self.key_presses.get(pyglet.window.key.RIGHT)
 
         return pyglet.math.Vec2(
-            1 if d else 0 - 1 if a else 0,
-            1 if w else 0 - 1 if s else 0
+            1 if right else 0 - 1 if left else 0,
+            1 if up else 0 - 1 if down else 0
         )
 
     def get_ctrl(self) -> bool:
