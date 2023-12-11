@@ -1,6 +1,9 @@
 #version 150 core
 in vec4 vertex_colors;
 in vec3 texture_coords;
+in vec3 frag_position;
+// in vec4 comp_position;
+
 out vec4 final_color;
 
 uniform sampler2D sprite_texture;
@@ -14,8 +17,9 @@ void main() {
 
     // Fetch the current color.
     final_color = texture(sprite_texture, texture_coords.xy) * vertex_colors;
+    // final_color = texture(sprite_texture, texture_coords.xy * 0.1 + frag_position.xy * 100) * vertex_colors;
     // vec4 source = texture(sprite_texture, texture_coords.xy) * vertex_colors;
-    // final_color = vec4(texture_coords.xxxx);
+    // final_color = vec4(gl_FragCoord.xy, 0.0, 1.0);
 
     // Coordinates greater than value% on the x axis should not be rendered.
     // if (texture_coords.x > value) {

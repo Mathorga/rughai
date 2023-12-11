@@ -35,13 +35,16 @@ class LoadingIndicatorNode(PositionNode):
             frame_sprite_res.anchor_x = frame_sprite_res.width / 2 + offset_x
             frame_sprite_res.anchor_y = frame_sprite_res.height / 2 + offset_y
 
-        # Load fragment source from file.
+        # Load shader sources from file.
+        vertex_source: str
+        with open(file = os.path.join(pyglet.resource.path[0], "../shaders/loading_indicator.vert"), mode = "r", encoding = "UTF8") as file:
+            vertex_source = file.read()
         fragment_source: str
         with open(file = os.path.join(pyglet.resource.path[0], "../shaders/loading_indicator.frag"), mode = "r", encoding = "UTF8") as file:
             fragment_source = file.read()
 
         # Create shader program from vector and fragment.
-        vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
+        vert_shader = pyglet.graphics.shader.Shader(vertex_source, "vertex")
         frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
         self.shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
