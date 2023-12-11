@@ -126,7 +126,7 @@ class InputController:
         Returns whether the interact button was pressed or not, either on controller or keyboard.
         """
 
-        return self.key_presses.get(pyglet.window.key.H, False) or self.button_presses.get("a", False)
+        return self.key_presses.get(pyglet.window.key.F, False) or self.key_presses.get(pyglet.window.key.H, False) or self.button_presses.get("a", False)
 
     def get_main_atk(self) -> bool:
         """

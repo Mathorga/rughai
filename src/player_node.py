@@ -400,6 +400,7 @@ class PlayerIdleState(PlayerState):
         self.__move: bool = False
         self.__aim: bool = False
         self.__sprint: bool = False
+        self.__interact: bool = False
 
     def start(self) -> None:
         self.actor.draw_time = 0.0
@@ -415,10 +416,15 @@ class PlayerIdleState(PlayerState):
             self.__move = controllers.INPUT_CONTROLLER.get_movement()
             self.__aim = controllers.INPUT_CONTROLLER.get_aim()
             self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
+            self.__interact = controllers.INPUT_CONTROLLER.get_interaction()
 
     def update(self, dt: float) -> Optional[str]:
         # Read inputs.
         self.__fetch_input()
+
+        # Interaction.
+        if self.__interact:
+            controllers.INTERACTION_CONTROLLER.interact()
 
         # Check for state changes.
         if self.__aim:
@@ -445,6 +451,7 @@ class PlayerWalkState(PlayerState):
         self.__aim: bool = False
         self.__shift: bool = False
         self.__sprint: bool = False
+        self.__interact: bool = False
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
@@ -459,10 +466,15 @@ class PlayerWalkState(PlayerState):
             self.__aim = controllers.INPUT_CONTROLLER.get_aim()
             self.__shift = controllers.INPUT_CONTROLLER.get_shift()
             self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
+            self.__interact = controllers.INPUT_CONTROLLER.get_interaction()
 
     def update(self, dt: float) -> Optional[str]:
         # Read inputs.
         self.__fetch_input()
+
+        # Interaction.
+        if self.__interact:
+            controllers.INTERACTION_CONTROLLER.interact()
 
         target_speed: float = 0.0
         if self.__move_vec.mag > 0.0:
@@ -512,6 +524,7 @@ class PlayerRunState(PlayerState):
         self.__aim: bool = False
         self.__shift: bool = False
         self.__sprint: bool = False
+        self.__interact: bool = False
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
@@ -526,10 +539,15 @@ class PlayerRunState(PlayerState):
             self.__aim = controllers.INPUT_CONTROLLER.get_aim()
             self.__shift = controllers.INPUT_CONTROLLER.get_shift()
             self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
+            self.__interact = controllers.INPUT_CONTROLLER.get_interaction()
 
     def update(self, dt: float) -> Optional[str]:
         # Read inputs.
         self.__fetch_input()
+
+        # Interaction.
+        if self.__interact:
+            controllers.INTERACTION_CONTROLLER.interact()
 
         target_speed: float = 0.0
         if self.__move_vec.mag > 0.0:

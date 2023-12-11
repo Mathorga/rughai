@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "show_collisions": true,
     "show_tiles_grid": false,
     "free_cam_bounds": false,
