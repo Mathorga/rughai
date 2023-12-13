@@ -36,15 +36,12 @@ class LoadingIndicatorNode(PositionNode):
             frame_sprite_res.anchor_y = frame_sprite_res.height / 2 + offset_y
 
         # Load shader sources from file.
-        vertex_source: str
-        with open(file = os.path.join(pyglet.resource.path[0], "../shaders/loading_indicator.vert"), mode = "r", encoding = "UTF8") as file:
-            vertex_source = file.read()
         fragment_source: str
         with open(file = os.path.join(pyglet.resource.path[0], "../shaders/loading_indicator.frag"), mode = "r", encoding = "UTF8") as file:
             fragment_source = file.read()
 
         # Create shader program from vector and fragment.
-        vert_shader = pyglet.graphics.shader.Shader(vertex_source, "vertex")
+        vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
         frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
         self.shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
@@ -94,9 +91,24 @@ class LoadingIndicatorNode(PositionNode):
     def set_value(self, value: float) -> None:
         assert value >= 0.0 and value <= 0.0, "Value out of range"
 
-        self.foreground_sprite.set_scale(x_scale = value)
+        # self.foreground_sprite.set_scale(x_scale = value)
 
-        # self.shader_program["value"] = value
+        texture_coords: Tuple[
+            float, float, float,
+            float, float, float,
+            float, float, float,
+            float, float, float
+        ]
+
+        # Also pass bottom-left and top-right texture coords.
+        if isinstance(self.foreground_sprite.sprite.image, pyglet.image.animation.Animation):
+            texture_coords = self.foreground_sprite.sprite.image.frames[self.foreground_sprite.sprite.frame_index].tex_coords
+        else:
+            texture_coords = self.foreground_sprite.sprite.image.tex_coords
+
+        self.shader_program["sw_coord"] = texture_coords[0:3]
+        self.shader_program["ne_coord"] = texture_coords[6:9]
+        self.shader_program["value"] = value
 
     def delete(self) -> None:
         self.foreground_sprite.delete()
