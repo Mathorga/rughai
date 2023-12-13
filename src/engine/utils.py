@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 import math
 import pyglet
 import pyglet.math as pm
@@ -241,6 +241,41 @@ def sweep_circle_rect() -> Optional[CollisionHit]:
 
 
 
+
+def set_offset(
+    resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
+    x: Optional[float],
+    y: Optional[float],
+    center: Optional[bool]
+) -> None:
+    if isinstance(resource, pyglet.image.TextureRegion):
+        if x is not None:
+            resource.anchor_x = ((resource.width / 2) if center else 0) + int(x)
+        if y is not None:
+            resource.anchor_y = ((resource.height / 2) if center else 0) + int(y)
+    elif isinstance(resource, pyglet.image.animation.Animation):
+        for frame in resource.frames:
+            if x is not None:
+                frame.image.anchor_x = ((frame.image.width / 2) if center else 0) + int(x)
+            if y is not None:
+                frame.image.anchor_y = ((frame.image.height / 2) if center else 0) + int(y)
+
+def set_anchor(
+    resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
+    x: Optional[float],
+    y: Optional[float]
+) -> None:
+    if isinstance(resource, pyglet.image.TextureRegion):
+        if x is not None:
+            resource.anchor_x = int(x)
+        if y is not None:
+            resource.anchor_y = int(y)
+    elif isinstance(resource, pyglet.image.animation.Animation):
+        set_animation_anchor(
+            animation = resource,
+            x = x,
+            y = y
+        )
 
 def set_animation_anchor(
     animation: pyglet.image.animation.Animation,

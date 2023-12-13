@@ -9,7 +9,7 @@ void main() {
     final_color = texture(sprite_texture, texture_coords.xy) * vertex_colors;
 
     // No GL_ALPHA_TEST in core, use shader to discard.
-    if (final_color.a < 0.01) {
-        discard;
-    }
+    // if (final_color.a < 0.01) {
+    //     discard;
+    // }
 }

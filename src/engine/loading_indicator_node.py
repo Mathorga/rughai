@@ -2,10 +2,9 @@ import os
 from typing import Optional, Tuple, Union
 import pyglet
 
-from engine.animation import Animation
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine import utils
+from engine.utils import set_offset
 
 class LoadingIndicatorNode(PositionNode):
     def __init__(
@@ -18,22 +17,32 @@ class LoadingIndicatorNode(PositionNode):
         z: float = 0.0,
         offset_x: float = 0.0,
         offset_y: float = 0.0,
-        background_color: Tuple[float, float, float, float] = (0.0, 0.0, 0.0, 1.0),
-        foreground_color: Tuple[float, float, float, float] = (1.0, 1.0, 1.0, 1.0),
         starting_value: float = 1.0,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
 
         # Center all sprites.
-        foreground_sprite_res.anchor_x = foreground_sprite_res.width / 2 + offset_x
-        foreground_sprite_res.anchor_y = foreground_sprite_res.height / 2 + offset_y
+        set_offset(
+            resource = foreground_sprite_res,
+            x = offset_x,
+            y = offset_y,
+            center = True
+        )
         if background_sprite_res is not None:
-            background_sprite_res.anchor_x = background_sprite_res.width / 2 + offset_x
-            background_sprite_res.anchor_y = background_sprite_res.height / 2 + offset_y
+            set_offset(
+                resource = background_sprite_res,
+                x = offset_x,
+                y = offset_y,
+                center = True
+            )
         if frame_sprite_res is not None:
-            frame_sprite_res.anchor_x = frame_sprite_res.width / 2 + offset_x
-            frame_sprite_res.anchor_y = frame_sprite_res.height / 2 + offset_y
+            set_offset(
+                resource = frame_sprite_res,
+                x = offset_x,
+                y = offset_y,
+                center = True
+            )
 
         # Load shader sources from file.
         fragment_source: str
@@ -46,7 +55,7 @@ class LoadingIndicatorNode(PositionNode):
         self.shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
         # Pass non sampler uniforms.
-        # self.shader_program["value"] = starting_value
+        self.shader_program["value"] = starting_value
 
         self.foreground_sprite: SpriteNode = SpriteNode(
             resource = foreground_sprite_res,
@@ -91,21 +100,16 @@ class LoadingIndicatorNode(PositionNode):
     def set_value(self, value: float) -> None:
         assert value >= 0.0 and value <= 0.0, "Value out of range"
 
-        # self.foreground_sprite.set_scale(x_scale = value)
-
+        # Fetch texture coordinates from sprite.
+        sprite_texture: pyglet.image.Texture = self.foreground_sprite.sprite.get_texture()
         texture_coords: Tuple[
             float, float, float,
             float, float, float,
             float, float, float,
             float, float, float
-        ]
+        ] = sprite_texture.tex_coords
 
         # Also pass bottom-left and top-right texture coords.
-        if isinstance(self.foreground_sprite.sprite.image, pyglet.image.animation.Animation):
-            texture_coords = self.foreground_sprite.sprite.image.frames[self.foreground_sprite.sprite.frame_index].tex_coords
-        else:
-            texture_coords = self.foreground_sprite.sprite.image.tex_coords
-
         self.shader_program["sw_coord"] = texture_coords[0:3]
         self.shader_program["ne_coord"] = texture_coords[6:9]
         self.shader_program["value"] = value

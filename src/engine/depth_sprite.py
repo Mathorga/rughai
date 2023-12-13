@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 import pyglet
 import pyglet.gl as gl
 
@@ -104,7 +104,7 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
 
     def __init__(
         self,
-        img,
+        img: Union[pyglet.image.AbstractImage, pyglet.image.Animation],
         x = 0,
         y = 0,
         z = 0,
@@ -157,6 +157,13 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
         """
 
         return self.frame_index
+
+    def get_texture(self) -> pyglet.image.Texture:
+        """
+        Returns the texture currently being displayed.
+        """
+
+        return self._texture
 
     @property
     def group(self):
