@@ -181,7 +181,9 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
             parent = group,
             samplers_2d = self.samplers_2d
         )
-        self._batch.migrate(self._vertex_list, gl.GL_TRIANGLES, self._group, self._batch)
+
+        if self._batch is not None:
+            self._batch.migrate(self._vertex_list, gl.GL_TRIANGLES, self._group, self._batch)
 
     # This method is overridden because the group needs to have all samplers by the time it draws to screen.
     def _set_texture(self, texture):
@@ -194,11 +196,13 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
                 parent = self._group.parent,
                 samplers_2d = self.samplers_2d
             )
-            self._vertex_list.delete()
+            if self._vertex_list is not None:
+                self._vertex_list.delete()
             self._texture = texture
             self._create_vertex_list()
         else:
-            self._vertex_list.tex_coords[:] = texture.tex_coords
+            if self._vertex_list is not None:
+                self._vertex_list.tex_coords[:] = texture.tex_coords
         self._texture = texture
 
     @property
@@ -217,5 +221,6 @@ class DepthSprite(pyglet.sprite.AdvancedSprite):
             parent = self._group,
             samplers_2d = self.samplers_2d
         )
-        self._batch.migrate(self._vertex_list, gl.GL_TRIANGLES, self._group, self._batch)
+        if self._batch is not None:
+            self._batch.migrate(self._vertex_list, gl.GL_TRIANGLES, self._group, self._batch)
         self._program = program
