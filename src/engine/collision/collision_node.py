@@ -15,7 +15,8 @@ class CollisionNode(PositionNode):
         self,
         x: float = 0,
         y: float = 0,
-        tags: List[str] = [],
+        active_tags: List[str] = [],
+        passive_tags: List[str] = [],
         collision_type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
         shapes: List[CollisionShape] = [],
@@ -27,7 +28,8 @@ class CollisionNode(PositionNode):
         self.velocity_x = 0.0
         self.velocity_y = 0.0
 
-        self.tags = tags
+        self.active_tags = active_tags
+        self.passive_tags = passive_tags
         self.type = collision_type
         self.sensor = sensor
         self.shapes: List[CollisionShape] = shapes
@@ -82,7 +84,7 @@ class CollisionNode(PositionNode):
         collision_hit = None
 
         # Make sure there's at least one matching tag.
-        if bool(set(self.tags) & set(other.tags)):
+        if bool(set(self.active_tags) & set(other.passive_tags)):
 
             # Only consider the first shape for now.
             # TODO Use all shapes.
@@ -96,9 +98,9 @@ class CollisionNode(PositionNode):
 
                 # Collision enter callback.
                 if self.on_triggered is not None:
-                    self.on_triggered(other.tags, True)
+                    self.on_triggered(other.passive_tags, True)
                 if other.on_triggered is not None:
-                    other.on_triggered(self.tags, True)
+                    other.on_triggered(self.active_tags, True)
             elif other in self.collisions and collision_hit is None:
                 # Remove if not colliding anymore.
                 self.collisions.remove(other)
@@ -106,8 +108,8 @@ class CollisionNode(PositionNode):
 
                 # Collision exit callback.
                 if self.on_triggered is not None:
-                    self.on_triggered(other.tags, False)
+                    self.on_triggered(other.active_tags, False)
                 if other.on_triggered is not None:
-                    other.on_triggered(self.tags, False)
+                    other.on_triggered(self.active_tags, False)
 
         return collision_hit

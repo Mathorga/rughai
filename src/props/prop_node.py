@@ -140,7 +140,7 @@ class IdlePropNode(PositionNode):
                     x = x,
                     y = y,
                     collision_type = CollisionType.STATIC,
-                    tags = collider_data["tags"],
+                    passive_tags = collider_data["tags"],
                     shapes = [
                         CollisionRect(
                             x = x + collider_data["offset_x"],
@@ -164,7 +164,7 @@ class IdlePropNode(PositionNode):
                     x = x,
                     y = y,
                     collision_type = CollisionType.STATIC,
-                    tags = sensor_data["tags"],
+                    passive_tags = sensor_data["tags"],
                     sensor = True,
                     shapes = [
                         CollisionRect(
@@ -295,7 +295,7 @@ class IdlePropIdleState(IdlePropState):
     def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
         if collision_tags.DAMAGE in tags and enter:
             return self.hit()
-        else:
+        elif collision_tags.PLAYER_SENSE in tags:
             if enter:
                 return IdlePropStates.MEET_IN
             else:

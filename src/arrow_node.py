@@ -74,7 +74,7 @@ class ArrowNode(PositionNode):
             y = y,
             sensor = True,
             collision_type = CollisionType.DYNAMIC,
-            tags = [
+            active_tags = [
                 collision_tags.PLAYER_COLLISION,
                 collision_tags.PLAYER_SENSE,
                 collision_tags.DAMAGE

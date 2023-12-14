@@ -22,7 +22,7 @@ class ColumnNode(PositionNode):
             x = x,
             y = y,
             collision_type = CollisionType.STATIC,
-            tags = [collision_tags.PLAYER_COLLISION],
+            active_tags = [collision_tags.PLAYER_COLLISION],
             shapes = [
                 CollisionCircle(
                     x = x,
@@ -53,7 +53,7 @@ class WallNode(PositionNode):
             x = x,
             y = y,
             collision_type = CollisionType.STATIC,
-            tags = [collision_tags.PLAYER_COLLISION],
+            active_tags = [collision_tags.PLAYER_COLLISION],
             shapes = [
                 CollisionRect(
                     x = x,

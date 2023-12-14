@@ -47,7 +47,7 @@ class DialogNode(PositionNode):
             y = y,
             sensor = True,
             collision_type = CollisionType.STATIC,
-            tags = [] if tags is None else list(tags),
+            active_tags = [] if tags is None else list(tags),
             on_triggered = lambda tags, entered: controllers.INTERACTION_CONTROLLER.toggle(self.interaction, enable = entered),
             shapes = [
                 CollisionRect(

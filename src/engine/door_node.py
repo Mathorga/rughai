@@ -24,7 +24,7 @@ class DoorNode(PositionNode):
         self.collider = CollisionNode(
             x = x,
             y = y,
-            tags = tags,
+            active_tags = tags,
             sensor = True,
             on_triggered = on_triggered,
             shapes = [
