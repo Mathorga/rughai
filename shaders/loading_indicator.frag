@@ -28,9 +28,4 @@ void main() {
     if (texture_coords.x > (ne_coord.x - sw_coord.x) * value + sw_coord.x) {
         final_color.a = 0.0;
     }
-
-    // No GL_ALPHA_TEST in core, use shader to discard.
-    // if (final_color.a < 0.01) {
-    //     discard;
-    // }
 }
