@@ -86,7 +86,7 @@ class R_0_1(PlayableSceneNode):
             y = 32 * self.__tile_size,
             width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_COLLISION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -106,7 +106,7 @@ class R_0_1(PlayableSceneNode):
             y = 0,
             width = 10 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_COLLISION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -126,7 +126,7 @@ class R_0_1(PlayableSceneNode):
             y = -2 * self.__tile_size,
             width = 16 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_COLLISION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,

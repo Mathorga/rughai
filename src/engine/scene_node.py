@@ -1,4 +1,7 @@
-from typing import Callable, Optional, Sequence, Tuple, Union
+import math
+import random
+import threading
+from typing import Callable, List, Optional, Sequence, Tuple, Union
 import pyglet
 import pyglet.math as pm
 
@@ -73,9 +76,10 @@ class SceneNode(Node):
         self.__cam_speed = cam_speed
         self.__cam_target = None
         self.__cam_bounds = cam_bounds
+        self.__cam_shake: float = 0.0
 
         # List of all children.
-        self.__children = []
+        self.__children: List[Node] = []
 
         # Scene title.
         if title is not None and SETTINGS[Builtins.DEBUG]:
@@ -153,16 +157,19 @@ class SceneNode(Node):
         if self.__camera is not None and self.__cam_target is not None:
             scaled_view_size = self.get_scaled_view_size()
 
+            # Compute camera shake.
+            camera_shake: pm.Vec2 = pm.Vec2.from_polar(mag = self.__cam_shake * random.random(), angle = math.pi * 2 * random.random())
+
             # Compute camera movement from camera target.
-            camera_movement = pm.Vec2(
+            camera_movement: pm.Vec2 = pm.Vec2(
                 (self.__cam_target.x * GLOBALS[Builtins.SCALING] - scaled_view_size[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
                 (self.__cam_target.y * GLOBALS[Builtins.SCALING] - scaled_view_size[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
-            )
+            ) + camera_shake
 
-            updated_x = self.__camera.position[0] + camera_movement.x
-            updated_y = self.__camera.position[1] + camera_movement.y
+            updated_x: float = self.__camera.position[0] + camera_movement.x
+            updated_y: float = self.__camera.position[1] + camera_movement.y
 
-            if self.__cam_bounds is not None and not SETTINGS[Builtins.FREE_CAM_BOUNDS]:
+            if self.__cam_bounds is not None and not (SETTINGS[Builtins.DEBUG] and SETTINGS[Builtins.FREE_CAM_BOUNDS]):
                 # Apply bounds to camera movement by limiting updated position.
                 if self.__cam_bounds.top is not None and self.__cam_bounds.top * GLOBALS[Builtins.SCALING] < updated_y + self.__view_height * GLOBALS[Builtins.SCALING]:
                     updated_y = self.__cam_bounds.top * GLOBALS[Builtins.SCALING] - self.__view_height * GLOBALS[Builtins.SCALING]
@@ -174,15 +181,12 @@ class SceneNode(Node):
                     updated_x = self.__cam_bounds.right * GLOBALS[Builtins.SCALING] - self.__view_width * GLOBALS[Builtins.SCALING]
 
             # Actually update camera position.
-            # Values are rounded in order not to cause subpixel movements and therefore texture bleeding.
             self.__camera.position = (
                 updated_x,
                 updated_y
-                # round(updated_x),
-                # round(updated_y)
             )
 
-    def update(self, dt):
+    def update(self, dt: float):
         # Update curtain.
         self.__update_curtain(dt)
 
@@ -192,6 +196,40 @@ class SceneNode(Node):
 
         # Update camera.
         self.__update_camera(dt)
+
+    def get_cam_bounds(self) -> Bounds:
+        return self.__cam_bounds
+
+    def get_cam_shake(self) -> float:
+        """
+        Returns the current max amount of camera shake (in pixels).
+        """
+
+        return self.__cam_shake
+
+    def set_cam_bounds(
+        self,
+        bounds: Bounds
+    ) -> None:
+        self.__cam_bounds = bounds
+
+    def set_cam_shake(self, magnitude: float) -> None:
+        """
+        Sets the amount of camera shake.
+        [magnitude] defines the maximum amount of displacement (in pixels).
+        """
+
+        self.__cam_shake = magnitude
+
+    def shake_camera(self, magnitude: float, duration: float) -> None:
+        """
+        Shakes the camera for [duration] seconds with [magnitude] max amplitude.
+        """
+
+        self.set_cam_shake(magnitude = magnitude)
+
+        timer: threading.Timer = threading.Timer(interval = duration, function = self.set_cam_shake, args = [0.0])
+        timer.start()
 
     def add_child(
         self,
@@ -242,15 +280,6 @@ class SceneNode(Node):
 
         self.__curtain = None
         self.__camera = None
-
-    def get_cam_bounds(self) -> Bounds:
-        return self.__cam_bounds
-
-    def set_cam_bounds(
-        self,
-        bounds: Bounds
-    ) -> None:
-        self.__cam_bounds = bounds
 
     def end(self):
         self.__curtain_opening = False

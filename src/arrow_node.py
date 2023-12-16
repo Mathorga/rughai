@@ -76,7 +76,6 @@ class ArrowNode(PositionNode):
             collision_type = CollisionType.DYNAMIC,
             active_tags = [
                 collision_tags.PLAYER_COLLISION,
-                collision_tags.PLAYER_SENSE,
                 collision_tags.DAMAGE
             ],
             on_triggered = self.on_collision,
@@ -125,6 +124,7 @@ class ArrowNode(PositionNode):
         aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2.from_polar(self.sprite_distance, self.direction)
         # Since sprites may be deleted before set_position is called, the whole section is trapped.
         # TODO This only happens for ArrowOutState, so needs a little check (it should happen for ArrowHitState as well).
+        # May this have to do with frustum culling?
         try:
             for index, sprite in enumerate(self.sprites):
                     sprite.set_position(

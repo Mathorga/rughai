@@ -1,5 +1,6 @@
 from typing import Callable, List, Optional
 import pyglet
+from constants import collision_tags
 
 from engine.door_node import DoorNode
 from engine.node import PositionNode
@@ -68,6 +69,7 @@ class TestRoom(PlayableSceneNode):
                 y = self.__tile_size * 25,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 1,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -75,6 +77,7 @@ class TestRoom(PlayableSceneNode):
                 y = self.__tile_size * 25,
                 width = self.__tile_size * 1,
                 height = self.__tile_size * 4,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -82,6 +85,7 @@ class TestRoom(PlayableSceneNode):
                 y = self.__tile_size * 28,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 1,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -89,6 +93,7 @@ class TestRoom(PlayableSceneNode):
                 y = self.__tile_size * 25,
                 width = self.__tile_size * 1,
                 height = self.__tile_size * 4,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
 

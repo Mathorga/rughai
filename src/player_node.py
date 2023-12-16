@@ -287,7 +287,7 @@ class PlayerNode(PositionNode):
         Updates the draw indicator.
         """
 
-        draw_indicator_value = pm.clamp(
+        draw_indicator_value: float = pm.clamp(
             num = self.draw_time,
             min_val = 0.0,
             max_val = self.stats.min_draw_time
@@ -307,9 +307,9 @@ class PlayerNode(PositionNode):
 
     def __update_cam_target(self, dt: float):
         # Automatically go to cam target distance if loading or aiming.
-        cam_target_distance = self.__cam_target_distance * self.__cam_target_distance_mag
+        cam_target_distance: float = self.__cam_target_distance * self.__cam_target_distance_mag
 
-        cam_target_vec = pyglet.math.Vec2.from_polar(cam_target_distance, self.stats.look_dir)
+        cam_target_vec: pyglet.math.Vec2 = pyglet.math.Vec2.from_polar(cam_target_distance, self.stats.look_dir)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
         self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
         self.__cam_target.update(dt)
@@ -767,6 +767,9 @@ class PlayerDrawState(PlayerState):
         self.__aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
         self.__draw: bool = False
 
+        # Misc.
+        self.__max_cam_shake: float = 1.0
+
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
@@ -793,8 +796,14 @@ class PlayerDrawState(PlayerState):
         self.actor.stats.look_dir = self.__aim_vec.heading
 
         # Build shoot magnitude.
-        shoot_mag: float = self.actor.get_shoot_mag()
-        self.actor.set_shoot_mag(shoot_mag + dt)
+        if self.actor.draw_time >= self.actor.stats.min_draw_time:
+            shoot_mag: float = self.actor.get_shoot_mag()
+            self.actor.set_shoot_mag(shoot_mag + dt)
+
+            if scenes.ACTIVE_SCENE is not None:
+                current_cam_shake: float = scenes.ACTIVE_SCENE.get_cam_shake()
+                if current_cam_shake < self.__max_cam_shake:
+                    scenes.ACTIVE_SCENE.set_cam_shake(current_cam_shake + 0.01)
 
         # Check for state changes.
         if self.__move:
@@ -803,9 +812,18 @@ class PlayerDrawState(PlayerState):
         if self.__aim_vec.mag <= 0.0:
             # Reset shoot magnitude.
             self.actor.set_shoot_mag(0.0)
+
+            # Reset cam shake.
+            if scenes.ACTIVE_SCENE is not None:
+                scenes.ACTIVE_SCENE.set_cam_shake(0.0)
+
             return PlayerStates.IDLE
 
         if not self.__draw:
+            # Reset cam shake.
+            if scenes.ACTIVE_SCENE is not None:
+                scenes.ACTIVE_SCENE.set_cam_shake(0.0)
+
             if self.actor.draw_time > self.actor.stats.min_draw_time:
                 return PlayerStates.SHOOT
             else:
@@ -825,6 +843,9 @@ class PlayerDrawWalkState(PlayerState):
         self.__move_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
         self.__aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
         self.__draw: bool = False
+
+        # Misc.
+        self.__max_cam_shake: float = 1.0
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
@@ -865,8 +886,14 @@ class PlayerDrawWalkState(PlayerState):
         self.actor.move(dt = dt)
 
         # Build shoot magnitude.
-        shoot_mag: float = self.actor.get_shoot_mag()
-        self.actor.set_shoot_mag(shoot_mag + dt)
+        if self.actor.draw_time >= self.actor.stats.min_draw_time:
+            shoot_mag: float = self.actor.get_shoot_mag()
+            self.actor.set_shoot_mag(shoot_mag + dt)
+
+            if scenes.ACTIVE_SCENE is not None:
+                current_cam_shake: float = scenes.ACTIVE_SCENE.get_cam_shake()
+                if current_cam_shake < self.__max_cam_shake:
+                    scenes.ACTIVE_SCENE.set_cam_shake(current_cam_shake + 0.01)
 
         # Check for state changes.
         if self.__move_vec.mag <= 0:
@@ -875,9 +902,18 @@ class PlayerDrawWalkState(PlayerState):
         if self.__aim_vec.mag <= 0.0:
             # Reset shoot magnitude.
             self.actor.set_shoot_mag(0.0)
+
+            # Reset cam shake.
+            if scenes.ACTIVE_SCENE is not None:
+                scenes.ACTIVE_SCENE.set_cam_shake(0.0)
+
             return PlayerStates.IDLE
 
         if not self.__draw:
+            # Reset cam shake.
+            if scenes.ACTIVE_SCENE is not None:
+                scenes.ACTIVE_SCENE.set_cam_shake(0.0)
+
             if self.actor.draw_time > self.actor.stats.min_draw_time:
                 return PlayerStates.SHOOT
             else:
@@ -908,6 +944,8 @@ class PlayerShootState(PlayerState):
                 direction = self.actor.stats.look_dir,
                 batch = self.actor.batch
             ))
+
+            scenes.ACTIVE_SCENE.shake_camera(magnitude = 10.0, duration = 0.1)
 
     def end(self) -> None:
         # Reset shoot magnitude.

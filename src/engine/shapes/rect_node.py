@@ -24,7 +24,7 @@ class RectNode(ShapeNode):
             color = color
         )
 
-        self.__shape = pyglet.shapes.Rectangle(
+        self.__shape: pyglet.shapes.Rectangle = pyglet.shapes.Rectangle(
             x = x * GLOBALS[Builtins.SCALING],
             y = y * GLOBALS[Builtins.SCALING],
             width = width * GLOBALS[Builtins.SCALING],

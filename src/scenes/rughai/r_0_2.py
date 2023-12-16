@@ -95,7 +95,7 @@ class R_0_2(PlayableSceneNode):
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -117,7 +117,7 @@ class R_0_2(PlayableSceneNode):
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -139,7 +139,7 @@ class R_0_2(PlayableSceneNode):
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
