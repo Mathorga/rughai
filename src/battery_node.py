@@ -68,7 +68,7 @@ class BatteryNode(PositionNode):
             y = y,
             sensor = True,
             collision_type = CollisionType.STATIC,
-            active_tags = [collision_tags.PLAYER_INTERACTION],
+            passive_tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda tags, entered: controllers.INTERACTION_CONTROLLER.toggle(self.interaction, enable = entered),
             shapes = [
                 CollisionRect(

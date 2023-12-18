@@ -65,6 +65,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 6,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -72,6 +73,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -79,6 +81,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 38,
                 width = self.__tile_size * 5,
                 height = self.__tile_size,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -86,6 +89,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 38,
                 width = self.__tile_size,
                 height = self.__tile_size * 3,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -93,6 +97,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 40,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -100,6 +105,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 34,
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -107,6 +113,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 34,
                 width = self.__tile_size * 4,
                 height = self.__tile_size,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -114,6 +121,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 32,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -121,6 +129,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 32,
                 width = self.__tile_size * 2,
                 height = self.__tile_size,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
 
@@ -130,6 +139,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 29,
                 width = self.__tile_size,
                 height = self.__tile_size * 7,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -137,6 +147,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 34,
                 width = self.__tile_size,
                 height = self.__tile_size * 8,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -144,6 +155,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 41,
                 width = self.__tile_size,
                 height = self.__tile_size * 5,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -151,6 +163,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 29,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -158,6 +171,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 27,
                 width = self.__tile_size,
                 height = self.__tile_size * 2,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             WallNode(
@@ -165,6 +179,7 @@ class R_0_0(PlayableSceneNode):
                 y = self.__tile_size * 25,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 2,
+                tags = [collision_tags.PLAYER_COLLISION],
                 batch = scenes.ACTIVE_SCENE.world_batch
             )
         ]
@@ -201,7 +216,7 @@ class R_0_0(PlayableSceneNode):
             y = 0,
             width = 32 * self.__tile_size,
             height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_COLLISION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -221,7 +236,7 @@ class R_0_0(PlayableSceneNode):
             y = 27 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 19 * self.__tile_size,
-            tags = [collision_tags.PLAYER_COLLISION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,

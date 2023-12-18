@@ -1,7 +1,6 @@
-from typing import Optional
+from typing import List, Optional
 import pyglet
 
-from constants import collision_tags
 from engine import controllers
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle, CollisionRect
@@ -13,16 +12,20 @@ class ColumnNode(PositionNode):
         x: float = 0,
         y: float = 0,
         radius: int = 1,
+        tags: Optional[List[str]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
+
+        if tags is None:
+            tags = []
 
         # Collider.
         self.__collider = CollisionNode(
             x = x,
             y = y,
             collision_type = CollisionType.STATIC,
-            active_tags = [collision_tags.PLAYER_COLLISION],
+            passive_tags = tags,
             shapes = [
                 CollisionCircle(
                     x = x,
@@ -44,16 +47,20 @@ class WallNode(PositionNode):
         y: float = 0,
         width: int = 8,
         height: int = 8,
+        tags: Optional[List[str]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y)
+
+        if tags is None:
+            tags = []
 
         # Collider.
         self.__collider = CollisionNode(
             x = x,
             y = y,
             collision_type = CollisionType.STATIC,
-            active_tags = [collision_tags.PLAYER_COLLISION],
+            passive_tags = tags,
             shapes = [
                 CollisionRect(
                     x = x,
