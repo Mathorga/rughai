@@ -4,7 +4,7 @@ import pyglet
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.utils import set_offset
+from engine.utils import Tween, set_offset
 
 class LoadingIndicatorNode(PositionNode):
     def __init__(
@@ -112,7 +112,7 @@ class LoadingIndicatorNode(PositionNode):
         # Also pass bottom-left and top-right texture coords.
         self.shader_program["sw_coord"] = texture_coords[0:3]
         self.shader_program["ne_coord"] = texture_coords[6:9]
-        self.shader_program["value"] = value
+        self.shader_program["value"] = Tween.compute(value, Tween.cubeIn)
 
     def delete(self) -> None:
         self.foreground_sprite.delete()
