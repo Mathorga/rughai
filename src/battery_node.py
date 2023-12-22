@@ -2,13 +2,14 @@ from typing import Callable, Optional
 import pyglet
 
 from constants import collision_tags
-from engine import controllers, utils
+from engine import controllers
 from engine.interaction_node import InteractionNode
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
+from engine.utils import utils
 
 class BatteryNode(PositionNode):
     def __init__(

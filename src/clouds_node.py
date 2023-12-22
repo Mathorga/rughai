@@ -4,7 +4,7 @@ import pyglet
 
 from engine.node import Node
 from engine.scene_node import Bounds
-from engine.utils import rect_rect_check
+from engine.utils.utils import rect_rect_check
 
 from cloud_node import CloudNode
 

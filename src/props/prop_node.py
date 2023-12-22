@@ -10,7 +10,7 @@ from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
-from engine.utils import set_animation_anchor
+from engine.utils.utils import set_animation_anchor
 from constants import collision_tags
 
 class IdlePropStates(str, Enum):

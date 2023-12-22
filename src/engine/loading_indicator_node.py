@@ -4,7 +4,8 @@ import pyglet
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.utils import Tween, set_offset
+from engine.utils.tween import Tween
+from engine.utils.utils import set_offset
 
 class LoadingIndicatorNode(PositionNode):
     def __init__(

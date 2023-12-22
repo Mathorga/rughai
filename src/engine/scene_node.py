@@ -12,7 +12,7 @@ from engine.shapes.rect_node import RectNode
 from engine.text_node import TextNode
 
 # Defines at which point the scene should be considered started while the curtain is opening.
-SCENE_START_THRESHOLD = 0x80
+SCENE_START_THRESHOLD: int = 0x80
 
 class Bounds:
     def __init__(

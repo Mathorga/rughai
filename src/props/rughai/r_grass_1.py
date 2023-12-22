@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 import pyglet
 
 from engine.node import PositionNode
-from engine.utils import set_animation_anchor
+from engine.utils.utils import set_animation_anchor
 from props.prop_node import PropNode
 
 class RGrass1(PositionNode):

@@ -5,26 +5,25 @@ Module containing the main player's classes.
 from enum import Enum
 import math
 from typing import Optional, Tuple
-
 import pyglet
 import pyglet.math as pm
-from arrow_node import ArrowNode
+
 from engine.loading_indicator_node import LoadingIndicatorNode
-from engine.utils import Tween, scale
-from scope_node import ScopeNode
-
-from constants import collision_tags, scenes
+from engine.utils.utils import scale
+from engine.utils.tween import Tween
+import engine.controllers as controllers
 from engine.animation import Animation
-
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.settings import SETTINGS, Builtins
-
-import engine.controllers as controllers
 from engine.state_machine import State, StateMachine
+
+from constants import collision_tags, scenes
+from scope_node import ScopeNode
 from player_stats import PlayerStats
+from arrow_node import ArrowNode
 
 class PlayerStates(str, Enum):
     IDLE = "idle"

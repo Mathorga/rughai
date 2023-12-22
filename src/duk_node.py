@@ -4,7 +4,7 @@ import pyglet
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine import utils
+from engine.utils import utils
 
 class DukNode(PositionNode):
     def __init__(

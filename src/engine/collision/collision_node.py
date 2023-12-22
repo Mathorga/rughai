@@ -4,7 +4,7 @@ import pyglet.math as pm
 
 from engine.collision.collision_shape import CollisionShape
 from engine.node import PositionNode
-from engine.utils import CollisionHit
+from engine.utils.utils import CollisionHit
 
 class CollisionType(Enum):
     STATIC = 0

@@ -1,0 +1,94 @@
+import math
+from typing import Callable
+
+class Tween:
+    """
+    Class representing a tween transformation between 0 and 1.
+    Exposes a [compute] method which returns the provided value mapped using the provided function.
+
+    Exposes the following list of transformation functions:
+     - linear
+     - sineIn
+     - sineOut
+     - sineInOut
+     - quadIn
+     - quadOut
+     - quadInOut
+     - cubeIn
+     - cubeOut
+     - cubeInOut
+     - expIn
+     - expOut
+     - expInOut
+
+    https://easings.net/
+    https://github.com/ai/easings.net/blob/master/src/easings/easingsFunctions.ts
+    """
+    @staticmethod
+    def linear(x: float) -> float:
+        return x
+
+    @staticmethod
+    def sineIn(x: float) -> float:
+        return 1.0 - math.cos((x * math.pi) / 2.0)
+
+    @staticmethod
+    def sineOut(x: float) -> float:
+        return math.sin((x * math.pi) / 2.0)
+
+    @staticmethod
+    def sineInOut(x: float) -> float:
+        return -(math.cos(math.pi * x) - 1.0) / 2.0
+
+    @staticmethod
+    def quadIn(x: float) -> float:
+        return x ** 2.0
+
+    @staticmethod
+    def quadOut(x: float) -> float:
+        return 1.0 - ((1.0 - x) ** 2.0)
+
+    @staticmethod
+    def quadInOut(x: float) -> float:
+        return 2.0 * x * x if x < 0.5 else 1.0 - ((-2.0 * x + 2.0) ** 2.0) / 2.0
+
+    @staticmethod
+    def cubeIn(x: float) -> float:
+        return x ** 3.0
+
+    @staticmethod
+    def cubeOut(x: float) -> float:
+        return 1.0 - (1 - x) ** 3.0
+
+    @staticmethod
+    def cubeInOut(x: float) -> float:
+        return 4.0 * (x ** 3.0) if x < 0.5 else 1.0 - ((-2.0 * x + 2.0) ** 3.0) / 2.0
+
+    @staticmethod
+    def expIn(x: float) -> float:
+        return 0.0 if x == 0.0 else (2.0 ** (10.0 * x - 10.0))
+
+    @staticmethod
+    def expOut(x: float) -> float:
+        return 1.0 if x == 1.0 else 1.0 - (2.0 ** (-10.0 * x))
+
+    @staticmethod
+    def expInOut(x: float) -> float:
+        return 0.0 if x == 0.0 else 1.0 if x == 1.0 else (2.0 ** (20.0 * x - 10.0)) / 2.0 if x < 0.5 else (2.0 - (2.0 ** (-20.0 * x + 10.0))) / 2.0
+
+    @staticmethod
+    def compute(value: float, function: Callable[[float], float]) -> float:
+        """
+        Maps the provided value using the provided function.
+
+        Parameters:
+        value (float): The value to map.
+
+        Returns:
+        int:Returning value
+
+        """
+        # Make sure the provided value is in range.
+        assert value >= 0.0 and value <= 1.0, "Value should be between 0.0 and 1.0"
+
+        return function(value)

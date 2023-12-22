@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 
 from engine.collision.collision_node import CollisionType, CollisionNode
-from engine.utils import CollisionHit
+from engine.utils.utils import CollisionHit
 
 class CollisionController:
     # TODO Swept collisions.

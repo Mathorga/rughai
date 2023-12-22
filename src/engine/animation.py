@@ -6,7 +6,7 @@ import json
 from typing import Any, Dict
 import pyglet
 
-from engine import utils
+from engine.utils import utils
 
 class Animation:
     """
