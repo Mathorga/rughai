@@ -10,7 +10,7 @@ import pyglet
 import pyglet.math as pm
 from arrow_node import ArrowNode
 from engine.loading_indicator_node import LoadingIndicatorNode
-from engine.utils import scale
+from engine.utils import Tween, scale
 from scope_node import ScopeNode
 
 from constants import collision_tags, scenes
@@ -103,6 +103,7 @@ class PlayerNode(PositionNode):
             x = self.x,
             y = self.y,
             offset_y = 4.0,
+            ease_function = Tween.cubeIn,
             batch = batch
         )
 

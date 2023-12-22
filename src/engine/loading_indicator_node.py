@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Tuple, Union
+from typing import Callable, Optional, Tuple, Union
 import pyglet
 
 from engine.node import PositionNode
@@ -18,6 +18,7 @@ class LoadingIndicatorNode(PositionNode):
         offset_x: float = 0.0,
         offset_y: float = 0.0,
         starting_value: float = 1.0,
+        ease_function: Callable[[float], float] = Tween.linear,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z)
@@ -43,6 +44,8 @@ class LoadingIndicatorNode(PositionNode):
                 y = offset_y,
                 center = True
             )
+
+        self.__ease_function = ease_function
 
         # Load shader sources from file.
         fragment_source: str
@@ -112,7 +115,7 @@ class LoadingIndicatorNode(PositionNode):
         # Also pass bottom-left and top-right texture coords.
         self.shader_program["sw_coord"] = texture_coords[0:3]
         self.shader_program["ne_coord"] = texture_coords[6:9]
-        self.shader_program["value"] = Tween.compute(value, Tween.cubeIn)
+        self.shader_program["value"] = Tween.compute(value, self.__ease_function)
 
     def delete(self) -> None:
         self.foreground_sprite.delete()
