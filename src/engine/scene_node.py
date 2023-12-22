@@ -57,7 +57,7 @@ class SceneNode(Node):
         title: Optional[str] = None,
         on_scene_start: Optional[Callable[[], None]] = None,
         on_scene_end: Optional[Callable[[], None]] = None,
-        cam_speed: float = 10.0,
+        default_cam_speed: float = 10.0,
         curtain_speed: int = 200,
         cam_bounds: Optional[Bounds] = None
     ):
@@ -73,10 +73,13 @@ class SceneNode(Node):
         self.__camera = Camera(
             window = window
         )
-        self.__cam_speed = cam_speed
+        self.__default_cam_speed = default_cam_speed
+        self.__cam_speed = default_cam_speed
         self.__cam_target = None
         self.__cam_bounds = cam_bounds
         self.__cam_shake: float = 0.0
+        self.__cam_impulse: pyglet.math.Vec2 = pyglet.math.Vec2(0.0, 0.0)
+        self.__cam_impulse_damp: float = 1.0
 
         # List of all children.
         self.__children: List[Node] = []
@@ -164,7 +167,7 @@ class SceneNode(Node):
             camera_movement: pm.Vec2 = pm.Vec2(
                 (self.__cam_target.x * GLOBALS[Builtins.SCALING] - scaled_view_size[0] / 2 - self.__camera.position[0]) * self.__cam_speed * dt,
                 (self.__cam_target.y * GLOBALS[Builtins.SCALING] - scaled_view_size[1] / 2 - self.__camera.position[1]) * self.__cam_speed * dt
-            ) + camera_shake
+            ) + camera_shake + self.__cam_impulse
 
             updated_x: float = self.__camera.position[0] + camera_movement.x
             updated_y: float = self.__camera.position[1] + camera_movement.y
@@ -179,6 +182,12 @@ class SceneNode(Node):
                     updated_x = self.__cam_bounds.left * GLOBALS[Builtins.SCALING]
                 if self.__cam_bounds.right is not None and self.__cam_bounds.right * GLOBALS[Builtins.SCALING] < updated_x + self.__view_width * GLOBALS[Builtins.SCALING]:
                     updated_x = self.__cam_bounds.right * GLOBALS[Builtins.SCALING] - self.__view_width * GLOBALS[Builtins.SCALING]
+
+            # Damp down impulse.
+            if self.__cam_impulse.mag > 0.0:
+                self.__cam_impulse = self.__cam_impulse.from_magnitude(magnitude = self.__cam_impulse.mag - self.__cam_impulse_damp)
+                if self.__cam_impulse.mag < 0.0:
+                    self.__cam_impulse = pyglet.math.Vec2(0.0, 0.0)
 
             # Actually update camera position.
             self.__camera.position = (
@@ -220,6 +229,25 @@ class SceneNode(Node):
         """
 
         self.__cam_shake = magnitude
+
+    def set_cam_speed(
+        self,
+        speed: float
+    ) -> None:
+        """
+        Sets the camera speed to the provided speed value.
+        """
+
+        self.__cam_speed = speed
+
+    def set_cam_impulse(
+        self,
+        impulse: pyglet.math.Vec2
+    ) -> None:
+        """
+        Applies the provided impulse to the camera, effectively moving it.
+        """
+        self.__cam_impulse = impulse
 
     def shake_camera(self, magnitude: float, duration: float) -> None:
         """

@@ -1,6 +1,12 @@
 import math
 from typing import Callable
 
+c1: float = 1.70158
+c2: float = c1 * 1.525
+c3: float = c1 + 1
+c4: float = (2 * math.pi) / 3
+c5: float = (2 * math.pi) / 4.5
+
 class Tween:
     """
     Class representing a tween transformation between 0 and 1.
@@ -20,6 +26,9 @@ class Tween:
      - expIn
      - expOut
      - expInOut
+     - backIn
+     - backOut
+     - backInOut
 
     https://easings.net/
     https://github.com/ai/easings.net/blob/master/src/easings/easingsFunctions.ts
@@ -75,6 +84,18 @@ class Tween:
     @staticmethod
     def expInOut(x: float) -> float:
         return 0.0 if x == 0.0 else 1.0 if x == 1.0 else (2.0 ** (20.0 * x - 10.0)) / 2.0 if x < 0.5 else (2.0 - (2.0 ** (-20.0 * x + 10.0))) / 2.0
+
+    @staticmethod
+    def backIn(x: float) -> float:
+        return c3 * x * x * x - c1 * x * x
+
+    @staticmethod
+    def backOut(x: float) -> float:
+        return 1 + c3 * ((x - 1) ** 3) + c1 * ((x - 1) ** 2)
+
+    @staticmethod
+    def backInOut(x: float) -> float:
+        return (((2 * x) ** 2) * ((c2 + 1) * 2 * x - c2)) / 2 if x < 0.5 else (((2 * x - 2) ** 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2
 
     @staticmethod
     def compute(value: float, function: Callable[[float], float]) -> float:

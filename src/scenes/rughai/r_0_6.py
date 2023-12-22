@@ -45,7 +45,7 @@ class R_0_6(PlayableSceneNode):
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
-            cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = "R_0_6",
             on_scene_end = self._on_scene_end
         )

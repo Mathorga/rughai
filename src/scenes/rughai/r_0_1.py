@@ -38,7 +38,7 @@ class R_0_1(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = "R_0_1",
             on_scene_end = self._on_scene_end,
             on_scene_start = self._on_scene_start

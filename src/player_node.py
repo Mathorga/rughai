@@ -102,7 +102,7 @@ class PlayerNode(PositionNode):
             x = self.x,
             y = self.y,
             offset_y = 4.0,
-            ease_function = Tween.cubeIn,
+            ease_function = Tween.expInOut,
             batch = batch
         )
 
@@ -903,6 +903,8 @@ class PlayerShootState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
+        # self.actor.set_cam_target_distance_mag(mag = 0.0)
+
         # Create a projectile.
         if scenes.ACTIVE_SCENE is not None:
             scenes.ACTIVE_SCENE.add_child(ArrowNode(
@@ -913,7 +915,8 @@ class PlayerShootState(PlayerState):
                 batch = self.actor.batch
             ))
 
-            scenes.ACTIVE_SCENE.shake_camera(magnitude = 5.0, duration = 0.1)
+            scenes.ACTIVE_SCENE.set_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 20.0, angle = self.actor.stats.look_dir + math.pi))
+            # scenes.ACTIVE_SCENE.shake_camera(magnitude = 5.0, duration = 0.1)
 
     def end(self) -> None:
         # Reset shoot magnitude.

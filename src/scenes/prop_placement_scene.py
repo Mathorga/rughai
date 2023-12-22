@@ -347,7 +347,7 @@ class PropPlacementScene(Node):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
             title = scene_name
         )
 
