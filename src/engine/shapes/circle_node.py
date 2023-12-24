@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 import pyglet
 
-from engine.settings import GLOBALS, Builtins
+from engine.settings import GLOBALS, Keys
 from engine.shapes.shape_node import ShapeNode
 
 class CircleNode(ShapeNode):
@@ -22,9 +22,9 @@ class CircleNode(ShapeNode):
         self.__radius = radius
 
         self.__shape = pyglet.shapes.Circle(
-            x = x * GLOBALS[Builtins.SCALING],
-            y = y * GLOBALS[Builtins.SCALING],
-            radius = radius * GLOBALS[Builtins.SCALING],
+            x = x * GLOBALS[Keys.SCALING],
+            y = y * GLOBALS[Keys.SCALING],
+            radius = radius * GLOBALS[Keys.SCALING],
             color = color,
             batch = batch
         )
@@ -39,10 +39,10 @@ class CircleNode(ShapeNode):
 
     def set_position(self, position: Tuple[int, int]) -> None:
         self.x = position[0]
-        self.__shape.x = self.x * GLOBALS[Builtins.SCALING]
+        self.__shape.x = self.x * GLOBALS[Keys.SCALING]
 
         self.y = position[1]
-        self.__shape.y = self.y * GLOBALS[Builtins.SCALING]
+        self.__shape.y = self.y * GLOBALS[Keys.SCALING]
 
     def set_opacity(self, opacity: float):
         self.__shape.opacity = opacity

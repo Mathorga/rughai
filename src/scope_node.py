@@ -4,7 +4,7 @@ import pyglet
 from engine.animation import Animation
 
 from engine.node import PositionNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
 
@@ -92,7 +92,7 @@ class ScopeNode(PositionNode):
                     position[0] + self.sprite_offset[0] + aim_vec.x + aim_vec.x * self.sprites_delta * (index + 1),
                     position[1] + self.sprite_offset[1] + aim_vec.y + aim_vec.y * self.sprites_delta * (index + 1)
                 ),
-                z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
+                z = position[1] + SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
             )
 
     def set_direction(

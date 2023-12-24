@@ -9,7 +9,7 @@ from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.wall_node import WallNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 
 from constants import collision_tags
 from player_node import PlayerNode
@@ -41,7 +41,7 @@ class R_0_0(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Keys.CAMERA_SPEED],
             title = "R_0_0",
             on_scene_start = self._on_scene_start,
             on_scene_end = self._on_scene_end

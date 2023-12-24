@@ -13,7 +13,7 @@ from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
 from engine.tilemap_node import TilemapNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 
 from engine.map_cursor_node import MapCursornode
 
@@ -347,7 +347,7 @@ class PropPlacementScene(Node):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Keys.CAMERA_SPEED],
             title = scene_name
         )
 

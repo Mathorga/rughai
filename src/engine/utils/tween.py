@@ -35,6 +35,10 @@ class Tween:
     """
     @staticmethod
     def linear(x: float) -> float:
+        """
+        Linear mapping.
+        """
+
         return x
 
     @staticmethod
@@ -98,18 +102,18 @@ class Tween:
         return (((2 * x) ** 2) * ((c2 + 1) * 2 * x - c2)) / 2 if x < 0.5 else (((2 * x - 2) ** 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2
 
     @staticmethod
-    def compute(value: float, function: Callable[[float], float]) -> float:
+    def compute(fill: float, function: Callable[[float], float]) -> float:
         """
-        Maps the provided value using the provided function.
+        Maps the provided fill value using the provided function.
 
         Parameters:
-        value (float): The value to map.
+        fill (float): The value to map. Must be between 0.0 and 1.0
 
         Returns:
-        int:Returning value
+        float: The computed value
 
         """
         # Make sure the provided value is in range.
-        assert value >= 0.0 and value <= 1.0, "Value should be between 0.0 and 1.0"
+        assert fill >= 0.0 and fill <= 1.0, "Value should be between 0.0 and 1.0"
 
-        return function(value)
+        return function(fill)

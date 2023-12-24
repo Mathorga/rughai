@@ -10,7 +10,7 @@ from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 
 from player_node import PlayerNode
 import constants.events as events
@@ -45,7 +45,7 @@ class R_0_5(PlayableSceneNode):
             view_width = view_width,
             view_height = view_height,
             scaling = scaling,
-            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Keys.CAMERA_SPEED],
             title = "R_0_5",
             on_scene_end = self._on_scene_end
         )

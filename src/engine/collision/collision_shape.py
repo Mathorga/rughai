@@ -8,7 +8,7 @@ from engine.shapes.line_node import LineNode
 from engine.shapes.rect_node import RectNode
 from engine.shapes.shape_node import ShapeNode
 import engine.utils.utils as utils
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 
 
 COLLIDING_COLOR = (0x7FF, 0x7F, 0x7F, 0x7F)
@@ -105,7 +105,7 @@ class CollisionRect(CollisionShape):
         self.anchor_x = anchor_x
         self.anchor_y = anchor_y
 
-        if SETTINGS[Builtins.DEBUG] and SETTINGS[Builtins.SHOW_COLLISIONS]:
+        if SETTINGS[Keys.DEBUG] and SETTINGS[Keys.SHOW_COLLISIONS]:
             self.render_shape = RectNode(
                 x = x,
                 y = y,
@@ -185,7 +185,7 @@ class CollisionCircle(CollisionShape):
         self.height = radius * 2
 
 
-        if SETTINGS[Builtins.DEBUG] and SETTINGS[Builtins.SHOW_COLLISIONS]:
+        if SETTINGS[Keys.DEBUG] and SETTINGS[Keys.SHOW_COLLISIONS]:
             self.render_shape = CircleNode(
                 x = x,
                 y = y,
