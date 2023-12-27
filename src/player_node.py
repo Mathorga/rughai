@@ -333,7 +333,7 @@ class PlayerNode(PositionNode):
     def unload_scope(self) -> None:
         self.__scope.unload()
 
-    def get_shoot_mag(self) -> float:
+    def get_shoot_fill(self) -> float:
         return self.__shoot_mag
 
     def set_shoot_mag(self, mag: float) -> None:
@@ -794,7 +794,7 @@ class PlayerDrawState(PlayerState):
 
         # Build shoot magnitude.
         if self.actor.draw_time >= self.actor.stats.min_draw_time:
-            shoot_mag: float = self.actor.get_shoot_mag()
+            shoot_mag: float = self.actor.get_shoot_fill()
             self.actor.set_shoot_mag(shoot_mag + dt)
 
         # Check for state changes.
@@ -868,7 +868,7 @@ class PlayerDrawWalkState(PlayerState):
 
         # Build shoot magnitude.
         if self.actor.draw_time >= self.actor.stats.min_draw_time:
-            shoot_mag: float = self.actor.get_shoot_mag()
+            shoot_mag: float = self.actor.get_shoot_fill()
             self.actor.set_shoot_mag(shoot_mag + dt)
 
         # Check for state changes.
@@ -904,18 +904,19 @@ class PlayerShootState(PlayerState):
         self.actor.set_animation(self.__animation)
 
         # self.actor.set_cam_target_distance_mag(mag = 0.0)
+        self.actor.set_cam_target_distance_fill(fill = 0.0)
 
         # Create a projectile.
         if scenes.ACTIVE_SCENE is not None:
             scenes.ACTIVE_SCENE.add_child(ArrowNode(
                 x = self.actor.x + self.actor.scope_offset[0],
                 y = self.actor.y + self.actor.scope_offset[1],
-                speed = scale(self.actor.get_shoot_mag(), (0.0, 1.0), (100.0, 500.0)),
+                speed = scale(self.actor.get_shoot_fill(), (0.0, 1.0), (100.0, 500.0)),
                 direction = self.actor.stats.look_dir,
                 batch = self.actor.batch
             ))
 
-            scenes.ACTIVE_SCENE.apply_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 10.0, angle = self.actor.stats.look_dir + math.pi))
+            scenes.ACTIVE_SCENE.apply_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 15.0, angle = self.actor.stats.look_dir + math.pi))
             # scenes.ACTIVE_SCENE.shake_camera(magnitude = 5.0, duration = 0.1)
 
     def end(self) -> None:
