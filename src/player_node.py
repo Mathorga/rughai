@@ -903,11 +903,8 @@ class PlayerShootState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
-        # self.actor.set_cam_target_distance_mag(mag = 0.0)
-        self.actor.set_cam_target_distance_fill(fill = 0.0)
-
-        # Create a projectile.
         if scenes.ACTIVE_SCENE is not None:
+            # Create a projectile.
             scenes.ACTIVE_SCENE.add_child(ArrowNode(
                 x = self.actor.x + self.actor.scope_offset[0],
                 y = self.actor.y + self.actor.scope_offset[1],
@@ -916,8 +913,8 @@ class PlayerShootState(PlayerState):
                 batch = self.actor.batch
             ))
 
-            scenes.ACTIVE_SCENE.apply_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 15.0, angle = self.actor.stats.look_dir + math.pi))
-            # scenes.ACTIVE_SCENE.shake_camera(magnitude = 5.0, duration = 0.1)
+            # Camera feedback.
+            scenes.ACTIVE_SCENE.apply_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 5.0, angle = self.actor.stats.look_dir))
 
     def end(self) -> None:
         # Reset shoot magnitude.
