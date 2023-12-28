@@ -1,8 +1,8 @@
 {
     "debug": false,
     "show_collisions": true,
-    "show_tiles_grid": false,
-    "free_cam_bounds": true,
+    "show_tiles_grid": true,
+    "free_cam_bounds": false,
     "title": "RUGHAI",
     "font_name": "rughai",
     "view_width": 240,
