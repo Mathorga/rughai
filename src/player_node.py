@@ -102,7 +102,7 @@ class PlayerNode(PositionNode):
             x = self.x,
             y = self.y,
             offset_y = 4.0,
-            ease_function = Tween.expInOut,
+            ease_function = Tween.cubeInOut,
             batch = batch
         )
 
