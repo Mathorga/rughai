@@ -77,6 +77,9 @@ class PlayerNode(PositionNode):
         # Current draw time (in seconds).
         self.draw_time: float = 0.0
 
+        # Draw sound.
+        self.draw_sound: pyglet.media.Source = pyglet.resource.media(name = "sounds/iryo_draw_0.wav")
+
         # Animations.
         self.__sprite = SpriteNode(
             resource = Animation(source = "sprites/iryo/iryo_idle.json").content,
@@ -634,6 +637,8 @@ class PlayerLoadState(PlayerState):
 
         # Set aim direction.
         self.actor.stats.look_dir = aim_vec.heading
+
+        controllers.SOUND_CONTROLLER.play_effect(self.actor.draw_sound)
 
     def on_animation_end(self) -> Optional[str]:
         return PlayerStates.AIM
