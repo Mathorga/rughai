@@ -102,7 +102,7 @@ class LoadingIndicatorNode(PositionNode):
             self.frame_sprite.set_position(position = position, z = (z if z is not None else position[1]) + 1)
 
     def set_fill(self, fill: float) -> None:
-        assert fill >= 0.0 and fill <= 0.0, "Value out of range"
+        assert fill >= 0.0 and fill <= 1.0, "Value out of range"
 
         # Fetch texture coordinates from sprite.
         sprite_texture: pyglet.image.Texture = self.foreground_sprite.sprite.get_texture()

@@ -78,7 +78,7 @@ class PlayerNode(PositionNode):
         self.draw_time: float = 0.0
 
         # Draw sound.
-        self.draw_sound: pyglet.media.Source = pyglet.resource.media(name = "sounds/iryo_draw_0.wav")
+        self.draw_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_draw_0.wav"))
 
         # Animations.
         self.__sprite = SpriteNode(
@@ -638,8 +638,6 @@ class PlayerLoadState(PlayerState):
         # Set aim direction.
         self.actor.stats.look_dir = aim_vec.heading
 
-        controllers.SOUND_CONTROLLER.play_effect(self.actor.draw_sound)
-
     def on_animation_end(self) -> Optional[str]:
         return PlayerStates.AIM
 
@@ -689,6 +687,7 @@ class PlayerAimState(PlayerState):
             return PlayerStates.IDLE
 
         if self.__draw:
+            controllers.SOUND_CONTROLLER.play_effect(self.actor.draw_sound)
             return PlayerStates.DRAW
 
         # Set aim direction.
@@ -752,6 +751,7 @@ class PlayerAimWalkState(PlayerState):
             return PlayerStates.IDLE
 
         if self.__draw:
+            controllers.SOUND_CONTROLLER.play_effect(self.actor.draw_sound)
             return PlayerStates.DRAW
 
         # Set aim direction.
