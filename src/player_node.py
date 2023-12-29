@@ -79,6 +79,7 @@ class PlayerNode(PositionNode):
 
         # Draw sound.
         self.draw_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_draw_0.wav"))
+        self.shoot_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_shoot_0.wav"))
 
         # Animations.
         self.__sprite = SpriteNode(
@@ -920,6 +921,8 @@ class PlayerShootState(PlayerState):
 
             # Camera feedback.
             scenes.ACTIVE_SCENE.apply_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 5.0, angle = self.actor.stats.look_dir))
+
+        controllers.SOUND_CONTROLLER.play_effect(self.actor.shoot_sound)
 
     def end(self) -> None:
         # Reset shoot magnitude.
