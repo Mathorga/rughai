@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 import pyglet
 
-from engine.settings import GLOBALS, Builtins
+from engine.settings import GLOBALS, Keys
 from engine.shapes.shape_node import ShapeNode
 
 class RectNode(ShapeNode):
@@ -25,15 +25,15 @@ class RectNode(ShapeNode):
         )
 
         self.__shape: pyglet.shapes.Rectangle = pyglet.shapes.Rectangle(
-            x = x * GLOBALS[Builtins.SCALING],
-            y = y * GLOBALS[Builtins.SCALING],
-            width = width * GLOBALS[Builtins.SCALING],
-            height = height * GLOBALS[Builtins.SCALING],
+            x = x * GLOBALS[Keys.SCALING],
+            y = y * GLOBALS[Keys.SCALING],
+            width = width * GLOBALS[Keys.SCALING],
+            height = height * GLOBALS[Keys.SCALING],
             color = color,
             group = pyglet.graphics.Group(order = z),
             batch = batch
         )
-        self.__shape.anchor_position = (anchor_x * GLOBALS[Builtins.SCALING], anchor_y * GLOBALS[Builtins.SCALING])
+        self.__shape.anchor_position = (anchor_x * GLOBALS[Keys.SCALING], anchor_y * GLOBALS[Keys.SCALING])
 
     def delete(self) -> None:
         self.__shape.delete()
@@ -49,8 +49,8 @@ class RectNode(ShapeNode):
     ) -> None:
         super().set_position(position)
 
-        self.__shape.x = position[0] * GLOBALS[Builtins.SCALING]
-        self.__shape.y = position[1] * GLOBALS[Builtins.SCALING]
+        self.__shape.x = position[0] * GLOBALS[Keys.SCALING]
+        self.__shape.y = position[1] * GLOBALS[Keys.SCALING]
 
     def set_opacity(self, opacity: float):
         self.__shape.opacity = opacity

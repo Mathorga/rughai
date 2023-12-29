@@ -10,7 +10,7 @@ from engine.prop_loader import PropLoader
 from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 
 from player_node import PlayerNode
 import constants.events as events
@@ -38,7 +38,7 @@ class R_0_1(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Keys.CAMERA_SPEED],
             title = "R_0_1",
             on_scene_end = self._on_scene_end,
             on_scene_start = self._on_scene_start
@@ -95,7 +95,7 @@ class R_0_1(PlayableSceneNode):
                         "next_scene": scenes.R_0_0,
                         "player_position": [
                             self._player.x,
-                            (SETTINGS[Builtins.TILEMAP_BUFFER] + 1) * self.__tile_size
+                            (SETTINGS[Keys.TILEMAP_BUFFER] + 1) * self.__tile_size
                         ]
                     }
                 ),

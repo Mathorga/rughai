@@ -2,7 +2,7 @@ from typing import List, Optional, Sequence
 import pyglet
 
 from engine import controllers
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.interaction_node import InteractionNode
@@ -66,17 +66,17 @@ class DialogNode(PositionNode):
         self.text = TextNode(
             # Start with no text.
             text = "",
-            font_name = SETTINGS[Builtins.FONT_NAME],
-            x = SETTINGS[Builtins.VIEW_WIDTH] / 2,
+            font_name = SETTINGS[Keys.FONT_NAME],
+            x = SETTINGS[Keys.VIEW_WIDTH] / 2,
             y = 16,
-            width = SETTINGS[Builtins.VIEW_WIDTH] * 0.8,
+            width = SETTINGS[Keys.VIEW_WIDTH] * 0.8,
             batch = ui_batch
         )
 
         self.next_icon = TextNode(
             text = "",
-            font_name = SETTINGS[Builtins.FONT_NAME],
-            x = SETTINGS[Builtins.VIEW_WIDTH] - 16,
+            font_name = SETTINGS[Keys.FONT_NAME],
+            x = SETTINGS[Keys.VIEW_WIDTH] - 16,
             y = 16,
             multiline = False,
             batch = ui_batch

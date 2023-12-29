@@ -3,7 +3,7 @@ import pyglet
 from engine.depth_sprite import DepthSprite
 
 from engine.node import PositionNode
-from engine.settings import GLOBALS, Builtins
+from engine.settings import GLOBALS, Keys
 
 class SpriteNode(PositionNode):
     def __init__(
@@ -25,14 +25,14 @@ class SpriteNode(PositionNode):
 
         self.sprite = DepthSprite(
             img = resource,
-            x = int(x * GLOBALS[Builtins.SCALING]),
-            y = int(y * GLOBALS[Builtins.SCALING]),
+            x = int(x * GLOBALS[Keys.SCALING]),
+            y = int(y * GLOBALS[Keys.SCALING]),
             z = int(z if z is not None else -y),
             program = shader,
             samplers_2d = samplers_2d,
             batch = batch
         )
-        self.sprite.scale = GLOBALS[Builtins.SCALING]
+        self.sprite.scale = GLOBALS[Keys.SCALING]
         self.sprite.push_handlers(self)
 
         self.__on_animation_end = on_animation_end
@@ -53,8 +53,8 @@ class SpriteNode(PositionNode):
         self.z = z if z is not None else -position[1]
 
         self.sprite.position = (
-            self.x * GLOBALS[Builtins.SCALING],
-            self.y * GLOBALS[Builtins.SCALING],
+            self.x * GLOBALS[Keys.SCALING],
+            self.y * GLOBALS[Keys.SCALING],
             int(self.z)
         )
 
@@ -106,15 +106,15 @@ class SpriteNode(PositionNode):
     def get_bounding_box(self):
         if isinstance(self.sprite.image, pyglet.image.TextureRegion):
             return (
-                self.sprite.x - self.sprite.image.anchor_x * GLOBALS[Builtins.SCALING],
-                self.sprite.y - self.sprite.image.anchor_y * GLOBALS[Builtins.SCALING],
+                self.sprite.x - self.sprite.image.anchor_x * GLOBALS[Keys.SCALING],
+                self.sprite.y - self.sprite.image.anchor_y * GLOBALS[Keys.SCALING],
                 self.sprite.width,
                 self.sprite.height
             )
         elif isinstance(self.sprite.image, pyglet.image.animation.Animation):
             return (
-                self.sprite.x - self.sprite.image.frames[0].image.anchor_x * GLOBALS[Builtins.SCALING],
-                self.sprite.y - self.sprite.image.frames[0].image.anchor_y * GLOBALS[Builtins.SCALING],
+                self.sprite.x - self.sprite.image.frames[0].image.anchor_x * GLOBALS[Keys.SCALING],
+                self.sprite.y - self.sprite.image.frames[0].image.anchor_y * GLOBALS[Keys.SCALING],
                 self.sprite.width,
                 self.sprite.height
             )

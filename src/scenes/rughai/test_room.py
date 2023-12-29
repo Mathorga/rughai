@@ -10,7 +10,7 @@ from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.wall_node import WallNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 
 from player_node import PlayerNode
 from clouds_node import CloudsNode
@@ -41,7 +41,7 @@ class TestRoom(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Keys.CAMERA_SPEED],
             title = "R_0_0",
             on_scene_end = self._on_scene_end
         )
@@ -55,10 +55,10 @@ class TestRoom(PlayableSceneNode):
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
         cam_bounds = Bounds(
-            bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * self.__tile_size,
-            right = (tilemap_width - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size,
+            bottom = SETTINGS[Keys.TILEMAP_BUFFER] * self.__tile_size,
+            right = (tilemap_width - 2 * SETTINGS[Keys.TILEMAP_BUFFER]) * self.__tile_size,
             left = (-20) * self.__tile_size,
-            top = (tilemap_height - 2 * SETTINGS[Builtins.TILEMAP_BUFFER]) * self.__tile_size
+            top = (tilemap_height - 2 * SETTINGS[Keys.TILEMAP_BUFFER]) * self.__tile_size
         )
 
         # Solid walls.

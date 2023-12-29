@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 import pyglet
 
-from engine.settings import GLOBALS, Builtins
+from engine.settings import GLOBALS, Keys
 from engine.shapes.shape_node import ShapeNode
 
 
@@ -21,12 +21,12 @@ class LineNode(ShapeNode):
         self.delta_y = delta_y
 
         self.__shape = pyglet.shapes.Line(
-            x = x * GLOBALS[Builtins.SCALING],
-            y = y * GLOBALS[Builtins.SCALING],
-            x2 = (x + delta_x) * GLOBALS[Builtins.SCALING],
-            y2 = (y + delta_y) * GLOBALS[Builtins.SCALING],
+            x = x * GLOBALS[Keys.SCALING],
+            y = y * GLOBALS[Keys.SCALING],
+            x2 = (x + delta_x) * GLOBALS[Keys.SCALING],
+            y2 = (y + delta_y) * GLOBALS[Keys.SCALING],
             color = color,
-            width = 1 * GLOBALS[Builtins.SCALING],
+            width = 1 * GLOBALS[Keys.SCALING],
             batch = batch
         )
 
@@ -53,8 +53,8 @@ class LineNode(ShapeNode):
     ) -> None:
         super().set_position(position)
 
-        self.__shape.x = position[0] * GLOBALS[Builtins.SCALING]
-        self.__shape.y = position[1] * GLOBALS[Builtins.SCALING]
+        self.__shape.x = position[0] * GLOBALS[Keys.SCALING]
+        self.__shape.y = position[1] * GLOBALS[Keys.SCALING]
 
     def set_delta(
         self,
@@ -63,8 +63,8 @@ class LineNode(ShapeNode):
         self.delta_x = delta[0]
         self.delta_y = delta[1]
 
-        self.__shape.x2 = (self.x + delta[0]) * GLOBALS[Builtins.SCALING]
-        self.__shape.y2 = (self.y + delta[1]) * GLOBALS[Builtins.SCALING]
+        self.__shape.x2 = (self.x + delta[0]) * GLOBALS[Keys.SCALING]
+        self.__shape.y2 = (self.y + delta[1]) * GLOBALS[Keys.SCALING]
 
     def set_opacity(self, opacity: float):
         self.__shape.opacity = opacity

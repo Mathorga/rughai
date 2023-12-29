@@ -17,7 +17,7 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import GLOBALS, SETTINGS, Keys
 from engine.state_machine import State, StateMachine
 
 from constants import collision_tags, scenes
@@ -102,7 +102,7 @@ class PlayerNode(PositionNode):
             x = self.x,
             y = self.y,
             offset_y = 4.0,
-            ease_function = Tween.expInOut,
+            ease_function = Tween.cubeInOut,
             batch = batch
         )
 
@@ -167,7 +167,7 @@ class PlayerNode(PositionNode):
         controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
 
         self.__cam_target_distance = 50.0
-        self.__cam_target_distance_mag = 0.0
+        self.__cam_target_distance_fill = 0.0
         self.__cam_target_offset = cam_target_offset
         self.__cam_target = cam_target
         self.__cam_target.x = x + cam_target_offset[0]
@@ -235,8 +235,8 @@ class PlayerNode(PositionNode):
         velocity: pyglet.math.Vec2 = self.__compute_velocity(dt)
 
         # Apply the computed velocity to all colliders.
-        self.__collider.set_velocity((round(velocity.x, 5), round(velocity.y, 5)))
-        self.__interactor.set_velocity((round(velocity.x, 5), round(velocity.y, 5)))
+        self.__collider.set_velocity((round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(velocity.y, 5)))
+        self.__interactor.set_velocity((round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(velocity.y, 5)))
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
@@ -278,7 +278,7 @@ class PlayerNode(PositionNode):
         self.__shadow_sprite.set_position(
             position = (self.x, self.y),
             # z = 0
-            z = -(self.y + (SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5))
+            z = -(self.y + (SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5))
         )
         self.__shadow_sprite.update(dt)
 
@@ -292,22 +292,22 @@ class PlayerNode(PositionNode):
             min_val = 0.0,
             max_val = self.stats.min_draw_time
         )
-        self.draw_indicator.set_value(value = draw_indicator_value / self.stats.min_draw_time)
+        self.draw_indicator.set_fill(fill = draw_indicator_value / self.stats.min_draw_time)
         self.draw_indicator.set_position(position = self.get_position())
         self.draw_indicator.update(dt = dt)
 
-    def set_cam_target_distance_mag(self, mag: float) -> None:
+    def set_cam_target_distance_fill(self, fill: float) -> None:
         """
-        Sets the magnitude (between 0 and 1) for cam target distance.
+        Sets the fill (between 0 and 1) for cam target distance.
         """
 
-        assert mag >= 0.0 and mag <= 1.0, "Value out of range"
+        assert fill >= 0.0 and fill <= 1.0, "Value out of range"
 
-        self.__cam_target_distance_mag = mag
+        self.__cam_target_distance_fill = fill
 
     def __update_cam_target(self, dt: float):
         # Automatically go to cam target distance if loading or aiming.
-        cam_target_distance: float = self.__cam_target_distance * self.__cam_target_distance_mag
+        cam_target_distance: float = self.__cam_target_distance * self.__cam_target_distance_fill
 
         cam_target_vec: pyglet.math.Vec2 = pyglet.math.Vec2.from_polar(cam_target_distance, self.stats.look_dir)
         self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
@@ -333,7 +333,7 @@ class PlayerNode(PositionNode):
     def unload_scope(self) -> None:
         self.__scope.unload()
 
-    def get_shoot_mag(self) -> float:
+    def get_shoot_fill(self) -> float:
         return self.__shoot_mag
 
     def set_shoot_mag(self, mag: float) -> None:
@@ -674,7 +674,7 @@ class PlayerAimState(PlayerState):
         # Read input.
         self.__fetch_input()
 
-        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag * 0.75)
+        self.actor.set_cam_target_distance_fill(fill = self.__aim_vec.mag * 0.75)
 
         # Check for state changes.
         if self.__move:
@@ -722,7 +722,7 @@ class PlayerAimWalkState(PlayerState):
         # Read input.
         self.__fetch_input()
 
-        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag * 0.75)
+        self.actor.set_cam_target_distance_fill(fill = self.__aim_vec.mag * 0.75)
 
         # Set move direction.
         self.actor.stats.move_dir = self.__move_vec.heading
@@ -787,14 +787,14 @@ class PlayerDrawState(PlayerState):
         # Update draw time.
         self.actor.draw_time = self.actor.draw_time + dt
 
-        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
+        self.actor.set_cam_target_distance_fill(fill = self.__aim_vec.mag)
 
         # Set aim direction.
         self.actor.stats.look_dir = self.__aim_vec.heading
 
         # Build shoot magnitude.
         if self.actor.draw_time >= self.actor.stats.min_draw_time:
-            shoot_mag: float = self.actor.get_shoot_mag()
+            shoot_mag: float = self.actor.get_shoot_fill()
             self.actor.set_shoot_mag(shoot_mag + dt)
 
         # Check for state changes.
@@ -848,7 +848,7 @@ class PlayerDrawWalkState(PlayerState):
         # Update draw time.
         self.actor.draw_time = self.actor.draw_time + dt
 
-        self.actor.set_cam_target_distance_mag(mag = self.__aim_vec.mag)
+        self.actor.set_cam_target_distance_fill(fill = self.__aim_vec.mag)
 
         # Set aim direction.
         self.actor.stats.look_dir = self.__aim_vec.heading
@@ -868,7 +868,7 @@ class PlayerDrawWalkState(PlayerState):
 
         # Build shoot magnitude.
         if self.actor.draw_time >= self.actor.stats.min_draw_time:
-            shoot_mag: float = self.actor.get_shoot_mag()
+            shoot_mag: float = self.actor.get_shoot_fill()
             self.actor.set_shoot_mag(shoot_mag + dt)
 
         # Check for state changes.
@@ -903,25 +903,23 @@ class PlayerShootState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
-        # self.actor.set_cam_target_distance_mag(mag = 0.0)
-
-        # Create a projectile.
         if scenes.ACTIVE_SCENE is not None:
+            # Create a projectile.
             scenes.ACTIVE_SCENE.add_child(ArrowNode(
                 x = self.actor.x + self.actor.scope_offset[0],
                 y = self.actor.y + self.actor.scope_offset[1],
-                speed = scale(self.actor.get_shoot_mag(), (0.0, 1.0), (100.0, 500.0)),
+                speed = scale(self.actor.get_shoot_fill(), (0.0, 1.0), (100.0, 500.0)),
                 direction = self.actor.stats.look_dir,
                 batch = self.actor.batch
             ))
 
-            scenes.ACTIVE_SCENE.set_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 20.0, angle = self.actor.stats.look_dir + math.pi))
-            # scenes.ACTIVE_SCENE.shake_camera(magnitude = 5.0, duration = 0.1)
+            # Camera feedback.
+            scenes.ACTIVE_SCENE.apply_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 5.0, angle = self.actor.stats.look_dir))
 
     def end(self) -> None:
         # Reset shoot magnitude.
         self.actor.set_shoot_mag(0.0)
-        self.actor.set_cam_target_distance_mag(mag = 0.0)
+        self.actor.set_cam_target_distance_fill(fill = 0.0)
 
     def __fetch_input(self) -> None:
         """

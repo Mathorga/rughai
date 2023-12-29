@@ -3,7 +3,7 @@ import json
 import platform
 
 
-class Builtins(str, Enum):
+class Keys(str, Enum):
     # Settings.
     DEBUG = "debug"
     SHOW_COLLISIONS = "show_collisions"
@@ -25,41 +25,43 @@ class Builtins(str, Enum):
     # Globals.
     PLATFORM = "platform"
     SCALING = "scaling"
+    FLOAT_ROUNDING = "float_rounding"
 
 SETTINGS = {
     # Debug.
-    Builtins.DEBUG: True,
-    Builtins.SHOW_COLLISIONS: True,
-    Builtins.SHOW_TILES_GRID: True,
-    Builtins.FREE_CAM_BOUNDS: False,
+    Keys.DEBUG: True,
+    Keys.SHOW_COLLISIONS: True,
+    Keys.SHOW_TILES_GRID: True,
+    Keys.FREE_CAM_BOUNDS: False,
 
     # Text settings.
-    Builtins.TITLE: "",
-    Builtins.FONT_NAME:  "",
+    Keys.TITLE: "",
+    Keys.FONT_NAME:  "",
 
     # Display settings.
     # GBA resolution:
-    Builtins.VIEW_WIDTH: 240,
-    Builtins.VIEW_HEIGHT: 160,
+    Keys.VIEW_WIDTH: 240,
+    Keys.VIEW_HEIGHT: 160,
     # GBA resolution x3:
-    Builtins.WINDOW_WIDTH: 720,
-    Builtins.WINDOW_HEIGHT: 480,
+    Keys.WINDOW_WIDTH: 720,
+    Keys.WINDOW_HEIGHT: 480,
 
     # Defines whether rendering and movement is per pixel or sub-pixel (unused for now).
-    Builtins.PIXEL_PERFECT: False,
-    Builtins.FULLSCREEN: True,
+    Keys.PIXEL_PERFECT: False,
+    Keys.FULLSCREEN: True,
 
     # Keep target fps high, as low values could cause unwanted lags.
-    Builtins.TARGET_FPS: 480,
+    Keys.TARGET_FPS: 480,
 
-    Builtins.CAMERA_SPEED: 5.0,
-    Builtins.LAYERS_Z_SPACING: 32.0,
-    Builtins.TILEMAP_BUFFER: 2
+    Keys.CAMERA_SPEED: 5.0,
+    Keys.LAYERS_Z_SPACING: 32.0,
+    Keys.TILEMAP_BUFFER: 2
 }
 
 GLOBALS = {
-    Builtins.PLATFORM: "",
-    Builtins.SCALING: 1
+    Keys.PLATFORM: "",
+    Keys.SCALING: 1,
+    Keys.FLOAT_ROUNDING: 5
 }
 
 def load_settings(source: str):
@@ -73,4 +75,4 @@ def load_settings(source: str):
         SETTINGS.update({entry})
 
     # Save platform for later use.
-    GLOBALS[Builtins.PLATFORM] = platform.platform()
+    GLOBALS[Keys.PLATFORM] = platform.platform()

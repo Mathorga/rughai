@@ -7,7 +7,7 @@ import pyglet.math as pm
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 
 class CloudNode(PositionNode):
     def __init__(
@@ -19,7 +19,7 @@ class CloudNode(PositionNode):
         super().__init__(
             x = x,
             y = y,
-            z = SETTINGS[Builtins.LAYERS_Z_SPACING]
+            z = SETTINGS[Keys.LAYERS_Z_SPACING]
         )
 
         self.speed = 5

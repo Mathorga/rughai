@@ -18,7 +18,7 @@ class LoadingIndicatorNode(PositionNode):
         z: float = 0.0,
         offset_x: float = 0.0,
         offset_y: float = 0.0,
-        starting_value: float = 1.0,
+        starting_fill: float = 1.0,
         ease_function: Callable[[float], float] = Tween.linear,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
@@ -59,7 +59,7 @@ class LoadingIndicatorNode(PositionNode):
         self.shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
         # Pass non sampler uniforms.
-        self.shader_program["value"] = starting_value
+        self.shader_program["fill"] = starting_fill
 
         self.foreground_sprite: SpriteNode = SpriteNode(
             resource = foreground_sprite_res,
@@ -101,8 +101,8 @@ class LoadingIndicatorNode(PositionNode):
         if self.frame_sprite is not None:
             self.frame_sprite.set_position(position = position, z = (z if z is not None else position[1]) + 1)
 
-    def set_value(self, value: float) -> None:
-        assert value >= 0.0 and value <= 0.0, "Value out of range"
+    def set_fill(self, fill: float) -> None:
+        assert fill >= 0.0 and fill <= 0.0, "Value out of range"
 
         # Fetch texture coordinates from sprite.
         sprite_texture: pyglet.image.Texture = self.foreground_sprite.sprite.get_texture()
@@ -116,7 +116,7 @@ class LoadingIndicatorNode(PositionNode):
         # Also pass bottom-left and top-right texture coords.
         self.shader_program["sw_coord"] = texture_coords[0:3]
         self.shader_program["ne_coord"] = texture_coords[6:9]
-        self.shader_program["value"] = Tween.compute(value, self.__ease_function)
+        self.shader_program["fill"] = Tween.compute(fill, self.__ease_function)
 
     def delete(self) -> None:
         self.foreground_sprite.delete()

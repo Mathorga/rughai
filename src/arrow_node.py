@@ -10,7 +10,7 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.scene_node import Bounds
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
 
@@ -132,7 +132,7 @@ class ArrowNode(PositionNode):
                             position[0] + aim_vec.x + aim_vec.x * self.sprites_delta * (index + 1),
                             position[1] + aim_vec.y + aim_vec.y * self.sprites_delta * (index + 1)
                         ),
-                        z = position[1] + SETTINGS[Builtins.LAYERS_Z_SPACING] * 0.5
+                        z = position[1] + SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
                     )
         except Exception:
             print("ERROR")

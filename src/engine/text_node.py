@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 import pyglet
 
-from engine.settings import GLOBALS, Builtins
+from engine.settings import GLOBALS, Keys
 from engine.node import PositionNode
 
 class TextNode(PositionNode):
@@ -31,14 +31,14 @@ class TextNode(PositionNode):
 
         self.label = pyglet.text.Label(
             text = text,
-            x = x * GLOBALS[Builtins.SCALING],
-            y = y * GLOBALS[Builtins.SCALING],
+            x = x * GLOBALS[Keys.SCALING],
+            y = y * GLOBALS[Keys.SCALING],
             z = int(z),
             multiline = multiline,
-            width = width * GLOBALS[Builtins.SCALING],
-            height = height * GLOBALS[Builtins.SCALING] if height is not None else None,
+            width = width * GLOBALS[Keys.SCALING],
+            height = height * GLOBALS[Keys.SCALING] if height is not None else None,
             font_name = font_name,
-            font_size = font_size * GLOBALS[Builtins.SCALING],
+            font_size = font_size * GLOBALS[Keys.SCALING],
             align = align,
             anchor_x = anchor_x,
             anchor_y = anchor_y,
@@ -55,10 +55,10 @@ class TextNode(PositionNode):
         z: Optional[float] = None
     ):
         self.x = position[0]
-        self.label.x = position[0] * GLOBALS[Builtins.SCALING]
+        self.label.x = position[0] * GLOBALS[Keys.SCALING]
 
         self.y = position[1]
-        self.label.y = position[1] * GLOBALS[Builtins.SCALING]
+        self.label.y = position[1] * GLOBALS[Keys.SCALING]
 
     def set_opacity(self, opacity: float):
         self.label.opacity = opacity

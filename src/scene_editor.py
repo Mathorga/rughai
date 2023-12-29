@@ -5,7 +5,7 @@ import pyglet.gl as gl
 
 import engine.controllers as controllers
 from engine.upscaler import Upscaler
-from engine.settings import GLOBALS, SETTINGS, Builtins, load_settings
+from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
 from scenes.prop_placement_scene import PropPlacementScene
 
 class RugHaiSceneEditor:
@@ -34,37 +34,37 @@ class RugHaiSceneEditor:
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
-        GLOBALS[Builtins.SCALING] = 1 if SETTINGS[Builtins.PIXEL_PERFECT] else min(
-            self._window.width // SETTINGS[Builtins.VIEW_WIDTH],
-            self._window.height // SETTINGS[Builtins.VIEW_HEIGHT]
+        GLOBALS[Keys.SCALING] = 1 if SETTINGS[Keys.PIXEL_PERFECT] else min(
+            self._window.width // SETTINGS[Keys.VIEW_WIDTH],
+            self._window.height // SETTINGS[Keys.VIEW_HEIGHT]
         )
 
         self._upscaler = Upscaler(
             window = self._window,
-            width = SETTINGS[Builtins.VIEW_WIDTH] * GLOBALS[Builtins.SCALING],
-            height = SETTINGS[Builtins.VIEW_HEIGHT] * GLOBALS[Builtins.SCALING]
+            width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
+            height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
         )
 
         # Create a scene.
         self._active_scene = PropPlacementScene(
             window = self._window,
-            view_width = SETTINGS[Builtins.VIEW_WIDTH],
-            view_height = SETTINGS[Builtins.VIEW_HEIGHT],
+            view_width = SETTINGS[Keys.VIEW_WIDTH],
+            view_height = SETTINGS[Keys.VIEW_HEIGHT],
             scene_name = sys.argv[1]
         )
 
     def __create_window(self) -> pyglet.window.Window:
         window = pyglet.window.Window(
-            SETTINGS[Builtins.WINDOW_WIDTH] if not SETTINGS[Builtins.FULLSCREEN] else None,
-            SETTINGS[Builtins.WINDOW_HEIGHT] if not SETTINGS[Builtins.FULLSCREEN] else None,
-            SETTINGS[Builtins.TITLE],
-            fullscreen = SETTINGS[Builtins.FULLSCREEN],
+            SETTINGS[Keys.WINDOW_WIDTH] if not SETTINGS[Keys.FULLSCREEN] else None,
+            SETTINGS[Keys.WINDOW_HEIGHT] if not SETTINGS[Keys.FULLSCREEN] else None,
+            SETTINGS[Keys.TITLE],
+            fullscreen = SETTINGS[Keys.FULLSCREEN],
             vsync = True,
             resizable = False
         )
 
         window.push_handlers(self)
-        if not SETTINGS[Builtins.DEBUG]:
+        if not SETTINGS[Keys.DEBUG]:
             window.set_mouse_visible(False)
 
         return window
@@ -105,7 +105,7 @@ class RugHaiSceneEditor:
         controllers.COLLISION_CONTROLLER.update(dt)
 
     def run(self) -> None:
-        pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Builtins.TARGET_FPS])
+        pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Keys.TARGET_FPS])
         # pyglet.clock.schedule(self.update)
         pyglet.app.run()
 

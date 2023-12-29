@@ -8,7 +8,7 @@ from engine.playable_scene_node import PlayableSceneNode
 from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
-from engine.settings import SETTINGS, Builtins
+from engine.settings import SETTINGS, Keys
 
 from player_node import PlayerNode
 from duk_node import DukNode
@@ -39,7 +39,7 @@ class R_0_3(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            default_cam_speed = SETTINGS[Builtins.CAMERA_SPEED],
+            default_cam_speed = SETTINGS[Keys.CAMERA_SPEED],
             title = "R_0_3",
             on_scene_end = self._on_scene_end
         )

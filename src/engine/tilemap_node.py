@@ -7,7 +7,7 @@ import pyglet.gl as gl
 from engine.depth_sprite import DepthSprite
 from engine.node import PositionNode
 from engine.scene_node import Bounds
-from engine.settings import GLOBALS, SETTINGS, Builtins
+from engine.settings import GLOBALS, SETTINGS, Keys
 
 # Tile scaling factor, used to avoid texture bleeding.
 # If tiles are slightly bigger, then they slightly overlap with each other, effectively never causing texture bleeding.
@@ -81,8 +81,8 @@ class TilemapNode(PositionNode):
         self.__sprites = [
             DepthSprite(
                 img = tileset.tiles[tex_index],
-                x = int(x + (index % map_width) * tileset.tile_width * GLOBALS[Builtins.SCALING]),
-                y = int(y + (map_height - 1 - (index // map_width)) * tileset.tile_height * GLOBALS[Builtins.SCALING]),
+                x = int(x + (index % map_width) * tileset.tile_width * GLOBALS[Keys.SCALING]),
+                y = int(y + (map_height - 1 - (index // map_width)) * tileset.tile_height * GLOBALS[Keys.SCALING]),
                 z = int(-((y + (map_height - 1 - (index // map_width)) * tileset.tile_height) + z_offset)),
                 batch = batch
             ) for (index, tex_index) in enumerate(data) if tex_index >= 0
@@ -91,18 +91,18 @@ class TilemapNode(PositionNode):
 
         for spr in self.__sprites:
             # Tile sprites are scaled up a bit in order to avoid texture bleeding.
-            spr.scale = GLOBALS[Builtins.SCALING] * TILE_SCALING
+            spr.scale = GLOBALS[Keys.SCALING] * TILE_SCALING
 
         self.grid_lines = []
-        if SETTINGS[Builtins.DEBUG] and SETTINGS[Builtins.SHOW_TILES_GRID]:
+        if SETTINGS[Keys.DEBUG] and SETTINGS[Keys.SHOW_TILES_GRID]:
             # Horizontal lines.
             for i in range(map_height + 1):
                 self.grid_lines.append(
                     pyglet.shapes.Line(
                         x = 0,
-                        y = i * tileset.tile_height * GLOBALS[Builtins.SCALING],
-                        x2 = map_width * tileset.tile_width * GLOBALS[Builtins.SCALING],
-                        y2 = i * tileset.tile_height * GLOBALS[Builtins.SCALING],
+                        y = i * tileset.tile_height * GLOBALS[Keys.SCALING],
+                        x2 = map_width * tileset.tile_width * GLOBALS[Keys.SCALING],
+                        y2 = i * tileset.tile_height * GLOBALS[Keys.SCALING],
                         width = 1,
                         color = (0xFF, 0xFF, 0xFF, 0x22),
                         batch = batch
@@ -114,9 +114,9 @@ class TilemapNode(PositionNode):
                 self.grid_lines.append(
                     pyglet.shapes.Line(
                         y = 0,
-                        x = i * tileset.tile_width * GLOBALS[Builtins.SCALING],
-                        y2 = map_height * tileset.tile_height * GLOBALS[Builtins.SCALING],
-                        x2 = i * tileset.tile_width * GLOBALS[Builtins.SCALING],
+                        x = i * tileset.tile_width * GLOBALS[Keys.SCALING],
+                        y2 = map_height * tileset.tile_height * GLOBALS[Keys.SCALING],
+                        x2 = i * tileset.tile_width * GLOBALS[Keys.SCALING],
                         width = 1,
                         color = (0xFF, 0xFF, 0xFF, 0x22),
                         batch = batch
@@ -125,10 +125,10 @@ class TilemapNode(PositionNode):
 
         # Compute bounds.
         self.bounds = Bounds(
-            bottom = SETTINGS[Builtins.TILEMAP_BUFFER] * tileset.tile_height,
-            right = (map_width - SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_width,
-            left = SETTINGS[Builtins.TILEMAP_BUFFER] * tileset.tile_width,
-            top = (map_height - SETTINGS[Builtins.TILEMAP_BUFFER]) * tileset.tile_height
+            bottom = SETTINGS[Keys.TILEMAP_BUFFER] * tileset.tile_height,
+            right = (map_width - SETTINGS[Keys.TILEMAP_BUFFER]) * tileset.tile_width,
+            left = SETTINGS[Keys.TILEMAP_BUFFER] * tileset.tile_width,
+            top = (map_height - SETTINGS[Keys.TILEMAP_BUFFER]) * tileset.tile_height
         )
 
     def delete(self) -> None:
@@ -171,7 +171,7 @@ class TilemapNode(PositionNode):
         tilemap_tilesets = root.findall("tileset")
 
         # Read layers spacing from settings if not provided.
-        spacing = layers_spacing if layers_spacing is not None else SETTINGS[Builtins.LAYERS_Z_SPACING]
+        spacing = layers_spacing if layers_spacing is not None else SETTINGS[Keys.LAYERS_Z_SPACING]
 
         # Extract a tileset from all the given file.
         tileset = Tileset(
@@ -251,10 +251,10 @@ class TilemapNode(PositionNode):
 
     def get_bounding_box(self):
         return (
-            self.x * GLOBALS[Builtins.SCALING],
-            self.y * GLOBALS[Builtins.SCALING],
-            self.map_width * self.__tileset.tile_width * GLOBALS[Builtins.SCALING],
-            self.map_height * self.__tileset.tile_height * GLOBALS[Builtins.SCALING]
+            self.x * GLOBALS[Keys.SCALING],
+            self.y * GLOBALS[Keys.SCALING],
+            self.map_width * self.__tileset.tile_width * GLOBALS[Keys.SCALING],
+            self.map_height * self.__tileset.tile_height * GLOBALS[Keys.SCALING]
         )
 
     def get_tile_size(self):
