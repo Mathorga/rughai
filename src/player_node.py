@@ -340,7 +340,7 @@ class PlayerNode(PositionNode):
     def get_shoot_fill(self) -> float:
         return self.__shoot_mag
 
-    def set_shoot_mag(self, mag: float) -> None:
+    def set_shoot_fill(self, mag: float) -> None:
         if mag >= 0.0 and mag <= 1.0:
             self.__shoot_mag = mag
 
@@ -374,6 +374,10 @@ class PlayerStateMachine(StateMachine):
             current_state.disable_input()
 
 class PlayerState(State):
+    """
+    Base class for player states.
+    """
+
     def __init__(
         self,
         actor: PlayerNode
@@ -383,13 +387,23 @@ class PlayerState(State):
         self.input_enabled: bool = True
         self.actor: PlayerNode = actor
 
-    def onAnimationEnd(self) -> None:
-        pass
+    def on_animation_end(self) -> None:
+        """
+        Callback for animations end.
+        """
 
     def enable_input(self) -> None:
+        """
+        Enables all input reading.
+        """
+
         self.input_enabled = True
 
     def disable_input(self) -> None:
+        """
+        Disables all input reading.
+        """
+
         self.input_enabled = False
 
 class PlayerIdleState(PlayerState):
@@ -801,7 +815,7 @@ class PlayerDrawState(PlayerState):
         # Build shoot magnitude.
         if self.actor.draw_time >= self.actor.stats.min_draw_time:
             shoot_mag: float = self.actor.get_shoot_fill()
-            self.actor.set_shoot_mag(shoot_mag + dt)
+            self.actor.set_shoot_fill(shoot_mag + dt)
 
         # Check for state changes.
         if self.__move:
@@ -809,7 +823,7 @@ class PlayerDrawState(PlayerState):
 
         if self.__aim_vec.mag <= 0.0:
             # Reset shoot magnitude.
-            self.actor.set_shoot_mag(0.0)
+            self.actor.set_shoot_fill(0.0)
 
             return PlayerStates.IDLE
 
@@ -875,7 +889,7 @@ class PlayerDrawWalkState(PlayerState):
         # Build shoot magnitude.
         if self.actor.draw_time >= self.actor.stats.min_draw_time:
             shoot_mag: float = self.actor.get_shoot_fill()
-            self.actor.set_shoot_mag(shoot_mag + dt)
+            self.actor.set_shoot_fill(shoot_mag + dt)
 
         # Check for state changes.
         if self.__move_vec.mag <= 0:
@@ -883,7 +897,7 @@ class PlayerDrawWalkState(PlayerState):
 
         if self.__aim_vec.mag <= 0.0:
             # Reset shoot magnitude.
-            self.actor.set_shoot_mag(0.0)
+            self.actor.set_shoot_fill(0.0)
 
             return PlayerStates.IDLE
 
@@ -926,7 +940,7 @@ class PlayerShootState(PlayerState):
 
     def end(self) -> None:
         # Reset shoot magnitude.
-        self.actor.set_shoot_mag(0.0)
+        self.actor.set_shoot_fill(0.0)
         self.actor.set_cam_target_distance_fill(fill = 0.0)
 
     def __fetch_input(self) -> None:

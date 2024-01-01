@@ -102,6 +102,11 @@ class LoadingIndicatorNode(PositionNode):
             self.frame_sprite.set_position(position = position, z = (z if z is not None else position[1]) + 1)
 
     def set_fill(self, fill: float) -> None:
+        """
+        Sets the current fill value to the provided one.
+        """
+
+        # Make sure the provided value lies in the valid range.
         assert fill >= 0.0 and fill <= 1.0, "Value out of range"
 
         # Fetch texture coordinates from sprite.
