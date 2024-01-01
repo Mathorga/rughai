@@ -58,7 +58,7 @@ class LoadingIndicatorNode(PositionNode):
         frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
         self.shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
-        # Pass non sampler uniforms.
+        # Pass non sampler uniforms to the shader.
         self.shader_program["fill"] = starting_fill
 
         self.foreground_sprite: SpriteNode = SpriteNode(
@@ -112,9 +112,13 @@ class LoadingIndicatorNode(PositionNode):
         # Fetch texture coordinates from sprite.
         sprite_texture: pyglet.image.Texture = self.foreground_sprite.sprite.get_texture()
         texture_coords: Tuple[
+            # South west.
             float, float, float,
+            # North west.
             float, float, float,
+            # North east.
             float, float, float,
+            # South east.
             float, float, float
         ] = sprite_texture.tex_coords
 
