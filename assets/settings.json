@@ -1,6 +1,6 @@
 {
     "debug": false,
-    "show_collisions": true,
+    "show_collisions": false,
     "show_tiles_grid": true,
     "free_cam_bounds": false,
     "title": "RUGHAI",
@@ -14,5 +14,8 @@
     "target_fps": 120,
     "camera_speed": 5.0,
     "layers_z_spacing": 32.0,
-    "tilemap_buffer": 2
+    "tilemap_buffer": 2,
+    "sound": true,
+    "music": false,
+    "sfx": false
 }

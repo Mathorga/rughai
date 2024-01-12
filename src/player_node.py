@@ -426,6 +426,7 @@ class PlayerIdleState(PlayerState):
         self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
         self.actor.unload_scope()
+        self.actor.draw_indicator.hide()
 
     def __fetch_input(self) -> None:
         """
@@ -646,6 +647,7 @@ class PlayerLoadState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.draw_indicator.hide()
 
         # Read input.
         aim_vec: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim_vec()
@@ -676,6 +678,7 @@ class PlayerAimState(PlayerState):
         self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
         self.actor.load_scope()
+        self.actor.draw_indicator.hide()
 
     def __fetch_input(self) -> None:
         """
@@ -726,6 +729,7 @@ class PlayerAimWalkState(PlayerState):
     def start(self) -> None:
         self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
+        self.actor.draw_indicator.hide()
 
     def __fetch_input(self) -> None:
         """
@@ -789,6 +793,7 @@ class PlayerDrawState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.draw_indicator.show()
 
     def __fetch_input(self) -> None:
         """
@@ -850,6 +855,7 @@ class PlayerDrawWalkState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.draw_indicator.show()
 
     def __fetch_input(self) -> None:
         """
@@ -922,6 +928,9 @@ class PlayerShootState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+
+        # Hide loading indicator.
+        self.actor.draw_indicator.hide()
 
         if scenes.ACTIVE_SCENE is not None:
             # Create a projectile.

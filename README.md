@@ -23,7 +23,7 @@ You can then find the compiled version of the game inside the main_dist:</br>
 You can change game settings by manually editing the [assets/settings.json](/assets/settings.json) file:</br>
 
 ### Debug
-  * `debug` -> General debug settings, shows some useful features such as update time, render time and collisions.</br>
+  * `debug` -> General debug setting, shows some useful features such as update time, render time and collisions.</br>
   * `show_collisions` -> Specific debug setting, shows collisions, but only if debug is true</br>
   * `show_tiles_grid` -> Specific debug setting, shows tilemap grid lines.</br>
   * `free_cam_bounds` -> Specific debug setting, allows the player to see beyond camera bounds.</br>
@@ -44,6 +44,12 @@ You can change game settings by manually editing the [assets/settings.json](/ass
   * `target_fps` -> Target FPS; keep this value high if you don't want any lags.</br>
   * `camera_speed` -> The speed at which the camera follows the player, the higher the speed, the closer it will be to the player.</br>
   * `layers_z_spacing` -> Distance between rendered layers on the Z axis.</br>
+  * `tilemap_buffer` -> Width (in tiles number) of tilemap buffer, a higher tilemap buffer will reduce room size.</br>
+
+### Sound
+  * `sound` -> General sound setting, defines whether the game plays audio or not.</br>
+  * `music` -> Specific sound setting, defines whether the game plays music or not.</br>
+  * `sfx` -> Specific sound setting, defines whether the game plays sound effects or not.</br>
 
 ## Idle props
 Simple prop can be added by defining an appropriate json file.</br>

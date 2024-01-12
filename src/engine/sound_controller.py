@@ -1,5 +1,8 @@
+import builtins
 from typing import List
 import pyglet
+
+from engine.settings import SETTINGS, Keys
 
 def on_effect_eos(self: pyglet.media.Player) -> None:
     self.pause()
@@ -16,6 +19,10 @@ class SoundController:
         self.effects: List[pyglet.media.Player] = []
 
     def set_music(self, music: pyglet.media.Source) -> None:
+        # Just return if sound is disabled.
+        if not SETTINGS[Keys.SOUND] or not SETTINGS[Keys.MUSIC]:
+            return
+
         if self.bg_music.source is not None:
             self.bg_music.delete()
 
@@ -23,7 +30,8 @@ class SoundController:
         self.bg_music.loop = True
 
     def pause_music(self) -> None:
-        self.bg_music.pause()
+        if self.bg_music.source is not None:
+            self.bg_music.pause()
 
     def restart_music(self) -> None:
         if self.bg_music.source is not None:
@@ -39,6 +47,10 @@ class SoundController:
         """
         Plays the provided sound effect.
         """
+
+        # Just return if sound is disabled.
+        if not SETTINGS[Keys.SOUND] or not SETTINGS[Keys.SFX]:
+            return
 
         player: pyglet.media.Player = sound.play()
         player.on_eos = player.on_effect_eos
