@@ -5,12 +5,14 @@ out vec4 final_color;
 
 uniform sampler2D sprite_texture;
 
+// Alpha channel.
+uniform float alpha;
+
 void main() {
     final_color = texture(sprite_texture, texture_coords.xy) * vertex_colors;
-    // final_color = vec4(0.52, 0.57, 0.57, final_color.a * 0.3);
-    final_color = vec4(1.0, 1.0, 1.0, final_color.a * 0.25);
+    final_color = vec4(1.0, 1.0, 1.0, final_color.a * alpha);
 
-    // No GL_ALPHA_TEST in core, use shader to discard.
+    // Discard transparent fragments or they'll be drawn over other sprites' on the same layer.
     if (final_color.a < 0.01) {
         discard;
     }

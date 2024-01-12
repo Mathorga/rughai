@@ -34,7 +34,7 @@ class CloudNode(PositionNode):
         # Load fragment source from file.
         fragment_source: str
         with open(
-            file = os.path.join(pyglet.resource.path[0], "../shaders/cloud.frag"),
+            file = os.path.join(pyglet.resource.path[0], "../shaders/alpha_blend.frag"),
             mode = "r",
             encoding = "UTF8"
         ) as file:
@@ -44,6 +44,7 @@ class CloudNode(PositionNode):
         vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
         frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
         shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
+        shader_program["alpha"] = 0.25
 
         self.sprite = SpriteNode(
             x = x,
