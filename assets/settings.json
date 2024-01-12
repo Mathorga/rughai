@@ -17,5 +17,5 @@
     "tilemap_buffer": 2,
     "sound": true,
     "music": false,
-    "sfx": false
+    "sfx": true
 }

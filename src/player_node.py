@@ -78,8 +78,8 @@ class PlayerNode(PositionNode):
         self.draw_time: float = 0.0
 
         # Draw sound.
-        self.draw_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_draw_0.wav"))
-        self.shoot_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_shoot_0.wav"))
+        self.draw_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_draw_1.wav"))
+        self.shoot_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_shoot_1.wav"))
 
         # Animations.
         self.__sprite = SpriteNode(
