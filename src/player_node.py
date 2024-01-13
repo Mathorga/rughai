@@ -56,13 +56,13 @@ class PlayerNode(PositionNode):
             y = y
         )
 
-        self.batch = batch
+        self.batch: Optional[pyglet.graphics.Batch] = batch
 
-        self.interactor_distance = 5.0
+        self.interactor_distance: float = 5.0
 
-        self.run_threshold = 0.75
+        self.run_threshold: float = 0.75
 
-        self.stats = PlayerStats(
+        self.stats: PlayerStats = PlayerStats(
             vitality = 5,
             resistance = 5,
             odds = 5,
@@ -386,11 +386,6 @@ class PlayerState(State):
 
         self.input_enabled: bool = True
         self.actor: PlayerNode = actor
-
-    def on_animation_end(self) -> None:
-        """
-        Callback for animations end.
-        """
 
     def enable_input(self) -> None:
         """
