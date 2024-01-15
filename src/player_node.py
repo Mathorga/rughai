@@ -44,7 +44,6 @@ class PlayerNode(PositionNode):
 
     __slots__ = (
         "batch",
-        "interactor_distance",
         "run_threshold",
         "stats",
         "__hor_facing",
@@ -53,9 +52,11 @@ class PlayerNode(PositionNode):
         "draw_sound",
         "shoot_sound",
         "__sprite",
+
         "scope_offset",
         "__scope",
         "draw_indicator",
+        "interactor_distance",
         "__shadow_sprite",
         "__collider",
         "__interactor",
@@ -98,9 +99,6 @@ class PlayerNode(PositionNode):
         )
 
         self.__hor_facing: int = 1
-
-        # Shooting magnitude: defines how strong the shot will be (must be between 0 and 1).
-        self.__shoot_mag: float = 0.0
 
         # Current draw time (in seconds).
         self.draw_time: float = 0.0
@@ -364,13 +362,6 @@ class PlayerNode(PositionNode):
 
     def unload_scope(self) -> None:
         self.__scope.unload()
-
-    def get_shoot_fill(self) -> float:
-        return self.__shoot_mag
-
-    def set_shoot_fill(self, mag: float) -> None:
-        if mag >= 0.0 and mag <= 1.0:
-            self.__shoot_mag = mag
 
     def __update_collider(self, dt):
         self.__collider.update(dt)
@@ -840,19 +831,11 @@ class PlayerDrawState(PlayerState):
         # Set aim direction.
         self.actor.stats.look_dir = self.__aim_vec.heading
 
-        # Build shoot magnitude.
-        if self.actor.draw_time >= self.actor.stats.min_draw_time:
-            shoot_mag: float = self.actor.get_shoot_fill()
-            self.actor.set_shoot_fill(shoot_mag + dt)
-
         # Check for state changes.
         if self.__move:
             return PlayerStates.DRAW_WALK
 
         if self.__aim_vec.mag <= 0.0:
-            # Reset shoot magnitude.
-            self.actor.set_shoot_fill(0.0)
-
             return PlayerStates.IDLE
 
         if not self.__draw:
@@ -915,19 +898,11 @@ class PlayerDrawWalkState(PlayerState):
         # Move the player.
         self.actor.move(dt = dt)
 
-        # Build shoot magnitude.
-        if self.actor.draw_time >= self.actor.stats.min_draw_time:
-            shoot_mag: float = self.actor.get_shoot_fill()
-            self.actor.set_shoot_fill(shoot_mag + dt)
-
         # Check for state changes.
         if self.__move_vec.mag <= 0:
             return PlayerStates.DRAW
 
         if self.__aim_vec.mag <= 0.0:
-            # Reset shoot magnitude.
-            self.actor.set_shoot_fill(0.0)
-
             return PlayerStates.IDLE
 
         if not self.__draw:
@@ -960,7 +935,7 @@ class PlayerShootState(PlayerState):
             scenes.ACTIVE_SCENE.add_child(ArrowNode(
                 x = self.actor.x + self.actor.scope_offset[0],
                 y = self.actor.y + self.actor.scope_offset[1],
-                speed = scale(self.actor.get_shoot_fill(), (0.0, 1.0), (100.0, 500.0)),
+                speed = 500.0,
                 direction = self.actor.stats.look_dir,
                 batch = self.actor.batch
             ))
@@ -971,8 +946,6 @@ class PlayerShootState(PlayerState):
         controllers.SOUND_CONTROLLER.play_effect(self.actor.shoot_sound)
 
     def end(self) -> None:
-        # Reset shoot magnitude.
-        self.actor.set_shoot_fill(0.0)
         self.actor.set_cam_target_distance_fill(fill = 0.0)
 
     def __fetch_input(self) -> None:
