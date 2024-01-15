@@ -42,6 +42,34 @@ class PlayerNode(PositionNode):
     Main player class.
     """
 
+    __slots__ = (
+        "batch",
+        "interactor_distance",
+        "run_threshold",
+        "stats",
+        "__hor_facing",
+        "__shoot_mag",
+        "draw_time",
+        "draw_sound",
+        "shoot_sound",
+        "__sprite",
+        "scope_offset",
+        "__scope",
+        "draw_indicator",
+        "__shadow_sprite",
+        "__collider",
+        "__interactor",
+
+        # Cam target info.
+        "__cam_target_distance",
+        "__cam_target_distance_fill",
+        "__cam_target_offset",
+        "__cam_target",
+
+        # State machine.
+        "__state_machine"
+    )
+
     def __init__(
         self,
         cam_target: PositionNode,
