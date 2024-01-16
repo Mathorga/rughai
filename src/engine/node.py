@@ -2,6 +2,8 @@ from typing import Optional, Tuple
 
 
 class Node:
+    __slots__ = ()
+
     def __init__(self) -> None:
         pass
 
@@ -30,6 +32,12 @@ class Node:
         pass
 
 class PositionNode(Node):
+    __slots__ = (
+        "x",
+        "y",
+        "z"
+    )
+
     def __init__(
         self,
         x: float = 0.0,

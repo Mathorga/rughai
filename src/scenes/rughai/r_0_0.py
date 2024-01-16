@@ -10,6 +10,7 @@ from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.wall_node import WallNode
 from engine.settings import SETTINGS, Keys
+from engine import controllers
 
 from constants import collision_tags
 from player_node import PlayerNode
@@ -46,6 +47,10 @@ class R_0_0(PlayableSceneNode):
             on_scene_start = self._on_scene_start,
             on_scene_end = self._on_scene_end
         )
+
+        # Scene music.
+        self.scene_music: pyglet.media.Source = pyglet.resource.media(name = "sounds/rughai_myst.wav")
+        controllers.SOUND_CONTROLLER.set_music(self.scene_music)
 
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(

@@ -42,6 +42,35 @@ class PlayerNode(PositionNode):
     Main player class.
     """
 
+    __slots__ = (
+        "batch",
+        "run_threshold",
+        "stats",
+        "__hor_facing",
+        "__shoot_mag",
+        "draw_time",
+        "draw_sound",
+        "shoot_sound",
+        "__sprite",
+
+        "scope_offset",
+        "__scope",
+        "draw_indicator",
+        "interactor_distance",
+        "__shadow_sprite",
+        "__collider",
+        "__interactor",
+
+        # Cam target info.
+        "__cam_target_distance",
+        "__cam_target_distance_fill",
+        "__cam_target_offset",
+        "__cam_target",
+
+        # State machine.
+        "__state_machine"
+    )
+
     def __init__(
         self,
         cam_target: PositionNode,
@@ -56,13 +85,13 @@ class PlayerNode(PositionNode):
             y = y
         )
 
-        self.batch = batch
+        self.batch: Optional[pyglet.graphics.Batch] = batch
 
-        self.interactor_distance = 5.0
+        self.interactor_distance: float = 5.0
 
-        self.run_threshold = 0.75
+        self.run_threshold: float = 0.75
 
-        self.stats = PlayerStats(
+        self.stats: PlayerStats = PlayerStats(
             vitality = 5,
             resistance = 5,
             odds = 5,
@@ -71,11 +100,12 @@ class PlayerNode(PositionNode):
 
         self.__hor_facing: int = 1
 
-        # Shooting magnitude: defines how strong the shot will be (must be between 0 and 1).
-        self.__shoot_mag: float = 0.0
-
         # Current draw time (in seconds).
         self.draw_time: float = 0.0
+
+        # Draw sound.
+        self.draw_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_draw_1.wav"))
+        self.shoot_sound: pyglet.media.StaticSource = pyglet.media.StaticSource(pyglet.resource.media(name = "sounds/iryo_shoot_1.wav"))
 
         # Animations.
         self.__sprite = SpriteNode(
@@ -333,13 +363,6 @@ class PlayerNode(PositionNode):
     def unload_scope(self) -> None:
         self.__scope.unload()
 
-    def get_shoot_fill(self) -> float:
-        return self.__shoot_mag
-
-    def set_shoot_mag(self, mag: float) -> None:
-        if mag >= 0.0 and mag <= 1.0:
-            self.__shoot_mag = mag
-
     def __update_collider(self, dt):
         self.__collider.update(dt)
 
@@ -370,6 +393,10 @@ class PlayerStateMachine(StateMachine):
             current_state.disable_input()
 
 class PlayerState(State):
+    """
+    Base class for player states.
+    """
+
     def __init__(
         self,
         actor: PlayerNode
@@ -379,13 +406,18 @@ class PlayerState(State):
         self.input_enabled: bool = True
         self.actor: PlayerNode = actor
 
-    def onAnimationEnd(self) -> None:
-        pass
-
     def enable_input(self) -> None:
+        """
+        Enables all input reading.
+        """
+
         self.input_enabled = True
 
     def disable_input(self) -> None:
+        """
+        Disables all input reading.
+        """
+
         self.input_enabled = False
 
 class PlayerIdleState(PlayerState):
@@ -408,6 +440,7 @@ class PlayerIdleState(PlayerState):
         self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
         self.actor.unload_scope()
+        self.actor.draw_indicator.hide()
 
     def __fetch_input(self) -> None:
         """
@@ -628,6 +661,7 @@ class PlayerLoadState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.draw_indicator.hide()
 
         # Read input.
         aim_vec: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim_vec()
@@ -658,6 +692,7 @@ class PlayerAimState(PlayerState):
         self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
         self.actor.load_scope()
+        self.actor.draw_indicator.hide()
 
     def __fetch_input(self) -> None:
         """
@@ -684,6 +719,7 @@ class PlayerAimState(PlayerState):
             return PlayerStates.IDLE
 
         if self.__draw:
+            controllers.SOUND_CONTROLLER.play_effect(self.actor.draw_sound)
             return PlayerStates.DRAW
 
         # Set aim direction.
@@ -707,6 +743,7 @@ class PlayerAimWalkState(PlayerState):
     def start(self) -> None:
         self.actor.draw_time = 0.0
         self.actor.set_animation(self.__animation)
+        self.actor.draw_indicator.hide()
 
     def __fetch_input(self) -> None:
         """
@@ -747,6 +784,7 @@ class PlayerAimWalkState(PlayerState):
             return PlayerStates.IDLE
 
         if self.__draw:
+            controllers.SOUND_CONTROLLER.play_effect(self.actor.draw_sound)
             return PlayerStates.DRAW
 
         # Set aim direction.
@@ -769,6 +807,7 @@ class PlayerDrawState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.draw_indicator.show()
 
     def __fetch_input(self) -> None:
         """
@@ -792,19 +831,11 @@ class PlayerDrawState(PlayerState):
         # Set aim direction.
         self.actor.stats.look_dir = self.__aim_vec.heading
 
-        # Build shoot magnitude.
-        if self.actor.draw_time >= self.actor.stats.min_draw_time:
-            shoot_mag: float = self.actor.get_shoot_fill()
-            self.actor.set_shoot_mag(shoot_mag + dt)
-
         # Check for state changes.
         if self.__move:
             return PlayerStates.DRAW_WALK
 
         if self.__aim_vec.mag <= 0.0:
-            # Reset shoot magnitude.
-            self.actor.set_shoot_mag(0.0)
-
             return PlayerStates.IDLE
 
         if not self.__draw:
@@ -830,6 +861,7 @@ class PlayerDrawWalkState(PlayerState):
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+        self.actor.draw_indicator.show()
 
     def __fetch_input(self) -> None:
         """
@@ -866,19 +898,11 @@ class PlayerDrawWalkState(PlayerState):
         # Move the player.
         self.actor.move(dt = dt)
 
-        # Build shoot magnitude.
-        if self.actor.draw_time >= self.actor.stats.min_draw_time:
-            shoot_mag: float = self.actor.get_shoot_fill()
-            self.actor.set_shoot_mag(shoot_mag + dt)
-
         # Check for state changes.
         if self.__move_vec.mag <= 0:
             return PlayerStates.DRAW
 
         if self.__aim_vec.mag <= 0.0:
-            # Reset shoot magnitude.
-            self.actor.set_shoot_mag(0.0)
-
             return PlayerStates.IDLE
 
         if not self.__draw:
@@ -903,12 +927,15 @@ class PlayerShootState(PlayerState):
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
 
+        # Hide loading indicator.
+        self.actor.draw_indicator.hide()
+
         if scenes.ACTIVE_SCENE is not None:
             # Create a projectile.
             scenes.ACTIVE_SCENE.add_child(ArrowNode(
                 x = self.actor.x + self.actor.scope_offset[0],
                 y = self.actor.y + self.actor.scope_offset[1],
-                speed = scale(self.actor.get_shoot_fill(), (0.0, 1.0), (100.0, 500.0)),
+                speed = 500.0,
                 direction = self.actor.stats.look_dir,
                 batch = self.actor.batch
             ))
@@ -916,9 +943,9 @@ class PlayerShootState(PlayerState):
             # Camera feedback.
             scenes.ACTIVE_SCENE.apply_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 5.0, angle = self.actor.stats.look_dir))
 
+        controllers.SOUND_CONTROLLER.play_effect(self.actor.shoot_sound)
+
     def end(self) -> None:
-        # Reset shoot magnitude.
-        self.actor.set_shoot_mag(0.0)
         self.actor.set_cam_target_distance_fill(fill = 0.0)
 
     def __fetch_input(self) -> None:

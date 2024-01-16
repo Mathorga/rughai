@@ -1,4 +1,5 @@
 from enum import Enum
+import os
 from typing import List, Optional, Tuple
 import pyglet
 from engine.animation import Animation
@@ -53,6 +54,21 @@ class ScopeNode(PositionNode):
         # Distance between each sprite.
         self.sprites_delta: float = 0.0
 
+        # Load fragment source from file.
+        fragment_source: str
+        with open(
+            file = os.path.join(pyglet.resource.path[0], "../shaders/alpha_blend.frag"),
+            mode = "r",
+            encoding = "UTF8"
+        ) as file:
+            fragment_source = file.read()
+
+        # Create shader program from vector and fragment.
+        vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
+        frag_shader = pyglet.graphics.shader.Shader(fragment_source, "fragment")
+        shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
+        shader_program["alpha"] = 0.5
+
         # Create sprites.
         self.sprites: List[SpriteNode] = []
         for animation in self.animations:
@@ -61,6 +77,7 @@ class ScopeNode(PositionNode):
                     resource = animation.content,
                     x = x,
                     y = y,
+                    shader = shader_program,
                     batch = batch
                 )
             )

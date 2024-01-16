@@ -21,6 +21,9 @@ class Keys(str, Enum):
     CAMERA_SPEED = "camera_speed"
     LAYERS_Z_SPACING = "layers_z_spacing"
     TILEMAP_BUFFER = "tilemap_buffer"
+    SOUND = "sound"
+    MUSIC = "music"
+    SFX = "sfx"
 
     # Globals.
     PLATFORM = "platform"
@@ -55,7 +58,12 @@ SETTINGS = {
 
     Keys.CAMERA_SPEED: 5.0,
     Keys.LAYERS_Z_SPACING: 32.0,
-    Keys.TILEMAP_BUFFER: 2
+    Keys.TILEMAP_BUFFER: 2,
+
+    # Sounds settings.
+    Keys.SOUND: True,
+    Keys.MUSIC: True,
+    Keys.SFX: True
 }
 
 GLOBALS = {
