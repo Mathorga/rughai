@@ -1,6 +1,13 @@
 from typing import Dict, List, Optional
 
-class State:
+class State ():
+    """
+    State interface, defines all mandatory methods for state implementations.
+    This class cannot be used as is, you must always define a specialization through inheritance.
+    """
+
+    __slots__ = ()
+
     def start(self) -> None:
         pass
 
@@ -17,6 +24,16 @@ class State:
         pass
 
 class StateMachine:
+    """
+    Base state machine class, handles state transition and events pass-through to states.
+    This class can be used as-is or specialized through inheritance.
+    """
+
+    __slots__ = (
+        "states",
+        "current_key"
+    )
+
     def __init__(
         self,
         states: Optional[Dict[str, State]]

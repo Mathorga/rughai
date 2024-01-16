@@ -59,6 +59,25 @@ class IdlePropNode(PositionNode):
     }
     """
 
+    __slots__ = (
+        "source",
+
+        # Animation data.
+        "__animations_data",
+        "animations",
+
+        "__colliders",
+        "__sensors",
+
+        "max_health_points",
+        "health_points",
+
+        "sprite",
+        "anim_duration",
+
+        "__state_machine"
+    )
+
     def __init__(
         self,
         source: str,
