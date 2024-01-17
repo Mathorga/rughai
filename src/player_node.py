@@ -370,7 +370,15 @@ class PlayerNode(PositionNode):
         return self.__sprite.get_bounding_box()
 
 class PlayerStateMachine(StateMachine):
+    """
+    Player state machine specialization. Handles player state transitions and adds input management.
+    """
+
     def enable_input(self) -> None:
+        """
+        Enables input handling on the current state.
+        """
+
         # Just return if there's no current state.
         if self.current_key is None:
             return
@@ -382,6 +390,10 @@ class PlayerStateMachine(StateMachine):
             current_state.enable_input()
 
     def disable_input(self) -> None:
+        """
+        Disables input handling on the current state.
+        """
+
         # Just return if there's no current state.
         if self.current_key is None:
             return
@@ -396,6 +408,11 @@ class PlayerState(State):
     """
     Base class for player states.
     """
+
+    __slots__ = (
+        "input_enabled",
+        "actor"
+    )
 
     def __init__(
         self,
@@ -421,6 +438,21 @@ class PlayerState(State):
         self.input_enabled = False
 
 class PlayerIdleState(PlayerState):
+    """
+    Player IDLE state.
+    Plays idle animations and defines state transitions to LOAD, WALK and ROLL.
+    """
+
+    __slots__ = (
+        "__animation",
+
+        # Input buffers.
+        "__move",
+        "__aim",
+        "__sprint",
+        "__interact"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -472,6 +504,22 @@ class PlayerIdleState(PlayerState):
             return PlayerStates.ROLL
 
 class PlayerWalkState(PlayerState):
+    """
+    Player WALK state.
+    Plays walk animations and defines state transitions to LOAD, ROLL, IDLE and RUN.
+    """
+
+    __slots__ = (
+        "__animation",
+
+        # Input buffers.
+        "__move_vec",
+        "__aim",
+        "__shift",
+        "__sprint",
+        "__interact"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -545,6 +593,22 @@ class PlayerWalkState(PlayerState):
             return PlayerStates.RUN
 
 class PlayerRunState(PlayerState):
+    """
+    Player RUN state.
+    Plays run animations and defines state transitions to LOAD, ROLL and WALK.
+    """
+
+    __slots__ = (
+        "__animation",
+
+        # Input buffers.
+        "__move_vec",
+        "__aim",
+        "__shift",
+        "__sprint",
+        "__interact"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -615,6 +679,16 @@ class PlayerRunState(PlayerState):
             return PlayerStates.WALK
 
 class PlayerRollState(PlayerState):
+    """
+    Player ROLL state.
+    Plays roll animations and defines state transitions to IDLE and WALK.
+    """
+
+    __slots__ = (
+        "__animation",
+        "__startup"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -650,6 +724,15 @@ class PlayerRollState(PlayerState):
             return PlayerStates.WALK
 
 class PlayerLoadState(PlayerState):
+    """
+    Player LOAD state.
+    Plays load animations and defines state transitions to AIM.
+    """
+
+    __slots__ = (
+        "__animation"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -673,6 +756,21 @@ class PlayerLoadState(PlayerState):
         return PlayerStates.AIM
 
 class PlayerAimState(PlayerState):
+    """
+    Player AIM state.
+    Plays load animations and defines state transitions to AIM_WALK, IDLE and DRAW.
+    """
+
+    __slots__ = (
+        "__animation",
+
+        # Input buffers.
+        "__move",
+        "__aim",
+        "__aim_vec",
+        "__draw"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -726,6 +824,20 @@ class PlayerAimState(PlayerState):
         self.actor.stats.look_dir = self.__aim_vec.heading
 
 class PlayerAimWalkState(PlayerState):
+    """
+    Player AIM_WALK state.
+    Plays walking aim animations and defines state transitions to AIM, IDLE and DRAW.
+    """
+
+    __slots__ = (
+        "__animation",
+
+        # Input buffers.
+        "__move_vec",
+        "__aim_vec",
+        "__draw"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -791,6 +903,20 @@ class PlayerAimWalkState(PlayerState):
         self.actor.stats.look_dir = self.__aim_vec.heading
 
 class PlayerDrawState(PlayerState):
+    """
+    Player DRAW state.
+    Plays draw animations and defines state transitions to DRAW_WALK, IDLE, SHOOT and AIM.
+    """
+
+    __slots__ = (
+        "__animation",
+
+        # Input buffers.
+        "__move",
+        "__aim_vec",
+        "__draw"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -845,6 +971,20 @@ class PlayerDrawState(PlayerState):
                 return PlayerStates.AIM
 
 class PlayerDrawWalkState(PlayerState):
+    """
+    Player DRAW_WALK state.
+    Plays walking draw animations and defines state transitions to DRAW, IDLE, SHOOT and AIM_WALK.
+    """
+
+    __slots__ = (
+        "__animation",
+
+        # Input buffers.
+        "__move_vec",
+        "__aim_vec",
+        "__draw"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -912,6 +1052,18 @@ class PlayerDrawWalkState(PlayerState):
                 return PlayerStates.AIM_WALK
 
 class PlayerShootState(PlayerState):
+    """
+    Player SHOOT state.
+    Plays shoot animations and defines state transitions to IDLE and AIM.
+    """
+
+    __slots__ = (
+        "__animation",
+
+        # Input buffers.
+        "__aim"
+    )
+
     def __init__(
         self,
         actor: PlayerNode
@@ -941,7 +1093,12 @@ class PlayerShootState(PlayerState):
             ))
 
             # Camera feedback.
-            scenes.ACTIVE_SCENE.apply_cam_impulse(impulse = pyglet.math.Vec2.from_polar(mag = 5.0, angle = self.actor.stats.look_dir))
+            scenes.ACTIVE_SCENE.apply_cam_impulse(
+                impulse = pyglet.math.Vec2.from_polar(
+                    mag = 10.0,
+                    angle = self.actor.stats.look_dir
+                )
+            )
 
         controllers.SOUND_CONTROLLER.play_effect(self.actor.shoot_sound)
 
