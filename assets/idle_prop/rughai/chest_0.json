@@ -27,7 +27,7 @@
     "anchor_y": 4,
     "sensors": [
         {
-            "tags": ["player_sense"],
+            "interact_tags": ["player_interaction"],
             "offset_x": 0,
             "offset_y": 0,
             "width": 32,
