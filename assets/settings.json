@@ -1,6 +1,6 @@
 {
-    "debug": false,
-    "show_collisions": false,
+    "debug": true,
+    "show_collisions": true,
     "show_tiles_grid": true,
     "free_cam_bounds": false,
     "title": "RUGHAI",
