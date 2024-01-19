@@ -22,5 +22,34 @@
         ]
     },
     "anchor_x": 192,
-    "anchor_y": 20
+    "anchor_y": 20,
+    "colliders": [
+        {
+            "tags": ["player_collision"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 40,
+            "height": 24,
+            "anchor_x": 20,
+            "anchor_y": 8
+        },
+        {
+            "tags": ["player_collision"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 80,
+            "height": 4,
+            "anchor_x": 40,
+            "anchor_y": 0
+        },
+        {
+            "tags": ["player_collision"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 60,
+            "height": 4,
+            "anchor_x": 30,
+            "anchor_y": -12
+        }
+    ]
 }
