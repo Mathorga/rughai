@@ -74,7 +74,9 @@ Idle prop files are defined as follows:</br>
     * `anchor_x[int]`: x component of the collider's anchor point.</br>
     * `anchor_y[int]`: y component of the collider's anchor point.</br>
   * `sensors[array](optional)`: array of all sensors (responsible for "non blocking" collisions). Every element in defined as follows:</br>
-    * `tags[array]`: array of all collision tags the single sensor reacts to.</br>
+    * `meet_tags[array]`: array of all collision tags causing meeting.</br>
+    * `interact_tags[array]`: array of all collision tags causing interaction.</br>
+    * `hit_tags[array]`: array of all collision tags causing hit.</br>
     * `offset_x[int]`: horizontal displacement, relative to the prop's position.</br>
     * `offset_y[int]`: vertical displacement, relative to the prop's position.</br>
     * `width[int]`: sensor width</br>

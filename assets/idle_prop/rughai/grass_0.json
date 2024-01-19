@@ -35,7 +35,7 @@
     "anchor_y": 2,
     "sensors": [
         {
-            "tags": ["player_sense"],
+            "meet_tags": ["player_sense"],
             "offset_x": 0,
             "offset_y": 0,
             "width": 6,
