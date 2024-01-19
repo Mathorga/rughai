@@ -1,0 +1,28 @@
+{
+    "animation_specs": [
+        {
+            "path": "sprites/prop/rughai/chest_0/chest_0_idle_0.gif",
+            "name": "idle_0"
+        },
+        {
+            "path": "sprites/prop/rughai/chest_0/chest_0_interact_0.gif",
+            "name": "interact_0"
+        }
+    ],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 1
+            }
+        ],
+        "interact": [
+            {
+                "name": "interact_0",
+                "weight": 1
+            }
+        ]
+    },
+    "anchor_x": 16,
+    "anchor_y": 4
+}
