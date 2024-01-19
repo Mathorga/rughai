@@ -238,8 +238,8 @@ class IdlePropNode(PositionNode):
                 IdlePropStates.MEET_IN: IdlePropMeetInState(actor = self),
                 IdlePropStates.MEETING: IdlePropMeetingState(actor = self),
                 IdlePropStates.MEET_OUT: IdlePropMeetOutState(actor = self),
+                IdlePropStates.INTERACT: IdlePropInteractState(actor = self),
                 # TODO Assign real states.
-                IdlePropStates.INTERACT: IdlePropMeetOutState(actor = self),
                 IdlePropStates.HIT: IdlePropMeetOutState(actor = self),
                 IdlePropStates.DESTROY: IdlePropMeetOutState(actor = self)
             }
@@ -379,15 +379,6 @@ class IdlePropIdleState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("idle")
 
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if collision_tags.DAMAGE in tags and enter:
-            return self.hit()
-        elif collision_tags.PLAYER_SENSE in tags:
-            if enter:
-                return IdlePropStates.MEET_IN
-            else:
-                return IdlePropStates.MEET_OUT
-
     def update(self, dt: float) -> str | None:
         self.__elapsed_anim_time += dt
 
@@ -400,10 +391,6 @@ class IdlePropMeetInState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("meet_in")
 
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if collision_tags.DAMAGE in tags and enter:
-            return self.hit()
-
     def on_animation_end(self) -> Optional[str]:
         return IdlePropStates.MEETING
 
@@ -414,13 +401,6 @@ class IdlePropMeetingState(IdlePropState):
 
     def start(self) -> None:
         self.actor.set_animation("meeting")
-
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if collision_tags.DAMAGE in tags and enter:
-            return self.hit()
-        else:
-            if not enter:
-                return IdlePropStates.MEET_OUT
 
     def update(self, dt: float) -> str | None:
         self.__elapsed_anim_time += dt
@@ -434,9 +414,12 @@ class IdlePropMeetOutState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("meet_out")
 
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if collision_tags.DAMAGE in tags and enter:
-            return self.hit()
+    def on_animation_end(self) -> Optional[str]:
+        return IdlePropStates.IDLE
+
+class IdlePropInteractState(IdlePropState):
+    def start(self) -> None:
+        self.actor.set_animation("interact")
 
     def on_animation_end(self) -> Optional[str]:
         return IdlePropStates.IDLE
