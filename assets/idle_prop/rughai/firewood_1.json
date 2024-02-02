@@ -1,0 +1,29 @@
+{
+    "animation_specs": [
+        {
+            "path": "sprites/prop/rughai/firewood_1/firewood_1_idle_0.gif",
+            "name": "idle_0"
+        }
+    ],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 1
+            }
+        ]
+    },
+    "anchor_x": 15,
+    "anchor_y": 4,
+    "colliders": [
+        {
+            "tags": ["player_collision"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 14,
+            "height": 8,
+            "anchor_x": 14,
+            "anchor_y": 4
+        }
+    ]
+}
