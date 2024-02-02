@@ -14,6 +14,15 @@ from engine.settings import GLOBALS, SETTINGS, Keys
 TILE_SCALING = 1.01
 
 class Tileset:
+    __slots__ = (
+        "__textures",
+        "tile_width",
+        "tile_height",
+        "margin",
+        "spacing",
+        "tiles"
+    )
+
     def __init__(
         self,
         sources: list,

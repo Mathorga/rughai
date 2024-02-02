@@ -14,5 +14,16 @@
         ]
     },
     "anchor_x": 8,
-    "anchor_y": 5
+    "anchor_y": 5,
+    "colliders": [
+        {
+            "tags": ["player_collision"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 6,
+            "height": 6,
+            "anchor_x": 3,
+            "anchor_y": 3
+        }
+    ]
 }

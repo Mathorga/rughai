@@ -41,7 +41,7 @@ class IdlePropNode(PositionNode):
         anchor_y[int](optional): y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
         health_points[int](optional): amount of damage the prop can take before breaking. If this is not set, then an infinite amount is used, aka the prop cannot be broken.
         colliders[array](optional): array of all colliders (responsible for "blocking" collisions). Every element in defined as follows:
-            tags[array]: array of all collision tags the single collider reacts to.
+            tags[array]: array of all collision tags causing blocking collisions.
             offset_x[int]: horizontal displacement, relative to the prop's position.
             offset_y[int]: vertical displacement, relative to the prop's position.
             width[int]: collider width
@@ -49,7 +49,9 @@ class IdlePropNode(PositionNode):
             anchor_x[int]: x component of the collider's anchor point.
             anchor_y[int]: y component of the collider's anchor point.
         sensors[array](optional): array of all sensors (responsible for "non blocking" collisions). Every element in defined as follows:
-            tags[array]: array of all collision tags the single sensor reacts to.
+            meet_tags[array]: array of all collision tags causing meeting.
+            interact_tags[array]: array of all collision tags causing interaction.
+            hit_tags[array]: array of all collision tags causing hit.
             offset_x[int]: horizontal displacement, relative to the prop's position.
             offset_y[int]: vertical displacement, relative to the prop's position.
             width[int]: sensor width
@@ -68,6 +70,7 @@ class IdlePropNode(PositionNode):
 
         "__colliders",
         "__sensors",
+        "__sensors_tags",
 
         "max_health_points",
         "health_points",
@@ -103,6 +106,7 @@ class IdlePropNode(PositionNode):
 
         self.__colliders: List[PositionNode] = []
         self.__sensors: List[PositionNode] = []
+        self.__sensors_tags: List[Dict[str, List[str]]] = []
 
         data: dict = {}
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
@@ -178,12 +182,20 @@ class IdlePropNode(PositionNode):
 
         # Sensors.
         if "sensors" in data:
-            for sensor_data in data["sensors"]:
+            for index, sensor_data in enumerate(data["sensors"]):
+                meet_tags: List[str] = sensor_data["meet_tags"] or [] if "meet_tags" in sensor_data else []
+                interact_tags: List[str] = sensor_data["interact_tags"] or [] if "interact_tags" in sensor_data else []
+                hit_tags: List[str] = sensor_data["hit_tags"] or [] if "hit_tags" in sensor_data else []
+
                 sensor = CollisionNode(
                     x = x,
                     y = y,
                     collision_type = CollisionType.STATIC,
-                    passive_tags = sensor_data["tags"],
+                    passive_tags = [
+                        *meet_tags,
+                        *interact_tags,
+                        *hit_tags
+                    ],
                     sensor = True,
                     shapes = [
                         CollisionRect(
@@ -196,9 +208,14 @@ class IdlePropNode(PositionNode):
                             batch = batch
                         )
                     ],
-                    on_triggered = self.__on_sensor_triggered
+                    on_triggered = lambda tags, entered: self.__on_sensor_triggered(tags = tags, entered = entered, index = index)
                 )
+                self.__sensors_tags.append({})
+                self.__sensors_tags[index]["meet"] = meet_tags
+                self.__sensors_tags[index]["interact"] = interact_tags
+                self.__sensors_tags[index]["hit"] = hit_tags
                 self.__sensors.append(sensor)
+
                 controllers.COLLISION_CONTROLLER.add_collider(sensor)
 
         self.sprite: Optional[SpriteNode] = None
@@ -215,16 +232,16 @@ class IdlePropNode(PositionNode):
             )
 
         # State machine.
-        self.__state_machine = StateMachine(
+        self.__state_machine = IdlePropStateMachine(
             states = {
                 IdlePropStates.IDLE: IdlePropIdleState(actor = self),
                 IdlePropStates.MEET_IN: IdlePropMeetInState(actor = self),
                 IdlePropStates.MEETING: IdlePropMeetingState(actor = self),
                 IdlePropStates.MEET_OUT: IdlePropMeetOutState(actor = self),
-                # TODO
-                # IdlePropStates.INTERACT: IdlePropInteractState(actor = self),
-                # IdlePropStates.HIT: IdlePropHitState(actor = self),
-                # IdlePropStates.DESTROY: IdlePropDestroyState(actor = self)
+                IdlePropStates.INTERACT: IdlePropInteractState(actor = self),
+                # TODO Assign real states.
+                IdlePropStates.HIT: IdlePropMeetOutState(actor = self),
+                IdlePropStates.DESTROY: IdlePropMeetOutState(actor = self)
             }
         )
 
@@ -235,12 +252,17 @@ class IdlePropNode(PositionNode):
 
         self.__state_machine.on_collision(tags = tags, enter = entered)
 
-    def __on_sensor_triggered(self, tags: List[str], entered: bool) -> None:
+    def __on_sensor_triggered(self, tags: List[str], entered: bool, index: int) -> None:
         """
         Handles all sensors' trigger events.
         """
 
-        self.__state_machine.on_collision(tags = tags, enter = entered)
+        if bool(set(tags) & set(self.__sensors_tags[index]["meet"])):
+            self.__state_machine.meet(entered = entered)
+        if bool(set(tags) & set(self.__sensors_tags[index]["interact"])):
+            self.__state_machine.interact()
+        elif bool(set(tags) & set(self.__sensors_tags[index]["hit"])):
+            self.__state_machine.hit()
 
     def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
         super().set_position(position, z)
@@ -283,6 +305,43 @@ class IdlePropNode(PositionNode):
             sensor.delete()
         self.__sensors.clear()
 
+class IdlePropStateMachine(StateMachine):
+
+    def on_collision(self, tags: List[str], enter: bool) -> None:
+        return super().on_collision(tags, enter)
+
+    def meet(self, entered: bool) -> None:
+        # Just return if there's no current state.
+        if self.current_key is None:
+            return
+
+        # Retrieve the current state.
+        current_state: State = self.states[self.current_key]
+
+        if isinstance(current_state, IdlePropState):
+            self.transition(current_state.meet(entered = entered))
+
+    def interact(self) -> None:
+        # Just return if there's no current state.
+        if self.current_key is None:
+            return
+
+        # Retrieve the current state.
+        current_state: State = self.states[self.current_key]
+
+        if isinstance(current_state, IdlePropState):
+            self.transition(current_state.interact())
+
+    def hit(self) -> None:
+        # Just return if there's no current state.
+        if self.current_key is None:
+            return
+
+        # Retrieve the current state.
+        current_state: State = self.states[self.current_key]
+
+        if isinstance(current_state, IdlePropState):
+            self.transition(current_state.hit())
 
 class IdlePropState(State):
     def __init__(
@@ -292,6 +351,15 @@ class IdlePropState(State):
         super().__init__()
 
         self.actor: IdlePropNode = actor
+
+    def meet(self, entered: bool) -> Optional[str]:
+        if entered:
+            return IdlePropStates.MEET_IN
+        else:
+            return IdlePropStates.MEET_OUT
+
+    def interact(self) -> Optional[str]:
+        return IdlePropStates.INTERACT
 
     def hit(self) -> Optional[str]:
         # Reduce health points if a damage occurred and health points were defined in the first place.
@@ -311,15 +379,6 @@ class IdlePropIdleState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("idle")
 
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if collision_tags.DAMAGE in tags and enter:
-            return self.hit()
-        elif collision_tags.PLAYER_SENSE in tags:
-            if enter:
-                return IdlePropStates.MEET_IN
-            else:
-                return IdlePropStates.MEET_OUT
-
     def update(self, dt: float) -> str | None:
         self.__elapsed_anim_time += dt
 
@@ -332,10 +391,6 @@ class IdlePropMeetInState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("meet_in")
 
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if collision_tags.DAMAGE in tags and enter:
-            return self.hit()
-
     def on_animation_end(self) -> Optional[str]:
         return IdlePropStates.MEETING
 
@@ -346,13 +401,6 @@ class IdlePropMeetingState(IdlePropState):
 
     def start(self) -> None:
         self.actor.set_animation("meeting")
-
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if collision_tags.DAMAGE in tags and enter:
-            return self.hit()
-        else:
-            if not enter:
-                return IdlePropStates.MEET_OUT
 
     def update(self, dt: float) -> str | None:
         self.__elapsed_anim_time += dt
@@ -366,9 +414,12 @@ class IdlePropMeetOutState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("meet_out")
 
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
-        if collision_tags.DAMAGE in tags and enter:
-            return self.hit()
+    def on_animation_end(self) -> Optional[str]:
+        return IdlePropStates.IDLE
+
+class IdlePropInteractState(IdlePropState):
+    def start(self) -> None:
+        self.actor.set_animation("interact")
 
     def on_animation_end(self) -> Optional[str]:
         return IdlePropStates.IDLE
