@@ -36,8 +36,7 @@ class IdlePropNode(PositionNode):
             anchor_y[int](optional): the y component of the animation-specific anchor point.
         animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit" and "destroy". Every element in each category is defined as follows:
             name[string]: the name of the animation name, as defined in animation_specs.
-            weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as:
-                1 / (category_weight_sum - animation_weight)
+            weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as animation_weight / category_weight_sum
         anchor_x[int](optional): x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
         anchor_y[int](optional): y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
         health_points[int](optional): amount of damage the prop can take before breaking. If this is not set, then an infinite amount is used, aka the prop cannot be broken.
