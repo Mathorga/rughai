@@ -112,6 +112,7 @@ class DialogNode(PositionNode):
         """
         Progresses the dialog to the next line.
         """
+
         if self.interaction.enabled:
             if self.current_char < len(self.lines[self.current_line]) - 1:
                 # Just go to end of the line if not there yet.

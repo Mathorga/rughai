@@ -23,6 +23,7 @@ class InteractionNode(Node):
         """
         Activates or deactivates the interaction.
         """
+
         self.enabled = enable
 
         if self.on_toggle is not None:

@@ -6,8 +6,24 @@ Rughai is an action RPG game built entirely in Python.
 ## Install dependencies
 `pip3 install -r requirements.txt`
 
-## Run
+## Run the game
 `python3 -O .\src\main.py`
+
+## Run the scene editor
+`python3 -O .\src\scene_editor.py <scene_name>`<br/>
+where scene_name is the name of the scene to edit.<br/>
+Possible scene names are:<br/>
+r_0_0<br/>
+r_0_1<br/>
+r_0_2<br/>
+r_0_3<br/>
+r_0_4<br/>
+r_0_5<br/>
+etc<br/>
+
+### Example
+The following command runs the scene editor on r_0_0:<br/>
+`python3 -O .\src\scene_editor.py r_0_0`<br/>
 
 ## Compile to executable (using Nuitka)
 In order to compile to executable you first need to install Nuitka:</br>

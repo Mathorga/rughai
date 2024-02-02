@@ -7,6 +7,7 @@ import pyglet
 from engine import controllers
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
+from engine.interaction_node import InteractionNode
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
@@ -68,6 +69,7 @@ class IdlePropNode(PositionNode):
         "__animations_data",
         "animations",
 
+        "__interactor",
         "__colliders",
         "__sensors",
         "__sensors_tags",
@@ -100,10 +102,12 @@ class IdlePropNode(PositionNode):
             "meet_in": {},
             "meeting": {},
             "meet_out": {},
+            "interact": {},
             "hit": {},
             "destroy": {}
         }
 
+        self.__interactor: Optional[InteractionNode] = None
         self.__colliders: List[PositionNode] = []
         self.__sensors: List[PositionNode] = []
         self.__sensors_tags: List[Dict[str, List[str]]] = []
@@ -182,6 +186,13 @@ class IdlePropNode(PositionNode):
 
         # Sensors.
         if "sensors" in data:
+            # Create interactor if interact tags are declared.
+            if any("interact_tags" in sensor for sensor in data["sensors"]):
+                self.__interactor = InteractionNode(
+                    on_interaction = self.__on_interaction,
+                )
+                controllers.INTERACTION_CONTROLLER.add_interaction(self.__interactor)
+
             for index, sensor_data in enumerate(data["sensors"]):
                 meet_tags: List[str] = sensor_data["meet_tags"] or [] if "meet_tags" in sensor_data else []
                 interact_tags: List[str] = sensor_data["interact_tags"] or [] if "interact_tags" in sensor_data else []
@@ -245,6 +256,12 @@ class IdlePropNode(PositionNode):
             }
         )
 
+    def __on_interaction(self) -> None:
+        """
+        """
+
+        self.__state_machine.interact()
+
     def __on_collider_triggered(self, tags: List[str], entered: bool) -> None:
         """
         Handles all colliders' trigger events.
@@ -259,8 +276,9 @@ class IdlePropNode(PositionNode):
 
         if bool(set(tags) & set(self.__sensors_tags[index]["meet"])):
             self.__state_machine.meet(entered = entered)
-        if bool(set(tags) & set(self.__sensors_tags[index]["interact"])):
-            self.__state_machine.interact()
+        elif bool(set(tags) & set(self.__sensors_tags[index]["interact"])):
+            if self.__interactor is not None:
+                controllers.INTERACTION_CONTROLLER.toggle(self.__interactor, enable = entered)
         elif bool(set(tags) & set(self.__sensors_tags[index]["hit"])):
             self.__state_machine.hit()
 
