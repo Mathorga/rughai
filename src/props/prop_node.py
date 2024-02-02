@@ -250,9 +250,8 @@ class IdlePropNode(PositionNode):
                 IdlePropStates.MEETING: IdlePropMeetingState(actor = self),
                 IdlePropStates.MEET_OUT: IdlePropMeetOutState(actor = self),
                 IdlePropStates.INTERACT: IdlePropInteractState(actor = self),
-                # TODO Assign real states.
-                IdlePropStates.HIT: IdlePropMeetOutState(actor = self),
-                IdlePropStates.DESTROY: IdlePropMeetOutState(actor = self)
+                IdlePropStates.HIT: IdlePropHitState(actor = self),
+                IdlePropStates.DESTROY: IdlePropDestroyState(actor = self)
             }
         )
 
@@ -279,7 +278,7 @@ class IdlePropNode(PositionNode):
         elif bool(set(tags) & set(self.__sensors_tags[index]["interact"])):
             if self.__interactor is not None:
                 controllers.INTERACTION_CONTROLLER.toggle(self.__interactor, enable = entered)
-        elif bool(set(tags) & set(self.__sensors_tags[index]["hit"])):
+        elif entered and bool(set(tags) & set(self.__sensors_tags[index]["hit"])):
             self.__state_machine.hit()
 
     def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
@@ -441,3 +440,17 @@ class IdlePropInteractState(IdlePropState):
 
     def on_animation_end(self) -> Optional[str]:
         return IdlePropStates.IDLE
+
+class IdlePropHitState(IdlePropState):
+    def start(self) -> None:
+        self.actor.set_animation("hit")
+
+    def on_animation_end(self) -> Optional[str]:
+        return IdlePropStates.IDLE
+
+class IdlePropDestroyState(IdlePropState):
+    def start(self) -> None:
+        self.actor.set_animation("destroy")
+
+    def on_animation_end(self) -> Optional[str]:
+        self.actor.delete()
