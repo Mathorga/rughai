@@ -1,7 +1,11 @@
 {
     "animation_specs": [
         {
-            "path": "sprites/prop/rughai/rock_7/rock_7_idle_0.gif",
+            "path": "sprites/prop/rughai/grave_8/grave_8_idle_0.gif",
+            "name": "idle_0"
+        },
+        {
+            "path": "sprites/prop/rughai/grave_8/grave_8_idle_1.gif",
             "name": "idle_0"
         }
     ],
@@ -10,19 +14,23 @@
             {
                 "name": "idle_0",
                 "weight": 1
+            },
+            {
+                "name": "idle_1",
+                "weight": 9
             }
         ]
     },
-    "anchor_x": 8,
-    "anchor_y": 5,
+    "anchor_x": 15,
+    "anchor_y": 4,
     "colliders": [
         {
             "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
-            "width": 8,
+            "width": 10,
             "height": 8,
-            "anchor_x": 4,
+            "anchor_x": 12,
             "anchor_y": 4
         }
     ]
