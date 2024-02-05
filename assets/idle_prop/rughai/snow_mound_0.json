@@ -1,7 +1,7 @@
 {
     "animation_specs": [
         {
-            "path": "sprites/prop/rughai/rock_7/rock_7_idle_0.gif",
+            "path": "sprites/prop/rughai/snow_mound_0/snow_mound_0_idle_0.gif",
             "name": "idle_0"
         }
     ],
@@ -13,16 +13,16 @@
             }
         ]
     },
-    "anchor_x": 8,
-    "anchor_y": 5,
+    "anchor_x": 15,
+    "anchor_y": 4,
     "colliders": [
         {
             "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
-            "width": 8,
+            "width": 10,
             "height": 8,
-            "anchor_x": 4,
+            "anchor_x": 12,
             "anchor_y": 4
         }
     ]

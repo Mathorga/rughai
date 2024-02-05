@@ -33,13 +33,21 @@
                 "name": "meeting_0",
                 "weight": 1
             }
+        ],
+        "destroy": [
+            {
+                "name": "destroy_0",
+                "weight": 1
+            }
         ]
     },
     "anchor_x": 8,
     "anchor_y": 2,
+    "health_points": 1,
     "sensors": [
         {
             "meet_tags": ["player_sense"],
+            "hit_tags": ["damage"],
             "offset_x": 0,
             "offset_y": 0,
             "width": 6,
