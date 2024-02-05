@@ -1,7 +1,7 @@
 {
     "animation_specs": [
         {
-            "path": "sprites/prop/rughai/grave_1/grave_1_idle_0.gif",
+            "path": "sprites/prop/rughai/burial_0/burial_0_idle_0.gif",
             "name": "idle_0"
         }
     ],
@@ -13,17 +13,17 @@
             }
         ]
     },
-    "anchor_x": 15,
-    "anchor_y": 4,
+    "anchor_x": 10,
+    "anchor_y": 6,
     "colliders": [
         {
             "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
             "width": 12,
-            "height": 8,
-            "anchor_x": 12,
-            "anchor_y": 4
+            "height": 24,
+            "anchor_x": 6,
+            "anchor_y": 2
         }
     ]
 }

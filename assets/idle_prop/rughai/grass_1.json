@@ -50,10 +50,10 @@
             "hit_tags": ["damage"],
             "offset_x": 0,
             "offset_y": 0,
-            "width": 6,
-            "height": 6,
-            "anchor_x": 3,
-            "anchor_y": 3
+            "width": 8,
+            "height": 4,
+            "anchor_x": 4,
+            "anchor_y": 1
         }
     ]
 }
