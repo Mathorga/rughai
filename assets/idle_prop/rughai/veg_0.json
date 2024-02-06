@@ -7,6 +7,14 @@
         {
             "path": "sprites/prop/rughai/veg_0/veg_0_idle_1.gif",
             "name": "idle_1"
+        },
+        {
+            "path": "sprites/prop/rughai/veg_0/veg_0_meeting_0.gif",
+            "name": "meeting_0"
+        },
+        {
+            "path": "sprites/prop/rughai/veg_0/veg_0_destroy_0.gif",
+            "name": "destroy_0"
         }
     ],
     "animations": {
@@ -19,8 +27,39 @@
                 "name": "idle_1",
                 "weight": 1
             }
+        ],
+        "meet_in": [
+            {
+                "name": "meet_in_0",
+                "weight": 1
+            }
+        ],
+        "meeting": [
+            {
+                "name": "meeting_0",
+                "weight": 1
+            }
+        ],
+        "destroy": [
+            {
+                "name": "destroy_0",
+                "weight": 1
+            }
         ]
     },
     "anchor_x": 4,
-    "anchor_y": 2
+    "anchor_y": 2,
+    "health_points": 1,
+    "sensors": [
+        {
+            "meet_tags": ["player_sense"],
+            "hit_tags": ["damage"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 4,
+            "height": 4,
+            "anchor_x": 2,
+            "anchor_y": 2
+        }
+    ]
 }
