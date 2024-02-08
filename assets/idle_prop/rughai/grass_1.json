@@ -9,6 +9,10 @@
             "name": "idle_1"
         },
         {
+            "path": "sprites/prop/rughai/grass_1/grass_1_meet_in_0.gif",
+            "name": "meet_in_0"
+        },
+        {
             "path": "sprites/prop/rughai/grass_1/grass_1_meeting_0.gif",
             "name": "meeting_0"
         },
@@ -25,6 +29,12 @@
             },
             {
                 "name": "idle_1",
+                "weight": 1
+            }
+        ],
+        "meet_in": [
+            {
+                "name": "meet_in_0",
                 "weight": 1
             }
         ],
