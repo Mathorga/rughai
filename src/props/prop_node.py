@@ -9,6 +9,7 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.interaction_node import InteractionNode
 from engine.node import PositionNode
+from engine.settings import SETTINGS, Keys
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
 from engine.utils.utils import set_animation_anchor, set_animation_anchor_x, set_animation_anchor_y, x_center_animation, y_center_animation
@@ -240,6 +241,8 @@ class IdlePropNode(PositionNode):
 
                 controllers.COLLISION_CONTROLLER.add_collider(sensor)
 
+        layer: str = data["layer"] if "layer" in data else "rat"
+
         self.sprite: Optional[SpriteNode] = None
         self.anim_duration = anim_duration
 
@@ -252,6 +255,15 @@ class IdlePropNode(PositionNode):
                 y = y,
                 batch = batch
             )
+
+            # Set z coord according to the provided layer.
+            match layer:
+                case "dig":
+                    self.sprite.sprite.z = -y - SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
+                case "rat":
+                    self.sprite.sprite.z = -y
+                case "pid":
+                    self.sprite.sprite.z = -y + SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
 
         # State machine.
         self.__state_machine = IdlePropStateMachine(
