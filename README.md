@@ -80,6 +80,7 @@ Idle prop files are defined as follows:</br>
     * **weight[int]**: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as `animation_weight / category_weight_sum`</br>
   * **anchor_x[int][optional]**: x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.</br>
   * **anchor_y[int][optional]**: y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.</br>
+  * **layer[string][optional]**: layer in which to place the prop. Possible options are "dig", "rat" and "pid", which respectively place the prop below, in or above the player movement layer. Defaults to "rat".
   * **health_points[int][optional]**: amount of damage the prop can take before breaking. If this is not set, then an infinite amount is used, aka the prop cannot be broken.</br>
   * **colliders[array][optional]**: array of all colliders (responsible for "blocking" collisions). Every element in defined as follows:</br>
     * **tags[array]**: array of all collision tags the single collider reacts to.</br>
