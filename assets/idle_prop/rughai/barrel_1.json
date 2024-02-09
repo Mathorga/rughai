@@ -3,12 +3,22 @@
         {
             "path": "sprites/prop/rughai/barrel_1/barrel_1_idle_0.gif",
             "name": "idle_0"
+        },
+        {
+            "path": "sprites/prop/rughai/barrel_1/barrel_1_destroy_0.gif",
+            "name": "destroy_0"
         }
     ],
     "animations": {
         "idle": [
             {
                 "name": "idle_0",
+                "weight": 1
+            }
+        ],
+        "destroy": [
+            {
+                "name": "destroy_0",
                 "weight": 1
             }
         ]
