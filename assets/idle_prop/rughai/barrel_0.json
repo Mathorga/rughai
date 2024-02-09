@@ -15,6 +15,7 @@
     },
     "anchor_x": 7,
     "anchor_y": 4,
+    "health_points": 2,
     "colliders": [
         {
             "tags": ["player_collision"],
@@ -24,6 +25,18 @@
             "height": 8,
             "anchor_x": 4,
             "anchor_y": 4
+        }
+    ],
+    "sensors": [
+        {
+            "meet_tags": ["player_sense"],
+            "hit_tags": ["damage"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 10,
+            "height": 14,
+            "anchor_x": 5,
+            "anchor_y": 5
         }
     ]
 }
