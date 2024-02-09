@@ -3,13 +3,29 @@
         {
             "path": "sprites/prop/rughai/tree_g/tree_g_idle_0.gif",
             "name": "idle_0"
+        },
+        {
+            "path": "sprites/prop/rughai/tree_g/tree_g_idle_1.gif",
+            "name": "idle_1"
+        },
+        {
+            "path": "sprites/prop/rughai/tree_g/tree_g_idle_2.gif",
+            "name": "idle_2"
         }
     ],
     "animations": {
         "idle": [
             {
                 "name": "idle_0",
-                "weight": 1
+                "weight": 88
+            },
+            {
+                "name": "idle_1",
+                "weight": 2
+            },
+            {
+                "name": "idle_2",
+                "weight": 10
             }
         ]
     },

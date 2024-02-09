@@ -6,7 +6,8 @@
         },
         {
             "path": "sprites/prop/rughai/barrel_0/barrel_0_destroy_0.gif",
-            "name": "destroy_0"
+            "name": "destroy_0",
+            "center_x": true
         }
     ],
     "animations": {
