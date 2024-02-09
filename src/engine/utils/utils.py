@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, Tuple, Union
 import math
 import pyglet

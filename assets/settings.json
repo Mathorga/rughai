@@ -13,7 +13,7 @@
     "fullscreen": true,
     "target_fps": 120,
     "camera_speed": 5.0,
-    "layers_z_spacing": 32.0,
+    "layers_z_spacing": 64.0,
     "tilemap_buffer": 2,
     "sound": false,
     "music": false,

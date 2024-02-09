@@ -40,6 +40,7 @@ class CollisionNode(PositionNode):
     def delete(self) -> None:
         for shape in self.shapes:
             shape.delete()
+        self.shapes.clear()
 
     def set_position(
         self,

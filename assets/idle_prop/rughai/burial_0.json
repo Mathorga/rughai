@@ -15,6 +15,7 @@
     },
     "anchor_x": 10,
     "anchor_y": 6,
+    "layer": "dig",
     "colliders": [
         {
             "tags": ["player_collision"],
