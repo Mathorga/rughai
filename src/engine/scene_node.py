@@ -285,10 +285,11 @@ class SceneNode(Node):
 
     def remove_child(self, child: Union[Node, PositionNode]):
         """
-        Removes the provided child from the scene.
+        Removes the provided child from the scene if present.
         """
 
-        self.__children.remove(child)
+        if child in self.__children:
+            self.__children.remove(child)
 
     def add_children(
         self,

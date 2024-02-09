@@ -12,7 +12,7 @@ from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
 from engine.utils.utils import set_animation_anchor
-from constants import collision_tags
+from constants import collision_tags, scenes
 
 class IdlePropStates(str, Enum):
     IDLE = "idle"
@@ -39,6 +39,7 @@ class IdlePropNode(PositionNode):
             weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as animation_weight / category_weight_sum
         anchor_x[int](optional): x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
         anchor_y[int](optional): y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
+        layer[string][optional]: layer in which to place the prop. Possible options are "dig", "rat" and "pid", which respectively place the prop below, in or above the player movement layer. Defaults to "rat".
         health_points[int](optional): amount of damage the prop can take before breaking. If this is not set, then an infinite amount is used, aka the prop cannot be broken.
         colliders[array](optional): array of all colliders (responsible for "blocking" collisions). Every element in defined as follows:
             tags[array]: array of all collision tags causing blocking collisions.
@@ -314,12 +315,18 @@ class IdlePropNode(PositionNode):
             self.sprite.delete()
 
         for collider in self.__colliders:
+            controllers.COLLISION_CONTROLLER.remove_collider(collider = collider)
             collider.delete()
         self.__colliders.clear()
 
         for sensor in self.__sensors:
+            controllers.COLLISION_CONTROLLER.remove_collider(collider = sensor)
             sensor.delete()
         self.__sensors.clear()
+
+        # Remove from the current scene.
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.remove_child(self)
 
 class IdlePropStateMachine(StateMachine):
 
