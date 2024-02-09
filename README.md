@@ -73,8 +73,10 @@ Idle prop files are defined as follows:</br>
   * **animation_specs[array]**: array of all animation definitions. Every element is structured as follows:</br>
     * **path[string]**: a path to the animation file (starting from the application-defined assets directory).</br>
     * **name[string]**: a name used to reference the single animation across the file.</br>
-    * **anchor_x[int][optional]**: the x component of the animation-specific anchor point.</br>
-    * **anchor_y[int][optional]**: the y component of the animation-specific anchor point.</br>
+    * **center_x[bool][optional]**: whether the animation should be centered on its x-axis.</br>
+    * **center_y[bool][optional]**: whether the animation should be centered on its y-axis.</br>
+    * **anchor_x[int][optional]**: the x component of the animation-specific anchor point. This is ignored if "center_x" is true.</br>
+    * **anchor_y[int][optional]**: the y component of the animation-specific anchor point. This is ignored if "center_y" is true.</br>
   * **animations[object]**: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit" and "destroy". Every element in each category is defined as follows:</br>
     * **name[string]**: the name of the animation name, as defined in animation_specs.</br>
     * **weight[int]**: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as `animation_weight / category_weight_sum`</br>

@@ -11,7 +11,7 @@ from engine.interaction_node import InteractionNode
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
-from engine.utils.utils import set_animation_anchor
+from engine.utils.utils import set_animation_anchor, set_animation_anchor_x, set_animation_anchor_y, x_center_animation, y_center_animation
 from constants import collision_tags, scenes
 
 class IdlePropStates(str, Enum):
@@ -32,8 +32,10 @@ class IdlePropNode(PositionNode):
         animation_specs[array]: array of all animation definitions. Every element is structured as follows:
             path[string]: a path to the animation file (starting from the application-defined assets directory).
             name[string]: a name used to reference the single animation across the file.
-            anchor_x[int](optional): the x component of the animation-specific anchor point.
-            anchor_y[int](optional): the y component of the animation-specific anchor point.
+            center_x[bool](optional): whether the animation should be centered on its x-axis.
+            center_y[bool](optional): whether the animation should be centered on its y-axis.
+            anchor_x[int](optional): the x component of the animation-specific anchor point. This is ignored if "center_x" is true.
+            anchor_y[int](optional): the y component of the animation-specific anchor point. This is ignored if "center_y" is true.
         animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit" and "destroy". Every element in each category is defined as follows:
             name[string]: the name of the animation name, as defined in animation_specs.
             weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as animation_weight / category_weight_sum
@@ -144,12 +146,21 @@ class IdlePropNode(PositionNode):
                 anim_anchor_x: Optional[int] = anim_spec["anchor_x"] if "anchor_x" in anim_spec else anchor_x
                 anim_anchor_y: Optional[int] = anim_spec["anchor_y"] if "anchor_y" in anim_spec else anchor_y
 
-                if anim_anchor_x is not None and anim_anchor_y is not None:
-                    set_animation_anchor(
-                        animation = anim_ref,
-                        x = anim_anchor_x,
-                        y = anim_anchor_y
-                    )
+                # Read animation centering.
+                center_x: bool = anim_spec["center_x"] if "center_x" in anim_spec else False
+                center_y: bool = anim_spec["center_y"] if "center_y" in anim_spec else False
+
+                # Set x anchor.
+                if center_x:
+                    x_center_animation(animation = anim_ref)
+                elif anim_anchor_x is not None:
+                    set_animation_anchor_x(animation = anim_ref, anchor = anim_anchor_x)
+
+                # Set y anchor.
+                if center_y:
+                    y_center_animation(animation = anim_ref)
+                elif anim_anchor_y is not None:
+                    set_animation_anchor_y(animation = anim_ref, anchor = anim_anchor_y)
 
             # Iterate over animation types.
             for anim_key, anim_content in self.animations.items():
