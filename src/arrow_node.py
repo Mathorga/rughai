@@ -136,7 +136,6 @@ class ArrowNode(PositionNode):
 
     def delete(self) -> None:
         controllers.COLLISION_CONTROLLER.remove_collider(self.__collider)
-
         self.__collider.delete()
 
         for sprite in self.sprites:

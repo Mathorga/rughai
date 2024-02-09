@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "show_collisions": true,
     "show_tiles_grid": true,
     "free_cam_bounds": false,
@@ -15,7 +15,7 @@
     "camera_speed": 5.0,
     "layers_z_spacing": 32.0,
     "tilemap_buffer": 2,
-    "sound": true,
+    "sound": false,
     "music": false,
-    "sfx": true
+    "sfx": false
 }
