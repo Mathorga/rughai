@@ -1,0 +1,45 @@
+{
+    "animation_specs": [
+        {
+            "path": "sprites/prop/rughai/tree_g/tree_g_idle_0.gif",
+            "name": "idle_0"
+        },
+        {
+            "path": "sprites/prop/rughai/tree_g/tree_g_idle_1.gif",
+            "name": "idle_1"
+        },
+        {
+            "path": "sprites/prop/rughai/tree_g/tree_g_idle_2.gif",
+            "name": "idle_2"
+        }
+    ],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 88
+            },
+            {
+                "name": "idle_1",
+                "weight": 2
+            },
+            {
+                "name": "idle_2",
+                "weight": 10
+            }
+        ]
+    },
+    "anchor_x": 16,
+    "anchor_y": 4,
+    "colliders": [
+        {
+            "tags": ["player_collision"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 8,
+            "height": 8,
+            "anchor_x": 4,
+            "anchor_y": 4
+        }
+    ]
+}

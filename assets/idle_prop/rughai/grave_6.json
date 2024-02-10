@@ -20,7 +20,7 @@
             "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
-            "width": 10,
+            "width": 12,
             "height": 8,
             "anchor_x": 12,
             "anchor_y": 4

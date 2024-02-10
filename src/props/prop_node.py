@@ -9,10 +9,11 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.interaction_node import InteractionNode
 from engine.node import PositionNode
+from engine.settings import SETTINGS, Keys
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
-from engine.utils.utils import set_animation_anchor
-from constants import collision_tags
+from engine.utils.utils import set_animation_anchor, set_animation_anchor_x, set_animation_anchor_y, x_center_animation, y_center_animation
+from constants import collision_tags, scenes
 
 class IdlePropStates(str, Enum):
     IDLE = "idle"
@@ -32,13 +33,16 @@ class IdlePropNode(PositionNode):
         animation_specs[array]: array of all animation definitions. Every element is structured as follows:
             path[string]: a path to the animation file (starting from the application-defined assets directory).
             name[string]: a name used to reference the single animation across the file.
-            anchor_x[int](optional): the x component of the animation-specific anchor point.
-            anchor_y[int](optional): the y component of the animation-specific anchor point.
+            center_x[bool](optional): whether the animation should be centered on its x-axis.
+            center_y[bool](optional): whether the animation should be centered on its y-axis.
+            anchor_x[int](optional): the x component of the animation-specific anchor point. This is ignored if "center_x" is true.
+            anchor_y[int](optional): the y component of the animation-specific anchor point. This is ignored if "center_y" is true.
         animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit" and "destroy". Every element in each category is defined as follows:
             name[string]: the name of the animation name, as defined in animation_specs.
             weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as animation_weight / category_weight_sum
         anchor_x[int](optional): x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
         anchor_y[int](optional): y component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
+        layer[string][optional]: layer in which to place the prop. Possible options are "dig", "rat" and "pid", which respectively place the prop below, in or above the player movement layer. Defaults to "rat".
         health_points[int](optional): amount of damage the prop can take before breaking. If this is not set, then an infinite amount is used, aka the prop cannot be broken.
         colliders[array](optional): array of all colliders (responsible for "blocking" collisions). Every element in defined as follows:
             tags[array]: array of all collision tags causing blocking collisions.
@@ -143,12 +147,21 @@ class IdlePropNode(PositionNode):
                 anim_anchor_x: Optional[int] = anim_spec["anchor_x"] if "anchor_x" in anim_spec else anchor_x
                 anim_anchor_y: Optional[int] = anim_spec["anchor_y"] if "anchor_y" in anim_spec else anchor_y
 
-                if anim_anchor_x is not None and anim_anchor_y is not None:
-                    set_animation_anchor(
-                        animation = anim_ref,
-                        x = anim_anchor_x,
-                        y = anim_anchor_y
-                    )
+                # Read animation centering.
+                center_x: bool = anim_spec["center_x"] if "center_x" in anim_spec else False
+                center_y: bool = anim_spec["center_y"] if "center_y" in anim_spec else False
+
+                # Set x anchor.
+                if center_x:
+                    x_center_animation(animation = anim_ref)
+                elif anim_anchor_x is not None:
+                    set_animation_anchor_x(animation = anim_ref, anchor = anim_anchor_x)
+
+                # Set y anchor.
+                if center_y:
+                    y_center_animation(animation = anim_ref)
+                elif anim_anchor_y is not None:
+                    set_animation_anchor_y(animation = anim_ref, anchor = anim_anchor_y)
 
             # Iterate over animation types.
             for anim_key, anim_content in self.animations.items():
@@ -228,6 +241,8 @@ class IdlePropNode(PositionNode):
 
                 controllers.COLLISION_CONTROLLER.add_collider(sensor)
 
+        layer: str = data["layer"] if "layer" in data else "rat"
+
         self.sprite: Optional[SpriteNode] = None
         self.anim_duration = anim_duration
 
@@ -240,6 +255,15 @@ class IdlePropNode(PositionNode):
                 y = y,
                 batch = batch
             )
+
+            # Set z coord according to the provided layer.
+            match layer:
+                case "dig":
+                    self.sprite.sprite.z = -y - SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
+                case "rat":
+                    self.sprite.sprite.z = -y
+                case "pid":
+                    self.sprite.sprite.z = -y + SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
 
         # State machine.
         self.__state_machine = IdlePropStateMachine(
@@ -314,12 +338,18 @@ class IdlePropNode(PositionNode):
             self.sprite.delete()
 
         for collider in self.__colliders:
+            controllers.COLLISION_CONTROLLER.remove_collider(collider = collider)
             collider.delete()
         self.__colliders.clear()
 
         for sensor in self.__sensors:
+            controllers.COLLISION_CONTROLLER.remove_collider(collider = sensor)
             sensor.delete()
         self.__sensors.clear()
+
+        # Remove from the current scene.
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.remove_child(self)
 
 class IdlePropStateMachine(StateMachine):
 

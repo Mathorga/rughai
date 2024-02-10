@@ -83,10 +83,10 @@ class ArrowNode(PositionNode):
                 CollisionRect(
                     x = x,
                     y = y,
-                    anchor_x = 3,
-                    anchor_y = 3,
-                    width = 6,
-                    height = 6,
+                    anchor_x = 2,
+                    anchor_y = 2,
+                    width = 4,
+                    height = 4,
                     batch = batch
                 )
             ]
@@ -122,31 +122,29 @@ class ArrowNode(PositionNode):
         super().set_position(position = position, z = z)
 
         aim_vec: pyglet.math.Vec2 = pyglet.math.Vec2.from_polar(self.sprite_distance, self.direction)
-        # Since sprites may be deleted before set_position is called, the whole section is trapped.
-        # TODO This only happens for ArrowOutState, so needs a little check (it should happen for ArrowHitState as well).
-        # May this have to do with frustum culling?
-        try:
-            for index, sprite in enumerate(self.sprites):
-                    sprite.set_position(
-                        position = (
-                            position[0] + aim_vec.x + aim_vec.x * self.sprites_delta * (index + 1),
-                            position[1] + aim_vec.y + aim_vec.y * self.sprites_delta * (index + 1)
-                        ),
-                        z = position[1] + SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
-                    )
-        except Exception:
-            print("ERROR")
+        for index, sprite in enumerate(self.sprites):
+                sprite.set_position(
+                    position = (
+                        position[0] + aim_vec.x + aim_vec.x * self.sprites_delta * (index + 1),
+                        position[1] + aim_vec.y + aim_vec.y * self.sprites_delta * (index + 1)
+                    ),
+                    z = position[1] + SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
+                )
 
     def on_collision(self, tags: List[str], enter: bool) -> None:
         self.__state_machine.on_collision(tags = tags, enter = enter)
 
     def delete(self) -> None:
         controllers.COLLISION_CONTROLLER.remove_collider(self.__collider)
-
         self.__collider.delete()
 
         for sprite in self.sprites:
             sprite.delete()
+        self.sprites.clear()
+
+        # Remove from the current scene.
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.remove_child(self)
 
 class ArrowState(State):
     def __init__(
@@ -175,12 +173,8 @@ class ArrowFlyState(ArrowState):
 
 class ArrowHitState(ArrowState):
     def start(self) -> None:
-        if scenes.ACTIVE_SCENE is not None:
-            scenes.ACTIVE_SCENE.remove_child(self.actor)
         self.actor.delete()
 
 class ArrowOutState(ArrowState):
     def start(self) -> None:
-        if scenes.ACTIVE_SCENE is not None:
-            scenes.ACTIVE_SCENE.remove_child(self.actor)
         self.actor.delete()

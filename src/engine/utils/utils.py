@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, Tuple, Union
 import math
 import pyglet
@@ -304,6 +305,19 @@ def set_animation_anchor_y(
     if anchor is not None:
         for frame in animation.frames:
             frame.image.anchor_y = anchor
+
+def center_animation(
+    animation: pyglet.image.animation.Animation,
+    x: bool = True,
+    y: bool = True
+) -> None:
+    if x:
+        for frame in animation.frames:
+            frame.image.anchor_x = animation.get_max_width() / 2
+
+    if y:
+        for frame in animation.frames:
+            frame.image.anchor_y = animation.get_max_width() / 2
 
 def x_center_animation(animation: pyglet.image.animation.Animation):
     for frame in animation.frames:

@@ -13,7 +13,7 @@
             }
         ]
     },
-    "anchor_x": 15,
+    "anchor_x": 16,
     "anchor_y": 4,
     "colliders": [
         {
@@ -22,7 +22,7 @@
             "offset_y": 0,
             "width": 10,
             "height": 8,
-            "anchor_x": 12,
+            "anchor_x": 13,
             "anchor_y": 4
         }
     ]

@@ -7,20 +7,60 @@
         {
             "path": "sprites/prop/rughai/grass_2/grass_2_idle_1.gif",
             "name": "idle_1"
+        },
+        {
+            "path": "sprites/prop/rughai/grass_2/grass_2_idle_2.gif",
+            "name": "idle_2"
+        },
+        {
+            "path": "sprites/prop/rughai/grass_2/grass_2_meet_in_0.gif",
+            "name": "meet_in_0"
+        },
+        {
+            "path": "sprites/prop/rughai/grass_2/grass_2_meeting_0.gif",
+            "name": "meeting_0"
         }
     ],
     "animations": {
         "idle": [
             {
                 "name": "idle_0",
-                "weight": 9
+                "weight": 8
             },
             {
                 "name": "idle_1",
+                "weight": 1
+            },
+            {
+                "name": "idle_2",
+                "weight": 1
+            }
+        ],
+        "meet_in": [
+            {
+                "name": "meet_in_0",
+                "weight": 1
+            }
+        ],
+        "meeting": [
+            {
+                "name": "meeting_0",
                 "weight": 1
             }
         ]
     },
     "anchor_x": 8,
-    "anchor_y": 4
+    "anchor_y": 4,
+    "sensors": [
+        {
+            "meet_tags": ["player_sense"],
+            "hit_tags": ["damage"],
+            "offset_x": 0,
+            "offset_y": 0,
+            "width": 6,
+            "height": 6,
+            "anchor_x": 3,
+            "anchor_y": 1
+        }
+    ]
 }

@@ -13,17 +13,18 @@
             }
         ]
     },
-    "anchor_x": 15,
+    "anchor_x": 6,
     "anchor_y": 4,
+    "layer": "dig",
     "colliders": [
         {
             "tags": ["player_collision"],
             "offset_x": 0,
             "offset_y": 0,
-            "width": 10,
-            "height": 8,
-            "anchor_x": 12,
-            "anchor_y": 4
+            "width": 8,
+            "height": 16,
+            "anchor_x": 2,
+            "anchor_y": -4
         }
     ]
 }

@@ -93,9 +93,10 @@ class Rughai:
     def __on_scene_end(self, bundle: dict):
         print("scene_ended", bundle)
         if bundle["next_scene"]:
+            # First delete the current scene then clear controllers.
+            self.__active_scene.delete()
             controllers.COLLISION_CONTROLLER.clear()
             controllers.INTERACTION_CONTROLLER.clear()
-            self.__active_scene.delete()
 
             if bundle["next_scene"] == scenes.R_0_0:
                 self.__active_scene = R_0_0(

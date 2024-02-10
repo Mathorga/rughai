@@ -308,7 +308,7 @@ class PlayerNode(PositionNode):
         self.__shadow_sprite.set_position(
             position = (self.x, self.y),
             # z = 0
-            z = -(self.y + (SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5))
+            z = -(self.y + (SETTINGS[Keys.LAYERS_Z_SPACING] * 0.1))
         )
         self.__shadow_sprite.update(dt)
 
