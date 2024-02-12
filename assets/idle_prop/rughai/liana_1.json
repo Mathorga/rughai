@@ -1,0 +1,18 @@
+{
+    "animation_specs": [
+        {
+            "path": "sprites/prop/rughai/liana_1/liana_1_idle_0.gif",
+            "name": "idle_0"
+        }
+    ],
+    "animations": {
+        "idle": [
+            {
+                "name": "idle_0",
+                "weight": 1
+            }
+        ]
+    },
+    "anchor_x": 14,
+    "anchor_y": 10
+}
