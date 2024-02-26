@@ -35,6 +35,7 @@ class DoorNode(PositionNode):
                     height = height,
                     anchor_x = anchor_x,
                     anchor_y = anchor_y,
+                    color = (0xFF, 0xFF, 0x7F, 0x7F),
                     batch = batch
                 )
             ]
