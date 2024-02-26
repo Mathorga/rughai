@@ -12,8 +12,8 @@ from engine.node import PositionNode
 from engine.settings import SETTINGS, Keys
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
-from engine.utils.utils import set_animation_anchor, set_animation_anchor_x, set_animation_anchor_y, x_center_animation, y_center_animation
-from constants import collision_tags, scenes
+from engine.utils.utils import set_animation_anchor_x, set_animation_anchor_y, x_center_animation, y_center_animation
+from constants import scenes
 
 class IdlePropStates(str, Enum):
     IDLE = "idle"
