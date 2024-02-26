@@ -23,6 +23,7 @@ class IdlePropStates(str, Enum):
     INTERACT = "interact"
     HIT = "hit"
     DESTROY = "destroy"
+    DESTROYED = "destroyed"
 
 class IdlePropNode(PositionNode):
     """
@@ -37,7 +38,7 @@ class IdlePropNode(PositionNode):
             center_y[bool](optional): whether the animation should be centered on its y-axis.
             anchor_x[int](optional): the x component of the animation-specific anchor point. This is ignored if "center_x" is true.
             anchor_y[int](optional): the y component of the animation-specific anchor point. This is ignored if "center_y" is true.
-        animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit" and "destroy". Every element in each category is defined as follows:
+        animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit", "destroy" and "destroyed". Every element in each category is defined as follows:
             name[string]: the name of the animation name, as defined in animation_specs.
             weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as animation_weight / category_weight_sum
         anchor_x[int](optional): x component of the global animation anchor point, this is used when no animation-specific anchor point is defined.
@@ -107,7 +108,8 @@ class IdlePropNode(PositionNode):
             "meet_out": {},
             "interact": {},
             "hit": {},
-            "destroy": {}
+            "destroy": {},
+            "destroyed": {}
         }
 
         self.__interactor: Optional[InteractionNode] = None
@@ -482,4 +484,8 @@ class IdlePropDestroyState(IdlePropState):
         self.actor.set_animation("destroy")
 
     def on_animation_end(self) -> Optional[str]:
-        self.actor.delete()
+        return IdlePropStates.DESTROYED
+
+class IdlePropDestroyedState(IdlePropState):
+    def start(self) -> None:
+        self.actor.set_animation("destroyed")
