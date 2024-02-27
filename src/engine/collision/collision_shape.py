@@ -19,13 +19,15 @@ class CollisionShape(PositionNode):
         self,
         x: float = 0,
         y: float = 0,
-        z: float = 0.0
+        z: float = 0.0,
+        color: Tuple[int, int, int, int] = FREE_COLOR
     ) -> None:
         super().__init__(x, y, z)
 
         # Velocity components.
         self.velocity_x = 0.0
         self.velocity_y = 0.0
+        self.color = color
 
         self.render_shape: Optional[ShapeNode] = None
         self.velocity_shape: Optional[LineNode] = None
@@ -38,6 +40,7 @@ class CollisionShape(PositionNode):
         """
         Sets the shape position.
         """
+
         super().set_position(position, z)
 
         if self.render_shape is not None:
@@ -67,11 +70,15 @@ class CollisionShape(PositionNode):
         """
         Sums the provided velocity to any already there.
         """
+
         self.velocity_x += velocity[0]
         self.velocity_y += velocity[1]
 
         if self.velocity_shape is not None:
             self.velocity_shape.set_delta((self.velocity_shape.delta_x + velocity[0], self.velocity_shape.delta_y + velocity[1]))
+
+    def set_color(self, color: Tuple[int, int, int, int]) -> None:
+        self.color = color
 
     def swept_collide(self, other) -> Optional[utils.CollisionHit]:
         return None
@@ -89,16 +96,17 @@ class CollisionShape(PositionNode):
 class CollisionRect(CollisionShape):
     def __init__(
         self,
-        x: float = 0,
-        y: float = 0,
+        x: float = 0.0,
+        y: float = 0.0,
         z: float = 0.0,
         width: int = 0,
         height: int = 0,
-        anchor_x: float = 0,
-        anchor_y: float = 0,
+        anchor_x: float = 0.0,
+        anchor_y: float = 0.0,
+        color: Optional[Tuple[int, int, int, int]] = FREE_COLOR,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
-        super().__init__(x, y, z)
+        super().__init__(x, y, z, color)
 
         self.width = width
         self.height = height
@@ -113,7 +121,7 @@ class CollisionRect(CollisionShape):
                 height = height,
                 anchor_x = anchor_x,
                 anchor_y = anchor_y,
-                color = (0x7F, 0xFF, 0xFF, 0x7F),
+                color = self.color,
                 batch = batch
             )
 
@@ -122,7 +130,7 @@ class CollisionRect(CollisionShape):
                 y = y,
                 delta_x = self.velocity_x,
                 delta_y = self.velocity_y,
-                color = (0xFF, 0x7F, 0xFF, 0x7F),
+                color = FREE_COLOR,
                 batch = batch
             )
 
@@ -168,6 +176,13 @@ class CollisionRect(CollisionShape):
         else:
             # Other.
             return (0, 0)
+
+    def set_color(self, color: Tuple[int, int, int, int]) -> None:
+        super().set_color(color = color)
+
+        # Set render shape color.
+        if self.render_shape is not None:
+            self.render_shape.set_color(color = color)
 
 class CollisionCircle(CollisionShape):
     def __init__(

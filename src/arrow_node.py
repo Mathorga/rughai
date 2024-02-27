@@ -79,17 +79,15 @@ class ArrowNode(PositionNode):
                 collision_tags.DAMAGE
             ],
             on_triggered = self.on_collision,
-            shapes = [
-                CollisionRect(
-                    x = x,
-                    y = y,
-                    anchor_x = 2,
-                    anchor_y = 2,
-                    width = 4,
-                    height = 4,
-                    batch = batch
-                )
-            ]
+            shape = CollisionRect(
+                x = x,
+                y = y,
+                anchor_x = 2,
+                anchor_y = 2,
+                width = 4,
+                height = 4,
+                batch = batch
+            )
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 

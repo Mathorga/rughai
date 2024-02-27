@@ -2,7 +2,7 @@
     "debug": false,
     "show_collisions": true,
     "show_tiles_grid": true,
-    "free_cam_bounds": false,
+    "free_cam_bounds": true,
     "title": "RUGHAI",
     "font_name": "rughai",
     "view_width": 240,

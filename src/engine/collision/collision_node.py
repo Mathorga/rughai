@@ -6,6 +6,9 @@ from engine.collision.collision_shape import CollisionShape
 from engine.node import PositionNode
 from engine.utils.utils import CollisionHit
 
+COLLIDER_COLOR: Tuple[int, int, int, int] = (0x7F, 0xFF, 0xFF, 0x7F)
+SENSOR_COLOR: Tuple[int, int, int, int] = (0x7F, 0xFF, 0x7F, 0x7F)
+
 class CollisionType(Enum):
     STATIC = 0
     DYNAMIC = 1
@@ -13,13 +16,14 @@ class CollisionType(Enum):
 class CollisionNode(PositionNode):
     def __init__(
         self,
+        shape: Optional[CollisionShape],
         x: float = 0,
         y: float = 0,
         active_tags: List[str] = [],
         passive_tags: List[str] = [],
         collision_type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
-        shapes: List[CollisionShape] = [],
+        color: Optional[Tuple[int, int, int, int]] = None,
         on_triggered: Optional[Callable[[List[str], bool], None]] = None
     ) -> None:
         super().__init__(x, y)
@@ -32,15 +36,21 @@ class CollisionNode(PositionNode):
         self.passive_tags = passive_tags
         self.type = collision_type
         self.sensor = sensor
-        self.shapes: List[CollisionShape] = shapes
+        self.shape: Optional[CollisionShape] = shape
         self.on_triggered = on_triggered
 
         self.collisions = set()
 
+        # Set shape color.
+        if color is not None:
+            self.shape.set_color(color = color)
+        else:
+            self.shape.set_color(color = SENSOR_COLOR if sensor else COLLIDER_COLOR)
+
     def delete(self) -> None:
-        for shape in self.shapes:
-            shape.delete()
-        self.shapes.clear()
+        if self.shape is not None:
+            self.shape.delete()
+        self.shape = None
 
     def set_position(
         self,
@@ -49,8 +59,8 @@ class CollisionNode(PositionNode):
     ) -> None:
         super().set_position(position)
 
-        for shape in self.shapes:
-            shape.set_position(position)
+        if self.shape is not None:
+            self.shape.set_position(position = position)
 
     def get_velocity(self) -> Tuple[float, float]:
         return (self.velocity_x, self.velocity_y)
@@ -65,8 +75,8 @@ class CollisionNode(PositionNode):
         self.velocity_x += velocity[0]
         self.velocity_y += velocity[1]
 
-        for shape in self.shapes:
-            shape.put_velocity(velocity)
+        if self.shape is not None:
+            self.shape.put_velocity(velocity = velocity)
 
     def set_velocity(
         self,
@@ -75,8 +85,8 @@ class CollisionNode(PositionNode):
         self.velocity_x = velocity[0]
         self.velocity_y = velocity[1]
 
-        for shape in self.shapes:
-            shape.set_velocity(velocity)
+        if self.shape is not None:
+            self.shape.set_velocity(velocity = velocity)
 
     def collide(self, other) -> Optional[CollisionHit]:
         assert isinstance(other, CollisionNode)
@@ -87,10 +97,9 @@ class CollisionNode(PositionNode):
         # Make sure there's at least one matching tag.
         if bool(set(self.active_tags) & set(other.passive_tags)):
 
-            # Only consider the first shape for now.
-            # TODO Use all shapes.
-            if len(self.shapes) > 0:
-                collision_hit = self.shapes[0].swept_collide(other.shapes[0])
+            # Check collision from shape.
+            if self.shape is not None:
+                collision_hit = self.shape.swept_collide(other.shape)
 
             if other not in self.collisions and collision_hit is not None:
                 # Store the colliding sensor.

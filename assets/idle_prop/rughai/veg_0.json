@@ -14,7 +14,8 @@
         },
         {
             "path": "sprites/prop/rughai/veg_0/veg_0_destroy_0.gif",
-            "name": "destroy_0"
+            "name": "destroy_0",
+            "loop": false
         }
     ],
     "animations": {

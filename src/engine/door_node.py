@@ -27,18 +27,16 @@ class DoorNode(PositionNode):
             passive_tags = tags,
             sensor = True,
             on_triggered = on_triggered,
-            shapes = [
-                CollisionRect(
-                    x = x,
-                    y = y,
-                    width = width,
-                    height = height,
-                    anchor_x = anchor_x,
-                    anchor_y = anchor_y,
-                    color = (0xFF, 0xFF, 0x7F, 0x7F),
-                    batch = batch
-                )
-            ]
+            color = (0xFF, 0xFF, 0x7F, 0x7F),
+            shape = CollisionRect(
+                x = x,
+                y = y,
+                width = width,
+                height = height,
+                anchor_x = anchor_x,
+                anchor_y = anchor_y,
+                batch = batch
+            )
         )
 
         controllers.COLLISION_CONTROLLER.add_collider(self.collider)

@@ -38,6 +38,7 @@ class IdlePropNode(PositionNode):
             center_y[bool](optional): whether the animation should be centered on its y-axis.
             anchor_x[int](optional): the x component of the animation-specific anchor point. This is ignored if "center_x" is true.
             anchor_y[int](optional): the y component of the animation-specific anchor point. This is ignored if "center_y" is true.
+            loop[bool](optional): whether the animation should loop or not. Defaults to true. This is useful when a non looping state should stick for a long time (e.g. destroyed or destroy when no destroy is provided).
         animations[object]: object defining all animations by category. Categories are "idle", "meet_in", "meeting", "meet_out", "interact", "hit", "destroy" and "destroyed". Every element in each category is defined as follows:
             name[string]: the name of the animation name, as defined in animation_specs.
             weight[int]: the selection weight of the specific animation, used during the animation selection algorithm. Probability for a specific animation is calculated as animation_weight / category_weight_sum
@@ -165,6 +166,10 @@ class IdlePropNode(PositionNode):
                 elif anim_anchor_y is not None:
                     set_animation_anchor_y(animation = anim_ref, anchor = anim_anchor_y)
 
+                # Set not looping if so specified.
+                if "loop" in anim_spec and anim_spec["loop"] is False:
+                    anim_ref.frames[-1].duration = None
+
             # Iterate over animation types.
             for anim_key, anim_content in self.animations.items():
                 if anim_key in data["animations"]:
@@ -182,17 +187,15 @@ class IdlePropNode(PositionNode):
                     y = y,
                     collision_type = CollisionType.STATIC,
                     passive_tags = collider_data["tags"],
-                    shapes = [
-                        CollisionRect(
-                            x = x + collider_data["offset_x"],
-                            y = y + collider_data["offset_y"],
-                            width = collider_data["width"],
-                            height = collider_data["height"],
-                            anchor_x = collider_data["anchor_x"],
-                            anchor_y = collider_data["anchor_y"],
-                            batch = batch
-                        )
-                    ],
+                    shape = CollisionRect(
+                        x = x + collider_data["offset_x"],
+                        y = y + collider_data["offset_y"],
+                        width = collider_data["width"],
+                        height = collider_data["height"],
+                        anchor_x = collider_data["anchor_x"],
+                        anchor_y = collider_data["anchor_y"],
+                        batch = batch
+                    ),
                     on_triggered = self.__on_collider_triggered
                 )
                 self.__colliders.append(collider)
@@ -222,17 +225,15 @@ class IdlePropNode(PositionNode):
                         *hit_tags
                     ],
                     sensor = True,
-                    shapes = [
-                        CollisionRect(
-                            x = x + sensor_data["offset_x"],
-                            y = y + sensor_data["offset_y"],
-                            width = sensor_data["width"],
-                            height = sensor_data["height"],
-                            anchor_x = sensor_data["anchor_x"],
-                            anchor_y = sensor_data["anchor_y"],
-                            batch = batch
-                        )
-                    ],
+                    shape = CollisionRect(
+                        x = x + sensor_data["offset_x"],
+                        y = y + sensor_data["offset_y"],
+                        width = sensor_data["width"],
+                        height = sensor_data["height"],
+                        anchor_x = sensor_data["anchor_x"],
+                        anchor_y = sensor_data["anchor_y"],
+                        batch = batch
+                    ),
                     on_triggered = lambda tags, entered: self.__on_sensor_triggered(tags = tags, entered = entered, index = index)
                 )
                 self.__sensors_tags.append({})
@@ -276,7 +277,8 @@ class IdlePropNode(PositionNode):
                 IdlePropStates.MEET_OUT: IdlePropMeetOutState(actor = self),
                 IdlePropStates.INTERACT: IdlePropInteractState(actor = self),
                 IdlePropStates.HIT: IdlePropHitState(actor = self),
-                IdlePropStates.DESTROY: IdlePropDestroyState(actor = self)
+                IdlePropStates.DESTROY: IdlePropDestroyState(actor = self),
+                # IdlePropStates.DESTROYED: IdlePropIdleState(actor = self)
             }
         )
 
@@ -335,9 +337,10 @@ class IdlePropNode(PositionNode):
             else:
                 self.__on_animation_end()
 
-    def delete(self) -> None:
-        if self.sprite is not None:
-            self.sprite.delete()
+    def delete_colliders(self) -> None:
+        """
+        Removes and destroys all colliders and sensors.
+        """
 
         for collider in self.__colliders:
             controllers.COLLISION_CONTROLLER.remove_collider(collider = collider)
@@ -348,6 +351,13 @@ class IdlePropNode(PositionNode):
             controllers.COLLISION_CONTROLLER.remove_collider(collider = sensor)
             sensor.delete()
         self.__sensors.clear()
+
+    def delete(self) -> None:
+        if self.sprite is not None:
+            self.sprite.delete()
+
+        # Destroy all colliders and sensors.
+        self.delete_colliders()
 
         # Remove from the current scene.
         if scenes.ACTIVE_SCENE is not None:
@@ -482,6 +492,9 @@ class IdlePropHitState(IdlePropState):
 class IdlePropDestroyState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("destroy")
+
+        # Destroy all colliders and sensors.
+        self.actor.delete_colliders()
 
     def on_animation_end(self) -> Optional[str]:
         return IdlePropStates.DESTROYED

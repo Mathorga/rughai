@@ -18,7 +18,8 @@
         },
         {
             "path": "sprites/prop/rughai/grass_0/grass_0_destroy_0.gif",
-            "name": "destroy_0"
+            "name": "destroy_0",
+            "loop": false
         }
     ],
     "animations": {

@@ -160,17 +160,15 @@ class PlayerNode(PositionNode):
             passive_tags = [
                 collision_tags.DAMAGE
             ],
-            shapes = [
-                CollisionRect(
-                    x = x,
-                    y = y,
-                    anchor_x = 3,
-                    anchor_y = 3,
-                    width = 6,
-                    height = 6,
-                    batch = batch
-                )
-            ]
+            shape = CollisionRect(
+                x = x,
+                y = y,
+                anchor_x = 3,
+                anchor_y = 3,
+                width = 6,
+                height = 6,
+                batch = batch
+            )
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 
@@ -182,17 +180,15 @@ class PlayerNode(PositionNode):
             sensor = True,
             collision_type = CollisionType.DYNAMIC,
             active_tags = [collision_tags.PLAYER_INTERACTION],
-            shapes = [
-                CollisionRect(
-                    x = x,
-                    y = y,
-                    anchor_x = 4,
-                    anchor_y = 4,
-                    width = 8,
-                    height = 8,
-                    batch = batch
-                )
-            ]
+            shape = CollisionRect(
+                x = x,
+                y = y,
+                anchor_x = 4,
+                anchor_y = 4,
+                width = 8,
+                height = 8,
+                batch = batch
+            )
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__interactor)
 

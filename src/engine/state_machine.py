@@ -91,7 +91,12 @@ class StateMachine:
         No state is set if [key] is null.
         """
 
+        # Exit condition: key is not defined.
         if key is None:
+            return
+
+        # Exit condition: the provided key does not match any state.
+        if not key in self.states:
             return
 
         # End the current state if present.

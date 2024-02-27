@@ -49,17 +49,15 @@ class DialogNode(PositionNode):
             collision_type = CollisionType.STATIC,
             passive_tags = [] if tags is None else list(tags),
             on_triggered = lambda tags, entered: controllers.INTERACTION_CONTROLLER.toggle(self.interaction, enable = entered),
-            shapes = [
-                CollisionRect(
-                    x = x,
-                    y = y,
-                    anchor_x = 6,
-                    anchor_y = 6,
-                    width = 12,
-                    height = 12,
-                    batch = world_batch
-                )
-            ]
+            shape = CollisionRect(
+                x = x,
+                y = y,
+                anchor_x = 6,
+                anchor_y = 6,
+                width = 12,
+                height = 12,
+                batch = world_batch
+            )
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.interactor)
 
