@@ -1,4 +1,5 @@
-*.vscode
+# .vscode is included to save run configurations.
+# *.vscode
 *__pycache__
 *.stackdump
 *.spec
