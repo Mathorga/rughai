@@ -17,16 +17,6 @@ from engine.settings import SETTINGS, Keys
 
 from engine.map_cursor_node import MapCursornode
 
-class EditorAction(str, Enum):
-    """
-    All possible editor actions.
-    """
-
-    PLACE_PROP = "PLCPRP"
-    PLACE_WALL = "PLCWLL"
-    PLACE_DOOR = "PLCDOR"
-    CLEAR = "CLR"
-
 class ActionSign(PositionNode):
     def __init__(
         self,
