@@ -5,21 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run rughai",
+            "name": "Python: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "src/main.py",
-            "console": "integratedTerminal"
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
         },
         {
-            "name": "Run scene_editor",
+            "name": "Rughai: Main",
             "type": "debugpy",
             "request": "launch",
-            "program": "src/scene_editor.py",
+            "program": "${workspaceFolder}/src/main.py",
             "console": "integratedTerminal",
-            "args": [
-                "r_0_0"
-            ]
+            "justMyCode": true
+        },
+        {
+            "name": "Rughai: Scene Editor",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/scene_editor.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ["r_0_0"]
         }
     ]
 }
