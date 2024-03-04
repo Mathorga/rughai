@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run rughai",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/main.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Run scene_editor",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/scene_editor.py",
+            "console": "integratedTerminal",
+            "args": [
+                "r_0_0"
+            ]
+        }
+    ]
+}
