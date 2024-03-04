@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Set, Tuple
 
-class EditorAction(str, Enum):
+class EditorToolKey(str, Enum):
     """
-    All possible editor actions.
+    All possible editor tool keys.
     """
 
     PLACE_PROP = "PLCPRP"
@@ -12,20 +12,36 @@ class EditorAction(str, Enum):
     CLEAR = "CLR"
 
 class EditorTool:
-    def __init__(
-        self,
-        open_config: Optional[Callable[[None], None]] = None
-    ) -> None:
-        self.__open_config: Optional[Callable[[None], None]] = open_config
+    def __init__(self) -> None:
+        pass
 
-    def open_config(self):
-        if self.__open_config is not None:
-            self.__open_config()
+    def open_config(self) -> None:
+        """
+        Opens the tool's dedicated configuration interface.
+        """
+
+        pass
+
+class PlacePropTool(EditorTool):
+    def open_config(self) -> None:
+        return super().open_config()
+
+class PlaceWallTool(EditorTool):
+    def open_config(self) -> None:
+        return super().open_config()
+
+class PlaceDoorTool(EditorTool):
+    def open_config(self) -> None:
+        return super().open_config()
+
+class ClearTool(EditorTool):
+    def open_config(self) -> None:
+        return super().open_config()
 
 # All tools are in this dictionary.
-tools: Dict[EditorAction, EditorTool] = {
-    EditorAction.PLACE_PROP: EditorTool(),
-    EditorAction.PLACE_WALL: EditorTool(),
-    EditorAction.PLACE_DOOR: EditorTool(),
-    EditorAction.CLEAR: EditorTool()
+tools: Dict[EditorToolKey, EditorTool] = {
+    EditorToolKey.PLACE_PROP: PlacePropTool(),
+    EditorToolKey.PLACE_WALL: PlaceWallTool(),
+    EditorToolKey.PLACE_DOOR: PlaceDoorTool(),
+    EditorToolKey.CLEAR: ClearTool()
 }

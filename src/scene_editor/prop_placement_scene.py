@@ -14,16 +14,17 @@ from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
-
 from engine.map_cursor_node import MapCursornode
+
+from scene_editor.editor_tool import EditorToolKey
 
 class ActionSign(PositionNode):
     def __init__(
         self,
         x: float = 0.0,
         y: float = 0.0,
-        action: EditorAction = EditorAction.PLACE_PROP,
-        on_toggle: Optional[Callable[[EditorAction], None]] = None,
+        action: EditorToolKey = EditorToolKey.PLACE_PROP,
+        on_toggle: Optional[Callable[[EditorToolKey], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -42,7 +43,7 @@ class ActionSign(PositionNode):
         return f"(tab) {self.action.value}"
 
     def __compute_color(self) -> Tuple[int, int, int, int]:
-        return (0xFF, 0x00, 0x00, 0xFF) if self.action == EditorAction.CLEAR else (0x00, 0xFF, 0x00, 0xFF)
+        return (0xFF, 0x00, 0x00, 0xFF) if self.action == EditorToolKey.CLEAR else (0x00, 0xFF, 0x00, 0xFF)
 
     def update(self, dt: int) -> None:
         super().update(dt)
@@ -53,10 +54,10 @@ class ActionSign(PositionNode):
                 self.toggle()
 
     def toggle(self) -> None:
-        if self.action == EditorAction.PLACE_PROP:
-            self.action = EditorAction.CLEAR
+        if self.action == EditorToolKey.PLACE_PROP:
+            self.action = EditorToolKey.CLEAR
         else:
-            self.action = EditorAction.PLACE_PROP
+            self.action = EditorToolKey.PLACE_PROP
 
         if self.__label is not None:
             self.__label.set_text(self.__compute_text())
@@ -390,7 +391,7 @@ class PropPlacementScene(Node):
         self.__action_sign = ActionSign(
             x = self.__tile_size,
             y = view_height - self.__tile_size,
-            action = EditorAction.CLEAR,
+            action = EditorToolKey.CLEAR,
             on_toggle = self.__on_action_toggle,
             batch = self.__scene.ui_batch
         )
@@ -470,7 +471,7 @@ class PropPlacementScene(Node):
                 else:
                     self.__current_props_index += 1
 
-                if self.__action_sign.action == EditorAction.PLACE_PROP:
+                if self.__action_sign.action == EditorToolKey.PLACE_PROP:
                     # Add the currently selected prop if the interaction button was pressed.
                     if self.__menu.get_current_prop() not in list(self.__prop_sets[self.__current_props_index].keys()):
                         self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()] = set()
@@ -548,8 +549,8 @@ class PropPlacementScene(Node):
 
         return data
 
-    def __on_action_toggle(self, action: EditorAction) -> None:
-        if action == EditorAction.CLEAR:
+    def __on_action_toggle(self, action: EditorToolKey) -> None:
+        if action == EditorToolKey.CLEAR:
             self.__cursor.set_child(self.__get_del_cursor_child())
         else:
             cursor_icon = map_prop(
@@ -570,7 +571,7 @@ class PropPlacementScene(Node):
         self.__cursor.enable_controls()
         self.__action_sign.show()
 
-        if self.__action_sign.action == EditorAction.PLACE_PROP:
+        if self.__action_sign.action == EditorToolKey.PLACE_PROP:
             cursor_icon = map_prop(
                 self.__menu.get_current_prop(),
                 x = self.__cursor.x,
