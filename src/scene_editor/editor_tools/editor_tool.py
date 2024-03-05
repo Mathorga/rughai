@@ -20,23 +20,31 @@ class EditorTool:
         Opens the tool's dedicated configuration interface.
         """
 
-        pass
-
-class PlacePropTool(EditorTool):
-    def open_config(self) -> None:
-        return super().open_config()
+    def run(self, position: Tuple[int, int]) -> None:
+        """
+        Runs the tool on the currently specified tile position.
+        """
 
 class PlaceWallTool(EditorTool):
     def open_config(self) -> None:
         return super().open_config()
 
+    def run(self, position: Tuple[int, int]) -> None:
+        return super().run()
+
 class PlaceDoorTool(EditorTool):
     def open_config(self) -> None:
         return super().open_config()
 
+    def run(self, position: Tuple[int, int]) -> None:
+        return super().run()
+
 class ClearTool(EditorTool):
     def open_config(self) -> None:
         return super().open_config()
+
+    def run(self, position: Tuple[int, int]) -> None:
+        return super().run()
 
 # All tools are in this dictionary.
 tools: Dict[EditorToolKey, EditorTool] = {
