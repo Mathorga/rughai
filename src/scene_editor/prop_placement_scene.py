@@ -122,6 +122,9 @@ class PropPlacementScene(Node):
         self.__tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
 
+        # Editor tool.
+        self.__current_tool: EditorToolKey
+
         # Cursor.
         cursor_position = (
             (self.__tilemap_width / 2) * self.__tile_size,
