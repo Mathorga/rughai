@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Set, Tuple
 
+from engine.node import Node, PositionNode
 from scene_editor.editor_tools.place_prop_tool import PlacePropTool
 
 class EditorToolKey(str, Enum):
@@ -13,45 +14,52 @@ class EditorToolKey(str, Enum):
     PLACE_DOOR = "PLCDOR"
     CLEAR = "CLR"
 
-class EditorTool:
+class EditorTool(Node):
     def __init__(self) -> None:
-        pass
+        # Tells whether
+        self.config_open: bool = False
 
-    def open_config(self) -> None:
+        self.cursor_icon: PositionNode = PositionNode()
+
+    def toggle_config(self, toggle: bool) -> None:
         """
-        Opens the tool's dedicated configuration interface.
+        Toggles the tool's dedicated configuration interface.
         """
+
+        self.config_open = toggle
 
     def run(self, position: Tuple[int, int]) -> None:
         """
         Runs the tool on the currently specified tile position.
         """
 
+    def undo(self) -> None:
+        """
+        Undoes the latest run.
+        """
+
+    def redo(self) -> None:
+        """
+        Redoes the latest run.
+        """
+
 class PlaceWallTool(EditorTool):
-    def open_config(self) -> None:
-        return super().open_config()
+    def toggle_config(self) -> None:
+        return super().toggle_config()
 
     def run(self, position: Tuple[int, int]) -> None:
-        return super().run()
+        return super().run(position = position)
 
 class PlaceDoorTool(EditorTool):
-    def open_config(self) -> None:
-        return super().open_config()
+    def toggle_config(self) -> None:
+        return super().toggle_config()
 
     def run(self, position: Tuple[int, int]) -> None:
-        return super().run()
+        return super().run(position = position)
 
 class ClearTool(EditorTool):
-    def open_config(self) -> None:
-        return super().open_config()
+    def toggle_config(self) -> None:
+        return super().toggle_config()
 
     def run(self, position: Tuple[int, int]) -> None:
-        return super().run()
-
-# All tools are in this dictionary.
-tools: Dict[EditorToolKey, EditorTool] = {
-    EditorToolKey.PLACE_PROP: PlacePropTool(),
-    EditorToolKey.PLACE_WALL: PlaceWallTool(),
-    EditorToolKey.PLACE_DOOR: PlaceDoorTool(),
-    EditorToolKey.CLEAR: ClearTool()
-}
+        return super().run(position = position)

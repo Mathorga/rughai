@@ -15,7 +15,8 @@ from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 from engine.map_cursor_node import MapCursornode
 
-from scene_editor.editor_tools.editor_tool import EditorToolKey
+from scene_editor.editor_tools.editor_tool import ClearTool, EditorTool, EditorToolKey, PlaceDoorTool, PlaceWallTool
+from scene_editor.editor_tools.place_prop_tool import PlacePropTool
 
 class ActionSign(PositionNode):
     def __init__(
@@ -23,7 +24,6 @@ class ActionSign(PositionNode):
         x: float = 0.0,
         y: float = 0.0,
         action: EditorToolKey = EditorToolKey.PLACE_PROP,
-        on_toggle: Optional[Callable[[EditorToolKey], None]] = None,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -35,7 +35,6 @@ class ActionSign(PositionNode):
         self.__label: Optional[TextNode] = None
 
         self.action = action
-        self.__on_toggle = on_toggle
         self.visible = True
 
     def __compute_text(self) -> str:
@@ -43,14 +42,6 @@ class ActionSign(PositionNode):
 
     def __compute_color(self) -> Tuple[int, int, int, int]:
         return (0xFF, 0x00, 0x00, 0xFF) if self.action == EditorToolKey.CLEAR else (0x00, 0xFF, 0x00, 0xFF)
-
-    def update(self, dt: int) -> None:
-        super().update(dt)
-
-        # Only do stuff if visible.
-        if self.visible:
-            if controllers.INPUT_CONTROLLER.get_switch():
-                self.toggle()
 
     def toggle(self) -> None:
         if self.action == EditorToolKey.PLACE_PROP:
@@ -61,10 +52,6 @@ class ActionSign(PositionNode):
         if self.__label is not None:
             self.__label.set_text(self.__compute_text())
             self.__label.set_color(self.__compute_color())
-
-        # Toggle callback.
-        if self.__on_toggle is not None:
-            self.__on_toggle(self.action)
 
     def hide(self) -> None:
         self.visible = False
@@ -123,7 +110,22 @@ class PropPlacementScene(Node):
         cam_bounds = tilemaps[0].bounds
 
         # Editor tool.
-        self.__current_tool: EditorToolKey
+        self.__current_tool: int = 0
+
+        # All tools are in this dictionary.
+        self.__tools: List[EditorTool] = [
+            PlacePropTool(
+                view_width = view_width,
+                view_height = view_height,
+                scene_name = scene_name
+            ),
+            PlaceWallTool(),
+            PlaceDoorTool(),
+            ClearTool()
+        ]
+
+        # Defines whether the current tool's config is open or not.
+        self.__config_open: bool = False
 
         # Cursor.
         cursor_position = (
@@ -147,24 +149,9 @@ class PropPlacementScene(Node):
             x = self.__tile_size,
             y = view_height - self.__tile_size,
             action = EditorToolKey.CLEAR,
-            on_toggle = self.__on_action_toggle,
             batch = self.__scene.ui_batch
         )
         self.__action_sign.show()
-
-        # Fetch current prop maps.
-        # self.__prop_sets = PropLoader.fetch_prop_sets(
-        #     source = f"propmaps/{scene_name}"
-        # )
-        self.__prop_sets: List[Dict[str, Set[Tuple[int, int]]]] = [
-            PropLoader.fetch_prop_sets(
-                source = f"propmaps/{scene_name}"
-            )
-        ]
-        self.__current_props_index = 0
-
-        self.__props: List[PositionNode] = []
-        self.__refresh_props()
 
         self.__bound_lines = [
             LineNode(
@@ -205,59 +192,34 @@ class PropPlacementScene(Node):
         self.__scene.add_child(cam_target, cam_target = True)
         self.__scene.add_child(self.__action_sign)
         self.__scene.add_child(self.__cursor)
-        self.__scene.add_child(self.__menu)
 
     def draw(self) -> None:
         if self.__scene is not None:
             self.__scene.draw()
 
     def update(self, dt) -> None:
-        if not self.__menu.is_open():
+        # Toggle open/close upon start key pressed.
+        if controllers.INPUT_CONTROLLER.get_start():
+            self.__toggle_config()
+
+        if self.__config_open:
+            if controllers.INPUT_CONTROLLER.get_switch():
+                # Switch action.
+                self.__current_tool += 1
+                self.__current_tool %= len(self.__tools)
+
+                self.__cursor.set_child(self.__tools[self.__current_tool].cursor_icon)
+
             if controllers.INPUT_CONTROLLER.get_sprint():
-                # Clear history until the current index is reached.
-                self.__prop_sets = self.__prop_sets[0:self.__current_props_index + 1]
-
-                # Add an entry in the prop sets history.
-                self.__prop_sets.append(copy.deepcopy(self.__prop_sets[self.__current_props_index]))
-
-                prop_sets_size = len(self.__prop_sets)
-                if prop_sets_size > 20:
-                    self.__prop_sets = self.__prop_sets[prop_sets_size - 20:prop_sets_size]
-                else:
-                    self.__current_props_index += 1
-
-                if self.__action_sign.action == EditorToolKey.PLACE_PROP:
-                    # Add the currently selected prop if the interaction button was pressed.
-                    if self.__menu.get_current_prop() not in list(self.__prop_sets[self.__current_props_index].keys()):
-                        self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()] = set()
-                    self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
-                else:
-                    # Delete anything in the current map position, regardless of the selected prop.
-                    for prop_set in list(self.__prop_sets[self.__current_props_index].values()):
-                        prop_set.discard(self.__cursor.get_map_position())
-
-                # Refresh props to apply changes.
-                self.__refresh_props()
-                PropLoader.save_prop_sets(
-                    dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
-                    map_width = self.__tilemap_width,
-                    map_height = self.__tilemap_height,
-                    prop_sets = self.__prop_sets[self.__current_props_index]
-                )
+                self.__tools[self.__current_tool].run()
 
             if controllers.INPUT_CONTROLLER.get_redo():
-                self.__current_props_index += 1
-                if self.__current_props_index > len(self.__prop_sets) - 1:
-                    self.__current_props_index = len(self.__prop_sets) - 1
-                self.__refresh_props()
+                self.__tools[self.__current_tool].redo()
             elif controllers.INPUT_CONTROLLER.get_undo():
-                self.__current_props_index -= 1
-                if self.__current_props_index < 0:
-                    self.__current_props_index = 0
-                self.__refresh_props()
-
-        if self.__scene is not None:
-            self.__scene.update(dt)
+                self.__tools[self.__current_tool].undo()
+        else:
+            if self.__scene is not None:
+                self.__scene.update(dt)
 
     def delete(self) -> None:
         if self.__scene is not None:
@@ -275,55 +237,15 @@ class PropPlacementScene(Node):
             batch = self.__scene.world_batch
         )
 
-    def __refresh_props(self) -> None:
-        # Delete all existing props.
-        for prop in self.__props:
-            if prop is not None:
-                prop.delete()
-        self.__props.clear()
+    def __toggle_config(self) -> None:
+        self.__config_open = not self.__config_open
 
-        # Recreate all of them starting from prop maps.
-        for prop_name in list(self.__prop_sets[self.__current_props_index].keys()):
-            for position in self.__prop_sets[self.__current_props_index][prop_name]:
-                prop = map_prop(
-                    prop_name,
-                    x = position[0] * self.__tile_size + self.__tile_size / 2,
-                    y = position[1] * self.__tile_size + self.__tile_size / 2,
-                    batch = self.__scene.world_batch
-                )
-
-                if prop is not None:
-                    self.__props.append(prop)
-
-    def __on_action_toggle(self, action: EditorToolKey) -> None:
-        if action == EditorToolKey.CLEAR:
-            self.__cursor.set_child(self.__get_del_cursor_child())
+        if self.__config_open:
+            self.__cursor.disable_controls()
+            self.__action_sign.hide()
         else:
-            cursor_icon = map_prop(
-                self.__menu.get_current_prop(),
-                x = self.__cursor.x,
-                y = self.__cursor.y,
-                batch = self.__scene.world_batch
-            )
+            self.__cursor.enable_controls()
+            self.__action_sign.show()
 
-            if cursor_icon is not None:
-                self.__cursor.set_child(cursor_icon)
-
-    def __on_menu_open(self) -> None:
-        self.__cursor.disable_controls()
-        self.__action_sign.hide()
-
-    def __on_menu_close(self) -> None:
-        self.__cursor.enable_controls()
-        self.__action_sign.show()
-
-        if self.__action_sign.action == EditorToolKey.PLACE_PROP:
-            cursor_icon = map_prop(
-                self.__menu.get_current_prop(),
-                x = self.__cursor.x,
-                y = self.__cursor.y,
-                batch = self.__scene.world_batch
-            )
-
-            if cursor_icon is not None:
-                self.__cursor.set_child(cursor_icon)
+        # Toggle the current tool.
+        self.__tools[self.__current_tool].toggle_config(self.__config_open)

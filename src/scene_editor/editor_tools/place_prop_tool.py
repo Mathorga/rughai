@@ -1,12 +1,14 @@
 
 
+import copy
 import json
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Set, Tuple
 
 import pyglet
 
 from engine import controllers
 from engine.node import Node, PositionNode
+from engine.prop_loader import PropLoader, map_prop
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
@@ -105,12 +107,8 @@ class PropEditorMenuNode(Node):
     def update(self, dt: int) -> None:
         super().update(dt)
 
-        # Toggle open/close upon start key pressed.
-        if controllers.INPUT_CONTROLLER.get_start():
-            self.toggle()
-
         if self.__open:
-            # Only handle all other controls if open:
+            # Only handle controls if open:
             # Page change.
             if controllers.INPUT_CONTROLLER.get_menu_page_left():
                 self.__current_page_index -= 1
@@ -241,14 +239,26 @@ class PlacePropTool(EditorTool):
     def __init__(
         self,
         view_width: int,
-        view_height: int
+        view_height: int,
+        scene_name: str
     ) -> None:
         super().__init__()
 
-        self.__prop_names = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
-        self.__in_menu = False
+        self.__prop_names: Dict[str, List[str]] = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
+        self.__in_menu: bool = False
+        self.__scene_name: str = scene_name
 
-        self.__menu = PropEditorMenuNode(
+        self.__prop_sets: List[Dict[str, Set[Tuple[int, int]]]] = [
+            PropLoader.fetch_prop_sets(
+                source = f"propmaps/{scene_name}"
+            )
+        ]
+        self.__current_props_index: int = 0
+
+        self.__props: List[PositionNode] = []
+        self.__refresh_props()
+
+        self.__menu: PropEditorMenuNode = PropEditorMenuNode(
             prop_names = self.__prop_names,
             view_width = view_width,
             view_height = view_height,
@@ -258,11 +268,54 @@ class PlacePropTool(EditorTool):
             on_close = self.__on_menu_close
         )
 
-    def open_config(self) -> None:
-        return super().open_config()
+    def update(self, dt: int) -> None:
+        super().update(dt)
+
+        # Toggle open/close upon start key pressed.
+        if controllers.INPUT_CONTROLLER.get_start():
+            self.toggle_config()
+
+        self.__menu.update(dt = dt)
+
+    def toggle_config(self) -> None:
+        super().toggle_config()
+        self.__menu.toggle()
 
     def run(self, position: Tuple[int, int]) -> None:
-        return super().run()
+        super().run(position = position)
+
+        # Clear history until the current index is reached.
+        self.__prop_sets = self.__prop_sets[0:self.__current_props_index + 1]
+
+        # Add an entry in the prop sets history.
+        self.__prop_sets.append(copy.deepcopy(self.__prop_sets[self.__current_props_index]))
+
+        prop_sets_size = len(self.__prop_sets)
+        if prop_sets_size > 20:
+            self.__prop_sets = self.__prop_sets[prop_sets_size - 20:prop_sets_size]
+        else:
+            self.__current_props_index += 1
+
+        # Add the currently selected prop if the interaction button was pressed.
+        if self.__menu.get_current_prop() not in list(self.__prop_sets[self.__current_props_index].keys()):
+            self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()] = set()
+        self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
+
+        # Refresh props to apply changes.
+        self.__refresh_props()
+
+        PropLoader.save_prop_sets(
+            dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
+            map_width = self.__tilemap_width,
+            map_height = self.__tilemap_height,
+            prop_sets = self.__prop_sets[self.__current_props_index]
+        )
+
+    def undo(self) -> None:
+        return super().undo()
+
+    def redo(self) -> None:
+        return super().redo()
 
     def __load_prop_names(self, source: str) -> Dict[str, List[str]]:
         data: Dict[str, List[str]]
@@ -272,3 +325,23 @@ class PlacePropTool(EditorTool):
             data = json.load(content)
 
         return data
+
+    def __refresh_props(self) -> None:
+        # Delete all existing props.
+        for prop in self.__props:
+            if prop is not None:
+                prop.delete()
+        self.__props.clear()
+
+        # Recreate all of them starting from prop maps.
+        for prop_name in list(self.__prop_sets[self.__current_props_index].keys()):
+            for position in self.__prop_sets[self.__current_props_index][prop_name]:
+                prop = map_prop(
+                    prop_name,
+                    x = position[0] * self.__tile_size + self.__tile_size / 2,
+                    y = position[1] * self.__tile_size + self.__tile_size / 2,
+                    batch = self.__scene.world_batch
+                )
+
+                if prop is not None:
+                    self.__props.append(prop)
