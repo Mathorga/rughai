@@ -3,10 +3,14 @@ import sys
 import pyglet
 import pyglet.gl as gl
 
+# setting path
+sys.path.append('..')
+
 import engine.controllers as controllers
+from constants import scenes
 from engine.upscaler import Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
-from scenes.prop_placement_scene import PropPlacementScene
+from scene_editor.prop_placement_scene import PropPlacementScene
 
 class RugHaiSceneEditor:
     """
@@ -46,7 +50,7 @@ class RugHaiSceneEditor:
         )
 
         # Create a scene.
-        self._active_scene = PropPlacementScene(
+        scenes.ACTIVE_SCENE = PropPlacementScene(
             window = self._window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],
@@ -94,12 +98,12 @@ class RugHaiSceneEditor:
 
         # Upscaler handles maintaining the wanted output resolution.
         with self._upscaler:
-            self._active_scene.draw()
+            scenes.ACTIVE_SCENE.draw()
 
     def update(self, dt) -> None:
         # InputController makes sure every input is handled correctly.
         with controllers.INPUT_CONTROLLER:
-            self._active_scene.update(dt)
+            scenes.ACTIVE_SCENE.update(dt)
 
         # Compute collisions through collision manager.
         controllers.COLLISION_CONTROLLER.update(dt)
