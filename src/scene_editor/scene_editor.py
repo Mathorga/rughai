@@ -4,7 +4,7 @@ import pyglet
 import pyglet.gl as gl
 
 # setting path
-sys.path.append('..')
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")))
 
 import engine.controllers as controllers
 from constants import scenes
