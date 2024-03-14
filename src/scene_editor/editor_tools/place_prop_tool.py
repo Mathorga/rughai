@@ -1,10 +1,13 @@
 
 
 import copy
+import sys
+import os
 import json
 from typing import Callable, Dict, List, Optional, Set, Tuple
-
 import pyglet
+
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")))
 
 from engine import controllers
 from engine.node import Node, PositionNode
@@ -12,7 +15,7 @@ from engine.prop_loader import PropLoader, map_prop
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
-from scene_editor.editor_tools.editor_tool import EditorTool
+from editor_tool import EditorTool
 
 class EditorMenuTitleNode(PositionNode):
     def __init__(

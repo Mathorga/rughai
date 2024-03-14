@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Callable, Dict, List, Optional, Set, Tuple
 
 from engine.node import Node, PositionNode
-from scene_editor.editor_tools.place_prop_tool import PlacePropTool
 
 class EditorToolKey(str, Enum):
     """

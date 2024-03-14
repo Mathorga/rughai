@@ -15,8 +15,8 @@ from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 from engine.map_cursor_node import MapCursornode
 
-from scene_editor.editor_tools.editor_tool import ClearTool, EditorTool, EditorToolKey, PlaceDoorTool, PlaceWallTool
-from scene_editor.editor_tools.place_prop_tool import PlacePropTool
+from editor_tools.editor_tool import ClearTool, EditorTool, EditorToolKey, PlaceDoorTool, PlaceWallTool
+from editor_tools.place_prop_tool import PlacePropTool
 
 class ActionSign(PositionNode):
     def __init__(

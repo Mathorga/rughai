@@ -7,10 +7,10 @@ import pyglet.gl as gl
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")))
 
 import engine.controllers as controllers
-from constants import scenes
 from engine.upscaler import Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
-from scene_editor.prop_placement_scene import PropPlacementScene
+from constants import scenes
+from prop_placement_scene import PropPlacementScene
 
 class RugHaiSceneEditor:
     """
@@ -19,7 +19,7 @@ class RugHaiSceneEditor:
 
     def __init__(self) -> None:
         # Set resources path.
-        pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
+        pyglet.resource.path = [f"{os.path.dirname(__file__)}/../../assets"]
         pyglet.resource.reindex()
 
         # Load font files.
