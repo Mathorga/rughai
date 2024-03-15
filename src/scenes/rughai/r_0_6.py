@@ -1,14 +1,12 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 import pyglet
 from constants import collision_tags
 
-from engine.collision.collision_controller import CollisionController
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from engine.scene_node import Bounds, SceneNode
+from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
-from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 
@@ -20,21 +18,15 @@ class R_0_6(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
-        collision_controller: CollisionController,
-        input_controller: InputController,
         view_width: int,
         view_height: int,
-        scaling: int = 1,
         bundle: Optional[dict] = None,
         on_ended: Optional[Callable[[dict], None]] = None
     ):
         super().__init__(
             window = window,
-            collision_controller = collision_controller,
-            input_controller = input_controller,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             bundle = bundle,
             on_ended = on_ended
         )
@@ -44,21 +36,20 @@ class R_0_6(PlayableSceneNode):
             window = window,
             view_width = view_width,
             view_height = view_height,
-            scaling = scaling,
             default_cam_speed = SETTINGS[Keys.CAMERA_SPEED],
             title = "R_0_6",
             on_scene_end = self._on_scene_end
         )
 
         # Define a tilemap.
-        tilemaps = TilemapNode.from_tmx_file(
-            source = "tilemaps/rughai/r_0_6.tmx",
-            scaling = scaling,
+        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
+            source = "tilemaps/r_0_6.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
+        cam_bounds = tilemaps[0].bounds
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
@@ -69,8 +60,7 @@ class R_0_6(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            z = 500,
-            scaling = scaling,
+            z = -500,
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
@@ -81,25 +71,20 @@ class R_0_6(PlayableSceneNode):
         )
         cam_target = PositionNode()
         self._player = PlayerNode(
-            input_controller = input_controller,
-            collision_controller = collision_controller,
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            scaling = scaling,
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Place doors.
         south_door = DoorNode(
-            collision_controller = collision_controller,
             x = 16 * self.__tile_size,
             y = -2 * self.__tile_size,
             width = 18 * self.__tile_size,
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            scaling = scaling,
             tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
@@ -116,15 +101,13 @@ class R_0_6(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         west_door = DoorNode(
-            collision_controller = collision_controller,
             x = -2 * self.__tile_size,
             y = 24 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 20 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            scaling = scaling,
-            tags = "player",
+            tags = [collision_tags.PLAYER_INTERACTION],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -132,7 +115,7 @@ class R_0_6(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_0,
                         "player_position": [
-                            49 * self.__tile_size,
+                            71 * self.__tile_size,
                             self._player.y
                         ]
                     }
@@ -140,14 +123,12 @@ class R_0_6(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         east_door = DoorNode(
-            collision_controller = collision_controller,
             x = tilemap_width * self.__tile_size,
             y = 15 * self.__tile_size,
             width = 2 * self.__tile_size,
             height = 25 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            scaling = scaling,
             tags = "player",
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
@@ -172,24 +153,16 @@ class R_0_6(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 4,
-            scaling = scaling,
             batch = scenes.ACTIVE_SCENE.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
-            scaling = scaling,
             batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
-        scenes.ACTIVE_SCENE.set_cam_bounds(
-            Bounds(
-                bottom = 0,
-                left = 0,
-                right = tilemap_width * self.__tile_size
-            )
-        )
+        scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
         scenes.ACTIVE_SCENE.add_child(bg)
         scenes.ACTIVE_SCENE.add_children(tilemaps)

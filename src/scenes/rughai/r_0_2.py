@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 from constants import collision_tags
 import pyglet
 from clouds_node import CloudsNode
@@ -45,7 +45,7 @@ class R_0_2(PlayableSceneNode):
         )
 
         # Define a tilemap.
-        tilemaps = TilemapNode.from_tmx_file(
+        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_2.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )

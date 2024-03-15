@@ -51,6 +51,7 @@ class R_0_4(PlayableSceneNode):
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
         tilemap_height = tilemaps[0].map_height
+        cam_bounds = tilemaps[0].bounds
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
@@ -141,14 +142,7 @@ class R_0_4(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
-        # self._scene.set_cam_bounds(
-        #     Bounds(
-        #         top = tilemap_height * self.__tile_size,
-        #         bottom = 0,
-        #         left = 0,
-        #         right = tilemap_width * self.__tile_size
-        #     )
-        # )
+        scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
         scenes.ACTIVE_SCENE.add_child(bg)
         scenes.ACTIVE_SCENE.add_children(tilemaps)
