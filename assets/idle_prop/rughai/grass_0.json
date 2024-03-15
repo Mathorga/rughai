@@ -53,18 +53,22 @@
         ]
     },
     "anchor_x": 8,
-    "anchor_y": 2,
+    "anchor_y": -2,
     "health_points": 1,
     "sensors": [
         {
-            "meet_tags": ["player_sense"],
-            "hit_tags": ["damage"],
+            "meet_tags": [
+                "player_sense"
+            ],
+            "hit_tags": [
+                "damage"
+            ],
             "offset_x": 0,
             "offset_y": 0,
             "width": 6,
             "height": 6,
             "anchor_x": 3,
-            "anchor_y": 3
+            "anchor_y": -1
         }
     ]
 }

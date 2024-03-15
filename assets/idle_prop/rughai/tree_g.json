@@ -33,10 +33,12 @@
     "anchor_y": 4,
     "colliders": [
         {
-            "tags": ["player_collision"],
+            "tags": [
+                "player_collision"
+            ],
             "offset_x": 0,
             "offset_y": 0,
-            "width": 8,
+            "width": 24,
             "height": 8,
             "anchor_x": 4,
             "anchor_y": 4
