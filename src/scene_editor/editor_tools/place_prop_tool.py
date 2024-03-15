@@ -241,6 +241,7 @@ class PlacePropTool(EditorTool):
         tilemap_width: int,
         tilemap_height: int,
         scene_name: str,
+        on_icon_changed: Optional[Callable] = None,
         world_batch: Optional[pyglet.graphics.Batch] = None,
         ui_batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
@@ -249,6 +250,7 @@ class PlacePropTool(EditorTool):
         self.__prop_names: Dict[str, List[str]] = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
         self.__in_menu: bool = False
         self.__scene_name: str = scene_name
+        self.__on_icon_changed: Optional[Callable] = on_icon_changed
         self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
         self.__ui_batch: Optional[pyglet.graphics.Batch] = ui_batch
 
@@ -290,27 +292,33 @@ class PlacePropTool(EditorTool):
         self.name = "Place prop"
         self.color = (0x22, 0x44, 0x66, 0x7F)
         self.cursor_icon = map_prop(
-                self.__menu.get_current_prop(),
-                x = 0,
-                y = 0,
-                batch = self.__world_batch
-            )
+            self.__menu.get_current_prop(),
+            x = 0,
+            y = 0,
+            batch = self.__world_batch
+        )
 
     def update(self, dt: int) -> None:
         super().update(dt)
 
         self.__menu.update(dt = dt)
 
-    # def toggle_config(self) -> None:
-    #     super().toggle_config()
-    #     self.__menu.toggle()
-        
     def toggle_menu(self, toggle: bool) -> None:
         super().toggle_menu(toggle)
         if toggle:
             self.__menu.open()
         else:
             self.__menu.close()
+            self.cursor_icon = map_prop(
+                self.__menu.get_current_prop(),
+                x = 0.0,
+                y = 0.0,
+                batch = self.__world_batch
+            )
+
+            # Notify icon changed.
+            if self.__on_icon_changed is not None:
+                self.__on_icon_changed()
 
     def run(self, position: Tuple[int, int]) -> None:
         super().run(position = position)
@@ -343,10 +351,19 @@ class PlacePropTool(EditorTool):
         )
 
     def undo(self) -> None:
-        return super().undo()
+        super().undo()
+
+        self.__current_props_index -= 1
+        if self.__current_props_index < 0:
+            self.__current_props_index = 0
+        self.__refresh_props()
 
     def redo(self) -> None:
-        return super().redo()
+        super().redo()
+        self.__current_props_index += 1
+        if self.__current_props_index > len(self.__prop_sets) - 1:
+            self.__current_props_index = len(self.__prop_sets) - 1
+        self.__refresh_props()
 
     def __load_prop_names(self, source: str) -> Dict[str, List[str]]:
         data: Dict[str, List[str]]

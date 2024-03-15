@@ -135,12 +135,22 @@ class PropPlacementScene(Node):
                 tilemap_height = self.__tilemap_height,
                 tile_size = self.__tile_size,
                 scene_name = scene_name,
+                on_icon_changed = self.__update_cursor_icon,
                 world_batch = scenes.ACTIVE_SCENE.world_batch,
                 ui_batch = scenes.ACTIVE_SCENE.ui_batch
             ),
-            PlaceWallTool(),
-            PlaceDoorTool(),
-            ClearTool()
+            PlaceWallTool(
+                tile_size = self.__tile_size,
+                batch = scenes.ACTIVE_SCENE.world_batch
+            ),
+            PlaceDoorTool(
+                tile_size = self.__tile_size,
+                batch = scenes.ACTIVE_SCENE.world_batch
+            ),
+            ClearTool(
+                tile_size = self.__tile_size,
+                batch = scenes.ACTIVE_SCENE.world_batch
+            )
         ]
 
         # Editor tool.
@@ -216,11 +226,7 @@ class PropPlacementScene(Node):
             scenes.ACTIVE_SCENE.draw()
 
     def update(self, dt) -> None:
-        # Toggle open/close upon start key pressed.
-        # if controllers.INPUT_CONTROLLER.get_start():
-        #     self.__toggle_config()
-
-        # self.__tools[self.__current_tool].update(dt = dt)
+        self.__tools[self.__current_tool].update(dt = dt)
 
         # Toggle open/close upon start key pressed.
         if controllers.INPUT_CONTROLLER.get_start():
@@ -232,7 +238,7 @@ class PropPlacementScene(Node):
                 self.__current_tool += 1
                 self.__current_tool %= len(self.__tools)
 
-                self.__cursor.set_child(self.__tools[self.__current_tool].cursor_icon)
+                self.__update_cursor_icon()
                 self.__action_sign.set_text(self.__tools[self.__current_tool].name)
                 self.__action_sign.set_color(self.__tools[self.__current_tool].color)
 
@@ -250,6 +256,9 @@ class PropPlacementScene(Node):
     def delete(self) -> None:
         if scenes.ACTIVE_SCENE is not None:
             scenes.ACTIVE_SCENE.delete()
+
+    def __update_cursor_icon(self) -> None:
+        self.__cursor.set_child(self.__tools[self.__current_tool].cursor_icon)
 
     def __get_del_cursor_child(self) -> PositionNode:
         return RectNode(
