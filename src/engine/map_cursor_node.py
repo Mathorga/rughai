@@ -36,6 +36,7 @@ class MapCursornode(PositionNode):
 
         # Save child.
         self.__child = child
+        self.__child.set_position(position = self.get_position())
 
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset
@@ -78,6 +79,7 @@ class MapCursornode(PositionNode):
             self.__child.delete()
 
         self.__child = child
+        self.__child.set_position(position = self.get_position())
 
     def get_map_position(self) -> Tuple[int, int]:
         return (

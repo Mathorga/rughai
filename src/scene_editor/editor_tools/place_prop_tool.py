@@ -77,8 +77,8 @@ class PropEditorMenuNode(Node):
         view_height: int,
         start_open: bool = False,
         batch: Optional[pyglet.graphics.Batch] = None,
-        on_open: Optional[Callable[[], None]] = None,
-        on_close: Optional[Callable[[], None]] = None,
+        # on_open: Optional[Callable[[], None]] = None,
+        # on_close: Optional[Callable[[], None]] = None,
     ) -> None:
         super().__init__()
 
@@ -102,8 +102,8 @@ class PropEditorMenuNode(Node):
         self.__current_prop_icon: Optional[SpriteNode] = None
 
         # Open/close callbacks.
-        self.__on_open = on_open
-        self.__on_close = on_close
+        # self.__on_open = on_open
+        # self.__on_close = on_close
 
         self.__background: Optional[RectNode] = None
 
@@ -146,12 +146,6 @@ class PropEditorMenuNode(Node):
 
     def is_open(self) -> bool:
         return self.__open
-    
-    def toggle(self) -> None:
-        if self.__open:
-            self.close()
-        else:
-            self.open()
 
     def open(self) -> None:
         self.__open = True
@@ -170,8 +164,8 @@ class PropEditorMenuNode(Node):
         self.__background.set_opacity(0xDD)
 
         # Open callback.
-        if self.__on_open is not None:
-            self.__on_open()
+        # if self.__on_open is not None:
+        #     self.__on_open()
 
     def close(self) -> None:
         self.__open = False
@@ -183,8 +177,8 @@ class PropEditorMenuNode(Node):
             self.__background = None
 
         # Close callback.
-        if self.__on_close is not None:
-            self.__on_close()
+        # if self.__on_close is not None:
+        #     self.__on_close()
 
     def clear_page(self) -> None:
         # Delete page title.
@@ -243,13 +237,24 @@ class PlacePropTool(EditorTool):
         self,
         view_width: int,
         view_height: int,
-        scene_name: str
+        tile_size: Tuple[int, int],
+        tilemap_width: int,
+        tilemap_height: int,
+        scene_name: str,
+        world_batch: Optional[pyglet.graphics.Batch] = None,
+        ui_batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__()
 
         self.__prop_names: Dict[str, List[str]] = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
         self.__in_menu: bool = False
         self.__scene_name: str = scene_name
+        self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
+        self.__ui_batch: Optional[pyglet.graphics.Batch] = ui_batch
+
+        self.__tile_size: Tuple[int, int] = tile_size
+        self.__tilemap_width: int = tilemap_width
+        self.__tilemap_height: int = tilemap_height
 
         self.__prop_sets: List[Dict[str, Set[Tuple[int, int]]]] = [
             PropLoader.fetch_prop_sets(
@@ -266,23 +271,46 @@ class PlacePropTool(EditorTool):
             view_width = view_width,
             view_height = view_height,
             start_open = self.__in_menu,
-            batch = self.__scene.ui_batch,
-            on_open = self.__on_menu_open,
-            on_close = self.__on_menu_close
+            batch = self.__ui_batch,
+            # on_open = self.__on_menu_open,
+            # on_close = self.__on_menu_close
         )
+
+        # self.cursor_icon = RectNode(
+        #     x = 0.0,
+        #     y = 0.0,
+        #     width = self.__tile_size,
+        #     height = self.__tile_size,
+        #     anchor_x = self.__tile_size / 2,
+        #     anchor_y = self.__tile_size / 2,
+        #     color = (0x33, 0xFF, 0x33, 0x7F),
+        #     batch = self.__world_batch
+        # )
+
+        self.name = "Place prop"
+        self.color = (0x22, 0x44, 0x66, 0x7F)
+        self.cursor_icon = map_prop(
+                self.__menu.get_current_prop(),
+                x = 0,
+                y = 0,
+                batch = self.__world_batch
+            )
 
     def update(self, dt: int) -> None:
         super().update(dt)
 
-        # Toggle open/close upon start key pressed.
-        if controllers.INPUT_CONTROLLER.get_start():
-            self.toggle_config()
-
         self.__menu.update(dt = dt)
 
-    def toggle_config(self) -> None:
-        super().toggle_config()
-        self.__menu.toggle()
+    # def toggle_config(self) -> None:
+    #     super().toggle_config()
+    #     self.__menu.toggle()
+        
+    def toggle_menu(self, toggle: bool) -> None:
+        super().toggle_menu(toggle)
+        if toggle:
+            self.__menu.open()
+        else:
+            self.__menu.close()
 
     def run(self, position: Tuple[int, int]) -> None:
         super().run(position = position)
@@ -302,7 +330,7 @@ class PlacePropTool(EditorTool):
         # Add the currently selected prop if the interaction button was pressed.
         if self.__menu.get_current_prop() not in list(self.__prop_sets[self.__current_props_index].keys()):
             self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()] = set()
-        self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()].add(self.__cursor.get_map_position())
+        self.__prop_sets[self.__current_props_index][self.__menu.get_current_prop()].add(position)
 
         # Refresh props to apply changes.
         self.__refresh_props()
@@ -343,7 +371,7 @@ class PlacePropTool(EditorTool):
                     prop_name,
                     x = position[0] * self.__tile_size + self.__tile_size / 2,
                     y = position[1] * self.__tile_size + self.__tile_size / 2,
-                    batch = self.__scene.world_batch
+                    batch = self.__world_batch
                 )
 
                 if prop is not None:

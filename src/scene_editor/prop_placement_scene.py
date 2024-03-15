@@ -4,6 +4,7 @@ import json
 from typing import Callable, Dict, List, Optional, Set, Tuple
 import pyglet
 
+from constants import scenes
 from engine import controllers
 from engine.prop_loader import PropLoader, map_prop
 from engine.node import Node, PositionNode
@@ -23,7 +24,8 @@ class ActionSign(PositionNode):
         self,
         x: float = 0.0,
         y: float = 0.0,
-        action: EditorToolKey = EditorToolKey.PLACE_PROP,
+        action: str = "",
+        color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF),
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -35,13 +37,22 @@ class ActionSign(PositionNode):
         self.__label: Optional[TextNode] = None
 
         self.action = action
+        self.color = color
         self.visible = True
 
+    def set_text(self, text: str) -> None:
+        self.action = text
+        self.__label.set_text(text = self.__compute_text())
+
+    def set_color(self, color: Tuple[int, int, int, int]) -> None:
+        self.color = color
+        self.__label.set_color(color = self.__compute_color())
+
     def __compute_text(self) -> str:
-        return f"(tab) {self.action.value}"
+        return f"(tab) {self.action}"
 
     def __compute_color(self) -> Tuple[int, int, int, int]:
-        return (0xFF, 0x00, 0x00, 0xFF) if self.action == EditorToolKey.CLEAR else (0x00, 0xFF, 0x00, 0xFF)
+        return self.color
 
     def toggle(self) -> None:
         if self.action == EditorToolKey.PLACE_PROP:
@@ -91,7 +102,7 @@ class PropPlacementScene(Node):
         self.__scene_name = scene_name
 
         # Define the scene.
-        self.__scene = SceneNode(
+        scenes.ACTIVE_SCENE = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
@@ -100,32 +111,14 @@ class PropPlacementScene(Node):
         )
 
         # Define a tilemap.
-        tilemaps = TilemapNode.from_tmx_file(
+        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
             source = f"tilemaps/{scene_name}.tmx",
-            batch = self.__scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
-        self.__tile_size = tilemaps[0].get_tile_size()[0]
+        self.__tile_size: Tuple[int, int] = tilemaps[0].get_tile_size()[0]
         self.__tilemap_width = tilemaps[0].map_width
         self.__tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
-
-        # Editor tool.
-        self.__current_tool: int = 0
-
-        # All tools are in this dictionary.
-        self.__tools: List[EditorTool] = [
-            PlacePropTool(
-                view_width = view_width,
-                view_height = view_height,
-                scene_name = scene_name
-            ),
-            PlaceWallTool(),
-            PlaceDoorTool(),
-            ClearTool()
-        ]
-
-        # Defines whether the current tool's config is open or not.
-        self.__config_open: bool = False
 
         # Cursor.
         cursor_position = (
@@ -133,12 +126,36 @@ class PropPlacementScene(Node):
             (self.__tilemap_height / 2) * self.__tile_size
         )
 
+        # All tools are in this dictionary.
+        self.__tools: List[EditorTool] = [
+            PlacePropTool(
+                view_width = view_width,
+                view_height = view_height,
+                tilemap_width = self.__tilemap_width,
+                tilemap_height = self.__tilemap_height,
+                tile_size = self.__tile_size,
+                scene_name = scene_name,
+                world_batch = scenes.ACTIVE_SCENE.world_batch,
+                ui_batch = scenes.ACTIVE_SCENE.ui_batch
+            ),
+            PlaceWallTool(),
+            PlaceDoorTool(),
+            ClearTool()
+        ]
+
+        # Editor tool.
+        self.__current_tool: int = 0
+
+        # Defines whether the current tool's config is open or not.
+        self.__config_open: bool = False
+
         # "Delete action" cursor child.
         cam_target = PositionNode()
         self.__cursor = MapCursornode(
             tile_width = self.__tile_size,
             tile_height = self.__tile_size,
-            child = self.__get_del_cursor_child(),
+            # child = self.__get_del_cursor_child(),
+            child = self.__tools[self.__current_tool].cursor_icon,
             cam_target = cam_target,
             x = cursor_position[0] + self.__tile_size / 2,
             y = cursor_position[1] + self.__tile_size / 2
@@ -148,8 +165,9 @@ class PropPlacementScene(Node):
         self.__action_sign = ActionSign(
             x = self.__tile_size,
             y = view_height - self.__tile_size,
-            action = EditorToolKey.CLEAR,
-            batch = self.__scene.ui_batch
+            action = self.__tools[self.__current_tool].name,
+            color = self.__tools[self.__current_tool].color,
+            batch = scenes.ACTIVE_SCENE.ui_batch
         )
         self.__action_sign.show()
 
@@ -160,7 +178,7 @@ class PropPlacementScene(Node):
                 delta_x = (self.__tilemap_width) * self.__tile_size,
                 delta_y = 0.0,
                 color = (0xFF, 0x33, 0x00, 0x7F),
-                batch = self.__scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             LineNode(
                 x = self.__tilemap_width * self.__tile_size,
@@ -168,7 +186,7 @@ class PropPlacementScene(Node):
                 delta_x = 0.0,
                 delta_y = self.__tilemap_height * self.__tile_size,
                 color = (0xFF, 0x33, 0x00, 0x7F),
-                batch = self.__scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             LineNode(
                 x = 0.0,
@@ -176,7 +194,7 @@ class PropPlacementScene(Node):
                 delta_x = self.__tilemap_width * self.__tile_size,
                 delta_y = 0.0,
                 color = (0xFF, 0x33, 0x00, 0x7F),
-                batch = self.__scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             ),
             LineNode(
                 x = 0.0,
@@ -184,46 +202,54 @@ class PropPlacementScene(Node):
                 delta_x = 0.0,
                 delta_y = self.__tilemap_height * self.__tile_size,
                 color = (0xFF, 0x33, 0x00, 0x7F),
-                batch = self.__scene.world_batch
+                batch = scenes.ACTIVE_SCENE.world_batch
             )
         ]
 
-        self.__scene.add_children(tilemaps)
-        self.__scene.add_child(cam_target, cam_target = True)
-        self.__scene.add_child(self.__action_sign)
-        self.__scene.add_child(self.__cursor)
+        scenes.ACTIVE_SCENE.add_children(tilemaps)
+        scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
+        scenes.ACTIVE_SCENE.add_child(self.__action_sign)
+        scenes.ACTIVE_SCENE.add_child(self.__cursor)
 
     def draw(self) -> None:
-        if self.__scene is not None:
-            self.__scene.draw()
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.draw()
 
     def update(self, dt) -> None:
         # Toggle open/close upon start key pressed.
-        if controllers.INPUT_CONTROLLER.get_start():
-            self.__toggle_config()
+        # if controllers.INPUT_CONTROLLER.get_start():
+        #     self.__toggle_config()
 
-        if self.__config_open:
+        # self.__tools[self.__current_tool].update(dt = dt)
+
+        # Toggle open/close upon start key pressed.
+        if controllers.INPUT_CONTROLLER.get_start():
+            self.__toggle_menu()
+
+        if not self.__config_open:
             if controllers.INPUT_CONTROLLER.get_switch():
                 # Switch action.
                 self.__current_tool += 1
                 self.__current_tool %= len(self.__tools)
 
                 self.__cursor.set_child(self.__tools[self.__current_tool].cursor_icon)
+                self.__action_sign.set_text(self.__tools[self.__current_tool].name)
+                self.__action_sign.set_color(self.__tools[self.__current_tool].color)
 
             if controllers.INPUT_CONTROLLER.get_sprint():
-                self.__tools[self.__current_tool].run()
+                self.__tools[self.__current_tool].run(self.__cursor.get_map_position())
 
             if controllers.INPUT_CONTROLLER.get_redo():
                 self.__tools[self.__current_tool].redo()
             elif controllers.INPUT_CONTROLLER.get_undo():
                 self.__tools[self.__current_tool].undo()
-        else:
-            if self.__scene is not None:
-                self.__scene.update(dt)
+
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.update(dt)
 
     def delete(self) -> None:
-        if self.__scene is not None:
-            self.__scene.delete()
+        if scenes.ACTIVE_SCENE is not None:
+            scenes.ACTIVE_SCENE.delete()
 
     def __get_del_cursor_child(self) -> PositionNode:
         return RectNode(
@@ -234,10 +260,10 @@ class PropPlacementScene(Node):
             anchor_x = self.__tile_size / 2,
             anchor_y = self.__tile_size / 2,
             color = (0xFF, 0x33, 0x33, 0x7F),
-            batch = self.__scene.world_batch
+            batch = scenes.ACTIVE_SCENE.world_batch
         )
 
-    def __toggle_config(self) -> None:
+    def __toggle_menu(self) -> None:
         self.__config_open = not self.__config_open
 
         if self.__config_open:
@@ -248,4 +274,4 @@ class PropPlacementScene(Node):
             self.__action_sign.show()
 
         # Toggle the current tool.
-        self.__tools[self.__current_tool].toggle_config(self.__config_open)
+        self.__tools[self.__current_tool].toggle_menu(self.__config_open)

@@ -50,7 +50,7 @@ class RugHaiSceneEditor:
         )
 
         # Create a scene.
-        scenes.ACTIVE_SCENE = PropPlacementScene(
+        self.__scene = PropPlacementScene(
             window = self._window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],
@@ -98,12 +98,12 @@ class RugHaiSceneEditor:
 
         # Upscaler handles maintaining the wanted output resolution.
         with self._upscaler:
-            scenes.ACTIVE_SCENE.draw()
+            self.__scene.draw()
 
     def update(self, dt) -> None:
         # InputController makes sure every input is handled correctly.
         with controllers.INPUT_CONTROLLER:
-            scenes.ACTIVE_SCENE.update(dt)
+            self.__scene.update(dt)
 
         # Compute collisions through collision manager.
         controllers.COLLISION_CONTROLLER.update(dt)
