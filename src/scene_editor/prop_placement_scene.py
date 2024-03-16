@@ -1,12 +1,8 @@
-import copy
-from enum import Enum
-import json
-from typing import Callable, Dict, List, Optional, Set, Tuple
+from typing import Callable, List, Optional, Tuple
 import pyglet
 
 from constants import scenes
 from engine import controllers
-from engine.prop_loader import PropLoader, map_prop
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
 from engine.shapes.line_node import LineNode
@@ -16,8 +12,9 @@ from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 from engine.map_cursor_node import MapCursornode
 
-from editor_tools.editor_tool import ClearTool, EditorTool, EditorToolKey, PlaceDoorTool, PlaceWallTool
+from editor_tools.editor_tool import DeletePropTool, EditorTool, PlaceDoorTool
 from editor_tools.place_prop_tool import PlacePropTool
+from editor_tools.place_wall_tool import PlaceWallTool
 
 class ActionSign(PositionNode):
     def __init__(
@@ -53,16 +50,6 @@ class ActionSign(PositionNode):
 
     def __compute_color(self) -> Tuple[int, int, int, int]:
         return self.color
-
-    def toggle(self) -> None:
-        if self.action == EditorToolKey.PLACE_PROP:
-            self.action = EditorToolKey.CLEAR
-        else:
-            self.action = EditorToolKey.PLACE_PROP
-
-        if self.__label is not None:
-            self.__label.set_text(self.__compute_text())
-            self.__label.set_color(self.__compute_color())
 
     def hide(self) -> None:
         self.visible = False
@@ -140,6 +127,8 @@ class PropPlacementScene(Node):
                 ui_batch = scenes.ACTIVE_SCENE.ui_batch
             ),
             PlaceWallTool(
+                view_width = view_width,
+                view_height = view_height,
                 tile_size = self.__tile_size,
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
@@ -147,7 +136,7 @@ class PropPlacementScene(Node):
                 tile_size = self.__tile_size,
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
-            ClearTool(
+            DeletePropTool(
                 tile_size = self.__tile_size,
                 batch = scenes.ACTIVE_SCENE.world_batch
             )
@@ -156,16 +145,16 @@ class PropPlacementScene(Node):
         # Editor tool.
         self.__current_tool: int = 0
 
-        # Defines whether the current tool's config is open or not.
-        self.__config_open: bool = False
+        # Defines whether the current tool's menu is open or not.
+        self.__menu_open: bool = False
 
-        # "Delete action" cursor child.
+        # Define a map cursor.
         cam_target = PositionNode()
         self.__cursor = MapCursornode(
             tile_width = self.__tile_size,
             tile_height = self.__tile_size,
             # child = self.__get_del_cursor_child(),
-            child = self.__tools[self.__current_tool].cursor_icon,
+            child = self.__tools[self.__current_tool].get_cursor_icon(),
             cam_target = cam_target,
             x = cursor_position[0] + self.__tile_size / 2,
             y = cursor_position[1] + self.__tile_size / 2
@@ -232,7 +221,7 @@ class PropPlacementScene(Node):
         if controllers.INPUT_CONTROLLER.get_start():
             self.__toggle_menu()
 
-        if not self.__config_open:
+        if not self.__menu_open:
             if controllers.INPUT_CONTROLLER.get_switch():
                 # Switch action.
                 self.__current_tool += 1
@@ -258,7 +247,7 @@ class PropPlacementScene(Node):
             scenes.ACTIVE_SCENE.delete()
 
     def __update_cursor_icon(self) -> None:
-        self.__cursor.set_child(self.__tools[self.__current_tool].cursor_icon)
+        self.__cursor.set_child(self.__tools[self.__current_tool].get_cursor_icon())
 
     def __get_del_cursor_child(self) -> PositionNode:
         return RectNode(
@@ -273,9 +262,9 @@ class PropPlacementScene(Node):
         )
 
     def __toggle_menu(self) -> None:
-        self.__config_open = not self.__config_open
+        self.__menu_open = not self.__menu_open
 
-        if self.__config_open:
+        if self.__menu_open:
             self.__cursor.disable_controls()
             self.__action_sign.hide()
         else:
@@ -283,4 +272,4 @@ class PropPlacementScene(Node):
             self.__action_sign.show()
 
         # Toggle the current tool.
-        self.__tools[self.__current_tool].toggle_menu(self.__config_open)
+        self.__tools[self.__current_tool].toggle_menu(self.__menu_open)

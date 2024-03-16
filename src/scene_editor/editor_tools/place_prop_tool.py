@@ -1,5 +1,3 @@
-
-
 import copy
 import sys
 import os
@@ -77,8 +75,6 @@ class PropEditorMenuNode(Node):
         view_height: int,
         start_open: bool = False,
         batch: Optional[pyglet.graphics.Batch] = None,
-        # on_open: Optional[Callable[[], None]] = None,
-        # on_close: Optional[Callable[[], None]] = None,
     ) -> None:
         super().__init__()
 
@@ -100,10 +96,6 @@ class PropEditorMenuNode(Node):
         # Currently selected element.
         self.__current_prop_index: int = 0
         self.__current_prop_icon: Optional[SpriteNode] = None
-
-        # Open/close callbacks.
-        # self.__on_open = on_open
-        # self.__on_close = on_close
 
         self.__background: Optional[RectNode] = None
 
@@ -163,10 +155,6 @@ class PropEditorMenuNode(Node):
         )
         self.__background.set_opacity(0xDD)
 
-        # Open callback.
-        # if self.__on_open is not None:
-        #     self.__on_open()
-
     def close(self) -> None:
         self.__open = False
 
@@ -175,10 +163,6 @@ class PropEditorMenuNode(Node):
         if self.__background is not None:
             self.__background.delete()
             self.__background = None
-
-        # Close callback.
-        # if self.__on_close is not None:
-        #     self.__on_close()
 
     def clear_page(self) -> None:
         # Delete page title.
@@ -274,24 +258,13 @@ class PlacePropTool(EditorTool):
             view_height = view_height,
             start_open = self.__in_menu,
             batch = self.__ui_batch,
-            # on_open = self.__on_menu_open,
-            # on_close = self.__on_menu_close
         )
 
-        # self.cursor_icon = RectNode(
-        #     x = 0.0,
-        #     y = 0.0,
-        #     width = self.__tile_size,
-        #     height = self.__tile_size,
-        #     anchor_x = self.__tile_size / 2,
-        #     anchor_y = self.__tile_size / 2,
-        #     color = (0x33, 0xFF, 0x33, 0x7F),
-        #     batch = self.__world_batch
-        # )
-
         self.name = "Place prop"
-        self.color = (0x22, 0x44, 0x66, 0x7F)
-        self.cursor_icon = map_prop(
+        self.color = (0x22, 0x44, 0x66, 0xAA)
+
+    def get_cursor_icon(self) -> PositionNode:
+        return map_prop(
             self.__menu.get_current_prop(),
             x = 0,
             y = 0,
@@ -309,12 +282,6 @@ class PlacePropTool(EditorTool):
             self.__menu.open()
         else:
             self.__menu.close()
-            self.cursor_icon = map_prop(
-                self.__menu.get_current_prop(),
-                x = 0.0,
-                y = 0.0,
-                batch = self.__world_batch
-            )
 
             # Notify icon changed.
             if self.__on_icon_changed is not None:
