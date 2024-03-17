@@ -34,7 +34,6 @@ class WallEditorMenuNode(Node):
 
         # Currently selected element.
         self.__current_wall_index: int = 0
-        self.__current_prop_icon: Optional[SpriteNode] = None
 
         self.__background: Optional[RectNode] = None
 

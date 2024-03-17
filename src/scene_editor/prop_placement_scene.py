@@ -12,7 +12,7 @@ from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 from engine.map_cursor_node import MapCursornode
 
-from editor_tools.editor_tool import DeletePropTool, EditorTool, PlaceDoorTool
+from editor_tools.editor_tool import EditorTool, PlaceDoorTool
 from editor_tools.place_prop_tool import PlacePropTool
 from editor_tools.place_wall_tool import PlaceWallTool
 
@@ -135,10 +135,6 @@ class PropPlacementScene(Node):
             PlaceDoorTool(
                 tile_size = self.__tile_size,
                 batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            DeletePropTool(
-                tile_size = self.__tile_size,
-                batch = scenes.ACTIVE_SCENE.world_batch
             )
         ]
 
@@ -149,11 +145,10 @@ class PropPlacementScene(Node):
         self.__menu_open: bool = False
 
         # Define a map cursor.
-        cam_target = PositionNode()
-        self.__cursor = MapCursornode(
+        cam_target: PositionNode = PositionNode()
+        self.__cursor: MapCursornode = MapCursornode(
             tile_width = self.__tile_size,
             tile_height = self.__tile_size,
-            # child = self.__get_del_cursor_child(),
             child = self.__tools[self.__current_tool].get_cursor_icon(),
             cam_target = cam_target,
             x = cursor_position[0] + self.__tile_size / 2,
@@ -161,7 +156,7 @@ class PropPlacementScene(Node):
         )
 
         # Action sign.
-        self.__action_sign = ActionSign(
+        self.__action_sign: ActionSign = ActionSign(
             x = self.__tile_size,
             y = view_height - self.__tile_size,
             action = self.__tools[self.__current_tool].name,
@@ -231,7 +226,9 @@ class PropPlacementScene(Node):
                 self.__action_sign.set_text(self.__tools[self.__current_tool].name)
                 self.__action_sign.set_color(self.__tools[self.__current_tool].color)
 
-            if controllers.INPUT_CONTROLLER.get_sprint():
+            if controllers.INPUT_CONTROLLER.get_tool_clear():
+                self.__tools[self.__current_tool].clear(self.__cursor.get_map_position())
+            elif controllers.INPUT_CONTROLLER.get_tool_run():
                 self.__tools[self.__current_tool].run(self.__cursor.get_map_position())
 
             if controllers.INPUT_CONTROLLER.get_redo():
@@ -248,18 +245,6 @@ class PropPlacementScene(Node):
 
     def __update_cursor_icon(self) -> None:
         self.__cursor.set_child(self.__tools[self.__current_tool].get_cursor_icon())
-
-    def __get_del_cursor_child(self) -> PositionNode:
-        return RectNode(
-            x = 0.0,
-            y = 0.0,
-            width = self.__tile_size,
-            height = self.__tile_size,
-            anchor_x = self.__tile_size / 2,
-            anchor_y = self.__tile_size / 2,
-            color = (0xFF, 0x33, 0x33, 0x7F),
-            batch = scenes.ACTIVE_SCENE.world_batch
-        )
 
     def __toggle_menu(self) -> None:
         self.__menu_open = not self.__menu_open

@@ -223,6 +223,12 @@ class InputController:
     def get_shift(self) -> bool:
         return self[pyglet.window.key.LSHIFT] or self[pyglet.window.key.RSHIFT]
 
+    def get_tool_run(self) -> bool:
+        return self.key_presses.get(pyglet.window.key.SPACE, False)
+
+    def get_tool_clear(self) -> bool:
+        return self.get_shift() and self.get_tool_run()
+
     def get_start(self) -> bool:
         return self.key_presses.get(pyglet.window.key.ENTER, False)
 

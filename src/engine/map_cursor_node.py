@@ -117,6 +117,8 @@ class MapCursornode(PositionNode):
 
     def __update_cam_target(self, dt):
         cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
-        self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
-        self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
+        self.__cam_target.set_position((
+            self.x + self.__cam_target_offset[0] + cam_target_vec.x,
+            self.y + self.__cam_target_offset[1] + cam_target_vec.y,
+        ))
         self.__cam_target.update(dt)

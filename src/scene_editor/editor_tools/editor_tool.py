@@ -36,6 +36,11 @@ class EditorTool(Node):
         Runs the tool on the currently specified tile position.
         """
 
+    def clear(self, position: Tuple[int, int]) -> None:
+        """
+        Clears the given position.
+        """
+
     def undo(self) -> None:
         """
         Undoes the latest run.
@@ -69,38 +74,6 @@ class PlaceDoorTool(EditorTool):
             anchor_x = self.__tile_size / 2,
             anchor_y = self.__tile_size / 2,
             color = SENSOR_COLOR,
-            batch = self.__batch
-        )
-
-    def toggle_menu(self, toggle: bool) -> None:
-        return super().toggle_menu(toggle = toggle)
-
-    def run(self, position: Tuple[int, int]) -> None:
-        return super().run(position = position)
-
-class DeletePropTool(EditorTool):
-    def __init__(
-        self,
-        tile_size: Tuple[int, int],
-        batch: Optional[pyglet.graphics.Batch] = None
-    ) -> None:
-        super().__init__(batch)
-
-        self.name = "Delete prop"
-        self.color = (0xFF, 0x00, 0x00, 0xAA)
-
-        self.__tile_size = tile_size
-        self.__batch = batch
-
-    def get_cursor_icon(self) -> PositionNode:
-        return RectNode(
-            x = 0.0,
-            y = 0.0,
-            width = self.__tile_size,
-            height = self.__tile_size,
-            anchor_x = self.__tile_size / 2,
-            anchor_y = self.__tile_size / 2,
-            color = (0xFF, 0x33, 0x33, 0x7F),
             batch = self.__batch
         )
 

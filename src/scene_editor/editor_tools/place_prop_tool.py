@@ -8,7 +8,7 @@ import pyglet
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")))
 
 from engine import controllers
-from engine.node import Node, PositionNode
+from engine.node import GroupNode, Node, PositionNode
 from engine.prop_loader import PropLoader, map_prop
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
@@ -264,11 +264,27 @@ class PlacePropTool(EditorTool):
         self.color = (0x22, 0x44, 0x66, 0xAA)
 
     def get_cursor_icon(self) -> PositionNode:
-        return map_prop(
-            self.__menu.get_current_prop(),
-            x = 0,
-            y = 0,
-            batch = self.__world_batch
+        return GroupNode(
+            x = 0.0,
+            y = 0.0,
+            children = [
+                map_prop(
+                    self.__menu.get_current_prop(),
+                    x = 0.0,
+                    y = 0.0,
+                    batch = self.__world_batch
+                ),
+                RectNode(
+                    x = 0.0,
+                    y = 0.0,
+                    width = self.__tile_size,
+                    height = self.__tile_size,
+                    anchor_x = self.__tile_size / 2,
+                    anchor_y = self.__tile_size / 2,
+                    color = self.color,
+                    batch = self.__world_batch
+                )
+            ]
         )
 
     def update(self, dt: int) -> None:
@@ -316,6 +332,16 @@ class PlacePropTool(EditorTool):
             map_height = self.__tilemap_height,
             prop_sets = self.__prop_sets[self.__current_props_index]
         )
+
+    def clear(self, position: Tuple[int]) -> None:
+        super().clear(position)
+
+        # Delete any prop in the current map position, regardless of the selected prop.
+        for prop_set in list(self.__prop_sets[self.__current_props_index].values()):
+            prop_set.discard(position)
+
+        # Refresh props to apply changes.
+        self.__refresh_props()
 
     def undo(self) -> None:
         super().undo()
