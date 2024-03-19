@@ -264,28 +264,43 @@ class PlacePropTool(EditorTool):
         self.color = (0x22, 0x44, 0x66, 0xAA)
 
     def get_cursor_icon(self) -> PositionNode:
-        return GroupNode(
+        return RectNode(
             x = 0.0,
             y = 0.0,
-            children = [
-                map_prop(
-                    self.__menu.get_current_prop(),
-                    x = 0.0,
-                    y = 0.0,
-                    batch = self.__world_batch
-                ),
-                RectNode(
-                    x = 0.0,
-                    y = 0.0,
-                    width = self.__tile_size,
-                    height = self.__tile_size,
-                    anchor_x = self.__tile_size / 2,
-                    anchor_y = self.__tile_size / 2,
-                    color = self.color,
-                    batch = self.__world_batch
-                )
-            ]
+            width = self.__tile_size,
+            height = self.__tile_size,
+            anchor_x = self.__tile_size / 2,
+            anchor_y = self.__tile_size / 2,
+            color = self.color,
+            batch = self.__world_batch
+        ) if self.alt_mode else map_prop(
+            self.__menu.get_current_prop(),
+            x = 0.0,
+            y = 0.0,
+            batch = self.__world_batch
         )
+        # return GroupNode(
+        #     x = 0.0,
+        #     y = 0.0,
+        #     children = [
+        #         map_prop(
+        #             self.__menu.get_current_prop(),
+        #             x = 0.0,
+        #             y = 0.0,
+        #             batch = self.__world_batch
+        #         ),
+        #         RectNode(
+        #             x = 0.0,
+        #             y = 0.0,
+        #             width = self.__tile_size,
+        #             height = self.__tile_size,
+        #             anchor_x = self.__tile_size / 2,
+        #             anchor_y = self.__tile_size / 2,
+        #             color = self.color,
+        #             batch = self.__world_batch
+        #         )
+        #     ]
+        # )
 
     def update(self, dt: int) -> None:
         super().update(dt)
@@ -303,8 +318,20 @@ class PlacePropTool(EditorTool):
             if self.__on_icon_changed is not None:
                 self.__on_icon_changed()
 
+    def toggle_alt_mode(self, toggle: bool) -> None:
+        super().toggle_alt_mode(toggle)
+
+        # Notify icon changed.
+        if self.__on_icon_changed is not None:
+            self.__on_icon_changed()
+
     def run(self, position: Tuple[int, int]) -> None:
         super().run(position = position)
+
+        if self.alt_mode:
+            # Just clear if in alt mode.
+            self.clear(position = position)
+            return
 
         # Clear history until the current index is reached.
         self.__prop_sets = self.__prop_sets[0:self.__current_props_index + 1]
@@ -334,9 +361,11 @@ class PlacePropTool(EditorTool):
         )
 
     def clear(self, position: Tuple[int]) -> None:
-        super().clear(position)
+        """
+        Deletes any prop in the current map position, regardless of the selected prop.
+        """
 
-        # Delete any prop in the current map position, regardless of the selected prop.
+        # Loop through prop types and delete any in the given position.
         for prop_set in list(self.__prop_sets[self.__current_props_index].values()):
             prop_set.discard(position)
 

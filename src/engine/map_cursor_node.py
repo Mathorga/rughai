@@ -59,7 +59,7 @@ class MapCursornode(PositionNode):
 
     def disable_controls(self):
         """
-        Disables user controls over the player and stops all existing inputs.
+        Disables user controls over the cursor and stops all existing inputs.
         """
 
         self.__look_input = pm.Vec2()
@@ -68,10 +68,17 @@ class MapCursornode(PositionNode):
 
     def enable_controls(self) -> None:
         """
-        Enables user controls over the player.
+        Enables user controls over the cursor.
         """
 
         self.__controls_enabled = True
+
+    def get_child(self) -> PositionNode:
+        """
+        Returns the current cursor child node.
+        """
+
+        return self.__child
 
     def set_child(self, child: PositionNode) -> None:
         # Delete the current child if present.
@@ -89,7 +96,7 @@ class MapCursornode(PositionNode):
 
     def __fetch_input(self):
         if self.__controls_enabled:
-            # Allow the player to look around even if they're rolling.
+            # Allow the user to look around.
             self.__look_input = controllers.INPUT_CONTROLLER.get_aim_vec().limit(1.0)
 
             self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()

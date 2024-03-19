@@ -216,6 +216,9 @@ class PropPlacementScene(Node):
         if controllers.INPUT_CONTROLLER.get_start():
             self.__toggle_menu()
 
+        # Toggle current tool's alt mode.
+        self.__tools[self.__current_tool].toggle_alt_mode(controllers.INPUT_CONTROLLER.get_tool_alt())
+
         if not self.__menu_open:
             if controllers.INPUT_CONTROLLER.get_switch():
                 # Switch action.
@@ -226,9 +229,11 @@ class PropPlacementScene(Node):
                 self.__action_sign.set_text(self.__tools[self.__current_tool].name)
                 self.__action_sign.set_color(self.__tools[self.__current_tool].color)
 
-            if controllers.INPUT_CONTROLLER.get_tool_clear():
-                self.__tools[self.__current_tool].clear(self.__cursor.get_map_position())
-            elif controllers.INPUT_CONTROLLER.get_tool_run():
+            # if controllers.INPUT_CONTROLLER.get_tool_clear():
+            #     self.__tools[self.__current_tool].clear(self.__cursor.get_map_position())
+            # elif controllers.INPUT_CONTROLLER.get_tool_run():
+            #     self.__tools[self.__current_tool].run(self.__cursor.get_map_position())
+            if controllers.INPUT_CONTROLLER.get_tool_run():
                 self.__tools[self.__current_tool].run(self.__cursor.get_map_position())
 
             if controllers.INPUT_CONTROLLER.get_redo():

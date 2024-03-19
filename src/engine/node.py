@@ -58,16 +58,6 @@ class PositionNode(Node):
         if z is not None:
             self.z = z
 
-    def move_by(
-        self,
-        dp: Tuple[float, float],
-        dz: Optional[float] = None
-    ):
-        self.x += dp[0]
-        self.y += dp[1]
-        if dz is not None:
-            self.z += dz
-
     def get_position(self) -> Tuple[float, float]:
         return (self.x, self.y)
 
@@ -75,6 +65,10 @@ class PositionNode(Node):
         return (self.x, self.y, 0.0, 0.0)
 
 class GroupNode(PositionNode):
+    """
+    Represents a node container, which displaces its children keeping their relative positions.
+    """
+
     __slots__ = {
         "children"
     }
@@ -100,18 +94,14 @@ class GroupNode(PositionNode):
         dz: float = z - self.z if z is not None else 0.0
 
         # Set the given position.
-        self.move_by(dp = dp, dz = dz)
-
-    def move_by(
-        self,
-        dp: Tuple[float],
-        dz: Optional[float] = None
-    ):
-        super().move_by(dp, dz)
+        self.x += dp[0]
+        self.y += dp[1]
+        self.z += dz
 
         # Move all children accordingly.
         for child in self.children:
-            child.move_by(dp = dp, dz = dz)
+            current_child_position: Tuple[int, int] = child.get_position()
+            child.set_position(position = (current_child_position[0] + dp[0], current_child_position[1] + dp[1]), z = child.z + dz)
 
     def update(self, dt: float) -> None:
         super().update(dt)
@@ -123,5 +113,7 @@ class GroupNode(PositionNode):
     def delete(self) -> None:
         for child in self.children:
             child.delete()
+
+        self.children.clear()
 
         super().delete()

@@ -229,6 +229,13 @@ class InputController:
     def get_tool_clear(self) -> bool:
         return self.get_shift() and self.get_tool_run()
 
+    def get_tool_alt(self) -> bool:
+        """
+        Returns whether the tool alternate mode key is being pressed or not.
+        """
+
+        return self[pyglet.window.key.RSHIFT]
+
     def get_start(self) -> bool:
         return self.key_presses.get(pyglet.window.key.ENTER, False)
 

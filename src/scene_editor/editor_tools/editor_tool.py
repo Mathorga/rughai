@@ -11,8 +11,11 @@ class EditorTool(Node):
         self,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
-        # Tells whether
-        self.config_open: bool = False
+        # Menu opening flag.
+        self.menu_open: bool = False
+
+        # Alternate activation flag.
+        self.alt_mode: bool = False
         
         self.name: str = ""
         self.color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF)
@@ -29,17 +32,19 @@ class EditorTool(Node):
         Toggles the tool's dedicated configuration interface.
         """
 
-        self.config_open = toggle
+        self.menu_open = toggle
 
     def run(self, position: Tuple[int, int]) -> None:
         """
         Runs the tool on the currently specified tile position.
         """
 
-    def clear(self, position: Tuple[int, int]) -> None:
+    def toggle_alt_mode(self, toggle: bool) -> None:
         """
-        Clears the given position.
+        Toggles the tool's alternate mode.
         """
+
+        self.alt_mode = toggle
 
     def undo(self) -> None:
         """
