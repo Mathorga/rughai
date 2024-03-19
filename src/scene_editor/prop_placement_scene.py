@@ -130,7 +130,9 @@ class PropPlacementScene(Node):
                 view_width = view_width,
                 view_height = view_height,
                 tile_size = self.__tile_size,
-                batch = scenes.ACTIVE_SCENE.world_batch
+                on_icon_changed = self.__update_cursor_icon,
+                world_batch = scenes.ACTIVE_SCENE.world_batch,
+                ui_batch = scenes.ACTIVE_SCENE.ui_batch
             ),
             PlaceDoorTool(
                 tile_size = self.__tile_size,
@@ -151,6 +153,7 @@ class PropPlacementScene(Node):
             tile_height = self.__tile_size,
             child = self.__tools[self.__current_tool].get_cursor_icon(),
             cam_target = cam_target,
+            on_move = self.__on_cursor_move,
             x = cursor_position[0] + self.__tile_size / 2,
             y = cursor_position[1] + self.__tile_size / 2
         )
@@ -229,10 +232,6 @@ class PropPlacementScene(Node):
                 self.__action_sign.set_text(self.__tools[self.__current_tool].name)
                 self.__action_sign.set_color(self.__tools[self.__current_tool].color)
 
-            # if controllers.INPUT_CONTROLLER.get_tool_clear():
-            #     self.__tools[self.__current_tool].clear(self.__cursor.get_map_position())
-            # elif controllers.INPUT_CONTROLLER.get_tool_run():
-            #     self.__tools[self.__current_tool].run(self.__cursor.get_map_position())
             if controllers.INPUT_CONTROLLER.get_tool_run():
                 self.__tools[self.__current_tool].run(self.__cursor.get_map_position())
 
@@ -247,6 +246,9 @@ class PropPlacementScene(Node):
     def delete(self) -> None:
         if scenes.ACTIVE_SCENE is not None:
             scenes.ACTIVE_SCENE.delete()
+
+    def __on_cursor_move(self, position: Tuple[int, int]) -> None:
+        self.__tools[self.__current_tool].move_cursor(position = position)
 
     def __update_cursor_icon(self) -> None:
         self.__cursor.set_child(self.__tools[self.__current_tool].get_cursor_icon())

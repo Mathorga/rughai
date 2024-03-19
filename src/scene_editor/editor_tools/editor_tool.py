@@ -1,21 +1,25 @@
-from enum import Enum
-from typing import Callable, Dict, List, Optional, Set, Tuple
+from typing import Callable, Optional, Tuple
 import pyglet
 
-from engine.collision.collision_node import COLLIDER_COLOR, SENSOR_COLOR
+from engine.collision.collision_node import SENSOR_COLOR
 from engine.node import Node, PositionNode
 from engine.shapes.rect_node import RectNode
 
 class EditorTool(Node):
     def __init__(
         self,
-        batch: Optional[pyglet.graphics.Batch] = None
+        on_icon_changed: Optional[Callable] = None
     ) -> None:
+        self.on_icon_changed: Optional[Callable] = on_icon_changed
+
         # Menu opening flag.
         self.menu_open: bool = False
 
         # Alternate activation flag.
         self.alt_mode: bool = False
+
+        # Current cursor position.
+        self.cursor_position: Tuple[int, int] = (0, 0)
         
         self.name: str = ""
         self.color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF)
@@ -27,6 +31,11 @@ class EditorTool(Node):
 
         return PositionNode()
 
+    def run(self, position: Tuple[int, int]) -> None:
+        """
+        Runs the tool on the currently specified tile position.
+        """
+
     def toggle_menu(self, toggle: bool) -> None:
         """
         Toggles the tool's dedicated configuration interface.
@@ -34,17 +43,19 @@ class EditorTool(Node):
 
         self.menu_open = toggle
 
-    def run(self, position: Tuple[int, int]) -> None:
-        """
-        Runs the tool on the currently specified tile position.
-        """
-
     def toggle_alt_mode(self, toggle: bool) -> None:
         """
         Toggles the tool's alternate mode.
         """
 
         self.alt_mode = toggle
+
+    def move_cursor(self, position: Tuple[int, int]) -> None:
+        """
+        Notify the tool about the current cursor position.
+        """
+
+        self.cursor_position = position
 
     def undo(self) -> None:
         """
@@ -62,7 +73,7 @@ class PlaceDoorTool(EditorTool):
         tile_size: Tuple[int, int],
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
-        super().__init__(batch)
+        super().__init__()
 
         self.name = "Place door"
         self.color = SENSOR_COLOR

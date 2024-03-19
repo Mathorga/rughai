@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 import pyglet
 
 from constants import collision_tags, scenes
@@ -9,6 +9,9 @@ from engine.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
 from engine.text_node import TextNode
 from engine.wall_node import WallNode
+
+TOOL_COLOR: Tuple[int, int, int, int] = (0x7F, 0xFF, 0xFF, 0xAA)
+ALT_COLOR: Tuple[int, int, int, int] = (0xFF, 0x7F, 0x00, 0x7F)
 
 class WallEditorMenuNode(Node):
     def __init__(
@@ -52,14 +55,6 @@ class WallEditorMenuNode(Node):
     def get_current_prop(self) -> str:
         return self.__prop_names[list(self.__prop_names.keys())[self.__current_page_index]][self.__current_wall_index]
 
-    def get_current_image(self) -> pyglet.image.TextureRegion:
-        current_prop_name = self.get_current_prop()
-        icon = pyglet.resource.image(f"sprites/prop/{current_page_name}/{current_prop_name}/{current_prop_name}_icon.png")
-        icon.anchor_x = icon.width / 2
-        icon.anchor_y = icon.height / 2
-
-        return icon
-
     def is_open(self) -> bool:
         return self.__open
 
@@ -90,24 +85,29 @@ class PlaceWallTool(EditorTool):
         view_width: int,
         view_height: int,
         tile_size: Tuple[int, int],
-        batch: Optional[pyglet.graphics.Batch] = None
+        on_icon_changed: Optional[Callable] = None,
+        world_batch: Optional[pyglet.graphics.Batch] = None,
+        ui_batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
-        super().__init__(batch)
+        super().__init__(
+            on_icon_changed = on_icon_changed
+        )
 
         # Parent overrides.
         self.name = "Place wall"
-        self.color = COLLIDER_COLOR
+        self.color = TOOL_COLOR
 
         # Save data for later use.
         self.__tile_size = tile_size
-        self.__batch = batch
+        self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
+        self.__ui_batch: Optional[pyglet.graphics.Batch] = ui_batch
 
         # Create a menu to handle wall type selection.
         self.__menu = WallEditorMenuNode(
             wall_names = [],
             view_width = view_width,
             view_height = view_height,
-            batch = batch
+            batch = ui_batch
         )
 
         # List of all inserted nodes.
@@ -117,6 +117,7 @@ class PlaceWallTool(EditorTool):
         self.__starting_position: Optional[Tuple[int, int]] = None
 
     def get_cursor_icon(self) -> PositionNode:
+        # Return a tile-sized rectangle. It's color depends on whether alternate mode is on or off.
         return RectNode(
             x = 0.0,
             y = 0.0,
@@ -124,15 +125,22 @@ class PlaceWallTool(EditorTool):
             height = self.__tile_size,
             anchor_x = self.__tile_size / 2,
             anchor_y = self.__tile_size / 2,
-            color = COLLIDER_COLOR,
-            batch = self.__batch
+            color = ALT_COLOR if self.alt_mode else self.color,
+            batch = self.__world_batch
         )
 
     def update(self, dt: float) -> None:
-        return super().update(dt)
+        super().update(dt)
 
     def toggle_menu(self, toggle: bool) -> None:
         return super().toggle_menu(toggle = toggle)
+
+    def toggle_alt_mode(self, toggle: bool) -> None:
+        super().toggle_alt_mode(toggle)
+
+        # Notify icon changed.
+        if self.on_icon_changed is not None:
+            self.on_icon_changed()
 
     def run(self, position: Tuple[int, int]) -> None:
         super().run(position = position)
@@ -149,7 +157,7 @@ class PlaceWallTool(EditorTool):
                 width = position[0] - self.__starting_position[0],
                 height = position[1] - self.__starting_position[1],
                 tags = [collision_tags.PLAYER_COLLISION],
-                batch = self.__batch
+                batch = self.__world_batch
             )
 
             # Save the newly created wall

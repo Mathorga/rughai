@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import pyglet
 import pyglet.math as pm
@@ -16,6 +16,7 @@ class MapCursornode(PositionNode):
         cam_target_offset: tuple = (0.0, 8.0),
         fast_speed: int = 5,
         child: Optional[PositionNode] = None,
+        on_move: Optional[Callable[[Tuple[int, int]], None]] = None,
         x: float = 0.0,
         y: float = 0.0
     ) -> None:
@@ -43,6 +44,8 @@ class MapCursornode(PositionNode):
         self.__cam_target = cam_target
         self.__cam_target.x = x + cam_target_offset[0]
         self.__cam_target.y = y + cam_target_offset[1]
+
+        self.__on_move: Optional[Callable[[Tuple[int, int]], None]] = on_move
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -115,6 +118,9 @@ class MapCursornode(PositionNode):
             self.x + int(self.__move_input.x * self.__tile_width),
             self.y + int(self.__move_input.y * self.__tile_height)
         ))
+
+        if self.__on_move is not None:
+            self.__on_move(self.get_position())
 
     def __update_child(self, dt):
         # Update child position.

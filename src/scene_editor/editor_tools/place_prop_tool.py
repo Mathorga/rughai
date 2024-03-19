@@ -8,12 +8,15 @@ import pyglet
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")))
 
 from engine import controllers
-from engine.node import GroupNode, Node, PositionNode
+from engine.node import Node, PositionNode
 from engine.prop_loader import PropLoader, map_prop
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
 from editor_tool import EditorTool
+
+TOOL_COLOR: Tuple[int, int, int, int] = (0x22, 0x44, 0x66, 0xAA)
+ALT_COLOR: Tuple[int, int, int, int] = (0xFF, 0x00, 0x00, 0x7F)
 
 class EditorMenuTitleNode(PositionNode):
     def __init__(
@@ -229,12 +232,13 @@ class PlacePropTool(EditorTool):
         world_batch: Optional[pyglet.graphics.Batch] = None,
         ui_batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
-        super().__init__()
+        super().__init__(
+            on_icon_changed = on_icon_changed
+        )
 
         self.__prop_names: Dict[str, List[str]] = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
         self.__in_menu: bool = False
         self.__scene_name: str = scene_name
-        self.__on_icon_changed: Optional[Callable] = on_icon_changed
         self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
         self.__ui_batch: Optional[pyglet.graphics.Batch] = ui_batch
 
@@ -261,9 +265,10 @@ class PlacePropTool(EditorTool):
         )
 
         self.name = "Place prop"
-        self.color = (0x22, 0x44, 0x66, 0xAA)
+        self.color = TOOL_COLOR
 
     def get_cursor_icon(self) -> PositionNode:
+        # Return a tile-sized rectangle if in alternate mode, the currently selected prop otherwise.
         return RectNode(
             x = 0.0,
             y = 0.0,
@@ -271,7 +276,7 @@ class PlacePropTool(EditorTool):
             height = self.__tile_size,
             anchor_x = self.__tile_size / 2,
             anchor_y = self.__tile_size / 2,
-            color = self.color,
+            color = ALT_COLOR,
             batch = self.__world_batch
         ) if self.alt_mode else map_prop(
             self.__menu.get_current_prop(),
@@ -279,28 +284,6 @@ class PlacePropTool(EditorTool):
             y = 0.0,
             batch = self.__world_batch
         )
-        # return GroupNode(
-        #     x = 0.0,
-        #     y = 0.0,
-        #     children = [
-        #         map_prop(
-        #             self.__menu.get_current_prop(),
-        #             x = 0.0,
-        #             y = 0.0,
-        #             batch = self.__world_batch
-        #         ),
-        #         RectNode(
-        #             x = 0.0,
-        #             y = 0.0,
-        #             width = self.__tile_size,
-        #             height = self.__tile_size,
-        #             anchor_x = self.__tile_size / 2,
-        #             anchor_y = self.__tile_size / 2,
-        #             color = self.color,
-        #             batch = self.__world_batch
-        #         )
-        #     ]
-        # )
 
     def update(self, dt: int) -> None:
         super().update(dt)
@@ -314,16 +297,12 @@ class PlacePropTool(EditorTool):
         else:
             self.__menu.close()
 
-            # Notify icon changed.
-            if self.__on_icon_changed is not None:
-                self.__on_icon_changed()
-
     def toggle_alt_mode(self, toggle: bool) -> None:
         super().toggle_alt_mode(toggle)
 
         # Notify icon changed.
-        if self.__on_icon_changed is not None:
-            self.__on_icon_changed()
+        if self.on_icon_changed is not None:
+            self.on_icon_changed()
 
     def run(self, position: Tuple[int, int]) -> None:
         super().run(position = position)
