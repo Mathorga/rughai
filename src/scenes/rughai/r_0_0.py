@@ -53,7 +53,7 @@ class R_0_0(PlayableSceneNode):
         controllers.SOUND_CONTROLLER.set_music(self.scene_music)
 
         # Define a tilemap.
-        tilemaps = TilemapNode.from_tmx_file(
+        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_0.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
