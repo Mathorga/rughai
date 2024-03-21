@@ -25,6 +25,20 @@ etc<br/>
 The following command runs the scene editor on r_0_0:<br/>
 `python3 -O .\src\scene_editor.py r_0_0`<br/>
 
+### Editor tools
+The editor provides various tools, all with the same commands:<br/>
+  * `WASD` to move the cursor on the map;<br/>
+  * `IJKL` to move the camera around the current cursor position;<br/>
+  * `LSHIFT`+`WASD` to move the cursor faster on the map;<br/>
+  * `ENTER` to open the tool's dedicated menu (if present);<br/>
+  * `SPACE` to trigger the tool's main mode;<br/>
+  * `RSHIFT`+`SPACE` to trigger the tool's alternate mode (if present).<br/>
+
+The currently available tools are:<br/>
+  * Prop placement tool<br/>
+  * Wall placement tool (TODO)<br/>
+  * Door placement tool (TODO)<br/>
+
 ## Compile to executable (using Nuitka)
 In order to compile to executable you first need to install Nuitka:</br>
 `pip3 install nuitka`</br>

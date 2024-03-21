@@ -24,7 +24,7 @@
             "name": "Rughai: Scene Editor",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/scene_editor.py",
+            "program": "${workspaceFolder}/src/scene_editor/scene_editor.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": ["r_0_0"]

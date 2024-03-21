@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import pyglet
 import pyglet.math as pm
@@ -16,6 +16,7 @@ class MapCursornode(PositionNode):
         cam_target_offset: tuple = (0.0, 8.0),
         fast_speed: int = 5,
         child: Optional[PositionNode] = None,
+        on_move: Optional[Callable[[Tuple[int, int]], None]] = None,
         x: float = 0.0,
         y: float = 0.0
     ) -> None:
@@ -36,12 +37,15 @@ class MapCursornode(PositionNode):
 
         # Save child.
         self.__child = child
+        self.__child.set_position(position = self.get_position())
 
         self.__cam_target_distance = cam_target_distance
         self.__cam_target_offset = cam_target_offset
         self.__cam_target = cam_target
         self.__cam_target.x = x + cam_target_offset[0]
         self.__cam_target.y = y + cam_target_offset[1]
+
+        self.__on_move: Optional[Callable[[Tuple[int, int]], None]] = on_move
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -58,7 +62,7 @@ class MapCursornode(PositionNode):
 
     def disable_controls(self):
         """
-        Disables user controls over the player and stops all existing inputs.
+        Disables user controls over the cursor and stops all existing inputs.
         """
 
         self.__look_input = pm.Vec2()
@@ -67,10 +71,17 @@ class MapCursornode(PositionNode):
 
     def enable_controls(self) -> None:
         """
-        Enables user controls over the player.
+        Enables user controls over the cursor.
         """
 
         self.__controls_enabled = True
+
+    def get_child(self) -> PositionNode:
+        """
+        Returns the current cursor child node.
+        """
+
+        return self.__child
 
     def set_child(self, child: PositionNode) -> None:
         # Delete the current child if present.
@@ -78,6 +89,7 @@ class MapCursornode(PositionNode):
             self.__child.delete()
 
         self.__child = child
+        self.__child.set_position(position = self.get_position())
 
     def get_map_position(self) -> Tuple[int, int]:
         return (
@@ -87,7 +99,7 @@ class MapCursornode(PositionNode):
 
     def __fetch_input(self):
         if self.__controls_enabled:
-            # Allow the player to look around even if they're rolling.
+            # Allow the user to look around.
             self.__look_input = controllers.INPUT_CONTROLLER.get_aim_vec().limit(1.0)
 
             self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()
@@ -107,6 +119,9 @@ class MapCursornode(PositionNode):
             self.y + int(self.__move_input.y * self.__tile_height)
         ))
 
+        if self.__on_move is not None:
+            self.__on_move(self.get_position())
+
     def __update_child(self, dt):
         # Update child position.
         if self.__child is not None:
@@ -115,6 +130,8 @@ class MapCursornode(PositionNode):
 
     def __update_cam_target(self, dt):
         cam_target_vec = pyglet.math.Vec2.from_polar(self.__cam_target_distance * self.__look_input.mag, self.__look_input.heading)
-        self.__cam_target.x = self.x + self.__cam_target_offset[0] + cam_target_vec.x
-        self.__cam_target.y = self.y + self.__cam_target_offset[1] + cam_target_vec.y
+        self.__cam_target.set_position((
+            self.x + self.__cam_target_offset[0] + cam_target_vec.x,
+            self.y + self.__cam_target_offset[1] + cam_target_vec.y,
+        ))
         self.__cam_target.update(dt)

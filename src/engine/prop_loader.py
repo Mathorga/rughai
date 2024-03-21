@@ -11,7 +11,7 @@ def map_prop(
     x: float,
     y: float,
     batch: Optional[pyglet.graphics.Batch] = None
-) -> Optional[PositionNode]:
+) -> PositionNode:
     # if prop_name in ("grass_0", "grass_1", "tree_s", "tree_m", "tree_l", "bush_0"):
     return IdlePropNode(
         source = f"idle_prop/rughai/{prop_name}.json",

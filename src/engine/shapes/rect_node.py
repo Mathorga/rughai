@@ -45,12 +45,16 @@ class RectNode(ShapeNode):
 
     def set_position(
         self,
-        position: Tuple[int, int]
+        position: Tuple[int, int],
+        z: Optional[float] = None
     ) -> None:
         super().set_position(position)
 
         self.__shape.x = position[0] * GLOBALS[Keys.SCALING]
         self.__shape.y = position[1] * GLOBALS[Keys.SCALING]
+
+        if z is not None:
+            self.z = z
 
     def set_opacity(self, opacity: float):
         self.__shape.opacity = opacity

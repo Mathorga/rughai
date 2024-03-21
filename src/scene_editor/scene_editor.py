@@ -3,10 +3,14 @@ import sys
 import pyglet
 import pyglet.gl as gl
 
+# setting path
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")))
+
 import engine.controllers as controllers
 from engine.upscaler import Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
-from scenes.prop_placement_scene import PropPlacementScene
+from constants import scenes
+from prop_placement_scene import PropPlacementScene
 
 class RugHaiSceneEditor:
     """
@@ -15,7 +19,7 @@ class RugHaiSceneEditor:
 
     def __init__(self) -> None:
         # Set resources path.
-        pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
+        pyglet.resource.path = [f"{os.path.dirname(__file__)}/../../assets"]
         pyglet.resource.reindex()
 
         # Load font files.
@@ -46,7 +50,7 @@ class RugHaiSceneEditor:
         )
 
         # Create a scene.
-        self._active_scene = PropPlacementScene(
+        self.__scene = PropPlacementScene(
             window = self._window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],
@@ -94,12 +98,12 @@ class RugHaiSceneEditor:
 
         # Upscaler handles maintaining the wanted output resolution.
         with self._upscaler:
-            self._active_scene.draw()
+            self.__scene.draw()
 
     def update(self, dt) -> None:
         # InputController makes sure every input is handled correctly.
         with controllers.INPUT_CONTROLLER:
-            self._active_scene.update(dt)
+            self.__scene.update(dt)
 
         # Compute collisions through collision manager.
         controllers.COLLISION_CONTROLLER.update(dt)
