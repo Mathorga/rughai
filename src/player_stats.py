@@ -121,7 +121,7 @@ class PlayerStats():
         min_value: float,
         max_value: float,
         variation: float,
-        trend_function: Optional[Callable[[float], float]] = math.log
+        trend_function: Callable[[float], float] = math.log
     ) -> float:
         """
         Computes and returns a stat provided a level.
@@ -135,7 +135,7 @@ class PlayerStats():
             The value of the stat at level [max_level].
         [variation]: float
             Additional offset to the resulting value. Acts as a bias.
-        [trend_function]: Optional[Callable[[float], float]]
+        [trend_function]: Callable[[float], float]
             The function which defines the stat trend, defaults to math.log.
         """
 

@@ -30,7 +30,7 @@ class RectNode(ShapeNode):
             width = width * GLOBALS[Keys.SCALING],
             height = height * GLOBALS[Keys.SCALING],
             color = color,
-            group = pyglet.graphics.Group(order = z),
+            group = pyglet.graphics.Group(order = int(z)),
             batch = batch
         )
         self.__shape.anchor_position = (anchor_x * GLOBALS[Keys.SCALING], anchor_y * GLOBALS[Keys.SCALING])

@@ -10,7 +10,6 @@ from engine.shapes.shape_node import ShapeNode
 import engine.utils.utils as utils
 from engine.settings import SETTINGS, Keys
 
-
 COLLIDING_COLOR = (0x7FF, 0x7F, 0x7F, 0x7F)
 FREE_COLOR = (0x7F, 0xFF, 0xFF, 0x7F)
 
@@ -27,7 +26,7 @@ class CollisionShape(PositionNode):
         # Velocity components.
         self.velocity_x = 0.0
         self.velocity_y = 0.0
-        self.color = color
+        self.color: Tuple[int, int, int, int] = color
 
         self.render_shape: Optional[ShapeNode] = None
         self.velocity_shape: Optional[LineNode] = None
@@ -103,7 +102,7 @@ class CollisionRect(CollisionShape):
         height: int = 0,
         anchor_x: float = 0.0,
         anchor_y: float = 0.0,
-        color: Optional[Tuple[int, int, int, int]] = FREE_COLOR,
+        color: Tuple[int, int, int, int] = FREE_COLOR,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z, color)
@@ -121,7 +120,7 @@ class CollisionRect(CollisionShape):
                 height = height,
                 anchor_x = anchor_x,
                 anchor_y = anchor_y,
-                color = self.color,
+                color = self.color[:-1],
                 batch = batch
             )
 
@@ -182,7 +181,7 @@ class CollisionRect(CollisionShape):
 
         # Set render shape color.
         if self.render_shape is not None:
-            self.render_shape.set_color(color = color)
+            self.render_shape.set_color(color = color[:-1])
 
 class CollisionCircle(CollisionShape):
     def __init__(
