@@ -310,8 +310,18 @@ class PlacePropTool(EditorTool):
         if self.alt_mode:
             # Just clear if in alt mode.
             self.clear(position = position)
-            return
+        else:
+            # Place the currently selected prop otherwise.
+            self.place_prop(position = position)
 
+        PropLoader.save_prop_sets(
+            dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
+            map_width = self.__tilemap_width,
+            map_height = self.__tilemap_height,
+            prop_sets = self.__prop_sets[self.__current_props_index]
+        )
+
+    def place_prop(self, position: Tuple[int, int]) -> None:
         # Clear history until the current index is reached.
         self.__prop_sets = self.__prop_sets[0:self.__current_props_index + 1]
 
@@ -332,14 +342,7 @@ class PlacePropTool(EditorTool):
         # Refresh props to apply changes.
         self.__refresh_props()
 
-        PropLoader.save_prop_sets(
-            dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
-            map_width = self.__tilemap_width,
-            map_height = self.__tilemap_height,
-            prop_sets = self.__prop_sets[self.__current_props_index]
-        )
-
-    def clear(self, position: Tuple[int]) -> None:
+    def clear(self, position: Tuple[int, int]) -> None:
         """
         Deletes any prop in the current map position, regardless of the selected prop.
         """
