@@ -248,7 +248,7 @@ class PropPlacementScene(Node):
             scenes.ACTIVE_SCENE.delete()
 
     def __on_cursor_move(self, position: Tuple[int, int]) -> None:
-        self.__tools[self.__current_tool].move_cursor(position = position)
+        self.__tools[self.__current_tool].move_cursor(map_position = position)
 
     def __update_cursor_icon(self) -> None:
         self.__cursor.set_child(self.__tools[self.__current_tool].get_cursor_icon())

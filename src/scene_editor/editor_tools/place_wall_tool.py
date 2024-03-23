@@ -119,28 +119,28 @@ class PlaceWallTool(EditorTool):
         # Starting position of the wall currently being placed.
         self.__starting_position: Optional[Tuple[int, int]] = None
 
-    def move_cursor(self, position: Tuple[int, int]) -> None:
-        super().move_cursor(position)
+    def move_cursor(self, map_position: Tuple[int, int]) -> None:
+        super().move_cursor(map_position)
 
         if self.__current_wall is not None and self.__starting_position is not None:
             # current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
             self.__current_wall.set_bounds(
                 bounds = (
                     # X position.
-                    min(position[0], self.__starting_position[0]) * self.__tile_size,
+                    min(map_position[0], self.__starting_position[0]) * self.__tile_size,
                     # Y position.
-                    min(position[1], self.__starting_position[1]) * self.__tile_size,
+                    min(map_position[1], self.__starting_position[1]) * self.__tile_size,
                     # Width.
-                    (position[0] - self.__starting_position[0] + 1) * self.__tile_size,
+                    (map_position[0] - self.__starting_position[0] + 1) * self.__tile_size,
                     # Height.
-                    (position[1] - self.__starting_position[1] + 1) * self.__tile_size
+                    (map_position[1] - self.__starting_position[1] + 1) * self.__tile_size
                 )
             )
-            print("GIGIONE", position, self.__current_wall.get_bounds())
+            print("GIGIONE", map_position, self.__current_wall.get_bounds())
 
         if len(self.__walls) > 0:
             # Update the latest wall's position.
-            self.__walls[-1].set_position(position = position)
+            self.__walls[-1].set_position(position = map_position)
 
     def get_cursor_icon(self) -> PositionNode:
         # Return a tile-sized rectangle. It's color depends on whether alternate mode is on or off.
@@ -165,16 +165,16 @@ class PlaceWallTool(EditorTool):
         if self.on_icon_changed is not None:
             self.on_icon_changed()
 
-    def run(self, position: Tuple[int, int]) -> None:
-        super().run(position = position)
+    def run(self, map_position: Tuple[int, int]) -> None:
+        super().run(map_position = map_position)
 
         if self.__starting_position == None:
             # Record starting position.
-            self.__starting_position = position
-            print("Creating wall at position", position)
+            self.__starting_position = map_position
+            print("Creating wall at position", map_position)
             self.__current_wall = RectNode(
-                x = position[0] * self.__tile_size,
-                y = position[1] * self.__tile_size,
+                x = map_position[0] * self.__tile_size,
+                y = map_position[1] * self.__tile_size,
                 width = self.__tile_size,
                 height = self.__tile_size,
                 color = (0xFF, 0x00, 0x00),
@@ -186,8 +186,8 @@ class PlaceWallTool(EditorTool):
             wall: WallNode = WallNode(
                 x = self.__starting_position[0] * self.__tile_size,
                 y = self.__starting_position[1] * self.__tile_size,
-                width = (position[0] - self.__starting_position[0]) * self.__tile_size,
-                height = (position[1] - self.__starting_position[1]) * self.__tile_size,
+                width = (map_position[0] - self.__starting_position[0]) * self.__tile_size,
+                height = (map_position[1] - self.__starting_position[1]) * self.__tile_size,
                 tags = [collision_tags.PLAYER_COLLISION],
                 batch = self.__world_batch
             )

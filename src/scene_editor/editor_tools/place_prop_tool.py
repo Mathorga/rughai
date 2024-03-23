@@ -304,15 +304,15 @@ class PlacePropTool(EditorTool):
         if self.on_icon_changed is not None:
             self.on_icon_changed()
 
-    def run(self, position: Tuple[int, int]) -> None:
-        super().run(position = position)
+    def run(self, map_position: Tuple[int, int]) -> None:
+        super().run(map_position = map_position)
 
         if self.alt_mode:
             # Just clear if in alt mode.
-            self.clear(position = position)
+            self.clear(position = map_position)
         else:
             # Place the currently selected prop otherwise.
-            self.place_prop(position = position)
+            self.place_prop(position = map_position)
 
         PropLoader.save_prop_sets(
             dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
