@@ -5,6 +5,7 @@ from constants import collision_tags, scenes
 from engine import controllers
 from engine.collision.collision_node import COLLIDER_COLOR
 from engine.node import Node, PositionNode
+from engine.settings import SETTINGS, Keys
 from engine.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
 from engine.text_node import TextNode
@@ -171,13 +172,14 @@ class PlaceWallTool(EditorTool):
         if self.__starting_position == None:
             # Record starting position.
             self.__starting_position = map_position
-            print("Creating wall at position", map_position)
+
+            # Create the rect node for displaying the area currently being defined.
             self.__current_wall = RectNode(
                 x = map_position[0] * self.__tile_size,
                 y = map_position[1] * self.__tile_size,
                 width = self.__tile_size,
                 height = self.__tile_size,
-                color = (0xFF, 0x00, 0x00),
+                color = COLLIDER_COLOR,
                 batch = self.__world_batch,
             )
         else:
