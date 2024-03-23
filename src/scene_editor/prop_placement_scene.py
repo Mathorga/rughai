@@ -10,7 +10,7 @@ from engine.shapes.rect_node import RectNode
 from engine.text_node import TextNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
-from engine.map_cursor_node import MapCursornode
+from engine.map_cursor_node import MapCursorNode
 
 from editor_tools.editor_tool import EditorTool, PlaceDoorTool
 from editor_tools.place_prop_tool import PlacePropTool
@@ -148,7 +148,7 @@ class PropPlacementScene(Node):
 
         # Define a map cursor.
         cam_target: PositionNode = PositionNode()
-        self.__cursor: MapCursornode = MapCursornode(
+        self.__cursor: MapCursorNode = MapCursorNode(
             tile_width = self.__tile_size,
             tile_height = self.__tile_size,
             child = self.__tools[self.__current_tool].get_cursor_icon(),

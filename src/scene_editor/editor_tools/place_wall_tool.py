@@ -110,11 +110,37 @@ class PlaceWallTool(EditorTool):
             batch = ui_batch
         )
 
+        # Area of the currently created
+        self.__current_wall: Optional[RectNode] = None
+
         # List of all inserted nodes.
         self.__walls: List[WallNode] = []
 
         # Starting position of the wall currently being placed.
         self.__starting_position: Optional[Tuple[int, int]] = None
+
+    def move_cursor(self, position: Tuple[int, int]) -> None:
+        super().move_cursor(position)
+
+        if self.__current_wall is not None and self.__starting_position is not None:
+            # current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
+            self.__current_wall.set_bounds(
+                bounds = (
+                    # X position.
+                    min(position[0], self.__starting_position[0]) * self.__tile_size,
+                    # Y position.
+                    min(position[1], self.__starting_position[1]) * self.__tile_size,
+                    # Width.
+                    (position[0] - self.__starting_position[0] + 1) * self.__tile_size,
+                    # Height.
+                    (position[1] - self.__starting_position[1] + 1) * self.__tile_size
+                )
+            )
+            print("GIGIONE", position, self.__current_wall.get_bounds())
+
+        if len(self.__walls) > 0:
+            # Update the latest wall's position.
+            self.__walls[-1].set_position(position = position)
 
     def get_cursor_icon(self) -> PositionNode:
         # Return a tile-sized rectangle. It's color depends on whether alternate mode is on or off.
@@ -128,9 +154,6 @@ class PlaceWallTool(EditorTool):
             color = ALT_COLOR if self.alt_mode else self.color,
             batch = self.__world_batch
         )
-
-    def update(self, dt: float) -> None:
-        super().update(dt)
 
     def toggle_menu(self, toggle: bool) -> None:
         return super().toggle_menu(toggle = toggle)
@@ -148,14 +171,23 @@ class PlaceWallTool(EditorTool):
         if self.__starting_position == None:
             # Record starting position.
             self.__starting_position = position
+            print("Creating wall at position", position)
+            self.__current_wall = RectNode(
+                x = position[0] * self.__tile_size,
+                y = position[1] * self.__tile_size,
+                width = self.__tile_size,
+                height = self.__tile_size,
+                color = (0xFF, 0x00, 0x00),
+                batch = self.__world_batch,
+            )
         else:
             # Create a wall with the given position and size.
             # The wall size is computed by subtracting the start position from the current.
             wall: WallNode = WallNode(
-                x = self.__starting_position[0],
-                y = self.__starting_position[1],
-                width = position[0] - self.__starting_position[0],
-                height = position[1] - self.__starting_position[1],
+                x = self.__starting_position[0] * self.__tile_size,
+                y = self.__starting_position[1] * self.__tile_size,
+                width = (position[0] - self.__starting_position[0]) * self.__tile_size,
+                height = (position[1] - self.__starting_position[1]) * self.__tile_size,
                 tags = [collision_tags.PLAYER_COLLISION],
                 batch = self.__world_batch
             )
@@ -167,3 +199,8 @@ class PlaceWallTool(EditorTool):
 
             # Reset the starting position.
             self.__starting_position = None
+
+            # Delete the current wall.
+            if self.__current_wall is not None:
+                self.__current_wall.delete()
+                self.__current_wall = None

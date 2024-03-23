@@ -45,7 +45,7 @@ class RectNode(ShapeNode):
 
     def set_position(
         self,
-        position: Tuple[int, int],
+        position: Tuple[float, float],
         z: Optional[float] = None
     ) -> None:
         super().set_position(position)
@@ -55,6 +55,24 @@ class RectNode(ShapeNode):
 
         if z is not None:
             self.z = z
+
+    def get_bounds(self) -> Tuple[float, float, float, float]:
+        """
+        Computes and returns the rectangle position and size in the form of a tuple defined as (x, y, width, height).
+        """
+        
+        return (*self.get_position(), self.__shape.width, self.__shape.height)
+
+    def set_bounds(self, bounds: Tuple[float, float, float, float]) -> None:
+        """
+        Sets the rectangle position and size.
+
+        [bounds] is a tuple defined as (x, y, width, height).
+        """
+
+        self.set_position(bounds[:2])
+        self.__shape.width = bounds[2] * GLOBALS[Keys.SCALING]
+        self.__shape.height = bounds[3] * GLOBALS[Keys.SCALING]
 
     def set_opacity(self, opacity: float):
         self.__shape.opacity = opacity
