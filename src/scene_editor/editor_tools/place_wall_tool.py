@@ -131,9 +131,9 @@ class PlaceWallTool(EditorTool):
                     # Y position.
                     min(map_position[1], self.__starting_position[1]) * self.__tile_size,
                     # Width.
-                    (map_position[0] - self.__starting_position[0] + 1) * self.__tile_size,
+                    max(abs(map_position[0] - self.__starting_position[0]), 1.0) * self.__tile_size,
                     # Height.
-                    (map_position[1] - self.__starting_position[1] + 1) * self.__tile_size
+                    max(abs(map_position[1] - self.__starting_position[1]), 1.0) * self.__tile_size
                 )
             )
             print("GIGIONE", map_position, self.__current_wall.get_bounds())
