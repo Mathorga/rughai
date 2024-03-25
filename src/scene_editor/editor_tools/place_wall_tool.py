@@ -137,7 +137,6 @@ class PlaceWallTool(EditorTool):
                     (abs(map_position[1] - self.__starting_position[1]) + 1.0) * self.__tile_size
                 )
             )
-            print("GIGIONE", map_position, self.__current_wall.get_bounds())
 
         if len(self.__walls) > 0:
             # Update the latest wall's position.
@@ -185,11 +184,12 @@ class PlaceWallTool(EditorTool):
         else:
             # Create a wall with the given position and size.
             # The wall size is computed by subtracting the start position from the current.
+            current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
             wall: WallNode = WallNode(
-                x = self.__starting_position[0] * self.__tile_size,
-                y = self.__starting_position[1] * self.__tile_size,
-                width = (map_position[0] - self.__starting_position[0]) * self.__tile_size,
-                height = (map_position[1] - self.__starting_position[1]) * self.__tile_size,
+                x = current_bounds[0],
+                y = current_bounds[1],
+                width = current_bounds[2],
+                height = current_bounds[3],
                 tags = [collision_tags.PLAYER_COLLISION],
                 batch = self.__world_batch
             )

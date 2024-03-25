@@ -14,7 +14,7 @@ class RectNode(ShapeNode):
         height: int = 0,
         anchor_x: float = 0,
         anchor_y: float = 0,
-        color: Tuple[int, int, int] = (0x00, 0x00, 0x00),
+        color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0x7F),
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -23,6 +23,9 @@ class RectNode(ShapeNode):
             z = z,
             color = color
         )
+
+        self.__width = width
+        self.__height = height
 
         self.__shape: pyglet.shapes.Rectangle = pyglet.shapes.Rectangle(
             x = x * GLOBALS[Keys.SCALING],
@@ -61,7 +64,7 @@ class RectNode(ShapeNode):
         Computes and returns the rectangle position and size in the form of a tuple defined as (x, y, width, height).
         """
         
-        return (*self.get_position(), self.__shape.width, self.__shape.height)
+        return (*self.get_position(), self.__width, self.__height)
 
     def set_bounds(self, bounds: Tuple[float, float, float, float]) -> None:
         """
@@ -71,6 +74,8 @@ class RectNode(ShapeNode):
         """
 
         self.set_position(bounds[:2])
+        self.__width = bounds[2]
+        self.__height = bounds[3]
         self.__shape.width = bounds[2] * GLOBALS[Keys.SCALING]
         self.__shape.height = bounds[3] * GLOBALS[Keys.SCALING]
 

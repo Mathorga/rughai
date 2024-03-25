@@ -120,7 +120,7 @@ class CollisionRect(CollisionShape):
                 height = height,
                 anchor_x = anchor_x,
                 anchor_y = anchor_y,
-                color = self.color[:-1],
+                color = self.color,
                 batch = batch
             )
 
