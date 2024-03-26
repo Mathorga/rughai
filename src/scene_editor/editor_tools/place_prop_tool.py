@@ -116,7 +116,7 @@ class PropEditorMenuNode(Node):
                 self.__current_page_index = self.__current_page_index % len(self.__prop_names)
 
             # Prop selection.
-            self.__current_prop_index -= controllers.INPUT_CONTROLLER.get_cursor_movement().y
+            self.__current_prop_index -= int(controllers.INPUT_CONTROLLER.get_cursor_movement().y)
             if self.__current_prop_index < 0:
                 self.__current_prop_index = 0
             if self.__current_prop_index >= len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page_index]]):
@@ -153,10 +153,9 @@ class PropEditorMenuNode(Node):
             z = -100.0,
             width = self.__view_width,
             height = self.__view_height,
-            color = (0x33, 0x33, 0x33),
+            color = (0x33, 0x33, 0x33, 0xDD),
             batch = self.__batch
         )
-        self.__background.set_opacity(0xDD)
 
     def close(self) -> None:
         self.__open = False
@@ -272,10 +271,10 @@ class PlacePropTool(EditorTool):
         return RectNode(
             x = 0.0,
             y = 0.0,
-            width = self.__tile_size,
-            height = self.__tile_size,
-            anchor_x = self.__tile_size / 2,
-            anchor_y = self.__tile_size / 2,
+            width = self.__tile_size[0],
+            height = self.__tile_size[1],
+            anchor_x = self.__tile_size[0] / 2,
+            anchor_y = self.__tile_size[1] / 2,
             color = ALT_COLOR,
             batch = self.__world_batch
         ) if self.alt_mode else map_prop(
@@ -390,8 +389,8 @@ class PlacePropTool(EditorTool):
             for position in self.__prop_sets[self.__current_props_index][prop_name]:
                 prop = map_prop(
                     prop_name,
-                    x = position[0] * self.__tile_size + self.__tile_size / 2,
-                    y = position[1] * self.__tile_size + self.__tile_size / 2,
+                    x = position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
+                    y = position[1] * self.__tile_size[1] + self.__tile_size[1] / 2,
                     batch = self.__world_batch
                 )
 
