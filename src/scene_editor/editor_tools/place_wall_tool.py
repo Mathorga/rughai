@@ -5,6 +5,7 @@ from constants import collision_tags, scenes
 from engine import controllers
 from engine.collision.collision_node import COLLIDER_COLOR
 from engine.node import Node, PositionNode
+from engine.settings import SETTINGS, Keys
 from engine.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
 from engine.text_node import TextNode
@@ -110,11 +111,36 @@ class PlaceWallTool(EditorTool):
             batch = ui_batch
         )
 
+        # Area of the currently created
+        self.__current_wall: Optional[RectNode] = None
+
         # List of all inserted nodes.
         self.__walls: List[WallNode] = []
 
         # Starting position of the wall currently being placed.
         self.__starting_position: Optional[Tuple[int, int]] = None
+
+    def move_cursor(self, map_position: Tuple[int, int]) -> None:
+        super().move_cursor(map_position)
+
+        if self.__current_wall is not None and self.__starting_position is not None:
+            # current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
+            self.__current_wall.set_bounds(
+                bounds = (
+                    # X position.
+                    min(map_position[0], self.__starting_position[0]) * self.__tile_size,
+                    # Y position.
+                    min(map_position[1], self.__starting_position[1]) * self.__tile_size,
+                    # Width.
+                    (abs(map_position[0] - self.__starting_position[0]) + 1.0) * self.__tile_size,
+                    # Height.
+                    (abs(map_position[1] - self.__starting_position[1]) + 1.0) * self.__tile_size
+                )
+            )
+
+        if len(self.__walls) > 0:
+            # Update the latest wall's position.
+            self.__walls[-1].set_position(position = map_position)
 
     def get_cursor_icon(self) -> PositionNode:
         # Return a tile-sized rectangle. It's color depends on whether alternate mode is on or off.
@@ -129,9 +155,6 @@ class PlaceWallTool(EditorTool):
             batch = self.__world_batch
         )
 
-    def update(self, dt: float) -> None:
-        super().update(dt)
-
     def toggle_menu(self, toggle: bool) -> None:
         return super().toggle_menu(toggle = toggle)
 
@@ -142,20 +165,31 @@ class PlaceWallTool(EditorTool):
         if self.on_icon_changed is not None:
             self.on_icon_changed()
 
-    def run(self, position: Tuple[int, int]) -> None:
-        super().run(position = position)
+    def run(self, map_position: Tuple[int, int]) -> None:
+        super().run(map_position = map_position)
 
         if self.__starting_position == None:
             # Record starting position.
-            self.__starting_position = position
+            self.__starting_position = map_position
+
+            # Create the rect node for displaying the area currently being defined.
+            self.__current_wall = RectNode(
+                x = map_position[0] * self.__tile_size,
+                y = map_position[1] * self.__tile_size,
+                width = self.__tile_size,
+                height = self.__tile_size,
+                color = COLLIDER_COLOR,
+                batch = self.__world_batch,
+            )
         else:
             # Create a wall with the given position and size.
             # The wall size is computed by subtracting the start position from the current.
+            current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
             wall: WallNode = WallNode(
-                x = self.__starting_position[0],
-                y = self.__starting_position[1],
-                width = position[0] - self.__starting_position[0],
-                height = position[1] - self.__starting_position[1],
+                x = current_bounds[0],
+                y = current_bounds[1],
+                width = current_bounds[2],
+                height = current_bounds[3],
                 tags = [collision_tags.PLAYER_COLLISION],
                 batch = self.__world_batch
             )
@@ -167,3 +201,8 @@ class PlaceWallTool(EditorTool):
 
             # Reset the starting position.
             self.__starting_position = None
+
+            # Delete the current wall.
+            if self.__current_wall is not None:
+                self.__current_wall.delete()
+                self.__current_wall = None

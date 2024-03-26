@@ -6,7 +6,7 @@ import pyglet.math as pm
 from engine.node import PositionNode
 import engine.controllers as controllers
 
-class MapCursornode(PositionNode):
+class MapCursorNode(PositionNode):
     def __init__(
         self,
         tile_width: int,
@@ -120,7 +120,7 @@ class MapCursornode(PositionNode):
         ))
 
         if self.__on_move is not None:
-            self.__on_move(self.get_position())
+            self.__on_move(self.get_map_position())
 
     def __update_child(self, dt):
         # Update child position.

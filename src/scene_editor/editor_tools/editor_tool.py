@@ -31,9 +31,10 @@ class EditorTool(Node):
 
         return PositionNode()
 
-    def run(self, position: Tuple[int, int]) -> None:
+    def run(self, map_position: Tuple[int, int]) -> None:
         """
-        Runs the tool on the currently specified tile position.
+        Runs the tool on the currently specified map position.
+        [map_position] is the current cursor position divided by the current tile size.
         """
 
     def toggle_menu(self, toggle: bool) -> None:
@@ -50,12 +51,12 @@ class EditorTool(Node):
 
         self.alt_mode = toggle
 
-    def move_cursor(self, position: Tuple[int, int]) -> None:
+    def move_cursor(self, map_position: Tuple[int, int]) -> None:
         """
         Notify the tool about the current cursor position.
         """
 
-        self.cursor_position = position
+        self.cursor_position = map_position
 
     def undo(self) -> None:
         """
@@ -97,4 +98,4 @@ class PlaceDoorTool(EditorTool):
         return super().toggle_menu(toggle = toggle)
 
     def run(self, position: Tuple[int, int]) -> None:
-        return super().run(position = position)
+        return super().run(map_position = position)
