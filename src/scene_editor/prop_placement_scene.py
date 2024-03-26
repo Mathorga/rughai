@@ -102,15 +102,15 @@ class PropPlacementScene(Node):
             source = f"tilemaps/{scene_name}.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
-        self.__tile_size: Tuple[int, int] = tilemaps[0].get_tile_size()[0]
+        self.__tile_size: Tuple[int, int] = tilemaps[0].get_tile_size()
         self.__tilemap_width = tilemaps[0].map_width
         self.__tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
 
         # Cursor.
         cursor_position = (
-            (self.__tilemap_width / 2) * self.__tile_size,
-            (self.__tilemap_height / 2) * self.__tile_size
+            (self.__tilemap_width / 2) * self.__tile_size[0],
+            (self.__tilemap_height / 2) * self.__tile_size[1]
         )
 
         # All tools are in this dictionary.
@@ -149,19 +149,19 @@ class PropPlacementScene(Node):
         # Define a map cursor.
         cam_target: PositionNode = PositionNode()
         self.__cursor: MapCursorNode = MapCursorNode(
-            tile_width = self.__tile_size,
-            tile_height = self.__tile_size,
+            tile_width = self.__tile_size[0],
+            tile_height = self.__tile_size[1],
             child = self.__tools[self.__current_tool].get_cursor_icon(),
             cam_target = cam_target,
             on_move = self.__on_cursor_move,
-            x = cursor_position[0] + self.__tile_size / 2,
-            y = cursor_position[1] + self.__tile_size / 2
+            x = cursor_position[0] + self.__tile_size[0] / 2,
+            y = cursor_position[1] + self.__tile_size[1] / 2
         )
 
         # Action sign.
         self.__action_sign: ActionSign = ActionSign(
-            x = self.__tile_size,
-            y = view_height - self.__tile_size,
+            x = self.__tile_size[0],
+            y = view_height - self.__tile_size[1],
             action = self.__tools[self.__current_tool].name,
             color = self.__tools[self.__current_tool].color,
             batch = scenes.ACTIVE_SCENE.ui_batch
@@ -172,23 +172,23 @@ class PropPlacementScene(Node):
             LineNode(
                 x = 0.0,
                 y = 0.0,
-                delta_x = (self.__tilemap_width) * self.__tile_size,
+                delta_x = (self.__tilemap_width) * self.__tile_size[0],
                 delta_y = 0.0,
                 color = (0xFF, 0x33, 0x00, 0x7F),
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             LineNode(
-                x = self.__tilemap_width * self.__tile_size,
+                x = self.__tilemap_width * self.__tile_size[0],
                 y = 0.0,
                 delta_x = 0.0,
-                delta_y = self.__tilemap_height * self.__tile_size,
+                delta_y = self.__tilemap_height * self.__tile_size[1],
                 color = (0xFF, 0x33, 0x00, 0x7F),
                 batch = scenes.ACTIVE_SCENE.world_batch
             ),
             LineNode(
                 x = 0.0,
-                y = self.__tilemap_height * self.__tile_size,
-                delta_x = self.__tilemap_width * self.__tile_size,
+                y = self.__tilemap_height * self.__tile_size[1],
+                delta_x = self.__tilemap_width * self.__tile_size[0],
                 delta_y = 0.0,
                 color = (0xFF, 0x33, 0x00, 0x7F),
                 batch = scenes.ACTIVE_SCENE.world_batch
@@ -197,7 +197,7 @@ class PropPlacementScene(Node):
                 x = 0.0,
                 y = 0.0,
                 delta_x = 0.0,
-                delta_y = self.__tilemap_height * self.__tile_size,
+                delta_y = self.__tilemap_height * self.__tile_size[1],
                 color = (0xFF, 0x33, 0x00, 0x7F),
                 batch = scenes.ACTIVE_SCENE.world_batch
             )
