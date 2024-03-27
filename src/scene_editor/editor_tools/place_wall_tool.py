@@ -141,10 +141,6 @@ class PlaceWallTool(EditorTool):
                 )
             )
 
-        if len(self.__walls) > 0:
-            # Update the latest wall's position.
-            self.__walls[-1].set_position(position = map_position)
-
     def get_cursor_icon(self) -> PositionNode:
         # Return a tile-sized rectangle. It's color depends on whether alternate mode is on or off.
         return RectNode(
@@ -214,7 +210,8 @@ class PlaceWallTool(EditorTool):
                     self.__current_wall.delete()
                     self.__current_wall = None
 
-        WallsLoader.store(
-            dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
-            walls = self.__walls
-        )
+                # Store the newly created wall.
+                WallsLoader.store(
+                    dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
+                    walls = self.__walls
+                )

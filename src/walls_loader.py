@@ -28,6 +28,10 @@ class WallsLoader:
         with open(file = abs_path, mode = "r", encoding = "UTF8") as source_file:
             data = json.load(source_file)
 
+        # Just return if no data is read.
+        if len(data) <= 0:
+            return []
+
         # Loop through defined wall types.
         for element in data["elements"]:
             positions: List[str] = element["positions"]
@@ -68,26 +72,29 @@ class WallsLoader:
         """
 
         # Group walls by tags.
-        walls_data: Dict[List[str], List[WallNode]] = {}
+        walls_data: Dict[str, List[WallNode]] = {}
         for wall in walls:
-            if not wall.tags in walls_data:
-                walls_data[wall.tags] = [wall]
+            key: str = ",".join(wall.tags)
+            if not key in walls_data:
+                walls_data[key] = [wall]
             else:
-                walls_data[wall.tags].append(wall)
+                walls_data[key].append(wall)
 
         # Prepare walls data for storage.
         result: List[Dict[str, List[str]]] = []
         for key, value in walls_data.items():
             element: Dict[str, List[str]] = {
-                "tags": key,
-                "positions": map(lambda w: f"{w.x},{w.y}", value),
-                "positions": map(lambda w: f"{w.width},{w.height}", value),
+                "tags": key.split(","),
+                "positions": list(map(lambda w: f"{w.x},{w.y}", value)),
+                "sizes": list(map(lambda w: f"{w.width},{w.height}", value)),
             }
             result.append(element)
 
         # Write to dest file.
         with open(file = dest, mode = "w", encoding = "UTF8") as dest_file:
             dest_file.write(json.dumps(
-                result,
+                {
+                    "elements": result
+                },
                 indent = 4
             ))
