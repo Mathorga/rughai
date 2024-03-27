@@ -9,7 +9,7 @@ sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__
 
 from engine import controllers
 from engine.node import Node, PositionNode
-from engine.prop_loader import PropLoader, map_prop
+from prop_loader import PropLoader, map_prop
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode

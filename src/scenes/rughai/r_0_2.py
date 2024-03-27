@@ -6,7 +6,7 @@ from engine.door_node import DoorNode
 
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from engine.prop_loader import PropLoader
+from prop_loader import PropLoader
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode

@@ -4,7 +4,7 @@ import pyglet
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from engine.prop_loader import PropLoader
+from prop_loader import PropLoader
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
@@ -19,6 +19,7 @@ import constants.events as events
 import constants.scenes as scenes
 from battery_node import BatteryNode
 from stan_lee_node import StanLeeNode
+from walls_loader import WallsLoader
 
 class R_0_0(PlayableSceneNode):
     def __init__(
@@ -63,131 +64,10 @@ class R_0_0(PlayableSceneNode):
         cam_bounds = tilemaps[0].bounds
 
         # Solid walls.
-        walls: List[PositionNode] = [
-            # House.
-            WallNode(
-                x = self.__tile_size * 45,
-                y = self.__tile_size * 32,
-                width = self.__tile_size,
-                height = self.__tile_size * 6,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 46,
-                y = self.__tile_size * 32,
-                width = self.__tile_size,
-                height = self.__tile_size,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 45,
-                y = self.__tile_size * 38,
-                width = self.__tile_size * 5,
-                height = self.__tile_size,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 50,
-                y = self.__tile_size * 38,
-                width = self.__tile_size,
-                height = self.__tile_size * 3,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 51,
-                y = self.__tile_size * 40,
-                width = self.__tile_size * 4,
-                height = self.__tile_size,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 55,
-                y = self.__tile_size * 34,
-                width = self.__tile_size,
-                height = self.__tile_size * 7,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 51,
-                y = self.__tile_size * 34,
-                width = self.__tile_size * 4,
-                height = self.__tile_size,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 51,
-                y = self.__tile_size * 32,
-                width = self.__tile_size,
-                height = self.__tile_size * 2,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 49,
-                y = self.__tile_size * 32,
-                width = self.__tile_size * 2,
-                height = self.__tile_size,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-
-            # Slopes.
-            WallNode(
-                x = self.__tile_size * 64,
-                y = self.__tile_size * 29,
-                width = self.__tile_size,
-                height = self.__tile_size * 7,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 63,
-                y = self.__tile_size * 34,
-                width = self.__tile_size,
-                height = self.__tile_size * 8,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 64,
-                y = self.__tile_size * 41,
-                width = self.__tile_size,
-                height = self.__tile_size * 5,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 65,
-                y = self.__tile_size * 29,
-                width = self.__tile_size * 4,
-                height = self.__tile_size * 2,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 68,
-                y = self.__tile_size * 27,
-                width = self.__tile_size,
-                height = self.__tile_size * 2,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            ),
-            WallNode(
-                x = self.__tile_size * 68,
-                y = self.__tile_size * 25,
-                width = self.__tile_size * 4,
-                height = self.__tile_size * 2,
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
-            )
-        ]
+        walls: List[WallNode] = WallsLoader.fetch(
+            source = "wallmaps/r_0_0.json",
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")

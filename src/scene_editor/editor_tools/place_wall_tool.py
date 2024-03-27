@@ -10,6 +10,7 @@ from engine.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
 from engine.text_node import TextNode
 from engine.wall_node import WallNode
+from walls_loader import WallsLoader
 
 TOOL_COLOR: Tuple[int, int, int, int] = (0x7F, 0xFF, 0xFF, 0xAA)
 ALT_COLOR: Tuple[int, int, int, int] = (0xFF, 0x7F, 0x00, 0x7F)
@@ -86,6 +87,7 @@ class PlaceWallTool(EditorTool):
         view_width: int,
         view_height: int,
         tile_size: Tuple[int, int],
+        scene_name: str,
         on_icon_changed: Optional[Callable] = None,
         world_batch: Optional[pyglet.graphics.Batch] = None,
         ui_batch: Optional[pyglet.graphics.Batch] = None
@@ -99,7 +101,8 @@ class PlaceWallTool(EditorTool):
         self.color = TOOL_COLOR
 
         # Save data for later use.
-        self.__tile_size = tile_size
+        self.__tile_size: Tuple[int, int] = tile_size
+        self.__scene_name: str = scene_name
         self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
         self.__ui_batch: Optional[pyglet.graphics.Batch] = ui_batch
 
@@ -210,3 +213,8 @@ class PlaceWallTool(EditorTool):
                 if self.__current_wall is not None:
                     self.__current_wall.delete()
                     self.__current_wall = None
+
+        WallsLoader.store(
+            dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
+            walls = self.__walls
+        )

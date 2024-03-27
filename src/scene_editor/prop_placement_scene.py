@@ -130,6 +130,7 @@ class PropPlacementScene(Node):
                 view_width = view_width,
                 view_height = view_height,
                 tile_size = self.__tile_size,
+                scene_name = scene_name,
                 on_icon_changed = self.__update_cursor_icon,
                 world_batch = scenes.ACTIVE_SCENE.world_batch,
                 ui_batch = scenes.ACTIVE_SCENE.ui_batch
