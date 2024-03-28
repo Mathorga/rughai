@@ -18,15 +18,16 @@ class WallNode(PositionNode):
     ) -> None:
         super().__init__(x, y)
 
-        if tags is None:
-            tags = []
+        self.tags = tags if tags is not None else []
+        self.width = width
+        self.height = height
 
         # Collider.
         self.__collider = CollisionNode(
             x = x,
             y = y,
             collision_type = CollisionType.STATIC,
-            passive_tags = tags,
+            passive_tags = self.tags,
             shape = CollisionRect(
                 x = x,
                 y = y,

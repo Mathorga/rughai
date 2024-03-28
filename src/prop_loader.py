@@ -27,25 +27,24 @@ class PropLoader:
         tile_width: int = 8,
         tile_height: int = 8,
         batch: Optional[pyglet.graphics.Batch] = None
-    ) -> List:
-        prop_list = []
+    ) -> List[PositionNode]:
+        prop_list: List[PositionNode] = []
 
-        abs_path = os.path.join(pyglet.resource.path[0], source)
+        abs_path: str = os.path.join(pyglet.resource.path[0], source)
 
         # Iterate over files in the source dir.
         for file_name in os.listdir(abs_path):
-            file_path = os.path.join(abs_path, file_name)
+            file_path: str = os.path.join(abs_path, file_name)
 
             # Make sure the current file is actually a file (and not a directory).
             if os.path.isfile(file_path):
-                print(f"Loading file {file_path}")
+                print(f"Loading prop {file_path}")
 
                 propmap = Image.open(file_path)
                 propmap_data = propmap.load()
 
                 for y in range(propmap.height):
                     for x in range(propmap.width):
-
                         # Only keep pixels with alpha greater than 50% (0x7F = 127).
                         if propmap_data[x, y][3] > 0x7F:
                             prop = map_prop(

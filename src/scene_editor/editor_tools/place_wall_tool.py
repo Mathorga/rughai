@@ -10,6 +10,7 @@ from engine.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
 from engine.text_node import TextNode
 from engine.wall_node import WallNode
+from walls_loader import WallsLoader
 
 TOOL_COLOR: Tuple[int, int, int, int] = (0x7F, 0xFF, 0xFF, 0xAA)
 ALT_COLOR: Tuple[int, int, int, int] = (0xFF, 0x7F, 0x00, 0x7F)
@@ -86,6 +87,7 @@ class PlaceWallTool(EditorTool):
         view_width: int,
         view_height: int,
         tile_size: Tuple[int, int],
+        scene_name: str,
         on_icon_changed: Optional[Callable] = None,
         world_batch: Optional[pyglet.graphics.Batch] = None,
         ui_batch: Optional[pyglet.graphics.Batch] = None
@@ -99,7 +101,8 @@ class PlaceWallTool(EditorTool):
         self.color = TOOL_COLOR
 
         # Save data for later use.
-        self.__tile_size = tile_size
+        self.__tile_size: Tuple[int, int] = tile_size
+        self.__scene_name: str = scene_name
         self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
         self.__ui_batch: Optional[pyglet.graphics.Batch] = ui_batch
 
@@ -128,29 +131,25 @@ class PlaceWallTool(EditorTool):
             self.__current_wall.set_bounds(
                 bounds = (
                     # X position.
-                    min(map_position[0], self.__starting_position[0]) * self.__tile_size,
+                    min(map_position[0], self.__starting_position[0]) * self.__tile_size[0],
                     # Y position.
-                    min(map_position[1], self.__starting_position[1]) * self.__tile_size,
+                    min(map_position[1], self.__starting_position[1]) * self.__tile_size[1],
                     # Width.
-                    (abs(map_position[0] - self.__starting_position[0]) + 1.0) * self.__tile_size,
+                    (abs(map_position[0] - self.__starting_position[0]) + 1.0) * self.__tile_size[0],
                     # Height.
-                    (abs(map_position[1] - self.__starting_position[1]) + 1.0) * self.__tile_size
+                    (abs(map_position[1] - self.__starting_position[1]) + 1.0) * self.__tile_size[1]
                 )
             )
-
-        if len(self.__walls) > 0:
-            # Update the latest wall's position.
-            self.__walls[-1].set_position(position = map_position)
 
     def get_cursor_icon(self) -> PositionNode:
         # Return a tile-sized rectangle. It's color depends on whether alternate mode is on or off.
         return RectNode(
             x = 0.0,
             y = 0.0,
-            width = self.__tile_size,
-            height = self.__tile_size,
-            anchor_x = self.__tile_size / 2,
-            anchor_y = self.__tile_size / 2,
+            width = self.__tile_size[0],
+            height = self.__tile_size[1],
+            anchor_x = self.__tile_size[0] / 2,
+            anchor_y = self.__tile_size[1] / 2,
             color = ALT_COLOR if self.alt_mode else self.color,
             batch = self.__world_batch
         )
@@ -168,41 +167,51 @@ class PlaceWallTool(EditorTool):
     def run(self, map_position: Tuple[int, int]) -> None:
         super().run(map_position = map_position)
 
-        if self.__starting_position == None:
-            # Record starting position.
-            self.__starting_position = map_position
-
-            # Create the rect node for displaying the area currently being defined.
-            self.__current_wall = RectNode(
-                x = map_position[0] * self.__tile_size,
-                y = map_position[1] * self.__tile_size,
-                width = self.__tile_size,
-                height = self.__tile_size,
-                color = COLLIDER_COLOR,
-                batch = self.__world_batch,
-            )
+        if self.alt_mode:
+            # Delete any wall overlapping the current map_position.
+            pass
         else:
-            # Create a wall with the given position and size.
-            # The wall size is computed by subtracting the start position from the current.
-            current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
-            wall: WallNode = WallNode(
-                x = current_bounds[0],
-                y = current_bounds[1],
-                width = current_bounds[2],
-                height = current_bounds[3],
-                tags = [collision_tags.PLAYER_COLLISION],
-                batch = self.__world_batch
-            )
+            if self.__starting_position == None:
+                # Record starting position.
+                self.__starting_position = map_position
 
-            # Save the newly created wall
-            self.__walls.append(wall)
+                # Create the rect node for displaying the area currently being defined.
+                self.__current_wall = RectNode(
+                    x = map_position[0] * self.__tile_size[0],
+                    y = map_position[1] * self.__tile_size[1],
+                    width = self.__tile_size[0],
+                    height = self.__tile_size[1],
+                    color = COLLIDER_COLOR,
+                    batch = self.__world_batch,
+                )
+            else:
+                # Create a wall with the given position and size.
+                # The wall size is computed by subtracting the start position from the current.
+                current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
+                wall: WallNode = WallNode(
+                    x = current_bounds[0],
+                    y = current_bounds[1],
+                    width = current_bounds[2],
+                    height = current_bounds[3],
+                    tags = [collision_tags.PLAYER_COLLISION],
+                    batch = self.__world_batch
+                )
 
-            scenes.ACTIVE_SCENE.add_child(wall)
+                # Save the newly created wall
+                self.__walls.append(wall)
 
-            # Reset the starting position.
-            self.__starting_position = None
+                scenes.ACTIVE_SCENE.add_child(wall)
 
-            # Delete the current wall.
-            if self.__current_wall is not None:
-                self.__current_wall.delete()
-                self.__current_wall = None
+                # Reset the starting position.
+                self.__starting_position = None
+
+                # Delete the current wall.
+                if self.__current_wall is not None:
+                    self.__current_wall.delete()
+                    self.__current_wall = None
+
+                # Store the newly created wall.
+                WallsLoader.store(
+                    dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
+                    walls = self.__walls
+                )
