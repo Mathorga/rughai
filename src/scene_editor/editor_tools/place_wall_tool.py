@@ -119,6 +119,7 @@ class PlaceWallTool(EditorTool):
 
         # List of all inserted nodes.
         self.__walls: List[WallNode] = []
+        self.__load_walls()
 
         # Starting position of the wall currently being placed.
         self.__starting_position: Optional[Tuple[int, int]] = None
@@ -185,14 +186,18 @@ class PlaceWallTool(EditorTool):
                     batch = self.__world_batch,
                 )
             else:
+                # Just return if there's no current wall.
+                if self.__current_wall is None:
+                    return
+
                 # Create a wall with the given position and size.
                 # The wall size is computed by subtracting the start position from the current.
                 current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
                 wall: WallNode = WallNode(
                     x = current_bounds[0],
                     y = current_bounds[1],
-                    width = current_bounds[2],
-                    height = current_bounds[3],
+                    width = int(current_bounds[2]),
+                    height = int(current_bounds[3]),
                     tags = [collision_tags.PLAYER_COLLISION],
                     batch = self.__world_batch
                 )
@@ -215,3 +220,16 @@ class PlaceWallTool(EditorTool):
                     dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
                     walls = self.__walls
                 )
+
+    def __load_walls(self) -> None:
+        # Delete all existing walls.
+        for wall in self.__walls:
+            if wall is not None:
+                wall.delete()
+        self.__walls.clear()
+
+        # Recreate all of them from wallmap files.
+        self.__walls = WallsLoader.fetch(
+            source = f"wallmaps/{self.__scene_name}.json",
+            batch = self.__world_batch
+        )

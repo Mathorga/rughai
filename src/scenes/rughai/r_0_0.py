@@ -64,7 +64,7 @@ class R_0_0(PlayableSceneNode):
         cam_bounds = tilemaps[0].bounds
 
         # Solid walls.
-        walls: List[PositionNode] = WallsLoader.fetch(
+        walls: List[WallNode] = WallsLoader.fetch(
             source = "wallmaps/r_0_0.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
