@@ -97,9 +97,9 @@ class R_0_0(PlayableSceneNode):
 
         # Place doors.
         south_door = DoorNode(
-            x = 40 * self.__tile_size,
+            x = 50 * self.__tile_size,
             y = 0,
-            width = 32 * self.__tile_size,
+            width = 7 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -118,9 +118,9 @@ class R_0_0(PlayableSceneNode):
         )
         east_door = DoorNode(
             x = (tilemap_width - 2) * self.__tile_size,
-            y = 27 * self.__tile_size,
+            y = 34 * self.__tile_size,
             width = 2 * self.__tile_size,
-            height = 19 * self.__tile_size,
+            height = 6 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
