@@ -86,10 +86,10 @@ class PlaceDoorTool(EditorTool):
         return RectNode(
             x = 0.0,
             y = 0.0,
-            width = self.__tile_size,
-            height = self.__tile_size,
-            anchor_x = self.__tile_size / 2,
-            anchor_y = self.__tile_size / 2,
+            width = self.__tile_size[0],
+            height = self.__tile_size[1],
+            anchor_x = self.__tile_size[0] / 2,
+            anchor_y = self.__tile_size[1] / 2,
             color = SENSOR_COLOR,
             batch = self.__batch
         )

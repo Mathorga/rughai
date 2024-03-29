@@ -1,10 +1,12 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import pyglet
 
 from engine import controllers
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle, CollisionRect
 from engine.node import PositionNode
+
+WALL_COLOR: Tuple[int, int, int, int] = (0xFF, 0x7F, 0xFF, 0x7F)
 
 class WallNode(PositionNode):
     def __init__(
@@ -28,6 +30,7 @@ class WallNode(PositionNode):
             y = y,
             collision_type = CollisionType.STATIC,
             passive_tags = self.tags,
+            color = WALL_COLOR,
             shape = CollisionRect(
                 x = x,
                 y = y,
