@@ -10,10 +10,10 @@ from engine.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
 from engine.text_node import TextNode
 from engine.utils.utils import point_in_rect
-from engine.wall_node import WallNode
+from engine.wall_node import WALL_COLOR, WallNode
 from walls_loader import WallsLoader
 
-TOOL_COLOR: Tuple[int, int, int, int] = (0x7F, 0xFF, 0xFF, 0xAA)
+TOOL_COLOR: Tuple[int, int, int, int] = WALL_COLOR
 ALT_COLOR: Tuple[int, int, int, int] = (0xFF, 0x7F, 0x00, 0x7F)
 
 class WallEditorMenuNode(Node):
@@ -182,7 +182,7 @@ class PlaceWallTool(EditorTool):
                     y = map_position[1] * self.__tile_size[1],
                     width = self.__tile_size[0],
                     height = self.__tile_size[1],
-                    color = COLLIDER_COLOR,
+                    color = WALL_COLOR,
                     batch = self.__world_batch,
                 )
             else:
