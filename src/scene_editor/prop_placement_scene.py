@@ -12,7 +12,7 @@ from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 from engine.map_cursor_node import MapCursorNode
 
-from editor_tools.editor_tool import EditorTool, PlaceDoorTool
+from editor_tools.editor_tool import ChangeSceneTool, EditorTool, PlaceDoorTool
 from editor_tools.place_prop_tool import PlacePropTool
 from editor_tools.place_wall_tool import PlaceWallTool
 
@@ -136,6 +136,10 @@ class PropPlacementScene(Node):
                 ui_batch = scenes.ACTIVE_SCENE.ui_batch
             ),
             PlaceDoorTool(
+                tile_size = self.__tile_size,
+                batch = scenes.ACTIVE_SCENE.world_batch
+            ),
+            ChangeSceneTool(
                 tile_size = self.__tile_size,
                 batch = scenes.ACTIVE_SCENE.world_batch
             )

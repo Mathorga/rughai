@@ -1,10 +1,12 @@
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 import pyglet
 
 from engine import controllers
 from engine.collision.collision_node import CollisionNode
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
+
+DOOR_COLOR: Tuple[int, int, int, int] = (0xFF, 0xFF, 0x7F, 0x7F)
 
 class DoorNode(PositionNode):
     def __init__(
@@ -27,7 +29,7 @@ class DoorNode(PositionNode):
             passive_tags = tags,
             sensor = True,
             on_triggered = on_triggered,
-            color = (0xFF, 0xFF, 0x7F, 0x7F),
+            color = DOOR_COLOR,
             shape = CollisionRect(
                 x = x,
                 y = y,
