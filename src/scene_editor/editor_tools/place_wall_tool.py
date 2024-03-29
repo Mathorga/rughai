@@ -9,6 +9,7 @@ from engine.settings import SETTINGS, Keys
 from engine.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
 from engine.text_node import TextNode
+from engine.utils.utils import point_in_rect
 from engine.wall_node import WallNode
 from walls_loader import WallsLoader
 
@@ -169,8 +170,25 @@ class PlaceWallTool(EditorTool):
         super().run(map_position = map_position)
 
         if self.alt_mode:
+            position: Tuple[float, float] = (
+                map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
+                map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2
+            )
+
+            # Filter overlapping walls.
+            hit_walls: List[WallNode] = filter(
+                lambda wall: point_in_rect(
+                    test = position,
+                    rect_position = (wall.x, wall.y),
+                    rect_size = (wall.width, wall.height)
+                ),
+                self.__walls
+            )
+
             # Delete any wall overlapping the current map_position.
-            pass
+            for wall in hit_walls:
+                self.__walls.remove(wall)
+                wall.delete()
         else:
             if self.__starting_position == None:
                 # Record starting position.
