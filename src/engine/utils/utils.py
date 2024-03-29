@@ -341,6 +341,16 @@ def remap(x, x_min, x_max, y_min, y_max):
     """
     return y_min + ((x- x_min) * (y_max-y_min))/ (x_max-x_min)
 
+def point_in_rect(
+    test: Tuple[float, float],
+    rect_position: Tuple[float, float],
+    rect_size: Tuple[float, float]
+) -> bool:
+    within_x: bool = rect_position[0] <= test[0] and rect_position[0] + rect_size[0] >= test[0]
+    within_y: bool = rect_position[1] <= test[1] and rect_position[1] + rect_size[1] >= test[1]
+
+    return within_x and within_y
+
 def rect_rect_min_dist(
     x1: float,
     y1: float,

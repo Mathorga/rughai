@@ -9,6 +9,7 @@ from engine.settings import SETTINGS, Keys
 from engine.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
 from engine.text_node import TextNode
+from engine.utils.utils import point_in_rect
 from engine.wall_node import WallNode
 from walls_loader import WallsLoader
 
@@ -169,8 +170,7 @@ class PlaceWallTool(EditorTool):
         super().run(map_position = map_position)
 
         if self.alt_mode:
-            # Delete any wall overlapping the current map_position.
-            pass
+            self.clear(map_position = map_position)
         else:
             if self.__starting_position == None:
                 # Record starting position.
@@ -215,11 +215,43 @@ class PlaceWallTool(EditorTool):
                     self.__current_wall.delete()
                     self.__current_wall = None
 
-                # Store the newly created wall.
-                WallsLoader.store(
-                    dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
-                    walls = self.__walls
-                )
+            # Store the updated walls.
+            WallsLoader.store(
+                dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
+                walls = self.__walls
+            )
+
+    def clear(self, map_position: Tuple[int, int]) -> None:
+        """
+        Deletes any wall overlapping the provided map position, regardless of the selected wall tags.
+        """
+
+        # Delete the current wall if any.
+        if self.__current_wall is not None:
+            self.__current_wall.delete()
+            self.__current_wall = None
+            self.__starting_position = None
+        else:
+            # Define a test position at the center of a tile.
+            test_position: Tuple[float, float] = (
+                map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
+                map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2
+            )
+
+            # Filter overlapping walls.
+            hit_walls: List[WallNode] = filter(
+                lambda wall: point_in_rect(
+                    test = test_position,
+                    rect_position = (wall.x, wall.y),
+                    rect_size = (wall.width, wall.height)
+                ),
+                self.__walls
+            )
+
+            # Delete any wall overlapping the current map_position.
+            for wall in hit_walls:
+                self.__walls.remove(wall)
+                wall.delete()
 
     def __load_walls(self) -> None:
         # Delete all existing walls.
