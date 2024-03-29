@@ -16,6 +16,8 @@ from scenes.rughai.r_0_3 import R_0_3
 from scenes.rughai.r_0_4 import R_0_4
 from scenes.rughai.r_0_5 import R_0_5
 from scenes.rughai.r_0_6 import R_0_6
+from scenes.rughai.r_0_7 import R_0_7
+from scenes.rughai.r_0_8 import R_0_8
 
 class Rughai:
     """
@@ -67,7 +69,7 @@ class Rughai:
         )
 
         # Create a scene.
-        self.__active_scene = R_0_0(
+        self.__active_scene = R_0_2(
             window = self._window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],
@@ -167,8 +169,8 @@ class Rughai:
             bottom = 0,
             top = self._window.height,
             # For some reason near and far planes are inverted in sign, so that -500 means 500 and 1024 means -1024.
-            z_near = -1000,
-            z_far = 1000
+            z_near = -3000,
+            z_far = 3000
         )
 
         # Scale textures using nearest neighbor filtering.
