@@ -6,6 +6,7 @@ from clouds_node import CloudsNode
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
+from engine.wall_node import WallNode
 from prop_loader import PropLoader
 from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
@@ -15,6 +16,7 @@ from engine.settings import SETTINGS, Keys
 from player_node import PlayerNode
 import constants.events as events
 import constants.scenes as scenes
+from walls_loader import WallsLoader
 
 class R_0_1(PlayableSceneNode):
     def __init__(
@@ -54,6 +56,12 @@ class R_0_1(PlayableSceneNode):
         tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
 
+        # Solid walls.
+        walls: List[WallNode] = WallsLoader.fetch(
+            source = "wallmaps/r_0_1.json",
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
+
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
         bg_image.anchor_x = bg_image.width / 2
@@ -82,9 +90,9 @@ class R_0_1(PlayableSceneNode):
 
         # Place doors.
         north_door = DoorNode(
-            x = 18 * self.__tile_size,
+            x = 47 * self.__tile_size,
             y = 32 * self.__tile_size,
-            width = 32 * self.__tile_size,
+            width = 6 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -102,9 +110,9 @@ class R_0_1(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         south_west_door = DoorNode(
-            x = 5 * self.__tile_size,
+            x = 30 * self.__tile_size,
             y = 0,
-            width = 10 * self.__tile_size,
+            width = 6 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -122,9 +130,9 @@ class R_0_1(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         south_east_door = DoorNode(
-            x = 34 * self.__tile_size,
-            y = -2 * self.__tile_size,
-            width = 16 * self.__tile_size,
+            x = 56 * self.__tile_size,
+            y = 0,
+            width = 6 * self.__tile_size,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -177,6 +185,7 @@ class R_0_1(PlayableSceneNode):
 
         scenes.ACTIVE_SCENE.add_child(bg)
         scenes.ACTIVE_SCENE.add_children(tilemaps)
+        scenes.ACTIVE_SCENE.add_children(walls)
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
         scenes.ACTIVE_SCENE.add_child(clouds)
         scenes.ACTIVE_SCENE.add_children(props)
