@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 import pyglet
 from constants import collision_tags
 
@@ -10,10 +10,12 @@ from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 
+from engine.wall_node import WallNode
 from player_node import PlayerNode
 from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
+from walls_loader import WallsLoader
 
 
 class R_0_3(PlayableSceneNode):
@@ -54,6 +56,12 @@ class R_0_3(PlayableSceneNode):
         tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
 
+        # Solid walls.
+        walls: List[WallNode] = WallsLoader.fetch(
+            source = "wallmaps/r_0_3.json",
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
+
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
         bg_image.anchor_x = bg_image.width / 2
@@ -90,9 +98,9 @@ class R_0_3(PlayableSceneNode):
 
         # Place doors.
         north_west_door = DoorNode(
-            x = 20 * self.__tile_size,
-            y = 26 * self.__tile_size,
-            width = 12 * self.__tile_size,
+            x = 40 * self.__tile_size,
+            y = 28 * self.__tile_size,
+            width = 10 * self.__tile_size,
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
@@ -112,9 +120,9 @@ class R_0_3(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         north_east_door = DoorNode(
-            x = 65 * self.__tile_size,
-            y = 26 * self.__tile_size,
-            width = 12 * self.__tile_size,
+            x = 89 * self.__tile_size,
+            y = 28 * self.__tile_size,
+            width = 5 * self.__tile_size,
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
@@ -128,6 +136,28 @@ class R_0_3(PlayableSceneNode):
                         "player_position": [
                             self._player.x - 45 * self.__tile_size,
                             self.__tile_size
+                        ]
+                    }
+            ),
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
+        east_door = DoorNode(
+            x = 118 * self.__tile_size,
+            y = 19 * self.__tile_size,
+            width = 2 * self.__tile_size,
+            height = 9 * self.__tile_size,
+            anchor_x = 0,
+            anchor_y = 0,
+            tags = [collision_tags.PLAYER_INTERACTION],
+            on_triggered = lambda tags, entered:
+                self.on_door_triggered(
+                    entered = entered,
+                    bundle = {
+                        "event": events.CHANGE_ROOM,
+                        "next_scene": scenes.R_0_7,
+                        "player_position": [
+                            self.__tile_size,
+                            self._player.y
                         ]
                     }
             ),
@@ -157,6 +187,7 @@ class R_0_3(PlayableSceneNode):
 
         scenes.ACTIVE_SCENE.add_child(bg)
         scenes.ACTIVE_SCENE.add_children(tilemaps)
+        scenes.ACTIVE_SCENE.add_children(walls)
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target=True)
         scenes.ACTIVE_SCENE.add_child(self._player)
         # self._scene.add_child(duk)
