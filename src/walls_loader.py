@@ -20,6 +20,10 @@ class WallsLoader:
 
         abs_path: str = os.path.join(pyglet.resource.path[0], source)
 
+        # Return an empty list if the source file is not found.
+        if not os.path.exists(abs_path):
+            return []
+
         print(f"Loading walls {abs_path}")
 
         data: dict
