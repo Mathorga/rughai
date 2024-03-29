@@ -85,8 +85,8 @@ class RugHaiSceneEditor:
             bottom = 0,
             top = self._window.height,
             # For some reason near and far planes are inverted in sign, so that -500 means 500 and 1024 means -1024.
-            z_near = -1000,
-            z_far = 1000
+            z_near = -3000,
+            z_far = 3000
         )
 
         # Scale textures using nearest neighbor filtering.

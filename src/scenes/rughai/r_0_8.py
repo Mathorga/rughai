@@ -1,25 +1,24 @@
 from typing import Callable, List, Optional
 from constants import collision_tags
 import pyglet
+
 from clouds_node import CloudsNode
 from engine.door_node import DoorNode
-
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.wall_node import WallNode
 from prop_loader import PropLoader
-from engine.scene_node import SceneNode
+from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 
 from player_node import PlayerNode
-from duk_node import DukNode
 import constants.events as events
 import constants.scenes as scenes
 from walls_loader import WallsLoader
 
-class R_0_2(PlayableSceneNode):
+class R_0_8(PlayableSceneNode):
     def __init__(
         self,
         window: pyglet.window.Window,
@@ -42,13 +41,14 @@ class R_0_2(PlayableSceneNode):
             view_width = view_width,
             view_height = view_height,
             default_cam_speed = SETTINGS[Keys.CAMERA_SPEED],
-            title = "R_0_2",
-            on_scene_end = self._on_scene_end
+            title = "R_0_8",
+            on_scene_end = self._on_scene_end,
+            on_scene_start = self._on_scene_start
         )
 
         # Define a tilemap.
         tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
-            source = "tilemaps/r_0_2.tmx",
+            source = "tilemaps/r_0_8.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -58,7 +58,7 @@ class R_0_2(PlayableSceneNode):
 
         # Solid walls.
         walls: List[WallNode] = WallsLoader.fetch(
-            source = "wallmaps/r_0_2.json",
+            source = "wallmaps/r_0_8.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
@@ -67,7 +67,7 @@ class R_0_2(PlayableSceneNode):
         bg_image.anchor_x = bg_image.width / 2
         bg_image.anchor_y = bg_image.height / 2
         bg = SpriteNode(
-            resource = pyglet.resource.image("bg.png"),
+            resource = bg_image,
             on_animation_end = lambda : None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
@@ -88,75 +88,62 @@ class R_0_2(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
-        # Duk.
-        # duk = DukNode(
-        #     x = 10 * self.__tile_size,
-        #     y = 8 * self.__tile_size,
-        #     batch = self._scene.world_batch
-        # )
-
         # Place doors.
-        north_west_door = DoorNode(
-            x = 29 * self.__tile_size,
-            y = 52 * self.__tile_size,
+        north_door = DoorNode(
+            x = 47 * self.__tile_size,
+            y = 32 * self.__tile_size,
             width = 6 * self.__tile_size,
             height = 2 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
                         "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_1,
+                        "next_scene": scenes.R_0_0,
                         "player_position": [
                             self._player.x,
-                            self.__tile_size
+                            (SETTINGS[Keys.TILEMAP_BUFFER] + 1) * self.__tile_size
                         ]
                     }
                 ),
             batch = scenes.ACTIVE_SCENE.world_batch
         )
-        north_east_door = DoorNode(
-            x = 57 * self.__tile_size,
-            y = 52 * self.__tile_size,
+        south_west_door = DoorNode(
+            x = 30 * self.__tile_size,
+            y = 0,
             width = 6 * self.__tile_size,
             height = 2 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
                         "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_1,
+                        "next_scene": scenes.R_0_2,
                         "player_position": [
                             self._player.x,
-                            self.__tile_size
+                            49 * self.__tile_size
                         ]
                     }
                 ),
             batch = scenes.ACTIVE_SCENE.world_batch
         )
-        south_door = DoorNode(
-            x = 44 * self.__tile_size,
-            y = 0.0,
-            width = 10 * self.__tile_size,
+        south_east_door = DoorNode(
+            x = 56 * self.__tile_size,
+            y = 0,
+            width = 6 * self.__tile_size,
             height = 2 * self.__tile_size,
-            anchor_x = 0,
-            anchor_y = 0,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
                     bundle = {
                         "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_3,
+                        "next_scene": scenes.R_0_2,
                         "player_position": [
                             self._player.x,
-                            25 * self.__tile_size
+                            49 * self.__tile_size
                         ]
                     }
                 ),
@@ -190,7 +177,7 @@ class R_0_2(PlayableSceneNode):
 
         # Props.
         props = PropLoader.fetch_prop_list(
-            "propmaps/r_0_2",
+            "propmaps/r_0_8",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
@@ -200,12 +187,11 @@ class R_0_2(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_children(tilemaps)
         scenes.ACTIVE_SCENE.add_children(walls)
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
-        scenes.ACTIVE_SCENE.add_child(self._player)
-        # self._scene.add_child(duk)
         scenes.ACTIVE_SCENE.add_child(clouds)
         scenes.ACTIVE_SCENE.add_children(props)
-        scenes.ACTIVE_SCENE.add_child(north_west_door)
-        scenes.ACTIVE_SCENE.add_child(north_east_door)
-        scenes.ACTIVE_SCENE.add_child(south_door)
+        scenes.ACTIVE_SCENE.add_child(self._player)
+        scenes.ACTIVE_SCENE.add_child(north_door)
+        scenes.ACTIVE_SCENE.add_child(south_west_door)
+        scenes.ACTIVE_SCENE.add_child(south_east_door)
         scenes.ACTIVE_SCENE.add_child(energy_bar)
         scenes.ACTIVE_SCENE.add_child(health_bar)

@@ -32,6 +32,10 @@ class PropLoader:
 
         abs_path: str = os.path.join(pyglet.resource.path[0], source)
 
+        # Return an empty list if the source file is not found.
+        if not os.path.exists(abs_path):
+            return []
+
         # Iterate over files in the source dir.
         for file_name in os.listdir(abs_path):
             file_path: str = os.path.join(abs_path, file_name)
