@@ -217,6 +217,21 @@ class InputController:
             1 if up else 0 - 1 if down else 0
         )
 
+    def get_cursor_movement_hold(self) -> pyglet.math.Vec2:
+        """
+        Returns the movement vector from keyboard and controller.
+        """
+
+        up = self[pyglet.window.key.W] or self[pyglet.window.key.UP]
+        left = self[pyglet.window.key.A] or self[pyglet.window.key.LEFT]
+        down = self[pyglet.window.key.S] or self[pyglet.window.key.DOWN]
+        right = self[pyglet.window.key.D] or self[pyglet.window.key.RIGHT]
+
+        return pyglet.math.Vec2(
+            1 if right else 0 - 1 if left else 0,
+            1 if up else 0 - 1 if down else 0
+        )
+
     def get_ctrl(self) -> bool:
         return self[pyglet.window.key.LCTRL] or self[pyglet.window.key.LCOMMAND] or self[pyglet.window.key.RCTRL] or self[pyglet.window.key.RCOMMAND]
 
