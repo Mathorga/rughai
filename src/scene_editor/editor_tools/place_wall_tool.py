@@ -215,11 +215,11 @@ class PlaceWallTool(EditorTool):
                     self.__current_wall.delete()
                     self.__current_wall = None
 
-            # Store the updated walls.
-            WallsLoader.store(
-                dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
-                walls = self.__walls
-            )
+        # Store the updated walls.
+        WallsLoader.store(
+            dest = f"{pyglet.resource.path[0]}/wallmaps/{self.__scene_name}.json",
+            walls = self.__walls
+        )
 
     def clear(self, map_position: Tuple[int, int]) -> None:
         """
