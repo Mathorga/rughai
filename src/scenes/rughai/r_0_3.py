@@ -71,7 +71,7 @@ class R_0_3(PlayableSceneNode):
             on_animation_end = lambda: None,
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
-            z = -500,
+            z = -1500,
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 

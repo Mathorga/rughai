@@ -12,9 +12,11 @@ from engine.input_controller import InputController
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 
+from engine.wall_node import WallNode
 from player_node import PlayerNode
 import constants.events as events
 import constants.scenes as scenes
+from walls_loader import WallsLoader
 
 class R_0_4(PlayableSceneNode):
     def __init__(
@@ -53,6 +55,12 @@ class R_0_4(PlayableSceneNode):
         tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
 
+        # Solid walls.
+        walls: List[WallNode] = WallsLoader.fetch(
+            source = "wallmaps/r_0_4.json",
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
+
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
         bg_image.anchor_x = bg_image.width / 2
@@ -81,9 +89,9 @@ class R_0_4(PlayableSceneNode):
 
         # Place doors.
         south_door = DoorNode(
-            x = 19 * self.__tile_size,
-            y = -2 * self.__tile_size,
-            width = 31 * self.__tile_size,
+            x = 25 * self.__tile_size,
+            y = 0.0,
+            width = 5 * self.__tile_size,
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
@@ -103,8 +111,8 @@ class R_0_4(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         north_door = DoorNode(
-            x = 20 * self.__tile_size,
-            y = 50 * self.__tile_size,
+            x = 22 * self.__tile_size,
+            y = 52 * self.__tile_size,
             width = 7 * self.__tile_size,
             height = 2 * self.__tile_size,
             anchor_x = 0,
@@ -146,6 +154,7 @@ class R_0_4(PlayableSceneNode):
 
         scenes.ACTIVE_SCENE.add_child(bg)
         scenes.ACTIVE_SCENE.add_children(tilemaps)
+        scenes.ACTIVE_SCENE.add_children(walls)
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
         scenes.ACTIVE_SCENE.add_child(self._player)
         scenes.ACTIVE_SCENE.add_child(south_door)
