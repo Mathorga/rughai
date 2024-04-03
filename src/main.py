@@ -4,6 +4,7 @@ import pyglet.gl as gl
 
 import engine.controllers as controllers
 from engine.benchmark import Benchmark
+from engine.dungen.dungen import random_walk
 from engine.upscaler import Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
 
@@ -206,6 +207,19 @@ class Rughai:
         pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Keys.TARGET_FPS])
         # pyglet.clock.schedule(self.update)
         pyglet.app.run()
+
+map_res = random_walk(
+    map_width = 30,
+    map_height = 30,
+    lifespan = 120,
+    max_reach = 8
+)
+
+map_res_trans: list[list[str]] = []
+for line in map_res:
+    map_res_trans.append(list(map(lambda x: "@" if x == 0 else ".", line)))
+
+print(map_res_trans)
 
 app = Rughai()
 app.run()
