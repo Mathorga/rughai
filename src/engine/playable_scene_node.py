@@ -30,6 +30,8 @@ class PlayableSceneNode(Node):
         self._player: PlayerNode
 
     def on_door_triggered(self, entered: bool, bundle: dict):
+        print(self._player.x)
+        print(bundle)
         if entered:
             if scenes.ACTIVE_SCENE is not None:
                 scenes.ACTIVE_SCENE.end()

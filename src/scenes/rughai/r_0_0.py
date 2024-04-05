@@ -4,6 +4,7 @@ import pyglet
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
+from engine.utils.utils import remap
 from prop_loader import PropLoader
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
@@ -87,6 +88,7 @@ class R_0_0(PlayableSceneNode):
             bundle["player_position"][0] if bundle else 50 * self.__tile_size,
             bundle["player_position"][1] if bundle else 25 * self.__tile_size,
         )
+        print(player_position)
         cam_target = PositionNode()
         self._player = PlayerNode(
             cam_target = cam_target,
@@ -96,10 +98,14 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Place doors.
+        south_src_door_x: float = 49 * self.__tile_size
+        south_src_door_width: float = 8 * self.__tile_size
+        south_dst_door_x: float = 46 * self.__tile_size
+        south_dst_door_width: float = 8 * self.__tile_size
         south_door = DoorNode(
-            x = 50 * self.__tile_size,
-            y = 0,
-            width = 7 * self.__tile_size,
+            x = south_src_door_x,
+            y = 0.0,
+            width = south_src_door_width,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -109,18 +115,22 @@ class R_0_0(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_1,
                         "player_position": [
-                            self._player.x,
+                            south_dst_door_x + remap(self._player.x - south_src_door_x, 0, south_src_door_width, 0, south_dst_door_width),
                             30 * self.__tile_size
                         ]
                     }
                 ),
             batch = scenes.ACTIVE_SCENE.world_batch
         )
+        east_src_door_y = 34 * self.__tile_size
+        east_src_door_height = 6 * self.__tile_size
+        east_dst_door_y = 33 * self.__tile_size
+        east_dst_door_height = 6 * self.__tile_size
         east_door = DoorNode(
             x = (tilemap_width - 2) * self.__tile_size,
-            y = 34 * self.__tile_size,
+            y = east_src_door_y,
             width = 2 * self.__tile_size,
-            height = 6 * self.__tile_size,
+            height = east_src_door_height,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
@@ -129,8 +139,8 @@ class R_0_0(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_6,
                         "player_position": [
-                            self.__tile_size,
-                            self._player.y
+                            (SETTINGS[Keys.TILEMAP_BUFFER] + 1) * self.__tile_size,
+                            east_dst_door_y + remap(self._player.y - east_src_door_y, 0, east_src_door_height, 0, east_dst_door_height)
                         ]
                     }
                 ),

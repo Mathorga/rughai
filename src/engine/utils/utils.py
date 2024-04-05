@@ -339,7 +339,7 @@ def remap(x, x_min, x_max, y_min, y_max):
     """
     Remaps x, which is in range [x_min, x_max], to range [y_min, y_max]
     """
-    return y_min + ((x- x_min) * (y_max-y_min))/ (x_max-x_min)
+    return y_min + ((x - x_min) * (y_max - y_min)) / (x_max - x_min)
 
 def point_in_rect(
     test: Tuple[float, float],

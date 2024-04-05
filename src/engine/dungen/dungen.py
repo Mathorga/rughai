@@ -4,9 +4,7 @@ from random import Random
 def random_walk(
     map_width: int,
     map_height: int,
-    #maxtunnels
     lifespan: int,
-    #maxlength
     max_reach: int,
     seed: int | float | str | bytes | bytearray | None = None
 ) -> None:
