@@ -70,7 +70,7 @@ class Rughai:
         )
 
         # Create a scene.
-        self.__active_scene = R_0_8(
+        self.__active_scene = R_0_3(
             window = self._window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],
@@ -151,6 +151,22 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_6:
                 self.__active_scene = R_0_6(
+                    window = self._window,
+                    view_width = SETTINGS[Keys.VIEW_WIDTH],
+                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
+                    bundle = bundle,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.R_0_7:
+                self.__active_scene = R_0_7(
+                    window = self._window,
+                    view_width = SETTINGS[Keys.VIEW_WIDTH],
+                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
+                    bundle = bundle,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.R_0_8:
+                self.__active_scene = R_0_8(
                     window = self._window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],

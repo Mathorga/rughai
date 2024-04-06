@@ -1,5 +1,6 @@
 from typing import Callable, List, Optional
 import pyglet
+from clouds_node import CloudsNode
 from constants import collision_tags
 
 from engine.door_node import DoorNode
@@ -152,9 +153,8 @@ class R_0_3(PlayableSceneNode):
         )
         east_src_door_y = 21 * self.__tile_size
         east_src_door_height = 7 * self.__tile_size
-        # TODO
-        east_dst_door_y = 33 * self.__tile_size
-        east_dst_door_height = 6 * self.__tile_size
+        east_dst_door_y = 41 * self.__tile_size
+        east_dst_door_height = 7 * self.__tile_size
         east_door = DoorNode(
             x = 118 * self.__tile_size,
             y = east_src_door_y,
@@ -162,7 +162,7 @@ class R_0_3(PlayableSceneNode):
             height = east_src_door_height,
             anchor_x = 0,
             anchor_y = 0,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -197,6 +197,12 @@ class R_0_3(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
+        # Clouds.
+        clouds: CloudsNode = CloudsNode(
+            bounds = cam_bounds,
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
+
         scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
         scenes.ACTIVE_SCENE.add_child(bg)
@@ -204,6 +210,7 @@ class R_0_3(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_children(walls)
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target=True)
         scenes.ACTIVE_SCENE.add_child(self._player)
+        scenes.ACTIVE_SCENE.add_child(clouds)
         # self._scene.add_child(duk)
         scenes.ACTIVE_SCENE.add_child(north_west_door)
         scenes.ACTIVE_SCENE.add_child(north_east_door)
