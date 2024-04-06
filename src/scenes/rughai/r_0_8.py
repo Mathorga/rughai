@@ -113,7 +113,7 @@ class R_0_8(PlayableSceneNode):
         west_src_door_y = 41 * self.__tile_size
         west_src_door_height = 7 * self.__tile_size
         west_dst_door_y = 21 * self.__tile_size
-        west_dst_door_height = 7 * self.__tile_size
+        west_dst_door_height = 6 * self.__tile_size
         west_door = DoorNode(
             x = 0.0,
             y = west_src_door_y,

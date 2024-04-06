@@ -70,7 +70,7 @@ class Rughai:
         )
 
         # Create a scene.
-        self.__active_scene = R_0_3(
+        self.__active_scene = R_0_0(
             window = self._window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],

@@ -110,7 +110,7 @@ class R_0_3(PlayableSceneNode):
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -136,7 +136,7 @@ class R_0_3(PlayableSceneNode):
             height = 2 * self.__tile_size,
             anchor_x = 0,
             anchor_y = 0,
-            tags = [collision_tags.PLAYER_INTERACTION],
+            tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
                 self.on_door_triggered(
                     entered = entered,
@@ -152,7 +152,7 @@ class R_0_3(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         east_src_door_y = 21 * self.__tile_size
-        east_src_door_height = 7 * self.__tile_size
+        east_src_door_height = 6 * self.__tile_size
         east_dst_door_y = 41 * self.__tile_size
         east_dst_door_height = 7 * self.__tile_size
         east_door = DoorNode(
