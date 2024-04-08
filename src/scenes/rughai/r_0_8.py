@@ -70,16 +70,16 @@ class R_0_8(PlayableSceneNode):
         bg = SpriteNode(
             resource = bg_image,
             on_animation_end = lambda : None,
-            x = (tilemaps[0].map_width * self.__tile_size) // 2,
-            y = (tilemaps[0].map_height * self.__tile_size) // 2,
+            x = (tilemap_width * self.__tile_size) // 2,
+            y = (tilemap_height * self.__tile_size) // 2,
             z = -1500,
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Player.
         player_position = (
-            bundle["player_position"][0] if bundle else 10 * self.__tile_size,
-            bundle["player_position"][1] if bundle else 10 * self.__tile_size,
+            bundle["player_position"][0] if bundle else (tilemap_width // 2) * self.__tile_size,
+            bundle["player_position"][1] if bundle else (tilemap_height // 2) * self.__tile_size,
         )
         cam_target = PositionNode()
         self._player = PlayerNode(
@@ -90,10 +90,14 @@ class R_0_8(PlayableSceneNode):
         )
 
         # Place doors.
+        north_src_door_x: float = 5 * self.__tile_size
+        north_src_door_width: float = 11 * self.__tile_size
+        north_dst_door_x: float = 6 * self.__tile_size
+        north_dst_door_width: float = 11 * self.__tile_size
         north_door = DoorNode(
-            x = 47 * self.__tile_size,
-            y = 32 * self.__tile_size,
-            width = 6 * self.__tile_size,
+            x = north_src_door_x,
+            y = 122 * self.__tile_size,
+            width = north_src_door_width,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -101,19 +105,19 @@ class R_0_8(PlayableSceneNode):
                     entered = entered,
                     bundle = {
                         "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_0,
+                        "next_scene": scenes.R_0_7,
                         "player_position": [
-                            self._player.x,
+                            north_dst_door_x + remap(self._player.x - north_src_door_x, 0, north_src_door_width, 0, north_dst_door_width),
                             (SETTINGS[Keys.TILEMAP_BUFFER] + 1) * self.__tile_size
                         ]
                     }
                 ),
             batch = scenes.ACTIVE_SCENE.world_batch
         )
-        west_src_door_y = 41 * self.__tile_size
-        west_src_door_height = 7 * self.__tile_size
-        west_dst_door_y = 21 * self.__tile_size
-        west_dst_door_height = 6 * self.__tile_size
+        west_src_door_y: float = 41 * self.__tile_size
+        west_src_door_height: float = 7 * self.__tile_size
+        west_dst_door_y: float = 21 * self.__tile_size
+        west_dst_door_height: float = 6 * self.__tile_size
         west_door = DoorNode(
             x = 0.0,
             y = west_src_door_y,

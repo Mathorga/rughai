@@ -137,10 +137,10 @@ class R_0_6(PlayableSceneNode):
         )
         east_src_door_y = 24 * self.__tile_size
         east_src_door_height = 12 * self.__tile_size
-        east_dst_door_y = 41 * self.__tile_size
-        east_dst_door_height = 7 * self.__tile_size
+        east_dst_door_y = 24 * self.__tile_size
+        east_dst_door_height = 12 * self.__tile_size
         east_door = DoorNode(
-            x = (tilemap_width - SETTINGS[Keys.TILEMAP_BUFFER]) * self.__tile_size,
+            x = 52 * self.__tile_size,
             y = east_src_door_y,
             width = 2 * self.__tile_size,
             height = east_src_door_height,
