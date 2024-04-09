@@ -1,6 +1,5 @@
 import os
 import json
-from typing import Optional
 import pyglet
 
 from engine.door_node import DoorNode
@@ -16,7 +15,7 @@ class DoorsLoader:
         Reads and returns the list of doors from the file provided in [source].
         """
 
-        doors_list: List[DoorNode] = []
+        doors_list: list[DoorNode] = []
 
         abs_path: str = os.path.join(pyglet.resource.path[0], source)
 
@@ -76,4 +75,4 @@ class DoorsLoader:
     @staticmethod
     def read_dst_door() -> list[str]:
         # TODO
-        pass
+        return []
