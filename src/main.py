@@ -70,7 +70,7 @@ class Rughai:
         )
 
         # Create a scene.
-        self.__active_scene = R_0_0(
+        self.__active_scene = R_0_8(
             window = self._window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],
@@ -157,6 +157,22 @@ class Rughai:
                     bundle = bundle,
                     on_ended = self.__on_scene_end
                 )
+            elif bundle["next_scene"] == scenes.R_0_7:
+                self.__active_scene = R_0_7(
+                    window = self._window,
+                    view_width = SETTINGS[Keys.VIEW_WIDTH],
+                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
+                    bundle = bundle,
+                    on_ended = self.__on_scene_end
+                )
+            elif bundle["next_scene"] == scenes.R_0_8:
+                self.__active_scene = R_0_8(
+                    window = self._window,
+                    view_width = SETTINGS[Keys.VIEW_WIDTH],
+                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
+                    bundle = bundle,
+                    on_ended = self.__on_scene_end
+                )
 
     def on_draw(self) -> None:
         """
@@ -208,18 +224,18 @@ class Rughai:
         # pyglet.clock.schedule(self.update)
         pyglet.app.run()
 
-map_res = random_walk(
-    map_width = 30,
-    map_height = 30,
-    lifespan = 120,
-    max_reach = 8
-)
+# map_res = random_walk(
+#     map_width = 30,
+#     map_height = 30,
+#     lifespan = 120,
+#     max_reach = 8
+# )
 
-map_res_trans: list[list[str]] = []
-for line in map_res:
-    map_res_trans.append(list(map(lambda x: "@" if x == 0 else ".", line)))
+# map_res_trans: list[list[str]] = []
+# for line in map_res:
+#     map_res_trans.append(list(map(lambda x: "@" if x == 0 else ".", line)))
 
-print(map_res_trans)
+# print(map_res_trans)
 
 app = Rughai()
 app.run()

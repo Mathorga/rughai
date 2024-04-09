@@ -42,7 +42,7 @@ class PropLoader:
 
             # Make sure the current file is actually a file (and not a directory).
             if os.path.isfile(file_path):
-                print(f"Loading prop {file_path}")
+                # print(f"Loading prop {file_path}")
 
                 propmap = Image.open(file_path)
                 propmap_data = propmap.load()

@@ -1,0 +1,27 @@
+{
+    "elements": [
+        {
+            "id": "south",
+            "location": "49.0,0.0",
+            "size": "8.0,2.0",
+            "direction": "south",
+            "dst_room": "r_0_1",
+            "dst_door": "north"
+        },
+        {
+            "id": "east",
+            "location": "73.0,34.0",
+            "size": "2.0,6.0",
+            "direction": "east",
+            "dst_room": "r_0_6",
+            "dst_door": "west"
+        },
+        {
+            "id": "test",
+            "location": "73.0,34.0",
+            "size": "2.0,6.0",
+            "direction": "west",
+            "dst_location": "34.0,28.0"
+        }
+    ]
+}

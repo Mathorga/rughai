@@ -6,6 +6,7 @@ from clouds_node import CloudsNode
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
+from engine.utils.utils import remap
 from engine.wall_node import WallNode
 from prop_loader import PropLoader
 from engine.scene_node import Bounds, SceneNode
@@ -89,10 +90,14 @@ class R_0_1(PlayableSceneNode):
         )
 
         # Place doors.
+        north_src_door_x: float = 46 * self.__tile_size
+        north_src_door_width: float = 8 * self.__tile_size
+        north_dst_door_x: float = 49 * self.__tile_size
+        north_dst_door_width: float = 8 * self.__tile_size
         north_door = DoorNode(
-            x = 47 * self.__tile_size,
+            x = north_src_door_x,
             y = 32 * self.__tile_size,
-            width = 6 * self.__tile_size,
+            width = north_src_door_width,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -102,17 +107,21 @@ class R_0_1(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_0,
                         "player_position": [
-                            self._player.x,
+                            north_dst_door_x + remap(self._player.x - north_src_door_x, 0, north_src_door_width, 0, north_dst_door_width),
                             (SETTINGS[Keys.TILEMAP_BUFFER] + 1) * self.__tile_size
                         ]
                     }
                 ),
             batch = scenes.ACTIVE_SCENE.world_batch
         )
+        south_west_src_door_x: float = 30 * self.__tile_size
+        south_west_src_door_width: float = 6 * self.__tile_size
+        south_west_dst_door_x: float = 29 * self.__tile_size
+        south_west_dst_door_width: float = 6 * self.__tile_size
         south_west_door = DoorNode(
-            x = 30 * self.__tile_size,
-            y = 0,
-            width = 6 * self.__tile_size,
+            x = south_west_src_door_x,
+            y = 0.0,
+            width = south_west_src_door_width,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -122,17 +131,21 @@ class R_0_1(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_2,
                         "player_position": [
-                            self._player.x,
-                            49 * self.__tile_size
+                            south_west_dst_door_x + remap(self._player.x - south_west_src_door_x, 0, south_west_src_door_width, 0, south_west_dst_door_width),
+                            50 * self.__tile_size
                         ]
                     }
                 ),
             batch = scenes.ACTIVE_SCENE.world_batch
         )
+        south_east_src_door_x: float = 56 * self.__tile_size
+        south_east_src_door_width: float = 6 * self.__tile_size
+        south_east_dst_door_x: float = 57 * self.__tile_size
+        south_east_dst_door_width: float = 6 * self.__tile_size
         south_east_door = DoorNode(
-            x = 56 * self.__tile_size,
+            x = south_east_src_door_x,
             y = 0,
-            width = 6 * self.__tile_size,
+            width = south_east_src_door_width,
             height = 2 * self.__tile_size,
             tags = [collision_tags.PLAYER_SENSE],
             on_triggered = lambda tags, entered:
@@ -142,8 +155,8 @@ class R_0_1(PlayableSceneNode):
                         "event": events.CHANGE_ROOM,
                         "next_scene": scenes.R_0_2,
                         "player_position": [
-                            self._player.x,
-                            49 * self.__tile_size
+                            south_east_dst_door_x + remap(self._player.x - south_east_src_door_x, 0, south_east_src_door_width, 0, south_east_dst_door_width),
+                            50 * self.__tile_size
                         ]
                     }
                 ),
