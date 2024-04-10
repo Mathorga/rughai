@@ -6,7 +6,8 @@ import pyglet
 from constants import collision_tags, events
 from engine.door_node import DoorNode
 
-directions: dict[str, tuple[float, float]] = {
+DST_DOOR_OFFSET: float = 2.0
+DIRECTIONS: dict[str, tuple[float, float]] = {
     "north": (0.0, 1.0),
     "south": (0.0, -1.0),
     "east": (1.0, 0.0),
@@ -84,7 +85,7 @@ class DoorsLoader:
         dst_room: str = data["dst_room"]
 
         # Make sure a valid direction is defined.
-        assert data["direction"] in directions
+        assert data["direction"] in DIRECTIONS
 
         dst_location: tuple[float, float] | None = None
 
@@ -168,6 +169,6 @@ class DoorsLoader:
         )
 
         # Apply direction.
-        result: tuple[float, float] = tuple[float, float](x + y for x, y in zip(door_center, directions[direction]))
+        result: tuple[float, float] = tuple[float, float](x + y * DST_DOOR_OFFSET for x, y in zip(door_center, DIRECTIONS[direction]))
 
         return result
