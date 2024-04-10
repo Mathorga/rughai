@@ -1,6 +1,7 @@
 from typing import Callable, List, Optional
 import pyglet
 
+from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
@@ -146,6 +147,12 @@ class R_0_0(PlayableSceneNode):
                 ),
             batch = scenes.ACTIVE_SCENE.world_batch
         )
+        # doors: list[DoorNode] = DoorsLoader.fetch(
+        #     source = "doormaps/r_0_0.json",
+        #     tile_size = (self.__tile_size, self.__tile_size),
+        #     on_triggered = self.on_door_triggered,
+        #     batch = scenes.ACTIVE_SCENE.world_batch
+        # )
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
@@ -205,6 +212,7 @@ class R_0_0(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_child(self._player)
         scenes.ACTIVE_SCENE.add_child(south_door)
         scenes.ACTIVE_SCENE.add_child(east_door)
+        # scenes.ACTIVE_SCENE.add_children(doors)
         scenes.ACTIVE_SCENE.add_child(energy_bar)
         scenes.ACTIVE_SCENE.add_child(health_bar)
 

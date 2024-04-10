@@ -1,0 +1,20 @@
+{
+    "elements": [
+        {
+            "id": "north",
+            "location": "46.0,32.0",
+            "size": "8.0,2.0",
+            "direction": "north",
+            "dst_room": "r_0_0",
+            "dst_door": "south"
+        },
+        {
+            "id": "south_west",
+            "location": "30.0,0.0",
+            "size": "6.0,2.0",
+            "direction": "south",
+            "dst_room": "r_0_2",
+            "dst_door": "north_west"
+        }
+    ]
+}
