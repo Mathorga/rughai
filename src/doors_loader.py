@@ -6,7 +6,8 @@ import pyglet
 from constants import collision_tags, events
 from engine.door_node import DoorNode
 
-directions: dict[str, tuple[float, float]] = {
+DST_DOOR_OFFSET: float = 2.0
+DIRECTIONS: dict[str, tuple[float, float]] = {
     "north": (0.0, 1.0),
     "south": (0.0, -1.0),
     "east": (1.0, 0.0),
@@ -47,61 +48,10 @@ class DoorsLoader:
 
         # Loop through defined wall types.
         for element in data["elements"]:
-            # Make sure location, size, direction and destination room are defined for the door.
-            assert "location" in element
-            assert "size" in element
-            assert "direction" in element
-            assert "dst_room" in element
-
-            # Make sure either destination location or destination door are defined.
-            assert "dst_location" in element or "dst_door" in element
-
-            location_string: str = element["location"]
-            location: tuple[float, float] = tuple[float, float](map(lambda element: float(element), tuple(location_string.split(","))))
-            size_string: str = element["size"]
-            size: tuple[float, float] = tuple[float, float](map(lambda element: float(element), tuple(size_string.split(","))))
-            direction: str = element["direction"]
-            dst_room: str = element["dst_room"]
-
-            # Make sure a valid direction is defined.
-            assert element["direction"] in directions
-
-            dst_location: tuple[float, float] | None = None
-
-            if "dst_door" in element:
-                # Read the destination location from destination door.
-                dst_location = DoorsLoader.dst_location_from_door(
-                    dst_room = dst_room,
-                    dst_door = element["dst_door"],
-                    direction = direction
-                )
-            else:
-                dst_loc_string: str = element["dst_location"]
-                dst_location = tuple[float, float](map(lambda element: float(element), tuple(dst_loc_string.split(","))))
-
-            # Make sure a destination location was found.
-            assert dst_location is not None
-
-            print("DST_LOCATION", dst_location)
-
-            # Create a new door node with all data.
-            door: DoorNode = DoorNode(
-                x = location[0] * tile_size[0],
-                y = location[1] * tile_size[1],
-                width = int(size[0] * tile_size[0]),
-                height = int(size[1] * tile_size[1]),
-                tags = [collision_tags.PLAYER_SENSE],
-                on_triggered = lambda tags, entered: on_triggered(
-                    entered,
-                    {
-                        "event": events.CHANGE_ROOM,
-                        "next_scene": dst_room,
-                        "player_position": [
-                            dst_location[0] * tile_size[0],
-                            dst_location[1] * tile_size[1]
-                        ]
-                    }
-                ) if on_triggered is not None and dst_location is not None else None,
+            door: DoorNode = DoorsLoader.create_door(
+                data = element,
+                tile_size = tile_size,
+                on_triggered = on_triggered,
                 batch = batch
             )
 
@@ -109,6 +59,74 @@ class DoorsLoader:
             doors_list.append(door)
 
         return doors_list
+
+    @staticmethod
+    def create_door(
+        data: dict,
+        tile_size: tuple[float, float],
+        on_triggered: Callable[[bool, dict], None] | None = None,
+        batch: pyglet.graphics.Batch | None = None
+    ) -> DoorNode:
+
+        # Make sure location, size, direction and destination room are defined for the door.
+        assert "location" in data
+        assert "size" in data
+        assert "direction" in data
+        assert "dst_room" in data
+
+        # Make sure either destination location or destination door are defined.
+        assert "dst_location" in data or "dst_door" in data
+
+        location_string: str = data["location"]
+        location: tuple[float, float] = tuple[float, float](map(lambda element: float(element), tuple(location_string.split(","))))
+        size_string: str = data["size"]
+        size: tuple[float, float] = tuple[float, float](map(lambda element: float(element), tuple(size_string.split(","))))
+        direction: str = data["direction"]
+        dst_room: str = data["dst_room"]
+
+        # Make sure a valid direction is defined.
+        assert data["direction"] in DIRECTIONS
+
+        dst_location: tuple[float, float] | None = None
+
+        if "dst_door" in data:
+            # Read the destination location from destination door.
+            dst_location = DoorsLoader.dst_location_from_door(
+                dst_room = dst_room,
+                dst_door = data["dst_door"],
+                direction = direction
+            )
+        else:
+            dst_loc_string: str = data["dst_location"]
+            dst_location = tuple[float, float](map(lambda element: float(element), tuple(dst_loc_string.split(","))))
+
+        # Make sure a destination location was found.
+        assert dst_location is not None
+
+        print("DST_LOCATION", dst_location)
+
+        # Create a new door node with all data.
+        door: DoorNode = DoorNode(
+            x = location[0] * tile_size[0],
+            y = location[1] * tile_size[1],
+            width = int(size[0] * tile_size[0]),
+            height = int(size[1] * tile_size[1]),
+            tags = [collision_tags.PLAYER_SENSE],
+            on_triggered = lambda tags, entered: on_triggered(
+                entered,
+                {
+                    "event": events.CHANGE_ROOM,
+                    "next_scene": dst_room,
+                    "player_position": [
+                        dst_location[0] * tile_size[0],
+                        dst_location[1] * tile_size[1]
+                    ]
+                }
+            ) if on_triggered is not None and dst_location is not None else None,
+            batch = batch
+        )
+
+        return door
 
     @staticmethod
     def dst_location_from_door(dst_room: str, dst_door: str, direction: str) -> tuple[float, float] | None:
@@ -151,6 +169,6 @@ class DoorsLoader:
         )
 
         # Apply direction.
-        result: tuple[float, float] = tuple[float, float](x + y for x, y in zip(door_center, directions[direction]))
+        result: tuple[float, float] = tuple[float, float](x + y * DST_DOOR_OFFSET for x, y in zip(door_center, DIRECTIONS[direction]))
 
         return result

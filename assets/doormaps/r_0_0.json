@@ -7,6 +7,14 @@
             "direction": "south",
             "dst_room": "r_0_1",
             "dst_door": "north"
+        },
+        {
+            "id": "east",
+            "location": "72.0,34.0",
+            "size": "2.0,6.0",
+            "direction": "east",
+            "dst_room": "r_0_6",
+            "dst_door": "west"
         }
     ]
 }
