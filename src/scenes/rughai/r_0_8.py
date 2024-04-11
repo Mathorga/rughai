@@ -3,6 +3,7 @@ from constants import collision_tags
 import pyglet
 
 from clouds_node import CloudsNode
+from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
@@ -90,52 +91,10 @@ class R_0_8(PlayableSceneNode):
         )
 
         # Place doors.
-        north_src_door_x: float = 5 * self.__tile_size
-        north_src_door_width: float = 11 * self.__tile_size
-        north_dst_door_x: float = 6 * self.__tile_size
-        north_dst_door_width: float = 11 * self.__tile_size
-        north_door = DoorNode(
-            x = north_src_door_x,
-            y = 122 * self.__tile_size,
-            width = north_src_door_width,
-            height = 2 * self.__tile_size,
-            tags = [collision_tags.PLAYER_SENSE],
-            on_triggered = lambda tags, entered:
-                self.on_door_triggered(
-                    entered = entered,
-                    bundle = {
-                        "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_7,
-                        "player_position": [
-                            north_dst_door_x + remap(self._player.x - north_src_door_x, 0, north_src_door_width, 0, north_dst_door_width),
-                            (SETTINGS[Keys.TILEMAP_BUFFER] + 1) * self.__tile_size
-                        ]
-                    }
-                ),
-            batch = scenes.ACTIVE_SCENE.world_batch
-        )
-        west_src_door_y: float = 41 * self.__tile_size
-        west_src_door_height: float = 7 * self.__tile_size
-        west_dst_door_y: float = 21 * self.__tile_size
-        west_dst_door_height: float = 6 * self.__tile_size
-        west_door = DoorNode(
-            x = 0.0,
-            y = west_src_door_y,
-            width = 2 * self.__tile_size,
-            height = west_src_door_height,
-            tags = [collision_tags.PLAYER_SENSE],
-            on_triggered = lambda tags, entered:
-                self.on_door_triggered(
-                    entered = entered,
-                    bundle = {
-                        "event": events.CHANGE_ROOM,
-                        "next_scene": scenes.R_0_3,
-                        "player_position": [
-                            116 * self.__tile_size,
-                            west_dst_door_y + remap(self._player.y - west_src_door_y, 0, west_src_door_height, 0, west_dst_door_height)
-                        ]
-                    }
-                ),
+        doors: list[DoorNode] = DoorsLoader.fetch(
+            source = "doormaps/r_0_8.json",
+            tile_size = (self.__tile_size, self.__tile_size),
+            on_triggered = self.on_door_triggered,
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
@@ -179,7 +138,6 @@ class R_0_8(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_child(self._player)
         scenes.ACTIVE_SCENE.add_child(clouds)
         scenes.ACTIVE_SCENE.add_children(props)
-        scenes.ACTIVE_SCENE.add_child(north_door)
-        scenes.ACTIVE_SCENE.add_child(west_door)
+        scenes.ACTIVE_SCENE.add_children(doors)
         scenes.ACTIVE_SCENE.add_child(energy_bar)
         scenes.ACTIVE_SCENE.add_child(health_bar)

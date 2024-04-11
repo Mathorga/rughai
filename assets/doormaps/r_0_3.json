@@ -1,0 +1,28 @@
+{
+    "elements": [
+        {
+            "id": "north_west",
+            "location": "40.0,28.0",
+            "size": "11.0,2.0",
+            "direction": "north",
+            "dst_room": "r_0_2",
+            "dst_door": "south_west"
+        },
+        {
+            "id": "north_east",
+            "location": "89.0,28.0",
+            "size": "5.0,2.0",
+            "direction": "north",
+            "dst_room": "r_0_4",
+            "dst_door": "south"
+        },
+        {
+            "id": "east",
+            "location": "118.0,21.0",
+            "size": "2.0,6.0",
+            "direction": "east",
+            "dst_room": "r_0_8",
+            "dst_door": "west"
+        }
+    ]
+}

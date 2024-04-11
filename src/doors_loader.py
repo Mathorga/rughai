@@ -103,8 +103,6 @@ class DoorsLoader:
         # Make sure a destination location was found.
         assert dst_location is not None
 
-        print("DST_LOCATION", dst_location)
-
         # Create a new door node with all data.
         door: DoorNode = DoorNode(
             x = location[0] * tile_size[0],

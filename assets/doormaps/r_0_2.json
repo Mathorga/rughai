@@ -22,7 +22,7 @@
             "size": "10.0,2.0",
             "direction": "south",
             "dst_room": "r_0_3",
-            "dst_door": "north"
+            "dst_door": "north_west"
         }
     ]
 }
