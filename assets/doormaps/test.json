@@ -21,6 +21,7 @@
             "location": "73.0,34.0",
             "size": "2.0,6.0",
             "direction": "west",
+            "dst_room": "r_0_1",
             "dst_location": "34.0,28.0"
         }
     ]
