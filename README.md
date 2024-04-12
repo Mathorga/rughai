@@ -133,3 +133,15 @@ Animation files are defined as follows:</br>
   * **loop[bool][optional]**: whether the animation should loop or not.</br>
 
 [Examples](/assets/sprites/iryo/animations)</br>
+
+## Wallmaps
+All walls for a room can be defined via a simple json placement file.</br>
+#TODO
+
+[Examples](/assets/wallmaps)</br>
+
+## Doormaps
+All doors for a room can be defined via a simple json placement file.</br>
+#TODO
+
+[Examples](/assets/doormaps)</br>

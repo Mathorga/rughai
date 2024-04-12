@@ -4,7 +4,7 @@ import pyglet
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 from engine.utils.utils import set_animation_anchor
-from props.prop_node import PropNode
+from props.idle_prop_node import PropNode
 
 class RTreeM(PositionNode):
     def __init__(

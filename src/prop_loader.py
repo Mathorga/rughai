@@ -4,7 +4,12 @@ import pyglet
 from PIL import Image, ImageDraw
 
 from engine.node import PositionNode
-from props.prop_node import IdlePropNode
+from props.idle_prop_node import IdlePropNode
+from stan_lee_node import StanLeeNode
+
+PROP_MAPPING: dict[str, type] = {
+    "stan_lee": StanLeeNode
+}
 
 def map_prop(
     prop_name: str,
@@ -12,7 +17,6 @@ def map_prop(
     y: float,
     batch: Optional[pyglet.graphics.Batch] = None
 ) -> PositionNode:
-    # if prop_name in ("grass_0", "grass_1", "tree_s", "tree_m", "tree_l", "bush_0"):
     return IdlePropNode(
         source = f"idle_prop/rughai/{prop_name}.json",
         x = x,
