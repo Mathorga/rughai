@@ -6,7 +6,7 @@
             "size": "11.0,2.0",
             "direction": "north",
             "dst_room": "r_0_2",
-            "dst_door": "south_west"
+            "dst_door": "south"
         },
         {
             "id": "north_east",
