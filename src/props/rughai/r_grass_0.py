@@ -3,7 +3,7 @@ import pyglet
 
 from engine.node import PositionNode
 from engine.utils.utils import set_animation_anchor
-from props.prop_node import PropNode
+from props.idle_prop_node import PropNode
 
 class RGrass0(PositionNode):
     def __init__(

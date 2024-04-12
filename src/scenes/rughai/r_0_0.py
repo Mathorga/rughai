@@ -5,7 +5,6 @@ from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from engine.utils.utils import remap
 from prop_loader import PropLoader
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
@@ -14,10 +13,8 @@ from engine.wall_node import WallNode
 from engine.settings import SETTINGS, Keys
 from engine import controllers
 
-from constants import collision_tags
 from player_node import PlayerNode
 from clouds_node import CloudsNode
-import constants.events as events
 import constants.scenes as scenes
 from battery_node import BatteryNode
 from stan_lee_node import StanLeeNode
@@ -80,7 +77,7 @@ class R_0_0(PlayableSceneNode):
             on_animation_end = lambda : None,
             x = (tilemap_width * self.__tile_size) // 2,
             y = (tilemap_height * self.__tile_size) // 2,
-            z = -500,
+            z = -1500,
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
@@ -89,7 +86,6 @@ class R_0_0(PlayableSceneNode):
             bundle["player_position"][0] if bundle else 50 * self.__tile_size,
             bundle["player_position"][1] if bundle else 25 * self.__tile_size,
         )
-        print(player_position)
         cam_target = PositionNode()
         self._player = PlayerNode(
             cam_target = cam_target,
