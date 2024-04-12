@@ -14,6 +14,7 @@ from engine.settings import SETTINGS, Keys
 
 from engine.utils.utils import remap
 from engine.wall_node import WallNode
+from idle_prop_loader import IdlePropLoader
 from player_node import PlayerNode
 from duk_node import DukNode
 import constants.events as events
@@ -132,6 +133,12 @@ class R_0_3(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
+        # Props.
+        props = IdlePropLoader.fetch_prop_list(
+            "propmaps/r_0_3",
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
+
         scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
         scenes.ACTIVE_SCENE.add_child(bg)
@@ -140,6 +147,7 @@ class R_0_3(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target=True)
         scenes.ACTIVE_SCENE.add_child(self._player)
         scenes.ACTIVE_SCENE.add_child(clouds)
+        scenes.ACTIVE_SCENE.add_children(props)
         # self._scene.add_child(duk)
         scenes.ACTIVE_SCENE.add_children(doors)
         scenes.ACTIVE_SCENE.add_child(energy_bar)
