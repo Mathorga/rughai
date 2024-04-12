@@ -5,7 +5,7 @@ from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from prop_loader import PropLoader
+from idle_prop_loader import PROP_MAPPING, IdlePropLoader
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
@@ -128,23 +128,23 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Props.
-        props = PropLoader.fetch_prop_list(
+        props = IdlePropLoader.fetch_prop_list(
             "propmaps/r_0_0",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
         # Stan Lee.
-        stan_lee = StanLeeNode(
+        stan_lee = PROP_MAPPING["stan_lee"](
             x = self.__tile_size * 48,
             y = self.__tile_size * 35,
             world_batch = scenes.ACTIVE_SCENE.world_batch,
             ui_batch = scenes.ACTIVE_SCENE.ui_batch
         )
-        self.battery = BatteryNode(
+        self.battery = PROP_MAPPING["battery"](
             x = self.__tile_size * 58,
             y = self.__tile_size * 35,
-            on_interaction = self.delete_battery,
-            batch = scenes.ACTIVE_SCENE.world_batch
+            world_batch = scenes.ACTIVE_SCENE.world_batch,
+            ui_batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
         scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
@@ -161,8 +161,3 @@ class R_0_0(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_children(doors)
         scenes.ACTIVE_SCENE.add_child(energy_bar)
         scenes.ACTIVE_SCENE.add_child(health_bar)
-
-    def delete_battery(self) -> None:
-        if scenes.ACTIVE_SCENE is not None:
-            scenes.ACTIVE_SCENE.remove_child(self.battery)
-        self.battery.delete()

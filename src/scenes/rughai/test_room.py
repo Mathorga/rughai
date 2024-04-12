@@ -5,7 +5,7 @@ from constants import collision_tags
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from prop_loader import PropLoader
+from idle_prop_loader import IdlePropLoader
 from engine.scene_node import Bounds, SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode

@@ -15,7 +15,7 @@ from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
 from editor_tool import EditorTool
 
-TOOL_COLOR: Tuple[int, int, int, int] = (0x66, 0x44, 0x22, 0xAA)
+TOOL_COLOR: Tuple[int, int, int, int] = (0x22, 0x44, 0x66, 0xAA)
 ALT_COLOR: Tuple[int, int, int, int] = (0xFF, 0x00, 0x00, 0x7F)
 
 class EditorMenuTitleNode(PositionNode):
@@ -70,7 +70,7 @@ class EditorMenuTitleNode(PositionNode):
             self.__text.delete()
             self.__text = None
 
-class PropEditorMenuNode(Node):
+class IdlePropEditorMenuNode(Node):
     def __init__(
         self,
         prop_names: Dict[str, List[str]],
@@ -218,7 +218,7 @@ class PropEditorMenuNode(Node):
                 batch = self.__batch
             )
 
-class PlacePropTool(EditorTool):
+class PlaceIdlePropTool(EditorTool):
     def __init__(
         self,
         view_width: int,
@@ -255,7 +255,7 @@ class PlacePropTool(EditorTool):
         self.__props: List[PositionNode] = []
         self.__refresh_props()
 
-        self.__menu: PropEditorMenuNode = PropEditorMenuNode(
+        self.__menu: IdlePropEditorMenuNode = IdlePropEditorMenuNode(
             prop_names = self.__prop_names,
             view_width = view_width,
             view_height = view_height,
@@ -263,7 +263,7 @@ class PlacePropTool(EditorTool):
             batch = self.__ui_batch,
         )
 
-        self.name = "Place prop"
+        self.name = "Place idle prop"
         self.color = TOOL_COLOR
 
     def get_cursor_icon(self) -> PositionNode:

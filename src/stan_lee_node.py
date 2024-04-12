@@ -5,8 +5,9 @@ from constants import collision_tags
 from engine.dialog_node import DialogNode
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
+from props.prop_node import PropNode
 
-class StanLeeNode(PositionNode):
+class StanLeeNode(PropNode):
     def __init__(
         self,
         x: float = 0,
@@ -14,7 +15,12 @@ class StanLeeNode(PositionNode):
         world_batch: Optional[pyglet.graphics.Batch] = None,
         ui_batch: Optional[pyglet.graphics.Batch] = None,
     ) -> None:
-        super().__init__(x, y)
+        super().__init__(
+            x = x,
+            y = y,
+            world_batch = world_batch,
+            ui_batch = ui_batch
+        )
 
         self.__image = pyglet.resource.image("sprites/extras/stan_lee.png")
         self.__image.anchor_x = 4
