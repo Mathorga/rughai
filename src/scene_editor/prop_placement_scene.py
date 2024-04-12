@@ -13,8 +13,9 @@ from engine.settings import SETTINGS, Keys
 from engine.map_cursor_node import MapCursorNode
 
 from editor_tools.editor_tool import ChangeSceneTool, EditorTool, PlaceDoorTool
-from editor_tools.place_prop_tool import PlacePropTool
+from editor_tools.place_idle_prop_tool import PlaceIdlePropTool
 from editor_tools.place_wall_tool import PlaceWallTool
+from editor_tools.place_prop_tool import PlacePropTool
 
 class ActionSign(PositionNode):
     def __init__(
@@ -115,6 +116,17 @@ class PropPlacementScene(Node):
 
         # All tools are in this dictionary.
         self.__tools: List[EditorTool] = [
+            PlaceIdlePropTool(
+                view_width = view_width,
+                view_height = view_height,
+                tilemap_width = self.__tilemap_width,
+                tilemap_height = self.__tilemap_height,
+                tile_size = self.__tile_size,
+                scene_name = scene_name,
+                on_icon_changed = self.__update_cursor_icon,
+                world_batch = scenes.ACTIVE_SCENE.world_batch,
+                ui_batch = scenes.ACTIVE_SCENE.ui_batch
+            ),
             PlacePropTool(
                 view_width = view_width,
                 view_height = view_height,

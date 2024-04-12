@@ -3,28 +3,17 @@ from typing import Dict, List, Optional, Set, Tuple
 import pyglet
 from PIL import Image, ImageDraw
 
+from battery_node import BatteryNode
 from engine.node import PositionNode
 from props.idle_prop_node import IdlePropNode
 from stan_lee_node import StanLeeNode
 
 PROP_MAPPING: dict[str, type] = {
-    "stan_lee": StanLeeNode
+    "stan_lee": StanLeeNode,
+    "battery": BatteryNode
 }
 
-def map_prop(
-    prop_name: str,
-    x: float,
-    y: float,
-    batch: Optional[pyglet.graphics.Batch] = None
-) -> PositionNode:
-    return IdlePropNode(
-        source = f"idle_prop/rughai/{prop_name}.json",
-        x = x,
-        y = y,
-        batch = batch
-    )
-
-class PropLoader:
+class IdlePropLoader:
     @staticmethod
     def fetch_prop_list(
         source: str,
@@ -55,7 +44,7 @@ class PropLoader:
                     for x in range(propmap.width):
                         # Only keep pixels with alpha greater than 50% (0x7F = 127).
                         if propmap_data[x, y][3] > 0x7F:
-                            prop = map_prop(
+                            prop = IdlePropLoader.map_prop(
                                 file_name.split(".")[0],
                                 x = x * tile_width + tile_width / 2,
                                 y = (propmap.height - 1 - y) * tile_height + tile_height / 2,
@@ -131,3 +120,17 @@ class PropLoader:
 
             # Save the generated propmap to file.
             propmap.save(f"{dest}/{prop_name}.png")
+
+    @staticmethod
+    def map_prop(
+        prop_name: str,
+        x: float,
+        y: float,
+        batch: Optional[pyglet.graphics.Batch] = None
+    ) -> IdlePropNode:
+        return IdlePropNode(
+            source = f"idle_prop/rughai/{prop_name}.json",
+            x = x,
+            y = y,
+            batch = batch
+        )

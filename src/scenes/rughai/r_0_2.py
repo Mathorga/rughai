@@ -9,7 +9,7 @@ from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.utils.utils import remap
 from engine.wall_node import WallNode
-from prop_loader import PropLoader
+from idle_prop_loader import IdlePropLoader
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
@@ -131,7 +131,7 @@ class R_0_2(PlayableSceneNode):
         )
 
         # Props.
-        props = PropLoader.fetch_prop_list(
+        props = IdlePropLoader.fetch_prop_list(
             "propmaps/r_0_2",
             batch = scenes.ACTIVE_SCENE.world_batch
         )

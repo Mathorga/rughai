@@ -7,19 +7,25 @@ from engine.interaction_node import InteractionNode
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 
-from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.utils import utils
+from props.prop_node import PropNode
 
-class BatteryNode(PositionNode):
+class BatteryNode(PropNode):
     def __init__(
         self,
         x: float = 0,
         y: float = 0,
-        on_interaction: Optional[Callable] = None,
-        batch: Optional[pyglet.graphics.Batch] = None
+        # on_interaction: Optional[Callable] = None,
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None
     ) -> None:
-        super().__init__(x, y)
+        super().__init__(
+            x = x,
+            y = y,
+            world_batch = world_batch,
+            ui_batch = ui_batch
+        )
 
         # Opening and closing flag.
         self.__in_transition = False
@@ -53,12 +59,12 @@ class BatteryNode(PositionNode):
             resource = self.__closed_image,
             x = x,
             y = y,
-            batch = batch
+            batch = world_batch
         )
 
         self.interaction = InteractionNode(
             on_toggle = self.__toggle,
-            on_interaction = on_interaction
+            # on_interaction = on_interaction
         )
         controllers.INTERACTION_CONTROLLER.add_interaction(self.interaction)
 
@@ -78,7 +84,7 @@ class BatteryNode(PositionNode):
                 height = 8,
                 anchor_x = 8,
                 anchor_y = 4,
-                batch = batch
+                batch = world_batch
             )
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.interaction_sensor)
