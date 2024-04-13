@@ -309,10 +309,20 @@ class PlacePropTool(EditorTool):
 
         if self.alt_mode:
             # Just clear if in alt mode.
-            self.clear(position = map_position)
+            self.clear(
+                position = (
+                    map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
+                    map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2
+                )
+            )
         else:
             # Place the currently selected prop otherwise.
-            self.place_prop(position = map_position)
+            self.place_prop(
+                position = (
+                    map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
+                    map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2
+                )
+            )
 
         PropLoader.store(
             dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}.json",
@@ -388,8 +398,8 @@ class PlacePropTool(EditorTool):
             for position in self.__prop_sets[self.__current_props_index][prop_name]:
                 prop = PropLoader.map_prop(
                     prop_name = prop_name,
-                    x = position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
-                    y = position[1] * self.__tile_size[1] + self.__tile_size[1] / 2,
+                    x = position[0],
+                    y = position[1],
                     world_batch = self.__world_batch,
                     ui_batch = self.__ui_batch
                 )
