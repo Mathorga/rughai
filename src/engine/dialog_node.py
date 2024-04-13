@@ -1,4 +1,4 @@
-from typing import List, Optional, Sequence
+from typing import Sequence
 import pyglet
 
 from engine import controllers
@@ -19,12 +19,12 @@ class DialogNode(PositionNode):
         self,
         x: float = 0,
         y: float = 0,
-        lines: Optional[List[str]] = None,
+        lines: list[str] | None = None,
         # Character duration in seconds.
         char_duration: float = 0.05,
-        tags: Optional[Sequence[str]] = None,
-        world_batch: Optional[pyglet.graphics.Batch] = None,
-        ui_batch: Optional[pyglet.graphics.Batch] = None,
+        tags: Sequence[str] | None = None,
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None,
     ) -> None:
         super().__init__(x, y)
 

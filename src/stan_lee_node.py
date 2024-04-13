@@ -16,13 +16,14 @@ class StanLeeNode(PropNode):
         ui_batch: Optional[pyglet.graphics.Batch] = None,
     ) -> None:
         super().__init__(
+            id = "stan_lee",
             x = x,
             y = y,
             world_batch = world_batch,
             ui_batch = ui_batch
         )
 
-        self.__image = pyglet.resource.image("sprites/extras/stan_lee.png")
+        self.__image = pyglet.resource.image("sprites/prop/other/stan_lee/stan_lee.png")
         self.__image.anchor_x = 4
         self.__image.anchor_y = 0
 

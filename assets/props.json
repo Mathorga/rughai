@@ -1,17 +1,9 @@
 {
-    "rughai": [
-        "log_1",
-        "log_2",
-        "log_3",
-        "liana_0",
-        "grave_0",
-        "grave_1",
-        "grave_2",
-        "grave_3",
-        "chest_0",
-        "trapdoor_0"
+    "other": [
+        "stan_lee",
+        "battery"
     ],
+    "rughai": [],
     "rokor": [],
-    "shieva": [],
-    "other": []
+    "shieva": []
 }

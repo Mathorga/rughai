@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Tuple
+from typing import Callable
 import pyglet
 
 from engine import controllers
@@ -6,7 +6,7 @@ from engine.collision.collision_node import CollisionNode
 from engine.collision.collision_shape import CollisionRect
 from engine.node import PositionNode
 
-DOOR_COLOR: Tuple[int, int, int, int] = (0xFF, 0xFF, 0x7F, 0x7F)
+DOOR_COLOR: tuple[int, int, int, int] = (0xFF, 0xFF, 0x7F, 0x7F)
 
 class DoorNode(PositionNode):
     def __init__(
@@ -17,9 +17,9 @@ class DoorNode(PositionNode):
         height: int = 0,
         anchor_x: float = 0,
         anchor_y: float = 0,
-        tags: List[str] = [],
-        on_triggered: Optional[Callable[[List[str], bool], None]] = None,
-        batch: Optional[pyglet.graphics.Batch] = None
+        tags: list[str] = [],
+        on_triggered: Callable[[list[str], bool], None] | None = None,
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(x, y)
 

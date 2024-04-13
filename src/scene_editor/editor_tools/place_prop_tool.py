@@ -2,21 +2,21 @@ import copy
 import sys
 import os
 import json
-from typing import Callable, Dict, List, Optional, Set, Tuple
+from typing import Callable
 import pyglet
 
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")))
 
 from engine import controllers
 from engine.node import Node, PositionNode
-from idle_prop_loader import IdlePropLoader
+from prop_loader import PropLoader
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.text_node import TextNode
 from editor_tool import EditorTool
 
-TOOL_COLOR: Tuple[int, int, int, int] = (0x66, 0x44, 0x22, 0xAA)
-ALT_COLOR: Tuple[int, int, int, int] = (0xFF, 0x00, 0x00, 0x7F)
+TOOL_COLOR: tuple[int, int, int, int] = (0x66, 0x44, 0x22, 0xAA)
+ALT_COLOR: tuple[int, int, int, int] = (0xFF, 0x00, 0x00, 0x7F)
 
 class EditorMenuTitleNode(PositionNode):
     def __init__(
@@ -25,7 +25,7 @@ class EditorMenuTitleNode(PositionNode):
         view_width: int,
         view_height: int,
         z: float = 0.0,
-        batch: Optional[pyglet.graphics.Batch] = None,
+        batch: pyglet.graphics.Batch | None = None,
     ) -> None:
         super().__init__(
             view_width / 2,
@@ -73,11 +73,11 @@ class EditorMenuTitleNode(PositionNode):
 class PropEditorMenuNode(Node):
     def __init__(
         self,
-        prop_names: Dict[str, List[str]],
+        prop_names: dict[str, list[str]],
         view_width: int,
         view_height: int,
         start_open: bool = False,
-        batch: Optional[pyglet.graphics.Batch] = None,
+        batch: pyglet.graphics.Batch | None = None,
     ) -> None:
         super().__init__()
 
@@ -91,16 +91,16 @@ class PropEditorMenuNode(Node):
 
         # Current page.
         self.__current_page_index: int = 0
-        self.__page_title: Optional[EditorMenuTitleNode] = None
+        self.__page_title: EditorMenuTitleNode | None = None
 
         # Elements in the current page.
-        self.__prop_texts: List[TextNode] = []
+        self.__prop_texts: list[TextNode] = []
 
         # Currently selected element.
         self.__current_prop_index: int = 0
-        self.__current_prop_icon: Optional[SpriteNode] = None
+        self.__current_prop_icon: SpriteNode | None = None
 
-        self.__background: Optional[RectNode] = None
+        self.__background: RectNode | None = None
 
     def update(self, dt: int) -> None:
         super().update(dt)
@@ -223,36 +223,36 @@ class PlacePropTool(EditorTool):
         self,
         view_width: int,
         view_height: int,
-        tile_size: Tuple[int, int],
+        tile_size: tuple[int, int],
         tilemap_width: int,
         tilemap_height: int,
         scene_name: str,
-        on_icon_changed: Optional[Callable] = None,
-        world_batch: Optional[pyglet.graphics.Batch] = None,
-        ui_batch: Optional[pyglet.graphics.Batch] = None
+        on_icon_changed: Callable | None = None,
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(
             on_icon_changed = on_icon_changed
         )
 
-        self.__prop_names: Dict[str, List[str]] = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
+        self.__prop_names: dict[str, list[str]] = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
         self.__in_menu: bool = False
         self.__scene_name: str = scene_name
-        self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
-        self.__ui_batch: Optional[pyglet.graphics.Batch] = ui_batch
+        self.__world_batch: pyglet.graphics.Batch | None = world_batch
+        self.__ui_batch: pyglet.graphics.Batch | None = ui_batch
 
-        self.__tile_size: Tuple[int, int] = tile_size
+        self.__tile_size: tuple[int, int] = tile_size
         self.__tilemap_width: int = tilemap_width
         self.__tilemap_height: int = tilemap_height
 
-        self.__prop_sets: List[Dict[str, Set[Tuple[int, int]]]] = [
-            IdlePropLoader.fetch_prop_sets(
-                source = f"propmaps/{scene_name}"
+        self.__prop_sets: list[dict[str, set[tuple[int, int]]]] = [
+            PropLoader.fetch_prop_sets(
+                source = f"propmaps/{scene_name}.json"
             )
         ]
         self.__current_props_index: int = 0
 
-        self.__props: List[PositionNode] = []
+        self.__props: list[PositionNode] = []
         self.__refresh_props()
 
         self.__menu: PropEditorMenuNode = PropEditorMenuNode(
@@ -277,11 +277,12 @@ class PlacePropTool(EditorTool):
             anchor_y = self.__tile_size[1] / 2,
             color = ALT_COLOR,
             batch = self.__world_batch
-        ) if self.alt_mode else IdlePropLoader.map_prop(
+        ) if self.alt_mode else PropLoader.map_prop(
             self.__menu.get_current_prop(),
             x = 0.0,
             y = 0.0,
-            batch = self.__world_batch
+            world_batch = self.__world_batch,
+            ui_batch = self.__ui_batch
         )
 
     def update(self, dt: int) -> None:
@@ -303,7 +304,7 @@ class PlacePropTool(EditorTool):
         if self.on_icon_changed is not None:
             self.on_icon_changed()
 
-    def run(self, map_position: Tuple[int, int]) -> None:
+    def run(self, map_position: tuple[int, int]) -> None:
         super().run(map_position = map_position)
 
         if self.alt_mode:
@@ -313,14 +314,12 @@ class PlacePropTool(EditorTool):
             # Place the currently selected prop otherwise.
             self.place_prop(position = map_position)
 
-        IdlePropLoader.save_prop_sets(
-            dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
-            map_width = self.__tilemap_width,
-            map_height = self.__tilemap_height,
-            prop_sets = self.__prop_sets[self.__current_props_index]
+        PropLoader.store(
+            dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}.json",
+            props = self.__props
         )
 
-    def place_prop(self, position: Tuple[int, int]) -> None:
+    def place_prop(self, position: tuple[int, int]) -> None:
         # Clear history until the current index is reached.
         self.__prop_sets = self.__prop_sets[0:self.__current_props_index + 1]
 
@@ -341,7 +340,7 @@ class PlacePropTool(EditorTool):
         # Refresh props to apply changes.
         self.__refresh_props()
 
-    def clear(self, position: Tuple[int, int]) -> None:
+    def clear(self, position: tuple[int, int]) -> None:
         """
         Deletes any prop in the current map position, regardless of the selected prop.
         """
@@ -368,8 +367,8 @@ class PlacePropTool(EditorTool):
             self.__current_props_index = len(self.__prop_sets) - 1
         self.__refresh_props()
 
-    def __load_prop_names(self, source: str) -> Dict[str, List[str]]:
-        data: Dict[str, List[str]]
+    def __load_prop_names(self, source: str) -> dict[str, list[str]]:
+        data: dict[str, list[str]]
 
         # Load JSON file.
         with open(file = source, mode = "r", encoding = "UTF-8") as content:
@@ -387,11 +386,12 @@ class PlacePropTool(EditorTool):
         # Recreate all of them starting from prop maps.
         for prop_name in list(self.__prop_sets[self.__current_props_index].keys()):
             for position in self.__prop_sets[self.__current_props_index][prop_name]:
-                prop = IdlePropLoader.map_prop(
-                    prop_name,
+                prop = PropLoader.map_prop(
+                    prop_name = prop_name,
                     x = position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
                     y = position[1] * self.__tile_size[1] + self.__tile_size[1] / 2,
-                    batch = self.__world_batch
+                    world_batch = self.__world_batch,
+                    ui_batch = self.__ui_batch
                 )
 
                 if prop is not None:

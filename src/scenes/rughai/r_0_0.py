@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from typing import Callable
 import pyglet
 
 from doors_loader import DoorsLoader
@@ -16,9 +16,7 @@ from engine import controllers
 from player_node import PlayerNode
 from clouds_node import CloudsNode
 import constants.scenes as scenes
-from battery_node import BatteryNode
-from prop_loader import PROP_MAPPING
-from stan_lee_node import StanLeeNode
+from prop_loader import PROP_MAPPING, PropLoader
 from walls_loader import WallsLoader
 
 class R_0_0(PlayableSceneNode):
@@ -27,8 +25,8 @@ class R_0_0(PlayableSceneNode):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        bundle: Optional[dict] = None,
-        on_ended: Optional[Callable[[dict], None]] = None
+        bundle: dict | None = None,
+        on_ended: Callable[[dict], None] | None = None
     ):
         super().__init__(
             window = window,
@@ -54,7 +52,7 @@ class R_0_0(PlayableSceneNode):
         controllers.SOUND_CONTROLLER.set_music(self.scene_music)
 
         # Define a tilemap.
-        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
+        tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_0.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
@@ -64,7 +62,7 @@ class R_0_0(PlayableSceneNode):
         cam_bounds = tilemaps[0].bounds
 
         # Solid walls.
-        walls: List[WallNode] = WallsLoader.fetch(
+        walls: list[WallNode] = WallsLoader.fetch(
             source = "wallmaps/r_0_0.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
@@ -129,9 +127,14 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Props.
-        props = IdlePropLoader.fetch_prop_list(
+        idle_props = IdlePropLoader.fetch_prop_list(
             "propmaps/r_0_0",
             batch = scenes.ACTIVE_SCENE.world_batch
+        )
+        props = PropLoader.fetch(
+            source = "propmaps/r_0_0.json",
+            world_batch = scenes.ACTIVE_SCENE.world_batch,
+            ui_batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
         # Stan Lee.
@@ -155,6 +158,7 @@ class R_0_0(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_children(walls)
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
         scenes.ACTIVE_SCENE.add_child(clouds)
+        scenes.ACTIVE_SCENE.add_children(idle_props)
         scenes.ACTIVE_SCENE.add_children(props)
         scenes.ACTIVE_SCENE.add_child(stan_lee)
         scenes.ACTIVE_SCENE.add_child(self.battery)

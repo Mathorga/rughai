@@ -1,17 +1,15 @@
 import os
 import json
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict
 import pyglet
 from PIL import Image, ImageDraw
 
 from battery_node import BatteryNode
-from engine.node import PositionNode
-from props.idle_prop_node import IdlePropNode
 from props.prop_node import PropNode
 from stan_lee_node import StanLeeNode
 
 PROP_MAPPING: dict[str, type] = {
-    # Rughai.
+    # Other.
     "stan_lee": StanLeeNode,
     "battery": BatteryNode
 }
@@ -20,13 +18,14 @@ class PropLoader:
     @staticmethod
     def fetch(
         source: str,
-        batch: pyglet.graphics.Batch | None = None
-    ) -> List[PropNode]:
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None
+    ) -> list[PropNode]:
         """
         Reads and returns the list of props from the file provided in [source].
         """
 
-        props_list: List[PropNode] = []
+        props_list: list[PropNode] = []
 
         abs_path: str = os.path.join(pyglet.resource.path[0], source)
 
@@ -46,117 +45,120 @@ class PropLoader:
         if len(data) <= 0:
             return []
 
-        # Loop through defined wall types.
+        # Loop through defined prop types.
         for element in data["elements"]:
-            positions: List[str] = element["positions"]
-            sizes: List[str] = element["sizes"]
+            id: str = element["id"]
+            positions: list[str] = element["positions"]
 
-            assert len(positions) == len(sizes)
+            # Make sure the current prop id is in the registered mapping.
+            assert id in PROP_MAPPING
 
-            # Loop through single walls.
+            # Loop through single props.
             for i in range(len(positions)):
                 position_string: str = positions[i]
-                size_string: str = sizes[i]
 
-                position: List[float] = list(map(lambda item: float(item), position_string.split(",")))
-                size: List[float] = list(map(lambda item: float(item), size_string.split(",")))
-
-                assert len(position) == 2 and len(size) == 2
+                position: list[float] = list(map(lambda item: float(item), position_string.split(",")))
 
                 # Create a new wall node and add it to the result.
-                props_list.append(WallNode(
+                props_list.append(PropLoader.map_prop(
+                    prop_name = id,
                     x = position[0],
                     y = position[1],
-                    width = size[0],
-                    height = size[1],
-                    tags = element["tags"],
-                    batch = batch
+                    world_batch = world_batch,
+                    ui_batch = ui_batch
                 ))
 
         return props_list
-    @staticmethod
-    def fetch_prop_list(
-        source: str,
-        tile_width: int = 8,
-        tile_height: int = 8,
-        batch: Optional[pyglet.graphics.Batch] = None
-    ) -> List[PositionNode]:
-        prop_list: List[PositionNode] = []
 
-        abs_path: str = os.path.join(pyglet.resource.path[0], source)
+    @staticmethod
+    def store(
+        dest: str,
+        props: list[PropNode]
+    ) -> None:
+        """
+        Saves a wallmap file to store all provided walls.
+        Walls are internally sorted by tags.
+        """
+
+        # Group props by type.
+        props_data: dict[str, list[PropNode]] = {}
+        for prop in props:
+            key: str = prop.id
+            if not key in props_data:
+                props_data[key] = [prop]
+            else:
+                props_data[key].append(prop)
+
+        # Prepare props data for storage.
+        result: list[dict[str, list[str]]] = []
+        for key, value in props_data.items():
+            element: dict[str, list[str]] = {
+                "id": key,
+                "positions": list(map(lambda w: f"{w.x},{w.y}", value)),
+            }
+            result.append(element)
+
+        # Write to dest file.
+        with open(file = dest, mode = "w", encoding = "UTF8") as dest_file:
+            dest_file.write(json.dumps(
+                {
+                    "elements": result
+                },
+                indent = 4
+            ))
+
+    @staticmethod
+    def fetch_prop_sets(source: str) -> dict[str, set[tuple[int, int]]]:
+        """
+        Returns a dictionary containing every found prop name as keys and a list of positions as values.
+        """
+
+        prop_sets: dict[str, set[tuple[int, int]]] = {}
+
+        abs_path = os.path.join(pyglet.resource.path[0], source)
 
         # Return an empty list if the source file is not found.
         if not os.path.exists(abs_path):
             return []
 
-        # Iterate over files in the source dir.
-        for file_name in os.listdir(abs_path):
-            file_path: str = os.path.join(abs_path, file_name)
+        print(f"Loading props {abs_path}")
 
-            # Make sure the current file is actually a file (and not a directory).
-            if os.path.isfile(file_path):
-                print(f"Loading prop {file_path}")
+        data: dict
 
-                propmap = Image.open(file_path)
-                propmap_data = propmap.load()
+        # Load the json file.
+        with open(file = abs_path, mode = "r", encoding = "UTF8") as source_file:
+            data = json.load(source_file)
 
-                for y in range(propmap.height):
-                    for x in range(propmap.width):
-                        # Only keep pixels with alpha greater than 50% (0x7F = 127).
-                        if propmap_data[x, y][3] > 0x7F:
-                            prop = PropLoader.map_prop(
-                                file_name.split(".")[0],
-                                x = x * tile_width + tile_width / 2,
-                                y = (propmap.height - 1 - y) * tile_height + tile_height / 2,
-                                batch = batch
-                            )
+        # Just return if no data is read.
+        if len(data) <= 0:
+            return []
 
-                            if prop is not None:
-                                prop_list.append(prop)
+        # Loop through defined prop types.
+        for element in data["elements"]:
+            id: str = element["id"]
+            positions: list[str] = element["positions"]
 
-        return prop_list
+            # Make sure the current prop id is in the registered mapping.
+            assert id in PROP_MAPPING
 
-    @staticmethod
-    def fetch_prop_sets(source: str) -> Dict[str, Set[Tuple[int, int]]]:
-        """
-        Returns a dictionary containing every found prop name as keys and a list of positions as values.
-        """
+            prop_sets[id] = set()
 
-        prop_list: Dict[str, Set[Tuple[int, int]]] = {}
+            # Loop through single props.
+            for i in range(len(positions)):
+                position_string: str = positions[i]
 
-        abs_path = os.path.join(pyglet.resource.path[0], source)
+                position: tuple[float, float] = tuple[float, float](map(lambda item: float(item), position_string.split(",")))
 
-        # Create the necessary directory if not already there.
-        if not os.path.exists(abs_path):
-            os.makedirs(abs_path)
+                prop_sets[id].add(position)
 
-        # Iterate over files in the source dir.
-        for file_name in os.listdir(abs_path):
-            file_path = os.path.join(abs_path, file_name)
-
-            # Make sure the current file is actually a file (and not a directory).
-            if os.path.isfile(file_path):
-                print(f"Loading file {file_path}")
-
-                propmap = Image.open(file_path)
-                propmap_data = propmap.load()
-
-                prop_list[file_name.split(".")[0]] = set()
-
-                for y in range(propmap.height):
-                    for x in range(propmap.width):
-                        # Only keep pixels with alpha greater than 50% (0x7F = 127).
-                        if propmap_data[x, y][3] > 0x7F:
-                            prop_list[file_name.split(".")[0]].add((x, propmap.height - 1 - y))
-
-        return prop_list
+        return prop_sets
 
     @staticmethod
     def save_prop_sets(
         dest: str,
         map_width: int,
         map_height: int,
-        prop_sets: Dict[str, Set[Tuple[int, int]]]
+        prop_sets: Dict[str, set[tuple[int, int]]]
     ) -> None:
         """
         Saves a propmap file for every set provided.
@@ -186,11 +188,12 @@ class PropLoader:
         prop_name: str,
         x: float,
         y: float,
-        batch: Optional[pyglet.graphics.Batch] = None
-    ) -> IdlePropNode:
-        return IdlePropNode(
-            source = f"idle_prop/rughai/{prop_name}.json",
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None
+    ) -> PropNode:
+        return PROP_MAPPING[prop_name](
             x = x,
             y = y,
-            batch = batch
+            world_batch = world_batch,
+            ui_batch = ui_batch
         )

@@ -51,7 +51,7 @@ class TextNode(PositionNode):
 
     def set_position(
         self,
-        position: Tuple[float, float],
+        position: tuple[float, float],
         z: Optional[float] = None
     ):
         self.x = position[0]

@@ -1,6 +1,5 @@
 import os
 import json
-from typing import Dict, List, Optional, Set
 import pyglet
 
 from engine.wall_node import WallNode
@@ -10,13 +9,13 @@ class WallsLoader:
     @staticmethod
     def fetch(
         source: str,
-        batch: Optional[pyglet.graphics.Batch] = None
-    ) -> List[WallNode]:
+        batch: pyglet.graphics.Batch | None = None
+    ) -> list[WallNode]:
         """
         Reads and returns the list of walls from the file provided in [source].
         """
 
-        walls_list: List[WallNode] = []
+        walls_list: list[WallNode] = []
 
         abs_path: str = os.path.join(pyglet.resource.path[0], source)
 
@@ -38,8 +37,8 @@ class WallsLoader:
 
         # Loop through defined wall types.
         for element in data["elements"]:
-            positions: List[str] = element["positions"]
-            sizes: List[str] = element["sizes"]
+            positions: list[str] = element["positions"]
+            sizes: list[str] = element["sizes"]
 
             assert len(positions) == len(sizes)
 
@@ -48,8 +47,8 @@ class WallsLoader:
                 position_string: str = positions[i]
                 size_string: str = sizes[i]
 
-                position: List[float] = list(map(lambda item: float(item), position_string.split(",")))
-                size: List[float] = list(map(lambda item: float(item), size_string.split(",")))
+                position: list[float] = list(map(lambda item: float(item), position_string.split(",")))
+                size: list[float] = list(map(lambda item: float(item), size_string.split(",")))
 
                 assert len(position) == 2 and len(size) == 2
 
@@ -68,7 +67,7 @@ class WallsLoader:
     @staticmethod
     def store(
         dest: str,
-        walls: List[WallNode]
+        walls: list[WallNode]
     ) -> None:
         """
         Saves a wallmap file to store all provided walls.
@@ -76,7 +75,7 @@ class WallsLoader:
         """
 
         # Group walls by tags.
-        walls_data: Dict[str, List[WallNode]] = {}
+        walls_data: dict[str, list[WallNode]] = {}
         for wall in walls:
             key: str = ",".join(wall.tags)
             if not key in walls_data:
@@ -85,9 +84,9 @@ class WallsLoader:
                 walls_data[key].append(wall)
 
         # Prepare walls data for storage.
-        result: List[Dict[str, List[str]]] = []
+        result: list[dict[str, list[str]]] = []
         for key, value in walls_data.items():
-            element: Dict[str, List[str]] = {
+            element: dict[str, list[str]] = {
                 "tags": key.split(","),
                 "positions": list(map(lambda w: f"{w.x},{w.y}", value)),
                 "sizes": list(map(lambda w: f"{w.width},{w.height}", value)),

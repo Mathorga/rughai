@@ -161,7 +161,7 @@ class InputController:
         Returns whether there's any move input or not, regardless its resulting magnitude.
         """
 
-        stick: Tuple[float, float] = self.sticks.get("leftstick", (0.0, 0.0))
+        stick: tuple[float, float] = self.sticks.get("leftstick", (0.0, 0.0))
         stick_vec: pyglet.math.Vec2 = pyglet.math.Vec2(stick[0], stick[1])
         return self[pyglet.window.key.D] or self[pyglet.window.key.A] or self[pyglet.window.key.W] or self[pyglet.window.key.S] or stick_vec.mag > 0.0
 
@@ -170,7 +170,7 @@ class InputController:
         Returns whether there's any aim input or not, regardless its resulting magnitude.
         """
 
-        stick: Tuple[float, float] = self.sticks.get("rightstick", (0.0, 0.0))
+        stick: tuple[float, float] = self.sticks.get("rightstick", (0.0, 0.0))
         stick_vec: pyglet.math.Vec2 = pyglet.math.Vec2(stick[0], stick[1])
         return self[pyglet.window.key.L] or self[pyglet.window.key.J] or self[pyglet.window.key.I] or self[pyglet.window.key.K] or stick_vec.mag > 0.0
 
@@ -179,7 +179,7 @@ class InputController:
         Returns the movement vector from keyboard and controller.
         """
 
-        stick: Tuple[float, float] = self.sticks.get("leftstick", (0.0, 0.0))
+        stick: tuple[float, float] = self.sticks.get("leftstick", (0.0, 0.0))
         stick_vec: pyglet.math.Vec2 = pyglet.math.Vec2(stick[0], stick[1])
         keyboard_vec: pyglet.math.Vec2 = pyglet.math.Vec2(
             self[pyglet.window.key.D] - self[pyglet.window.key.A],
@@ -193,7 +193,7 @@ class InputController:
         Returns the camera movement vector from keyboard and controller.
         """
 
-        stick: Tuple[float, float] = self.sticks.get("rightstick", (0.0, 0.0))
+        stick: tuple[float, float] = self.sticks.get("rightstick", (0.0, 0.0))
         stick_vec: pyglet.math.Vec2 = pyglet.math.Vec2(stick[0], stick[1])
         keyboard_vec: pyglet.math.Vec2 = pyglet.math.Vec2(
             self[pyglet.window.key.L] - self[pyglet.window.key.J],

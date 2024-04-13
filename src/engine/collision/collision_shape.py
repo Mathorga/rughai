@@ -19,21 +19,21 @@ class CollisionShape(PositionNode):
         x: float = 0,
         y: float = 0,
         z: float = 0.0,
-        color: Tuple[int, int, int, int] = FREE_COLOR
+        color: tuple[int, int, int, int] = FREE_COLOR
     ) -> None:
         super().__init__(x, y, z)
 
         # Velocity components.
         self.velocity_x = 0.0
         self.velocity_y = 0.0
-        self.color: Tuple[int, int, int, int] = color
+        self.color: tuple[int, int, int, int] = color
 
         self.render_shape: Optional[ShapeNode] = None
         self.velocity_shape: Optional[LineNode] = None
 
     def set_position(
         self,
-        position: Tuple[float, float],
+        position: tuple[float, float],
         z: Optional[float] = None
     ) -> None:
         """
@@ -50,7 +50,7 @@ class CollisionShape(PositionNode):
 
     def set_velocity(
         self,
-        velocity: Tuple[float, float]
+        velocity: tuple[float, float]
     ) -> None:
         """
         Sets the shape velocity.
@@ -64,7 +64,7 @@ class CollisionShape(PositionNode):
 
     def put_velocity(
         self,
-        velocity: Tuple[float, float]
+        velocity: tuple[float, float]
     ) -> None:
         """
         Sums the provided velocity to any already there.
@@ -76,7 +76,7 @@ class CollisionShape(PositionNode):
         if self.velocity_shape is not None:
             self.velocity_shape.set_delta((self.velocity_shape.delta_x + velocity[0], self.velocity_shape.delta_y + velocity[1]))
 
-    def set_color(self, color: Tuple[int, int, int, int]) -> None:
+    def set_color(self, color: tuple[int, int, int, int]) -> None:
         self.color = color
 
     def swept_collide(self, other) -> Optional[utils.CollisionHit]:
@@ -85,7 +85,7 @@ class CollisionShape(PositionNode):
     def overlap(self, _other) -> bool:
         return False
 
-    def collide(self, _other) -> Tuple[float, float]:
+    def collide(self, _other) -> tuple[float, float]:
         return (0.0, 0.0)
 
     def delete(self) -> None:
@@ -102,7 +102,7 @@ class CollisionRect(CollisionShape):
         height: int = 0,
         anchor_x: float = 0.0,
         anchor_y: float = 0.0,
-        color: Tuple[int, int, int, int] = FREE_COLOR,
+        color: tuple[int, int, int, int] = FREE_COLOR,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z, color)
@@ -165,7 +165,7 @@ class CollisionRect(CollisionShape):
             # Other.
             return False
 
-    def collide(self, other) -> Tuple[float, float]:
+    def collide(self, other) -> tuple[float, float]:
         if isinstance(other, CollisionRect):
             # Rect/rect collision.
             return utils.rect_rect_solve(
@@ -176,7 +176,7 @@ class CollisionRect(CollisionShape):
             # Other.
             return (0, 0)
 
-    def set_color(self, color: Tuple[int, int, int, int]) -> None:
+    def set_color(self, color: tuple[int, int, int, int]) -> None:
         super().set_color(color = color)
 
         # Set render shape color.
@@ -236,7 +236,7 @@ class CollisionCircle(CollisionShape):
         # https://ericleong.me/research/circle-circle/#dynamic-static-circle-collision-detection
         return None
 
-    def collide(self, other) -> Tuple[float, float]:
+    def collide(self, other) -> tuple[float, float]:
         if isinstance(other, CollisionRect):
             # Circle/rect collision.
             return utils.circle_rect_solve(

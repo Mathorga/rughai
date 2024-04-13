@@ -8,7 +8,7 @@ from engine.shapes.shape_node import ShapeNode
 class LineNode(ShapeNode):
     def __init__(
         self,
-        color: Tuple[int, int, int, int] = (0xFF, 0xFF, 0xFF, 0xFF),
+        color: tuple[int, int, int, int] = (0xFF, 0xFF, 0xFF, 0xFF),
         x: float = 0.0,
         y: float = 0.0,
         delta_x: float = 0.0,
@@ -42,14 +42,14 @@ class LineNode(ShapeNode):
     def delete(self) -> None:
         self.__shape.delete()
 
-    def set_color(self, color: Tuple[int, int, int]):
+    def set_color(self, color: tuple[int, int, int]):
         super().set_color(color)
 
         self.__shape.color = color
 
     def set_position(
         self,
-        position: Tuple[float, float]
+        position: tuple[float, float]
     ) -> None:
         super().set_position(position)
 
@@ -58,7 +58,7 @@ class LineNode(ShapeNode):
 
     def set_delta(
         self,
-        delta: Tuple[float, float]
+        delta: tuple[float, float]
     ) -> None:
         self.delta_x = delta[0]
         self.delta_y = delta[1]

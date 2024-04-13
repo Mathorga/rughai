@@ -117,7 +117,7 @@ class PlayerNode(PositionNode):
         )
 
         # Scope.
-        self.scope_offset: Tuple[float, float] = (0.0, 8.0)
+        self.scope_offset: tuple[float, float] = (0.0, 8.0)
         self.__scope = ScopeNode(
             x = self.x,
             y = self.y,

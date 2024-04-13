@@ -1,13 +1,12 @@
 from enum import Enum
-from typing import Callable, List, Optional, Tuple
-import pyglet.math as pm
+from typing import Callable, Optional
 
 from engine.collision.collision_shape import CollisionShape
 from engine.node import PositionNode
 from engine.utils.utils import CollisionHit
 
-COLLIDER_COLOR: Tuple[int, int, int, int] = (0x7F, 0xFF, 0xFF, 0x7F)
-SENSOR_COLOR: Tuple[int, int, int, int] = (0x7F, 0xFF, 0x7F, 0x7F)
+COLLIDER_COLOR: tuple[int, int, int, int] = (0x7F, 0xFF, 0xFF, 0x7F)
+SENSOR_COLOR: tuple[int, int, int, int] = (0x7F, 0xFF, 0x7F, 0x7F)
 
 class CollisionType(Enum):
     STATIC = 0
@@ -19,12 +18,12 @@ class CollisionNode(PositionNode):
         shape: Optional[CollisionShape],
         x: float = 0,
         y: float = 0,
-        active_tags: List[str] = [],
-        passive_tags: List[str] = [],
+        active_tags: list[str] = [],
+        passive_tags: list[str] = [],
         collision_type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
-        color: Optional[Tuple[int, int, int, int]] = None,
-        on_triggered: Optional[Callable[[List[str], bool], None]] = None
+        color: Optional[tuple[int, int, int, int]] = None,
+        on_triggered: Optional[Callable[[list[str], bool], None]] = None
     ) -> None:
         super().__init__(x, y)
 
@@ -54,7 +53,7 @@ class CollisionNode(PositionNode):
 
     def set_position(
         self,
-        position: Tuple[float, float],
+        position: tuple[float, float],
         z: Optional[float] = None
     ) -> None:
         super().set_position(position)
@@ -62,12 +61,12 @@ class CollisionNode(PositionNode):
         if self.shape is not None:
             self.shape.set_position(position = position)
 
-    def get_velocity(self) -> Tuple[float, float]:
+    def get_velocity(self) -> tuple[float, float]:
         return (self.velocity_x, self.velocity_y)
 
     def put_velocity(
         self,
-        velocity: Tuple[float, float]
+        velocity: tuple[float, float]
     ) -> None:
         """
         Sums the provided velocity to any already there.
@@ -80,7 +79,7 @@ class CollisionNode(PositionNode):
 
     def set_velocity(
         self,
-        velocity: Tuple[float, float]
+        velocity: tuple[float, float]
     ) -> None:
         self.velocity_x = velocity[0]
         self.velocity_y = velocity[1]

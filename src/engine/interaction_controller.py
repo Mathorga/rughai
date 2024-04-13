@@ -1,12 +1,10 @@
-from typing import List, Optional
-
 from engine.interaction_node import InteractionNode
 
 
 class InteractionController:
     def __init__(self) -> None:
-        self.interactions: List[InteractionNode] = []
-        self.active_interaction: Optional[InteractionNode] = None
+        self.interactions: list[InteractionNode] = []
+        self.active_interaction: InteractionNode | None = None
 
     def add_interaction(
         self,

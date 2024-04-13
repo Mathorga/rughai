@@ -107,7 +107,7 @@ class LoadingIndicatorNode(PositionNode):
 
     def set_position(
         self,
-        position: Tuple[float, float],
+        position: tuple[float, float],
         z: Optional[float] = None
     ) -> None:
         super().set_position(position, z)
@@ -134,7 +134,7 @@ class LoadingIndicatorNode(PositionNode):
         if self.foreground_sprite is not None:
             # Fetch texture coordinates from sprite.
             sprite_texture: pyglet.image.Texture = self.foreground_sprite.sprite.get_texture()
-            texture_coords: Tuple[
+            texture_coords: tuple[
                 # South west.
                 float, float, float,
                 # North west.

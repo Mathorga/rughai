@@ -1,6 +1,6 @@
 import os
 import random
-from typing import Optional, Tuple
+from typing import Optional
 import math
 import pyglet
 import pyglet.math as pm
@@ -55,7 +55,7 @@ class CloudNode(PositionNode):
             batch = batch
         )
 
-    def get_bounding_box(self) -> Tuple[float, float, float, float]:
+    def get_bounding_box(self) -> tuple[float, float, float, float]:
         return (
             self.x - self.image.anchor_x,
             self.y - self.image.anchor_y,

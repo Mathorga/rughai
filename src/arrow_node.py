@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Tuple
+from typing import Optional
 import pyglet
 import pyglet.math as pm
 from constants import collision_tags, scenes
@@ -44,7 +44,7 @@ class ArrowNode(PositionNode):
         self.sprite_distance: float = 1.0
 
         # Animation handlers.
-        self.animations: List[Animation] = [
+        self.animations: list[Animation] = [
             Animation(source = "sprites/scope/scope_load_0.json"),
             Animation(source = "sprites/scope/scope_load_0.json"),
             Animation(source = "sprites/scope/scope_load_1.json"),
@@ -57,7 +57,7 @@ class ArrowNode(PositionNode):
         self.sprites_delta: float = 1.5
 
         # Create sprites.
-        self.sprites: List[SpriteNode] = []
+        self.sprites: list[SpriteNode] = []
         for animation in self.animations:
             self.sprites.append(
                 SpriteNode(
@@ -105,16 +105,16 @@ class ArrowNode(PositionNode):
 
         self.__state_machine.update(dt = dt)
 
-        collider_position: Tuple[float, float] = self.__collider.get_position()
+        collider_position: tuple[float, float] = self.__collider.get_position()
 
         self.set_position(collider_position)
 
-    def set_velocity(self, velocity: Tuple[float, float]) -> None:
+    def set_velocity(self, velocity: tuple[float, float]) -> None:
         self.__collider.set_velocity(velocity = velocity)
 
     def set_position(
         self,
-        position: Tuple[float, float],
+        position: tuple[float, float],
         z: Optional[float] = None
     ) -> None:
         super().set_position(position = position, z = z)
@@ -129,7 +129,7 @@ class ArrowNode(PositionNode):
                     z = position[1] + SETTINGS[Keys.LAYERS_Z_SPACING] * 0.5
                 )
 
-    def on_collision(self, tags: List[str], enter: bool) -> None:
+    def on_collision(self, tags: list[str], enter: bool) -> None:
         self.__state_machine.on_collision(tags = tags, enter = enter)
 
     def delete(self) -> None:
@@ -161,11 +161,11 @@ class ArrowFlyState(ArrowState):
         self.actor.set_velocity((movement.x, movement.y))
 
         scene_bounds: Bounds = scenes.ACTIVE_SCENE.get_cam_bounds()
-        position: Tuple[float, float] = self.actor.get_position()
+        position: tuple[float, float] = self.actor.get_position()
         if position[0] < scene_bounds.left or position[0] > scene_bounds.right or position[1] < scene_bounds.bottom or position[1] > scene_bounds.top:
             return ArrowStates.OUT
 
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
+    def on_collision(self, tags: list[str], enter: bool) -> Optional[str]:
         if collision_tags.PLAYER_COLLISION in tags and enter:
             return ArrowStates.HIT
 

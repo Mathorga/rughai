@@ -1,5 +1,5 @@
 import json
-from typing import List, Optional, Sequence, Tuple
+from typing import Optional, Sequence
 import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
@@ -160,7 +160,7 @@ class TilemapNode(PositionNode):
         # Starting z-offset for all layers in the file.
         z_offset: int = 0,
         batch: Optional[pyglet.graphics.Batch] = None
-    ) -> List:
+    ) -> list:
         """
         Constructs a new TileMap from the given TMX (XML) file.
         Layers naming in the supplied file is critical:
@@ -266,5 +266,5 @@ class TilemapNode(PositionNode):
             self.map_height * self.__tileset.tile_height * GLOBALS[Keys.SCALING]
         )
 
-    def get_tile_size(self) -> Tuple[int, int]:
+    def get_tile_size(self) -> tuple[int, int]:
         return (self.__tileset.tile_width, self.__tileset.tile_height)

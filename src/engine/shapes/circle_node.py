@@ -32,12 +32,12 @@ class CircleNode(ShapeNode):
     def delete(self) -> None:
         self.__shape.delete()
 
-    def set_color(self, color: Tuple[int, int, int]):
+    def set_color(self, color: tuple[int, int, int]):
         super().set_color(color)
 
         self.__shape.color = color
 
-    def set_position(self, position: Tuple[int, int]) -> None:
+    def set_position(self, position: tuple[int, int]) -> None:
         self.x = position[0]
         self.__shape.x = self.x * GLOBALS[Keys.SCALING]
 

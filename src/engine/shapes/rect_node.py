@@ -14,7 +14,7 @@ class RectNode(ShapeNode):
         height: int = 0,
         anchor_x: float = 0,
         anchor_y: float = 0,
-        color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0x7F),
+        color: tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0x7F),
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(
@@ -41,14 +41,14 @@ class RectNode(ShapeNode):
     def delete(self) -> None:
         self.__shape.delete()
 
-    def set_color(self, color: Tuple[int, int, int]):
+    def set_color(self, color: tuple[int, int, int]):
         super().set_color(color)
 
         self.__shape.color = color
 
     def set_position(
         self,
-        position: Tuple[float, float],
+        position: tuple[float, float],
         z: Optional[float] = None
     ) -> None:
         super().set_position(position)
@@ -59,14 +59,14 @@ class RectNode(ShapeNode):
         if z is not None:
             self.z = z
 
-    def get_bounds(self) -> Tuple[float, float, float, float]:
+    def get_bounds(self) -> tuple[float, float, float, float]:
         """
         Computes and returns the rectangle position and size in the form of a tuple defined as (x, y, width, height).
         """
         
         return (*self.get_position(), self.__width, self.__height)
 
-    def set_bounds(self, bounds: Tuple[float, float, float, float]) -> None:
+    def set_bounds(self, bounds: tuple[float, float, float, float]) -> None:
         """
         Sets the rectangle position and size.
 

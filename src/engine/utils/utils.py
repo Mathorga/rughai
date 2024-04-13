@@ -6,7 +6,7 @@ import pyglet.math as pm
 
 EPSILON = 1e-8
 
-def scale(val: float, src: Tuple[float, float], dst: Tuple[float, float]) -> float:
+def scale(val: float, src: tuple[float, float], dst: tuple[float, float]) -> float:
     """
     Scale the given value from the scale of src to the scale of dst.
     """
@@ -342,9 +342,9 @@ def remap(x, x_min, x_max, y_min, y_max):
     return y_min + ((x - x_min) * (y_max - y_min)) / (x_max - x_min)
 
 def point_in_rect(
-    test: Tuple[float, float],
-    rect_position: Tuple[float, float],
-    rect_size: Tuple[float, float]
+    test: tuple[float, float],
+    rect_position: tuple[float, float],
+    rect_size: tuple[float, float]
 ) -> bool:
     within_x: bool = rect_position[0] <= test[0] and rect_position[0] + rect_size[0] >= test[0]
     within_y: bool = rect_position[1] <= test[1] and rect_position[1] + rect_size[1] >= test[1]
@@ -440,7 +440,7 @@ def rect_rect_solve(
     y2: float,
     w2: float,
     h2: float
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Computes the reaction vector for collisions between two AABBs.
 
@@ -479,7 +479,7 @@ def circle_rect_solve(
     y2: float,
     w2: float,
     h2: float
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     nearest_x = max(x2, min(x1, x2 + w2))
     nearest_y = max(y2, min(y1, y2 + h2))    
     dist = pm.Vec2(x1 - nearest_x, y1 - nearest_y)
@@ -488,7 +488,7 @@ def circle_rect_solve(
     penetration_vector = dist.from_magnitude(penetration_depth)
     return (penetration_vector.x, penetration_vector.y)
 
-def center_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> Tuple[float, float]:
+def center_distance(x1, y1, w1, h1, x2, y2, w2, h2) -> tuple[float, float]:
     """
     Computes the distance between the centers of the given rectangles.
     """
@@ -504,7 +504,7 @@ def circle_circle_solve(
     x2: float,
     y2: float,
     r2: float
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     angle = math.atan2(y1 - y2, x1 - x2)
     distance_between_circles = math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
     distance_to_move = r2 + r1 - distance_between_circles

@@ -21,6 +21,7 @@ class BatteryNode(PropNode):
         ui_batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(
+            id = "battery",
             x = x,
             y = y,
             world_batch = world_batch,
@@ -33,22 +34,22 @@ class BatteryNode(PropNode):
         self.__open_requested = False
         self.__close_requested = False
 
-        self.__closed_image = pyglet.resource.image("sprites/extras/battery/battery_closed.png")
+        self.__closed_image = pyglet.resource.image("sprites/prop/other/battery/battery_closed.png")
         self.__closed_image.anchor_x = 16
         self.__closed_image.anchor_y = 6
 
-        self.__opened_image = pyglet.resource.image("sprites/extras/battery/battery_open.png")
+        self.__opened_image = pyglet.resource.image("sprites/prop/other/battery/battery_open.png")
         self.__opened_image.anchor_x = 16
         self.__opened_image.anchor_y = 6
 
-        self.__open_image = pyglet.resource.animation("sprites/extras/battery/battery_opening.gif")
+        self.__open_image = pyglet.resource.animation("sprites/prop/other/battery/battery_opening.gif")
         utils.set_animation_anchor(
             animation = self.__open_image,
             x = 16.0,
             y = 6.0
         )
 
-        self.__close_image = pyglet.resource.animation("sprites/extras/battery/battery_closing.gif")
+        self.__close_image = pyglet.resource.animation("sprites/prop/other/battery/battery_closing.gif")
         utils.set_animation_anchor(
             animation = self.__close_image,
             x = 16.0,

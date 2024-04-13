@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from typing import Callable, list, Optional
 import pyglet
 from constants import collision_tags
 
@@ -62,7 +62,7 @@ class TestRoom(PlayableSceneNode):
         )
 
         # Solid walls.
-        walls: List[PositionNode] = [
+        walls: list[PositionNode] = [
             # Square.
             WallNode(
                 x = self.__tile_size * 40,

@@ -1,7 +1,7 @@
 import math
 import random
 import threading
-from typing import Callable, List, Optional, Sequence, Tuple, Union
+from typing import Callable, Optional, Sequence
 import pyglet
 import pyglet.math as pm
 
@@ -38,7 +38,7 @@ class Bounds:
 
         return self.top - self.bottom
 
-    def get_bounding_box(self) -> Tuple[int, int, int, int]:
+    def get_bounding_box(self) -> tuple[int, int, int, int]:
         assert self.top is not None and self.bottom is not None
         assert self.right is not None and self.left is not None
 
@@ -82,8 +82,8 @@ class SceneNode(Node):
         self.__cam_impulse: pyglet.math.Vec2 = pyglet.math.Vec2(0.0, 0.0)
         self.__cam_impulse_damp: float = 1.0
 
-        # List of all children.
-        self.__children: List[Node] = []
+        # list of all children.
+        self.__children: list[Node] = []
 
         # Scene title.
         if title is not None and SETTINGS[Keys.DEBUG]:
@@ -263,7 +263,7 @@ class SceneNode(Node):
 
     def add_child(
         self,
-        child: Union[Node, PositionNode],
+        child: Node | PositionNode,
         cam_target: bool = False
     ):
         """
@@ -283,7 +283,7 @@ class SceneNode(Node):
 
         self.__children.append(child)
 
-    def remove_child(self, child: Union[Node, PositionNode]):
+    def remove_child(self, child: Node | PositionNode):
         """
         Removes the provided child from the scene if present.
         """
@@ -293,7 +293,7 @@ class SceneNode(Node):
 
     def add_children(
         self,
-        children: Sequence[Union[Node, PositionNode]],
+        children: Sequence[Node | PositionNode],
     ):
         for child in children:
             self.add_child(

@@ -1,20 +1,17 @@
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 import pyglet
-from constants import collision_tags
 from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from engine.scene_node import Bounds, SceneNode
+from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 
-from engine.utils.utils import remap
 from engine.wall_node import WallNode
 from player_node import PlayerNode
-import constants.events as events
 import constants.scenes as scenes
 from walls_loader import WallsLoader
 
@@ -46,7 +43,7 @@ class R_0_5(PlayableSceneNode):
         )
 
         # Define a tilemap.
-        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
+        tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_5.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
@@ -56,7 +53,7 @@ class R_0_5(PlayableSceneNode):
         cam_bounds = tilemaps[0].bounds
 
         # Solid walls.
-        walls: List[WallNode] = WallsLoader.fetch(
+        walls: list[WallNode] = WallsLoader.fetch(
             source = "wallmaps/r_0_5.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
