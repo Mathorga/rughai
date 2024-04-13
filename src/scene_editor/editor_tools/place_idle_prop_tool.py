@@ -235,7 +235,7 @@ class PlaceIdlePropTool(EditorTool):
             on_icon_changed = on_icon_changed
         )
 
-        self.__prop_names: Dict[str, List[str]] = self.__load_prop_names(f"{pyglet.resource.path[0]}/props.json")
+        self.__prop_names: Dict[str, List[str]] = self.__load_prop_names(f"{pyglet.resource.path[0]}/idle_props.json")
         self.__in_menu: bool = False
         self.__scene_name: str = scene_name
         self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
