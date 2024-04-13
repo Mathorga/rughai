@@ -5,7 +5,7 @@ from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from idle_prop_loader import PROP_MAPPING, IdlePropLoader
+from idle_prop_loader import IdlePropLoader
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
@@ -17,6 +17,7 @@ from player_node import PlayerNode
 from clouds_node import CloudsNode
 import constants.scenes as scenes
 from battery_node import BatteryNode
+from prop_loader import PROP_MAPPING
 from stan_lee_node import StanLeeNode
 from walls_loader import WallsLoader
 

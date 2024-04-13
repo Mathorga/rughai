@@ -1,7 +1,10 @@
 {
     "elements": [
         {
-            
+            "id": "stan_lee",
+            "locations": [
+                "12.0,12.0"
+            ]
         }
     ]
 }
