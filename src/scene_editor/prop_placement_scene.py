@@ -40,11 +40,15 @@ class ActionSign(PositionNode):
 
     def set_text(self, text: str) -> None:
         self.action = text
-        self.__label.set_text(text = self.__compute_text())
+
+        if self.__label is not None:
+            self.__label.set_text(text = self.__compute_text())
 
     def set_color(self, color: tuple[int, int, int, int]) -> None:
         self.color = color
-        self.__label.set_color(color = self.__compute_color())
+
+        if self.__label is not None:
+            self.__label.set_color(color = self.__compute_color())
 
     def __compute_text(self) -> str:
         return f"(tab) {self.action}"
