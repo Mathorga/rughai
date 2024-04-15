@@ -1,17 +1,9 @@
 import os
-from typing import Dict, List, Optional, Set, Tuple
 import pyglet
 from PIL import Image, ImageDraw
 
-from battery_node import BatteryNode
 from engine.node import PositionNode
 from props.idle_prop_node import IdlePropNode
-from stan_lee_node import StanLeeNode
-
-PROP_MAPPING: dict[str, type] = {
-    "stan_lee": StanLeeNode,
-    "battery": BatteryNode
-}
 
 class IdlePropLoader:
     @staticmethod
@@ -19,9 +11,9 @@ class IdlePropLoader:
         source: str,
         tile_width: int = 8,
         tile_height: int = 8,
-        batch: Optional[pyglet.graphics.Batch] = None
-    ) -> List[PositionNode]:
-        prop_list: List[PositionNode] = []
+        batch: pyglet.graphics.Batch | None = None
+    ) -> list[PositionNode]:
+        prop_list: list[PositionNode] = []
 
         abs_path: str = os.path.join(pyglet.resource.path[0], source)
 
@@ -57,12 +49,12 @@ class IdlePropLoader:
         return prop_list
 
     @staticmethod
-    def fetch_prop_sets(source: str) -> Dict[str, Set[Tuple[int, int]]]:
+    def fetch_prop_sets(source: str) -> dict[str, set[tuple[int, int]]]:
         """
         Returns a dictionary containing every found prop name as keys and a list of positions as values.
         """
 
-        prop_list: Dict[str, Set[Tuple[int, int]]] = {}
+        prop_list: dict[str, set[tuple[int, int]]] = {}
 
         abs_path = os.path.join(pyglet.resource.path[0], source)
 
@@ -96,7 +88,7 @@ class IdlePropLoader:
         dest: str,
         map_width: int,
         map_height: int,
-        prop_sets: Dict[str, Set[Tuple[int, int]]]
+        prop_sets: dict[str, set[tuple[int, int]]]
     ) -> None:
         """
         Saves a propmap file for every set provided.
@@ -126,7 +118,7 @@ class IdlePropLoader:
         prop_name: str,
         x: float,
         y: float,
-        batch: Optional[pyglet.graphics.Batch] = None
+        batch: pyglet.graphics.Batch | None = None
     ) -> IdlePropNode:
         return IdlePropNode(
             source = f"idle_prop/rughai/{prop_name}.json",

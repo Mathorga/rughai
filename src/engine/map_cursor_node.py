@@ -16,7 +16,7 @@ class MapCursorNode(PositionNode):
         cam_target_offset: tuple = (0.0, 8.0),
         fast_speed: int = 5,
         child: Optional[PositionNode] = None,
-        on_move: Optional[Callable[[Tuple[int, int]], None]] = None,
+        on_move: Optional[Callable[[tuple[int, int]], None]] = None,
         x: float = 0.0,
         y: float = 0.0
     ) -> None:
@@ -45,7 +45,7 @@ class MapCursorNode(PositionNode):
         self.__cam_target.x = x + cam_target_offset[0]
         self.__cam_target.y = y + cam_target_offset[1]
 
-        self.__on_move: Optional[Callable[[Tuple[int, int]], None]] = on_move
+        self.__on_move: Optional[Callable[[tuple[int, int]], None]] = on_move
 
     def update(self, dt) -> None:
         # Fetch input.
@@ -91,7 +91,7 @@ class MapCursorNode(PositionNode):
         self.__child = child
         self.__child.set_position(position = self.get_position())
 
-    def get_map_position(self) -> Tuple[int, int]:
+    def get_map_position(self) -> tuple[int, int]:
         return (
             int(self.x / self.__tile_width),
             int(self.y / self.__tile_height)

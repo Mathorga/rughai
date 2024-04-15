@@ -1,6 +1,5 @@
 from enum import Enum
 import os
-from typing import List, Optional, Tuple
 import pyglet
 from engine.animation import Animation
 
@@ -25,14 +24,14 @@ class ScopeNode(PositionNode):
         z: float = 0,
         offset_x: float = 0.0,
         offset_y: float = 0.0,
-        batch: Optional[pyglet.graphics.Batch] = None
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(x, y, z)
 
-        self.batch: Optional[pyglet.graphics.Batch] = batch
+        self.batch: pyglet.graphics.Batch | None = batch
 
         # Aim sprite offset, defines the offset from self.x and self.y, respectively.
-        self.sprite_offset: Tuple[float, float] = (offset_x, offset_y)
+        self.sprite_offset: tuple[float, float] = (offset_x, offset_y)
 
         # Sprite distance, defines the distance at which the sprite floats.
         self.sprite_distance: float = 10.0
@@ -40,7 +39,7 @@ class ScopeNode(PositionNode):
         self.direction = 0.0
 
         # State sprite.
-        self.animations: List[Animation] = [
+        self.animations: list[Animation] = [
             Animation(source = "sprites/scope/scope_load_0.json"),
             Animation(source = "sprites/scope/scope_load_0.json"),
             Animation(source = "sprites/scope/scope_load_1.json"),
@@ -70,7 +69,7 @@ class ScopeNode(PositionNode):
         shader_program["alpha"] = 0.5
 
         # Create sprites.
-        self.sprites: List[SpriteNode] = []
+        self.sprites: list[SpriteNode] = []
         for animation in self.animations:
             self.sprites.append(
                 SpriteNode(
@@ -97,8 +96,8 @@ class ScopeNode(PositionNode):
 
     def set_position(
         self,
-        position: Tuple[float, float],
-        z: Optional[float] = None
+        position: tuple[float, float],
+        z: float | None = None
     ) -> None:
         super().set_position(position = position, z = z)
 
@@ -151,7 +150,7 @@ class ScopeIdleState(ScopeState):
         self.__target_delta: float = 0.0
         self.__delta_speed: float = 1.5
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         if self.actor.sprites_delta > self.__target_delta:
             self.actor.sprites_delta = self.actor.sprites_delta - self.__delta_speed * dt
 
@@ -166,6 +165,6 @@ class ScopeLoadState(ScopeState):
         self.__target_delta: float = 0.15
         self.__delta_speed: float = 2.0
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         if self.actor.sprites_delta < self.__target_delta:
             self.actor.sprites_delta = self.actor.sprites_delta + self.__delta_speed * dt

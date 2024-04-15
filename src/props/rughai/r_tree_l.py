@@ -51,7 +51,7 @@ class RTreeL(PositionNode):
             batch = batch
         )
 
-    def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
+    def set_position(self, position: tuple[float, float], z: Optional[float] = None):
         super().set_position(position, z)
         self.prop_node.set_position(position, z)
 

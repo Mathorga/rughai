@@ -1,4 +1,3 @@
-from typing import List, Optional, Tuple
 import pyglet
 
 from engine import controllers
@@ -6,7 +5,7 @@ from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionCircle, CollisionRect
 from engine.node import PositionNode
 
-WALL_COLOR: Tuple[int, int, int, int] = (0xFF, 0x7F, 0xFF, 0x7F)
+WALL_COLOR: tuple[int, int, int, int] = (0xFF, 0x7F, 0xFF, 0x7F)
 
 class WallNode(PositionNode):
     def __init__(
@@ -15,8 +14,8 @@ class WallNode(PositionNode):
         y: float = 0,
         width: int = 8,
         height: int = 8,
-        tags: Optional[List[str]] = None,
-        batch: Optional[pyglet.graphics.Batch] = None
+        tags: list[str] | None = None,
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(x, y)
 

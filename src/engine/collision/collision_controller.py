@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from engine.collision.collision_node import CollisionType, CollisionNode
 from engine.utils.utils import CollisionHit
@@ -6,7 +6,7 @@ from engine.utils.utils import CollisionHit
 class CollisionController:
     # TODO Swept collisions.
     def __init__(self) -> None:
-        self.__colliders: Dict[CollisionType, List[CollisionNode]] = {}
+        self.__colliders: Dict[CollisionType, list[CollisionNode]] = {}
 
     def add_collider(
         self,

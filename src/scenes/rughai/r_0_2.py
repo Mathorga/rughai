@@ -1,5 +1,4 @@
-from typing import Callable, List, Optional
-from constants import collision_tags
+from typing import Callable, Optional
 import pyglet
 from clouds_node import CloudsNode
 from doors_loader import DoorsLoader
@@ -49,7 +48,7 @@ class R_0_2(PlayableSceneNode):
         )
 
         # Define a tilemap.
-        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
+        tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_2.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
@@ -59,7 +58,7 @@ class R_0_2(PlayableSceneNode):
         cam_bounds = tilemaps[0].bounds
 
         # Solid walls.
-        walls: List[WallNode] = WallsLoader.fetch(
+        walls: list[WallNode] = WallsLoader.fetch(
             source = "wallmaps/r_0_2.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )

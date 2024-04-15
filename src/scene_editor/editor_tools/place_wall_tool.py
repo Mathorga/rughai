@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable
 import pyglet
 
 from constants import collision_tags, scenes
@@ -13,17 +13,17 @@ from engine.utils.utils import point_in_rect
 from engine.wall_node import WALL_COLOR, WallNode
 from walls_loader import WallsLoader
 
-TOOL_COLOR: Tuple[int, int, int, int] = WALL_COLOR
-ALT_COLOR: Tuple[int, int, int, int] = (0xFF, 0x7F, 0x00, 0x7F)
+TOOL_COLOR: tuple[int, int, int, int] = WALL_COLOR
+ALT_COLOR: tuple[int, int, int, int] = (0xFF, 0x7F, 0x00, 0x7F)
 
 class WallEditorMenuNode(Node):
     def __init__(
         self,
-        wall_names: List[str],
+        wall_names: list[str],
         view_width: int,
         view_height: int,
         start_open: bool = False,
-        batch: Optional[pyglet.graphics.Batch] = None,
+        batch: pyglet.graphics.Batch | None = None,
     ) -> None:
         super().__init__()
 
@@ -36,12 +36,12 @@ class WallEditorMenuNode(Node):
         self.__open = start_open
 
         # Elements in the current page.
-        self.__wall_texts: List[TextNode] = []
+        self.__wall_texts: list[TextNode] = []
 
         # Currently selected element.
         self.__current_wall_index: int = 0
 
-        self.__background: Optional[RectNode] = None
+        self.__background: RectNode | None = None
 
     def update(self, dt: int) -> None:
         super().update(dt)
@@ -87,11 +87,11 @@ class PlaceWallTool(EditorTool):
         self,
         view_width: int,
         view_height: int,
-        tile_size: Tuple[int, int],
+        tile_size: tuple[int, int],
         scene_name: str,
-        on_icon_changed: Optional[Callable] = None,
-        world_batch: Optional[pyglet.graphics.Batch] = None,
-        ui_batch: Optional[pyglet.graphics.Batch] = None
+        on_icon_changed: Callable | None = None,
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(
             on_icon_changed = on_icon_changed
@@ -102,10 +102,10 @@ class PlaceWallTool(EditorTool):
         self.color = TOOL_COLOR
 
         # Save data for later use.
-        self.__tile_size: Tuple[int, int] = tile_size
+        self.__tile_size: tuple[int, int] = tile_size
         self.__scene_name: str = scene_name
-        self.__world_batch: Optional[pyglet.graphics.Batch] = world_batch
-        self.__ui_batch: Optional[pyglet.graphics.Batch] = ui_batch
+        self.__world_batch: pyglet.graphics.Batch | None = world_batch
+        self.__ui_batch: pyglet.graphics.Batch | None = ui_batch
 
         # Create a menu to handle wall type selection.
         self.__menu = WallEditorMenuNode(
@@ -116,20 +116,20 @@ class PlaceWallTool(EditorTool):
         )
 
         # Area of the currently created
-        self.__current_wall: Optional[RectNode] = None
+        self.__current_wall: RectNode | None = None
 
-        # List of all inserted nodes.
-        self.__walls: List[WallNode] = []
+        # list of all inserted nodes.
+        self.__walls: list[WallNode] = []
         self.__load_walls()
 
         # Starting position of the wall currently being placed.
-        self.__starting_position: Optional[Tuple[int, int]] = None
+        self.__starting_position: tuple[int, int] | None = None
 
-    def move_cursor(self, map_position: Tuple[int, int]) -> None:
+    def move_cursor(self, map_position: tuple[int, int]) -> None:
         super().move_cursor(map_position)
 
         if self.__current_wall is not None and self.__starting_position is not None:
-            # current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
+            # current_bounds: tuple[float, float, float, float] = self.__current_wall.get_bounds()
             self.__current_wall.set_bounds(
                 bounds = (
                     # X position.
@@ -166,7 +166,7 @@ class PlaceWallTool(EditorTool):
         if self.on_icon_changed is not None:
             self.on_icon_changed()
 
-    def run(self, map_position: Tuple[int, int]) -> None:
+    def run(self, map_position: tuple[int, int]) -> None:
         super().run(map_position = map_position)
 
         if self.alt_mode:
@@ -192,7 +192,7 @@ class PlaceWallTool(EditorTool):
 
                 # Create a wall with the given position and size.
                 # The wall size is computed by subtracting the start position from the current.
-                current_bounds: Tuple[float, float, float, float] = self.__current_wall.get_bounds()
+                current_bounds: tuple[float, float, float, float] = self.__current_wall.get_bounds()
                 wall: WallNode = WallNode(
                     x = current_bounds[0],
                     y = current_bounds[1],
@@ -221,7 +221,7 @@ class PlaceWallTool(EditorTool):
             walls = self.__walls
         )
 
-    def clear(self, map_position: Tuple[int, int]) -> None:
+    def clear(self, map_position: tuple[int, int]) -> None:
         """
         Deletes any wall overlapping the provided map position, regardless of the selected wall tags.
         """
@@ -233,13 +233,13 @@ class PlaceWallTool(EditorTool):
             self.__starting_position = None
         else:
             # Define a test position at the center of a tile.
-            test_position: Tuple[float, float] = (
+            test_position: tuple[float, float] = (
                 map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
                 map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2
             )
 
             # Filter overlapping walls.
-            hit_walls: List[WallNode] = filter(
+            hit_walls: list[WallNode] = filter(
                 lambda wall: point_in_rect(
                     test = test_position,
                     rect_position = (wall.x, wall.y),

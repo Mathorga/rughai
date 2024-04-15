@@ -1,5 +1,3 @@
-from typing import Dict, List, Optional
-
 class State ():
     """
     State interface, defines all mandatory methods for state implementations.
@@ -11,13 +9,13 @@ class State ():
     def start(self) -> None:
         pass
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> str | None:
         pass
 
-    def on_collision(self, tags: List[str], enter: bool) -> Optional[str]:
+    def on_collision(self, tags: list[str], enter: bool) -> str | None:
         pass
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         pass
 
     def end(self) -> None:
@@ -36,18 +34,18 @@ class StateMachine:
 
     def __init__(
         self,
-        states: Optional[Dict[str, State]]
+        states: dict[str, State] | None
     ) -> None:
-        self.states: Dict[str, State] = states if states is not None else {}
-        self.current_key: Optional[str] = list(self.states.keys())[0] if len(self.states) > 0 else None
+        self.states: dict[str, State] = states if states is not None else {}
+        self.current_key: str | None = list(self.states.keys())[0] if len(self.states) > 0 else None
 
-        current_state: Optional[State] = self.get_current_state()
+        current_state: State | None = self.get_current_state()
         if current_state is None:
             return
 
         current_state.start()
 
-    def get_current_state(self) -> Optional[State]:
+    def get_current_state(self) -> State | None:
         """
         Returns the current state of the state machine.
         """
@@ -72,20 +70,20 @@ class StateMachine:
             self.states[self.current_key].start()
 
     def on_animation_end(self) -> None:
-        current_state: Optional[State] = self.get_current_state()
+        current_state: State | None = self.get_current_state()
         if current_state is None:
             return
 
         self.transition(current_state.on_animation_end())
 
-    def on_collision(self, tags: List[str], enter: bool) -> None:
-        current_state: Optional[State] = self.get_current_state()
+    def on_collision(self, tags: list[str], enter: bool) -> None:
+        current_state: State | None = self.get_current_state()
         if current_state is None:
             return
 
         self.transition(current_state.on_collision(tags = tags, enter = enter))
 
-    def transition(self, key: Optional[str]) -> None:
+    def transition(self, key: str | None) -> None:
         """
         Sets a new state from the provided key.
         No state is set if [key] is null.

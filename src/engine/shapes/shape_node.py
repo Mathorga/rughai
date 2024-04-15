@@ -9,7 +9,7 @@ class ShapeNode(PositionNode):
         x: float = 0.0,
         y: float = 0.0,
         z: float = 0.0,
-        color: Tuple[int, int, int] = (0x00, 0x00, 0x00)
+        color: tuple[int, int, int] = (0x00, 0x00, 0x00)
     ) -> None:
         super().__init__(
             x = x,
@@ -19,5 +19,5 @@ class ShapeNode(PositionNode):
 
         self.color = color
 
-    def set_color(self, color: Tuple[int, int, int]):
+    def set_color(self, color: tuple[int, int, int]):
         self.color = color

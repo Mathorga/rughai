@@ -20,10 +20,10 @@ class EditorTool(Node):
         self.alt_mode: bool = False
 
         # Current cursor position.
-        self.cursor_position: Tuple[int, int] = (0, 0)
+        self.cursor_position: tuple[int, int] = (0, 0)
         
         self.name: str = ""
-        self.color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF)
+        self.color: tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF)
 
     def get_cursor_icon(self) -> PositionNode:
         """
@@ -32,7 +32,7 @@ class EditorTool(Node):
 
         return PositionNode()
 
-    def run(self, map_position: Tuple[int, int]) -> None:
+    def run(self, map_position: tuple[int, int]) -> None:
         """
         Runs the tool on the currently specified map position.
         [map_position] is the current cursor position divided by the current tile size.
@@ -52,7 +52,7 @@ class EditorTool(Node):
 
         self.alt_mode = toggle
 
-    def move_cursor(self, map_position: Tuple[int, int]) -> None:
+    def move_cursor(self, map_position: tuple[int, int]) -> None:
         """
         Notify the tool about the current cursor position.
         """
@@ -72,7 +72,7 @@ class EditorTool(Node):
 class PlaceDoorTool(EditorTool):
     def __init__(
         self,
-        tile_size: Tuple[int, int],
+        tile_size: tuple[int, int],
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__()
@@ -98,14 +98,14 @@ class PlaceDoorTool(EditorTool):
     def toggle_menu(self, toggle: bool) -> None:
         return super().toggle_menu(toggle = toggle)
 
-    def run(self, position: Tuple[int, int]) -> None:
+    def run(self, position: tuple[int, int]) -> None:
         return super().run(map_position = position)
 
 
 class ChangeSceneTool(EditorTool):
     def __init__(
         self,
-        tile_size: Tuple[int, int],
+        tile_size: tuple[int, int],
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__()
@@ -131,5 +131,5 @@ class ChangeSceneTool(EditorTool):
     def toggle_menu(self, toggle: bool) -> None:
         return super().toggle_menu(toggle = toggle)
 
-    def run(self, position: Tuple[int, int]) -> None:
+    def run(self, position: tuple[int, int]) -> None:
         return super().run(map_position = position)

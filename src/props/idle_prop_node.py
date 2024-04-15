@@ -1,7 +1,6 @@
 from enum import Enum
 import json
 import random
-from typing import Dict, List, Optional, Tuple
 import pyglet
 
 from engine import controllers
@@ -96,12 +95,12 @@ class IdlePropNode(PositionNode):
         x: float = 0.0,
         y: float = 0.0,
         z: float = 0.0,
-        batch: Optional[pyglet.graphics.Batch] = None
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(x, y, z)
 
         self.source = source
-        self.__animations_data: Dict[str, pyglet.image.animation.Animation] = {}
+        self.__animations_data: dict[str, pyglet.image.animation.Animation] = {}
         self.animations = {
             "idle": {},
             "meet_in": {},
@@ -113,25 +112,25 @@ class IdlePropNode(PositionNode):
             "destroyed": {}
         }
 
-        self.__interactor: Optional[InteractionNode] = None
-        self.__colliders: List[PositionNode] = []
-        self.__sensors: List[PositionNode] = []
-        self.__sensors_tags: List[Dict[str, List[str]]] = []
+        self.__interactor: InteractionNode | None = None
+        self.__colliders: list[PositionNode] = []
+        self.__sensors: list[PositionNode] = []
+        self.__sensors_tags: list[dict[str, list[str]]] = []
 
         data: dict = {}
         with open(file = f"{pyglet.resource.path[0]}/{source}", mode = "r", encoding = "UTF-8") as content:
             data = json.load(content)
 
         # Read health points.
-        self.max_health_points: Optional[int] = None
+        self.max_health_points: int | None = None
         self.health_points = 0
         if "health_points" in data:
             self.max_health_points = data["health_points"]
             self.health_points = self.max_health_points
 
         # Read global anchor point.
-        anchor_x: Optional[int] = None
-        anchor_y: Optional[int] = None
+        anchor_x: int | None = None
+        anchor_y: int | None = None
         if "anchor_x" in data and "anchor_y" in data:
             anchor_x = data["anchor_x"]
             anchor_y = data["anchor_y"]
@@ -147,8 +146,8 @@ class IdlePropNode(PositionNode):
                 self.__animations_data[anim_spec["name"]] = anim_ref
 
                 # Read animation-specific anchor point and fall to global if not defined.
-                anim_anchor_x: Optional[int] = anim_spec["anchor_x"] if "anchor_x" in anim_spec else anchor_x
-                anim_anchor_y: Optional[int] = anim_spec["anchor_y"] if "anchor_y" in anim_spec else anchor_y
+                anim_anchor_x: int | None = anim_spec["anchor_x"] if "anchor_x" in anim_spec else anchor_x
+                anim_anchor_y: int | None = anim_spec["anchor_y"] if "anchor_y" in anim_spec else anchor_y
 
                 # Read animation centering.
                 center_x: bool = anim_spec["center_x"] if "center_x" in anim_spec else False
@@ -211,9 +210,9 @@ class IdlePropNode(PositionNode):
                 controllers.INTERACTION_CONTROLLER.add_interaction(self.__interactor)
 
             for index, sensor_data in enumerate(data["sensors"]):
-                meet_tags: List[str] = sensor_data["meet_tags"] or [] if "meet_tags" in sensor_data else []
-                interact_tags: List[str] = sensor_data["interact_tags"] or [] if "interact_tags" in sensor_data else []
-                hit_tags: List[str] = sensor_data["hit_tags"] or [] if "hit_tags" in sensor_data else []
+                meet_tags: list[str] = sensor_data["meet_tags"] or [] if "meet_tags" in sensor_data else []
+                interact_tags: list[str] = sensor_data["interact_tags"] or [] if "interact_tags" in sensor_data else []
+                hit_tags: list[str] = sensor_data["hit_tags"] or [] if "hit_tags" in sensor_data else []
 
                 sensor = CollisionNode(
                     x = x,
@@ -246,7 +245,7 @@ class IdlePropNode(PositionNode):
 
         layer: str = data["layer"] if "layer" in data else "rat"
 
-        self.sprite: Optional[SpriteNode] = None
+        self.sprite: SpriteNode | None = None
         self.anim_duration = anim_duration
 
         if len(self.animations["idle"]) > 0:
@@ -288,14 +287,14 @@ class IdlePropNode(PositionNode):
 
         self.__state_machine.interact()
 
-    def __on_collider_triggered(self, tags: List[str], entered: bool) -> None:
+    def __on_collider_triggered(self, tags: list[str], entered: bool) -> None:
         """
         Handles all colliders' trigger events.
         """
 
         self.__state_machine.on_collision(tags = tags, enter = entered)
 
-    def __on_sensor_triggered(self, tags: List[str], entered: bool, index: int) -> None:
+    def __on_sensor_triggered(self, tags: list[str], entered: bool, index: int) -> None:
         """
         Handles all sensors' trigger events.
         """
@@ -308,7 +307,7 @@ class IdlePropNode(PositionNode):
         elif entered and bool(set(tags) & set(self.__sensors_tags[index]["hit"])):
             self.__state_machine.hit()
 
-    def set_position(self, position: Tuple[float, float], z: Optional[float] = None):
+    def set_position(self, position: tuple[float, float], z: float | None = None):
         super().set_position(position, z)
 
         if self.sprite is not None:
@@ -365,7 +364,7 @@ class IdlePropNode(PositionNode):
 
 class IdlePropStateMachine(StateMachine):
 
-    def on_collision(self, tags: List[str], enter: bool) -> None:
+    def on_collision(self, tags: list[str], enter: bool) -> None:
         return super().on_collision(tags, enter)
 
     def meet(self, entered: bool) -> None:
@@ -410,16 +409,16 @@ class IdlePropState(State):
 
         self.actor: IdlePropNode = actor
 
-    def meet(self, entered: bool) -> Optional[str]:
+    def meet(self, entered: bool) -> str | None:
         if entered:
             return IdlePropStates.MEET_IN
         else:
             return IdlePropStates.MEET_OUT
 
-    def interact(self) -> Optional[str]:
+    def interact(self) -> str | None:
         return IdlePropStates.INTERACT
 
-    def hit(self) -> Optional[str]:
+    def hit(self) -> str | None:
         # Reduce health points if a damage occurred and health points were defined in the first place.
         if self.actor.max_health_points is not None:
             self.actor.health_points -= 1
@@ -449,7 +448,7 @@ class IdlePropMeetInState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("meet_in")
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> str | None:
         return IdlePropStates.MEETING
 
 class IdlePropMeetingState(IdlePropState):
@@ -472,21 +471,21 @@ class IdlePropMeetOutState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("meet_out")
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> str | None:
         return IdlePropStates.IDLE
 
 class IdlePropInteractState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("interact")
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> str | None:
         return IdlePropStates.IDLE
 
 class IdlePropHitState(IdlePropState):
     def start(self) -> None:
         self.actor.set_animation("hit")
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> str | None:
         return IdlePropStates.IDLE
 
 class IdlePropDestroyState(IdlePropState):
@@ -496,7 +495,7 @@ class IdlePropDestroyState(IdlePropState):
         # Destroy all colliders and sensors.
         self.actor.delete_colliders()
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> str | None:
         return IdlePropStates.DESTROYED
 
 class IdlePropDestroyedState(IdlePropState):

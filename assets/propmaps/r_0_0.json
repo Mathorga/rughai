@@ -1,3 +1,12 @@
 {
-    
+    "elements": [
+        {
+            "id": "stan_lee",
+            "positions": []
+        },
+        {
+            "id": "battery",
+            "positions": []
+        }
+    ]
 }

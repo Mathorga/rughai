@@ -1,5 +1,5 @@
 import random
-from typing import List, Optional
+from typing import Optional
 import pyglet
 
 from engine.node import Node
@@ -21,7 +21,7 @@ class CloudsNode(Node):
         self.bounds = bounds
 
         # Create clouds.
-        self.clouds: List[CloudNode] = [
+        self.clouds: list[CloudNode] = [
             CloudNode(
                 x = bounds.left + random.random() * (bounds.right - bounds.left),
                 y = bounds.bottom + random.random() * (bounds.top - bounds.bottom),

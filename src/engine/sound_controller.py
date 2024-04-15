@@ -1,5 +1,3 @@
-import builtins
-from typing import List
 import pyglet
 
 from engine.settings import SETTINGS, Keys
@@ -16,7 +14,7 @@ class SoundController:
         self.bg_music: pyglet.media.Player = pyglet.media.Player()
 
         # Sound effects
-        self.effects: List[pyglet.media.Player] = []
+        self.effects: list[pyglet.media.Player] = []
 
     def set_music(self, music: pyglet.media.Source) -> None:
         # Just return if sound is disabled.

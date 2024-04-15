@@ -1,22 +1,21 @@
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 import pyglet
 from clouds_node import CloudsNode
-from constants import collision_tags
 
 from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
-from engine.scene_node import Bounds, SceneNode
+from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 
 from engine.utils.utils import remap
 from engine.wall_node import WallNode
+from idle_prop_loader import IdlePropLoader
 from player_node import PlayerNode
 from duk_node import DukNode
-import constants.events as events
 import constants.scenes as scenes
 from walls_loader import WallsLoader
 
@@ -50,7 +49,7 @@ class R_0_3(PlayableSceneNode):
         )
 
         # Define a tilemap.
-        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
+        tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_3.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
@@ -60,7 +59,7 @@ class R_0_3(PlayableSceneNode):
         cam_bounds = tilemaps[0].bounds
 
         # Solid walls.
-        walls: List[WallNode] = WallsLoader.fetch(
+        walls: list[WallNode] = WallsLoader.fetch(
             source = "wallmaps/r_0_3.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
@@ -132,6 +131,12 @@ class R_0_3(PlayableSceneNode):
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
+        # Props.
+        props = IdlePropLoader.fetch_prop_list(
+            "propmaps/r_0_3",
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
+
         scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
         scenes.ACTIVE_SCENE.add_child(bg)
@@ -140,6 +145,7 @@ class R_0_3(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target=True)
         scenes.ACTIVE_SCENE.add_child(self._player)
         scenes.ACTIVE_SCENE.add_child(clouds)
+        scenes.ACTIVE_SCENE.add_children(props)
         # self._scene.add_child(duk)
         scenes.ACTIVE_SCENE.add_children(doors)
         scenes.ACTIVE_SCENE.add_child(energy_bar)

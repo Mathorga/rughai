@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Tuple
+from typing import Callable
 import pyglet
 
 from constants import scenes
@@ -23,8 +23,8 @@ class ActionSign(PositionNode):
         x: float = 0.0,
         y: float = 0.0,
         action: str = "",
-        color: Tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF),
-        batch: Optional[pyglet.graphics.Batch] = None
+        color: tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0xFF),
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(
             x = x,
@@ -32,7 +32,7 @@ class ActionSign(PositionNode):
         )
 
         self.__batch = batch
-        self.__label: Optional[TextNode] = None
+        self.__label: TextNode | None = None
 
         self.action = action
         self.color = color
@@ -42,14 +42,14 @@ class ActionSign(PositionNode):
         self.action = text
         self.__label.set_text(text = self.__compute_text())
 
-    def set_color(self, color: Tuple[int, int, int, int]) -> None:
+    def set_color(self, color: tuple[int, int, int, int]) -> None:
         self.color = color
         self.__label.set_color(color = self.__compute_color())
 
     def __compute_text(self) -> str:
         return f"(tab) {self.action}"
 
-    def __compute_color(self) -> Tuple[int, int, int, int]:
+    def __compute_color(self) -> tuple[int, int, int, int]:
         return self.color
 
     def hide(self) -> None:
@@ -82,7 +82,7 @@ class PropPlacementScene(Node):
         view_width: int,
         view_height: int,
         scene_name: str,
-        on_ended: Optional[Callable[[dict], None]] = None
+        on_ended: Callable[[dict], None] | None = None
     ):
         super().__init__()
         self.__window = window
@@ -99,11 +99,11 @@ class PropPlacementScene(Node):
         )
 
         # Define a tilemap.
-        tilemaps: List[TilemapNode] = TilemapNode.from_tmx_file(
+        tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = f"tilemaps/{scene_name}.tmx",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
-        self.__tile_size: Tuple[int, int] = tilemaps[0].get_tile_size()
+        self.__tile_size: tuple[int, int] = tilemaps[0].get_tile_size()
         self.__tilemap_width = tilemaps[0].map_width
         self.__tilemap_height = tilemaps[0].map_height
         cam_bounds = tilemaps[0].bounds
@@ -115,7 +115,7 @@ class PropPlacementScene(Node):
         )
 
         # All tools are in this dictionary.
-        self.__tools: List[EditorTool] = [
+        self.__tools: list[EditorTool] = [
             PlaceIdlePropTool(
                 view_width = view_width,
                 view_height = view_height,
@@ -264,7 +264,7 @@ class PropPlacementScene(Node):
         if scenes.ACTIVE_SCENE is not None:
             scenes.ACTIVE_SCENE.delete()
 
-    def __on_cursor_move(self, position: Tuple[int, int]) -> None:
+    def __on_cursor_move(self, position: tuple[int, int]) -> None:
         self.__tools[self.__current_tool].move_cursor(map_position = position)
 
     def __update_cursor_icon(self) -> None:

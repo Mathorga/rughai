@@ -1,6 +1,3 @@
-from typing import List, Optional, Tuple
-
-
 class Node:
     __slots__ = ()
 
@@ -50,18 +47,18 @@ class PositionNode(Node):
 
     def set_position(
         self,
-        position: Tuple[float, float],
-        z: Optional[float] = None
+        position: tuple[float, float],
+        z: float | None = None
     ):
         self.x = position[0]
         self.y = position[1]
         if z is not None:
             self.z = z
 
-    def get_position(self) -> Tuple[float, float]:
+    def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
 
-    def get_bounding_box(self) -> Tuple[float, float, float, float]:
+    def get_bounding_box(self) -> tuple[float, float, float, float]:
         return (self.x, self.y, 0.0, 0.0)
 
 class GroupNode(PositionNode):
@@ -78,19 +75,19 @@ class GroupNode(PositionNode):
         x: float = 0,
         y: float = 0,
         z: float = 0,
-        children: Optional[List[PositionNode]] = None
+        children: list[PositionNode] | None = None
     ) -> None:
         super().__init__(x, y, z)
 
-        self.children: List[PositionNode] = children if children is not None else []
+        self.children: list[PositionNode] = children if children is not None else []
 
     def set_position(
         self,
-        position: Tuple[float, float],
-        z: Optional[float] = None
+        position: tuple[float, float],
+        z: float | None = None
     ):
         # Compute position delta.
-        dp: Tuple[float, float] = (position[0] - self.x, position[1] - self.y)
+        dp: tuple[float, float] = (position[0] - self.x, position[1] - self.y)
         dz: float = z - self.z if z is not None else 0.0
 
         # Set the given position.
@@ -100,7 +97,7 @@ class GroupNode(PositionNode):
 
         # Move all children accordingly.
         for child in self.children:
-            current_child_position: Tuple[int, int] = child.get_position()
+            current_child_position: tuple[int, int] = child.get_position()
             child.set_position(position = (current_child_position[0] + dp[0], current_child_position[1] + dp[1]), z = child.z + dz)
 
     def update(self, dt: float) -> None:
