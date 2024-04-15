@@ -112,6 +112,16 @@ class BatteryNode(PropNode):
             self.__in_transition = True
             self.sprite.set_image(self.__open_image if enable else self.__close_image)
 
+    def set_position(
+        self,
+        position: tuple[float, float],
+        z: float | None = None
+    ):
+        super().set_position(position = position, z = z)
+
+        # Update sprite position as well.
+        self.sprite.set_position(position = position, z = z)
+
     def update(self, dt: int) -> None:
         self.interaction.update(dt)
 

@@ -55,7 +55,18 @@ class StanLeeNode(PropNode):
             ui_batch = ui_batch
         )
 
+    def set_position(
+        self,
+        position: tuple[float, float],
+        z: float | None = None
+    ):
+        super().set_position(position = position, z = z)
+
+        # Update sprite position as well.
+        self.sprite.set_position(position = position, z = z)
+
     def update(self, dt: int) -> None:
+        super().update(dt = dt)
         self.dialog.update(dt)
 
     def delete(self) -> None:

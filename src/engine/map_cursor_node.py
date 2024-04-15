@@ -126,7 +126,7 @@ class MapCursorNode(PositionNode):
     def __update_child(self, dt):
         # Update child position.
         if self.__child is not None:
-            self.__child.set_position((self.x, self.y))
+            self.__child.set_position(self.get_position())
             self.__child.update(dt)
 
     def __update_cam_target(self, dt):
