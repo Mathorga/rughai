@@ -5,6 +5,8 @@ import json
 from typing import Callable
 import pyglet
 
+from props.prop_node import PropNode
+
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")))
 
 from engine import controllers
@@ -252,7 +254,7 @@ class PlacePropTool(EditorTool):
         ]
         self.__current_props_index: int = 0
 
-        self.__props: list[PositionNode] = []
+        self.__props: list[PropNode] = []
         self.__refresh_props()
 
         self.__menu: PropEditorMenuNode = PropEditorMenuNode(
@@ -311,16 +313,16 @@ class PlacePropTool(EditorTool):
             # Just clear if in alt mode.
             self.clear(
                 position = (
-                    map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
-                    map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2
+                    int(map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2),
+                    int(map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2)
                 )
             )
         else:
             # Place the currently selected prop otherwise.
             self.place_prop(
                 position = (
-                    map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
-                    map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2
+                    int(map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2),
+                    int(map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2)
                 )
             )
 
