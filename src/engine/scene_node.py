@@ -55,12 +55,12 @@ class SceneNode(Node):
         window: pyglet.window.Window,
         view_width: int,
         view_height: int,
-        title: Optional[str] = None,
-        on_scene_start: Optional[Callable[[], None]] = None,
-        on_scene_end: Optional[Callable[[], None]] = None,
+        title: str | None = None,
+        on_scene_start: Callable[[], None] | None = None,
+        on_scene_end: Callable[[], None] | None = None,
         default_cam_speed: float = 10.0,
         curtain_speed: float = 1.0,
-        cam_bounds: Optional[Bounds] = None
+        cam_bounds: Bounds | None = None
     ):
         self.__view_width = view_width
         self.__view_height = view_height
@@ -69,6 +69,9 @@ class SceneNode(Node):
         self.__on_scene_start = on_scene_start
         self.world_batch = pyglet.graphics.Batch()
         self.ui_batch = pyglet.graphics.Batch()
+
+        # Tells whether the scene should be updating its children or not.
+        self.__frozen: bool = False
 
         # Create a new camera.
         self.__camera = Camera(
@@ -197,18 +200,37 @@ class SceneNode(Node):
                 updated_y
             )
 
+    def freeze(self) -> None:
+        """
+        Stops all updates to children by setting the scene to frozen state.
+
+        Call [melt] to unset the frozen state.
+        """
+
+        self.__frozen = True
+
+    def melt(self) -> None:
+        """
+        Resumes all updates to children by unsetting the scene's frozen state.
+
+        Call [freeze] to reset the frozen state.
+        """
+
+        self.__frozen = False
+
     def update(self, dt: float):
         # Update curtain.
         self.__update_curtain(dt)
 
-        # Update all fixed children.
-        for child in self.__children:
-            child.update(dt)
+        # Update all children if not frozen.
+        if not self.__frozen:
+            for child in self.__children:
+                child.update(dt)
 
         # Update camera.
         self.__update_camera(dt)
 
-    def get_cam_bounds(self) -> Bounds:
+    def get_cam_bounds(self) -> Bounds | None:
         return self.__cam_bounds
 
     def get_cam_shake(self) -> float:
