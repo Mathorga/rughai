@@ -6,7 +6,6 @@ from engine import controllers
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
 from engine.shapes.line_node import LineNode
-from engine.shapes.rect_node import RectNode
 from engine.text_node import TextNode
 from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
@@ -16,6 +15,7 @@ from editor_tools.editor_tool import ChangeSceneTool, EditorTool, PlaceDoorTool
 from editor_tools.place_idle_prop_tool import PlaceIdlePropTool
 from editor_tools.place_wall_tool import PlaceWallTool
 from editor_tools.place_prop_tool import PlacePropTool
+from editor_tools.place_fall_tool import PlaceFallTool
 
 class ActionSign(PositionNode):
     def __init__(
@@ -143,6 +143,15 @@ class PropPlacementScene(Node):
                 ui_batch = scenes.ACTIVE_SCENE.ui_batch
             ),
             PlaceWallTool(
+                view_width = view_width,
+                view_height = view_height,
+                tile_size = self.__tile_size,
+                scene_name = scene_name,
+                on_icon_changed = self.__update_cursor_icon,
+                world_batch = scenes.ACTIVE_SCENE.world_batch,
+                ui_batch = scenes.ACTIVE_SCENE.ui_batch
+            ),
+            PlaceFallTool(
                 view_width = view_width,
                 view_height = view_height,
                 tile_size = self.__tile_size,

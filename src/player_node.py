@@ -211,7 +211,9 @@ class PlayerNode(PositionNode):
                 PlayerStates.AIM_WALK: PlayerAimWalkState(actor = self),
                 PlayerStates.DRAW: PlayerDrawState(actor = self),
                 PlayerStates.DRAW_WALK: PlayerDrawWalkState(actor = self),
-                PlayerStates.SHOOT: PlayerShootState(actor = self)
+                PlayerStates.SHOOT: PlayerShootState(actor = self),
+                # TODO
+                # PlayerStates.FALL: PlayerFallState(actor = self)
             }
         )
 
