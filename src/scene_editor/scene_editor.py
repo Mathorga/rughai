@@ -53,8 +53,7 @@ class RugHaiSceneEditor:
         self.__scene = PropPlacementScene(
             window = self._window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
-            view_height = SETTINGS[Keys.VIEW_HEIGHT],
-            scene_name = sys.argv[1]
+            view_height = SETTINGS[Keys.VIEW_HEIGHT]
         )
 
     def __create_window(self) -> pyglet.window.Window:

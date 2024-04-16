@@ -36,6 +36,7 @@ class PlayerStates(str, Enum):
     DRAW = "draw"
     DRAW_WALK = "draw_walk"
     SHOOT = "shoot"
+    FALL = "fall"
 
 class PlayerNode(PositionNode):
     """
@@ -212,8 +213,7 @@ class PlayerNode(PositionNode):
                 PlayerStates.DRAW: PlayerDrawState(actor = self),
                 PlayerStates.DRAW_WALK: PlayerDrawWalkState(actor = self),
                 PlayerStates.SHOOT: PlayerShootState(actor = self),
-                # TODO
-                # PlayerStates.FALL: PlayerFallState(actor = self)
+                PlayerStates.FALL: PlayerFallState(actor = self)
             }
         )
 
@@ -1120,3 +1120,10 @@ class PlayerShootState(PlayerState):
             return PlayerStates.IDLE
         else:
             return PlayerStates.AIM
+
+class PlayerFallState(PlayerState):
+    def __init__(
+        self,
+        actor: PlayerNode
+    ) -> None:
+        super().__init__(actor)

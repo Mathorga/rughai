@@ -119,7 +119,7 @@ class PropLoader:
 
         # Return an empty list if the source file is not found.
         if not os.path.exists(abs_path):
-            return []
+            return dict()
 
         print(f"Loading props {abs_path}")
 
@@ -131,7 +131,7 @@ class PropLoader:
 
         # Just return if no data is read.
         if len(data) <= 0:
-            return []
+            return dict()
 
         # Loop through defined prop types.
         for element in data["elements"]:
