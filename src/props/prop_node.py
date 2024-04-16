@@ -4,6 +4,12 @@ from engine.node import PositionNode
 
 
 class PropNode(PositionNode):
+    __slots__ = (
+        "id",
+        "world_batch",
+        "ui_batch"
+    )
+
     def __init__(
         self,
         id: str,

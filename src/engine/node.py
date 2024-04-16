@@ -1,13 +1,21 @@
 class Node:
-    __slots__ = ()
+    __slots__ = (
+        "components"
+    )
 
     def __init__(self) -> None:
-        pass
+        self.components: list[Node] = []
 
     def draw(self) -> None:
-        """Renders the object."""
+        """
+        Renders the object.
+        """
 
-        pass
+    def add_component(self, component) -> None:
+        """
+        Adds a component to self.
+        """
+        self.components.append(component)
 
     def update(
             self,
@@ -23,10 +31,17 @@ class Node:
             Time (in s) since the last frame was calculated.
         """
 
-        pass
-
     def delete(self) -> None:
-        pass
+        """
+        Deletes all components.
+        """
+
+        # Delete all components.
+        for component in self.components:
+            component.delete()
+
+        # Clear the components list.
+        self.components.clear()
 
 class PositionNode(Node):
     __slots__ = (
@@ -41,6 +56,7 @@ class PositionNode(Node):
         y: float = 0.0,
         z: float = 0.0
     ) -> None:
+        super().__init__()
         self.x = x
         self.y = y
         self.z = z
@@ -54,6 +70,11 @@ class PositionNode(Node):
         self.y = position[1]
         if z is not None:
             self.z = z
+
+        # Update all components positions.
+        for component in self.components:
+            if issubclass(type(component), PositionNode):
+                component.set_position(position = position, z = z) # type: ignore
 
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)

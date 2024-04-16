@@ -1,4 +1,3 @@
-from typing import Callable, Optional
 import pyglet
 
 from constants import collision_tags
@@ -12,6 +11,19 @@ from engine.utils import utils
 from props.prop_node import PropNode
 
 class BatteryNode(PropNode):
+    __slots__ = (
+        "__in_transition",
+        "__open_requested",
+        "__close_requested",
+        "__closed_image",
+        "__opened_image",
+        "__open_image",
+        "__close_image",
+        "sprite",
+        "interaction",
+        "interaction_sensor"
+    )
+
     def __init__(
         self,
         x: float = 0,
@@ -62,6 +74,7 @@ class BatteryNode(PropNode):
             y = y,
             batch = world_batch
         )
+        self.add_component(component = self.sprite)
 
         self.interaction = InteractionNode(
             on_toggle = self.__toggle,
@@ -112,23 +125,15 @@ class BatteryNode(PropNode):
             self.__in_transition = True
             self.sprite.set_image(self.__open_image if enable else self.__close_image)
 
-    def set_position(
-        self,
-        position: tuple[float, float],
-        z: float | None = None
-    ):
-        super().set_position(position = position, z = z)
-
-        # Update sprite position as well.
-        self.sprite.set_position(position = position, z = z)
-
     def update(self, dt: int) -> None:
+        super().update(dt = dt)
+
         self.interaction.update(dt)
 
         if self.sprite.get_frame_index() >= self.sprite.get_frames_num() - 1:
             self.__on_animation_end()
 
     def delete(self) -> None:
-        self.sprite.delete()
         self.interaction.delete()
         self.interaction_sensor.delete()
+        super().delete()

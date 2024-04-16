@@ -1,19 +1,23 @@
-from typing import Optional
 import pyglet
 
 from constants import collision_tags
 from engine.dialog_node import DialogNode
-from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from props.prop_node import PropNode
 
 class StanLeeNode(PropNode):
+    __slots__ = (
+        "__image",
+        "sprite",
+        "dialog"
+    )
+
     def __init__(
         self,
         x: float = 0,
         y: float = 0,
-        world_batch: Optional[pyglet.graphics.Batch] = None,
-        ui_batch: Optional[pyglet.graphics.Batch] = None,
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None,
     ) -> None:
         super().__init__(
             id = "stan_lee",
@@ -33,6 +37,7 @@ class StanLeeNode(PropNode):
             y = y,
             batch = world_batch
         )
+        self.add_component(component = self.sprite)
 
         self.dialog = DialogNode(
             x = self.x,
@@ -55,20 +60,10 @@ class StanLeeNode(PropNode):
             ui_batch = ui_batch
         )
 
-    def set_position(
-        self,
-        position: tuple[float, float],
-        z: float | None = None
-    ):
-        super().set_position(position = position, z = z)
-
-        # Update sprite position as well.
-        self.sprite.set_position(position = position, z = z)
-
     def update(self, dt: int) -> None:
         super().update(dt = dt)
         self.dialog.update(dt)
 
     def delete(self) -> None:
-        self.sprite.delete()
         self.dialog.delete()
+        super().delete()
