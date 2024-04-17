@@ -284,6 +284,7 @@ def set_texture_filter(
     filter: int
 ) -> None:
     gl.glBindTexture(texture.target, texture.id)
+    gl.glTexParameteri(texture.target, gl.GL_TEXTURE_MIN_FILTER, filter)
     gl.glTexParameteri(texture.target, gl.GL_TEXTURE_MAG_FILTER, filter)
     gl.glBindTexture(texture.target, 0)
 
