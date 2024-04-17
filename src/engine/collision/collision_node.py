@@ -38,7 +38,9 @@ class CollisionNode(PositionNode):
         self.shape: Optional[CollisionShape] = shape
         self.on_triggered = on_triggered
 
-        self.collisions = set()
+        self.collisions = set[CollisionNode]()
+        self.in_collisions = set[CollisionNode]()
+        self.out_collisions = set[CollisionNode]()
 
         # Set shape color.
         if color is not None:
@@ -104,21 +106,13 @@ class CollisionNode(PositionNode):
                 # Store the colliding sensor.
                 self.collisions.add(other)
                 other.collisions.add(self)
-
-                # Collision enter callback.
-                if self.on_triggered is not None:
-                    self.on_triggered(other.passive_tags, True)
-                if other.on_triggered is not None:
-                    other.on_triggered(self.active_tags, True)
+                self.in_collisions.add(other)
+                other.in_collisions.add(self)
             elif other in self.collisions and collision_hit is None:
                 # Remove if not colliding anymore.
                 self.collisions.remove(other)
                 other.collisions.remove(self)
-
-                # Collision exit callback.
-                if self.on_triggered is not None:
-                    self.on_triggered(other.active_tags, False)
-                if other.on_triggered is not None:
-                    other.on_triggered(self.active_tags, False)
+                self.out_collisions.add(other)
+                other.out_collisions.add(self)
 
         return collision_hit
