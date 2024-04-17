@@ -1,27 +1,34 @@
 from typing import Callable, Dict, Optional, Tuple, Union
 import pyglet
-from engine.depth_sprite import DepthSprite
+import pyglet.gl as gl
 
+from engine.depth_sprite import DepthSprite
 from engine.node import PositionNode
 from engine.settings import GLOBALS, Keys
+from engine.utils import utils
 
 class SpriteNode(PositionNode):
     def __init__(
         self,
-        resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
-        batch: Optional[pyglet.graphics.Batch] = None,
-        on_animation_end: Optional[Callable] = None,
+        resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
+        batch: pyglet.graphics.Batch | None = None,
+        on_animation_end: Callable | None = None,
         x: float = 0,
         y: float = 0,
-        z: Optional[float] = None,
-        shader: Optional[pyglet.graphics.shader.ShaderProgram] = None,
-        samplers_2d: Optional[Dict[str, pyglet.image.ImageData]] = None,
+        z: float | None = None,
+        shader: pyglet.graphics.shader.ShaderProgram | None = None,
+        samplers_2d: dict[str, pyglet.image.ImageData] | None = None,
     ) -> None:
         super().__init__(
             x = x,
             y = y,
             z = z if z is not None else y
         )
+
+        if isinstance(resource, pyglet.image.TextureRegion):
+            utils.set_texture_filter(texture = resource, filter = gl.GL_NEAREST)
+        elif isinstance(resource, pyglet.image.animation.Animation):
+            utils.set_animation_filter(animation = resource, filter = gl.GL_NEAREST)
 
         self.sprite = DepthSprite(
             img = resource,

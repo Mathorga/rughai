@@ -1,8 +1,9 @@
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Literal, Optional, Tuple, Union
 import math
 import pyglet
 import pyglet.math as pm
+import pyglet.gl as gl
 
 EPSILON = 1e-8
 
@@ -277,6 +278,21 @@ def set_anchor(
             x = x,
             y = y
         )
+
+def set_texture_filter(
+    texture: pyglet.image.TextureRegion,
+    filter: int
+) -> None:
+    gl.glBindTexture(texture.target, texture.id)
+    gl.glTexParameteri(texture.target, gl.GL_TEXTURE_MAG_FILTER, filter)
+    gl.glBindTexture(texture.target, 0)
+
+def set_animation_filter(
+    animation: pyglet.image.animation.Animation,
+    filter: int
+) -> None:
+    for texture in animation.frames:
+        set_texture_filter(texture = texture.image, filter = filter)
 
 def set_animation_anchor(
     animation: pyglet.image.animation.Animation,
