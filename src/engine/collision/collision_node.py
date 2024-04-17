@@ -105,14 +105,10 @@ class CollisionNode(PositionNode):
             if other not in self.collisions and collision_hit is not None:
                 # Store the colliding sensor.
                 self.collisions.add(other)
-                other.collisions.add(self)
                 self.in_collisions.add(other)
-                other.in_collisions.add(self)
             elif other in self.collisions and collision_hit is None:
                 # Remove if not colliding anymore.
                 self.collisions.remove(other)
-                other.collisions.remove(self)
                 self.out_collisions.add(other)
-                other.out_collisions.add(self)
 
         return collision_hit
