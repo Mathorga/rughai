@@ -25,17 +25,17 @@ class FallNode(PositionNode):
 
         # Collider.
         self.__collider = CollisionNode(
-            x = x,
-            y = y,
+            x = x + 2.0,
+            y = y + 2.0,
             collision_type = CollisionType.STATIC,
             passive_tags = self.tags,
             sensor = True,
             color = FALL_COLOR,
             shape = CollisionRect(
-                x = x,
-                y = y,
-                width = width,
-                height = height,
+                x = x + 2.0,
+                y = y + 2.0,
+                width = width - 4,
+                height = height - 4,
                 batch = batch
             )
         )

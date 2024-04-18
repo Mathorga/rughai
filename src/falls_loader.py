@@ -56,8 +56,8 @@ class FallsLoader:
                 falls_list.append(FallNode(
                     x = position[0],
                     y = position[1],
-                    width = size[0],
-                    height = size[1],
+                    width = int(size[0]),
+                    height = int(size[1]),
                     tags = element["tags"],
                     batch = batch
                 ))

@@ -64,7 +64,7 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
                     # Prepare the texture to be read by the shader.
                     image = self.samplers_2d[uniform.name]
                     width, height = image.width, image.height
-                    image_data = image.get_data('RGB', width * 3)
+                    image_data = image.get_data("RGB", width * 3)
 
                     # Pass the generated texture to GPU memory.
                     gl.glActiveTexture(gl.GL_TEXTURE0 + uniform_index)
