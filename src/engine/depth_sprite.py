@@ -51,9 +51,9 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
 
         # Set sampler2D uniforms.
         if self.samplers_2d is not None:
-            sampler_2d_uniforms = list(filter(lambda element : element.type == gl.GL_SAMPLER_2D, self.program.uniforms.values()))
+            sampler_2d_uniforms: list = list(filter(lambda element : element.type == gl.GL_SAMPLER_2D, self.program.uniforms.values()))
             # Generate sampler2D textures.
-            textures = [0] * len(sampler_2d_uniforms)
+            textures: list = [0] * len(sampler_2d_uniforms)
             textures_ctype = (gl.GLuint * len(textures))(*textures)
             gl.glGenTextures(len(sampler_2d_uniforms), textures_ctype)
 
