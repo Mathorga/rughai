@@ -279,6 +279,16 @@ def set_anchor(
             y = y
         )
 
+
+def set_filter(
+    resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
+    filter: int
+) -> None:
+    if isinstance(resource, pyglet.image.TextureRegion):
+        set_texture_filter(texture = resource, filter = filter)
+    elif isinstance(resource, pyglet.image.animation.Animation):
+        set_animation_filter(animation = resource, filter = filter)
+
 def set_texture_filter(
     texture: pyglet.image.TextureRegion,
     filter: int

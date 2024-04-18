@@ -24,11 +24,8 @@ class SpriteNode(PositionNode):
             y = y,
             z = z if z is not None else y
         )
-
-        if isinstance(resource, pyglet.image.TextureRegion):
-            utils.set_texture_filter(texture = resource, filter = gl.GL_NEAREST)
-        elif isinstance(resource, pyglet.image.animation.Animation):
-            utils.set_animation_filter(animation = resource, filter = gl.GL_NEAREST)
+        # Make sure the given resource is filtered using a nearest neighbor filter.
+        utils.set_filter(resource = resource, filter = gl.GL_NEAREST)
 
         self.sprite = DepthSprite(
             img = resource,
