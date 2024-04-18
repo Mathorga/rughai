@@ -4,7 +4,6 @@ from engine.collision.collision_node import CollisionType, CollisionNode
 from engine.utils.utils import CollisionHit
 
 class CollisionController:
-    # TODO Swept collisions.
     def __init__(self) -> None:
         self.__colliders: Dict[CollisionType, list[CollisionNode]] = {}
 
@@ -22,6 +21,20 @@ class CollisionController:
         if CollisionType.DYNAMIC in self.__colliders and CollisionType.STATIC in self.__colliders:
             # Loop through dynamic colliders.
             for actor in self.__colliders[CollisionType.DYNAMIC]:
+                # Trigger all collisions from the previous step.
+                for other in actor.in_collisions:
+                    if actor.on_triggered is not None:
+                        actor.on_triggered(other.passive_tags, True)
+                    if other.on_triggered is not None:
+                        other.on_triggered(actor.active_tags, True)
+                for other in actor.out_collisions:
+                    if actor.on_triggered is not None:
+                        actor.on_triggered(other.passive_tags, False)
+                    if other.on_triggered is not None:
+                        other.on_triggered(actor.active_tags, False)
+                actor.in_collisions.clear()
+                actor.out_collisions.clear()
+
                 # Solve collision and iterate until velocity is exhausted.
                 while abs(actor.velocity_x) > 0.0 or abs(actor.velocity_y) > 0.0:
                     # Save the resulting collisions for the given actor.

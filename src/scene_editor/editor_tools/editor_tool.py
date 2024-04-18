@@ -100,36 +100,3 @@ class PlaceDoorTool(EditorTool):
 
     def run(self, position: tuple[int, int]) -> None:
         return super().run(map_position = position)
-
-
-class ChangeSceneTool(EditorTool):
-    def __init__(
-        self,
-        tile_size: tuple[int, int],
-        batch: Optional[pyglet.graphics.Batch] = None
-    ) -> None:
-        super().__init__()
-
-        self.name = "Change scene"
-        self.color = SENSOR_COLOR
-
-        self.__tile_size = tile_size
-        self.__batch = batch
-
-    def get_cursor_icon(self) -> PositionNode:
-        return RectNode(
-            x = 0.0,
-            y = 0.0,
-            width = self.__tile_size[0],
-            height = self.__tile_size[1],
-            anchor_x = self.__tile_size[0] / 2,
-            anchor_y = self.__tile_size[1] / 2,
-            color = SENSOR_COLOR,
-            batch = self.__batch
-        )
-
-    def toggle_menu(self, toggle: bool) -> None:
-        return super().toggle_menu(toggle = toggle)
-
-    def run(self, position: tuple[int, int]) -> None:
-        return super().run(map_position = position)

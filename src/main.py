@@ -190,10 +190,6 @@ class Rughai:
             z_far = 3000
         )
 
-        # Scale textures using nearest neighbor filtering.
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-
         # Benchmark measures render time.
         with self._render_bench:
             self._window.clear()
