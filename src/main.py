@@ -59,7 +59,7 @@ class Rughai:
         )
 
         self._upscaler = Upscaler(
-            window = self._window,
+            window = self.window,
             width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
             height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
         )
