@@ -38,22 +38,24 @@ class Rughai:
         load_settings(f"{pyglet.resource.path[0]}/settings.json")
 
         # Create a window.
-        self._window = self.__create_window()
+        self.window = self.__create_window()
         self.fps_display = pyglet.window.FPSDisplay(
-            window = self._window,
-            color = (0, 0, 0, 255),
+            window = self.window,
+            color = (0x00, 0x00, 0x00, 0xFF),
             samples = 16
         )
 
+        print("WINDOW SIZE", self.window.width, self.window.height)
+
         # Controllers.
-        controllers.create_controllers(window = self._window)
+        controllers.create_controllers(window = self.window)
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
         GLOBALS[Keys.SCALING] = 1 if SETTINGS[Keys.PIXEL_PERFECT] else min(
-            self._window.width // SETTINGS[Keys.VIEW_WIDTH],
-            self._window.height // SETTINGS[Keys.VIEW_HEIGHT]
+            self.window.width // SETTINGS[Keys.VIEW_WIDTH],
+            self.window.height // SETTINGS[Keys.VIEW_HEIGHT]
         )
 
         self._upscaler = Upscaler(
@@ -63,25 +65,25 @@ class Rughai:
         )
 
         # self._upscaler = TrueUpscaler(
-        #     window = self._window,
-        #     width = SETTINGS[Keys.VIEW_WIDTH],
-        #     height = SETTINGS[Keys.VIEW_HEIGHT]
+        #     window = self.window,
+        #     width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
+        #     height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
         # )
 
         # Create benchmarks.
         self._update_bench = Benchmark(
-            window = self._window,
+            window = self.window,
             text = "UT: ",
             y = 30
         )
         self._render_bench = Benchmark(
-            window = self._window,
+            window = self.window,
             text = "RT: "
         )
 
         # Create a scene.
         self.__active_scene = R_0_0(
-            window = self._window,
+            window = self.window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],
             on_ended = self.__on_scene_end
@@ -113,7 +115,7 @@ class Rughai:
 
             if bundle["next_scene"] == scenes.R_0_0:
                 self.__active_scene = R_0_0(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -121,7 +123,7 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_1:
                 self.__active_scene = R_0_1(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -129,7 +131,7 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_2:
                 self.__active_scene = R_0_2(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -137,7 +139,7 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_3:
                 self.__active_scene = R_0_3(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -145,7 +147,7 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_4:
                 self.__active_scene = R_0_4(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -153,7 +155,7 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_5:
                 self.__active_scene = R_0_5(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -161,7 +163,7 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_6:
                 self.__active_scene = R_0_6(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -169,7 +171,7 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_7:
                 self.__active_scene = R_0_7(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -177,7 +179,7 @@ class Rughai:
                 )
             elif bundle["next_scene"] == scenes.R_0_8:
                 self.__active_scene = R_0_8(
-                    window = self._window,
+                    window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -190,11 +192,11 @@ class Rughai:
         """
 
         # Update window matrix.
-        self._window.projection = pyglet.math.Mat4.orthogonal_projection(
+        self.window.projection = pyglet.math.Mat4.orthogonal_projection(
             left = 0,
-            right = self._window.width,
+            right = self.window.width,
             bottom = 0,
-            top = self._window.height,
+            top = self.window.height,
             # For some reason near and far planes are inverted in sign, so that -500 means 500 and 1024 means -1024.
             z_near = -3000,
             z_far = 3000
@@ -202,7 +204,7 @@ class Rughai:
 
         # Benchmark measures render time.
         with self._render_bench:
-            self._window.clear()
+            self.window.clear()
 
             # Upscaler handles maintaining the wanted output resolution.
             with self._upscaler:

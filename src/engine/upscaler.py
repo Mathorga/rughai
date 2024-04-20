@@ -128,40 +128,34 @@ class TrueUpscaler:
         self.width: int = width
         self.height: int = height
 
-        # # Generate a texture to render to.
-        # image: pyglet.image.ImageData = pyglet.image.create(width = width, height = height)
-        # self.texture: pyglet.image.Texture = image.get_texture()
-
         # Generate a framebuffer to render to.
         self.framebuffer_id = gl.GLuint()
         gl.glGenFramebuffers(1, byref(self.framebuffer_id))
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
 
         # Generate a texture to attach to the framebuffer.
-        # self.texture_id = gl.GLuint()
-        self.texture = pyglet.image.create(width = width, height = height).get_texture()
-        # gl.glGenTextures(1, byref(self.texture.id))
+        image: pyglet.image.ImageData = pyglet.image.create(width = width, height = height)
+        self.texture: pyglet.image.Texture = image.get_texture()
         gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
-        gl.glTexImage2D(
-            gl.GL_TEXTURE_2D,
-            0,
-            gl.GL_RGB,
-            window.width,
-            window.height,
-            0,
-            gl.GL_RGB,
-            gl.GL_UNSIGNED_BYTE,
-            None
-        )
+        gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+        gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+        # gl.glTexImage2D(
+        #     gl.GL_TEXTURE_2D,
+        #     0,
+        #     gl.GL_RGB,
+        #     width,
+        #     height,
+        #     0,
+        #     gl.GL_RGB,
+        #     gl.GL_UNSIGNED_BYTE,
+        #     None
+        # )
 
         # Bind the framebuffer to the destination texture.
-        # gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
         gl.glFramebufferTexture2D(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_TEXTURE_2D, self.texture.id, 0)
-        # set_texture_filter(texture = self.texture, filter = gl.GL_NEAREST)
 
-        if gl.glCheckFramebufferStatus(gl.GL_FRAMEBUFFER) != gl.GL_FRAMEBUFFER_COMPLETE:
-            print("ERROR: framebuffer is not complete")
-            exit(1)
+        # Make sure the frame buffer is complete.
+        assert gl.glCheckFramebufferStatus(gl.GL_FRAMEBUFFER) != gl.GL_FRAMEBUFFER_COMPLETE, "framebuffer is not complete"
 
         # Setup the depth buffer.
         self.depthbuffer_id = gl.GLuint()
@@ -171,16 +165,6 @@ class TrueUpscaler:
 
         # Bind the generated depthbuffer to the framebuffer.
         gl.glFramebufferRenderbuffer(gl.GL_FRAMEBUFFER, gl.GL_DEPTH_ATTACHMENT, gl.GL_RENDERBUFFER, self.depthbuffer_id)
-
-        # self.vertices = [
-        #     0, 0,
-        #     window.width, 0,
-        #     window.width, window.height,
-        #     0, window.height
-        # ]
-        # self.tex_coords = [0, 0, 1, 0, 1, 1, 0, 1]
-        # self.indices = [0, 1, 2, 0, 2, 3]
-        # self.vertex_list = pyglet.graphics.()
 
     def __enter__(self):
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
@@ -199,9 +183,3 @@ class TrueUpscaler:
             width = self.window.width,
             height = self.window.height
         )
-
-    # def render(self) -> None:
-    #     gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
-    #     gl.glEnable(gl.GL_TEXTURE_2D)
-
-    #     gl.glEnableCl
