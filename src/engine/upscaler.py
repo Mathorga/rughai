@@ -46,9 +46,12 @@ The method used in this example is:
 4. Unbind the Framebuffer, and blit the Texture scaled to fill the screen.
 """
 
+from ctypes import byref
 import pyglet
+import pyglet.gl as gl
 
 from engine.settings import GLOBALS, Keys
+from engine.utils.utils import set_texture_filter
 
 class Upscaler:
     def __init__(
@@ -113,3 +116,92 @@ class Upscaler:
 
     def end(self):
         self.__exit__()
+
+class TrueUpscaler:
+    def __init__(
+        self,
+        window: pyglet.window.Window,
+        width: int,
+        height: int
+    ) -> None:
+        self.window: pyglet.window.Window = window
+        self.width: int = width
+        self.height: int = height
+
+        # # Generate a texture to render to.
+        # image: pyglet.image.ImageData = pyglet.image.create(width = width, height = height)
+        # self.texture: pyglet.image.Texture = image.get_texture()
+
+        # Generate a framebuffer to render to.
+        self.framebuffer_id = gl.GLuint()
+        gl.glGenFramebuffers(1, byref(self.framebuffer_id))
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
+
+        # Generate a texture to attach to the framebuffer.
+        # self.texture_id = gl.GLuint()
+        self.texture = pyglet.image.create(width = width, height = height).get_texture()
+        # gl.glGenTextures(1, byref(self.texture.id))
+        gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
+        gl.glTexImage2D(
+            gl.GL_TEXTURE_2D,
+            0,
+            gl.GL_RGB,
+            window.width,
+            window.height,
+            0,
+            gl.GL_RGB,
+            gl.GL_UNSIGNED_BYTE,
+            None
+        )
+
+        # Bind the framebuffer to the destination texture.
+        # gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
+        gl.glFramebufferTexture2D(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_TEXTURE_2D, self.texture.id, 0)
+        # set_texture_filter(texture = self.texture, filter = gl.GL_NEAREST)
+
+        if gl.glCheckFramebufferStatus(gl.GL_FRAMEBUFFER) != gl.GL_FRAMEBUFFER_COMPLETE:
+            print("ERROR: framebuffer is not complete")
+            exit(1)
+
+        # Setup the depth buffer.
+        self.depthbuffer_id = gl.GLuint()
+        gl.glGenRenderbuffers(1, byref(self.depthbuffer_id))
+        gl.glBindRenderbuffer(gl.GL_RENDERBUFFER, self.depthbuffer_id)
+        gl.glRenderbufferStorage(gl.GL_RENDERBUFFER, gl.GL_DEPTH_COMPONENT, window.width, window.height)
+
+        # Bind the generated depthbuffer to the framebuffer.
+        gl.glFramebufferRenderbuffer(gl.GL_FRAMEBUFFER, gl.GL_DEPTH_ATTACHMENT, gl.GL_RENDERBUFFER, self.depthbuffer_id)
+
+        # self.vertices = [
+        #     0, 0,
+        #     window.width, 0,
+        #     window.width, window.height,
+        #     0, window.height
+        # ]
+        # self.tex_coords = [0, 0, 1, 0, 1, 1, 0, 1]
+        # self.indices = [0, 1, 2, 0, 2, 3]
+        # self.vertex_list = pyglet.graphics.()
+
+    def __enter__(self):
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
+        gl.glEnable(gl.GL_DEPTH_TEST)
+
+        # Clear the framebuffer from depth data.
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+
+    def __exit__(self, *params):
+        gl.glDisable(gl.GL_DEPTH_TEST)
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
+        # self.window.clear()
+        self.texture.blit(
+            x = 0,
+            y = 0,
+            width = self.window.width,
+            height = self.window.height
+        )
+
+    # def render(self) -> None:
+    #     gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
+    #     gl.glEnable(gl.GL_TEXTURE_2D)
+
+    #     gl.glEnableCl

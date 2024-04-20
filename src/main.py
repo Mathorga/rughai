@@ -5,7 +5,7 @@ import pyglet.gl as gl
 import engine.controllers as controllers
 from engine.benchmark import Benchmark
 from engine.dungen.dungen import random_walk
-from engine.upscaler import Upscaler
+from engine.upscaler import TrueUpscaler, Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
 
 import constants.scenes as scenes
@@ -39,7 +39,11 @@ class Rughai:
 
         # Create a window.
         self._window = self.__create_window()
-        self.fps_display = pyglet.window.FPSDisplay(window = self._window, color = (0, 0, 0, 255), samples = 16)
+        self.fps_display = pyglet.window.FPSDisplay(
+            window = self._window,
+            color = (0, 0, 0, 255),
+            samples = 16
+        )
 
         # Controllers.
         controllers.create_controllers(window = self._window)
@@ -57,6 +61,12 @@ class Rughai:
             width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
             height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
         )
+
+        # self._upscaler = TrueUpscaler(
+        #     window = self._window,
+        #     width = SETTINGS[Keys.VIEW_WIDTH],
+        #     height = SETTINGS[Keys.VIEW_HEIGHT]
+        # )
 
         # Create benchmarks.
         self._update_bench = Benchmark(
@@ -79,9 +89,9 @@ class Rughai:
 
     def __create_window(self) -> pyglet.window.Window:
         window = pyglet.window.Window(
-            SETTINGS[Keys.WINDOW_WIDTH] if not SETTINGS[Keys.FULLSCREEN] else None,
-            SETTINGS[Keys.WINDOW_HEIGHT] if not SETTINGS[Keys.FULLSCREEN] else None,
-            SETTINGS[Keys.TITLE],
+            width = SETTINGS[Keys.WINDOW_WIDTH] if not SETTINGS[Keys.FULLSCREEN] else None,
+            height = SETTINGS[Keys.WINDOW_HEIGHT] if not SETTINGS[Keys.FULLSCREEN] else None,
+            caption = SETTINGS[Keys.TITLE],
             fullscreen = SETTINGS[Keys.FULLSCREEN],
             vsync = True,
             resizable = False
