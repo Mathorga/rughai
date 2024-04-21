@@ -76,7 +76,7 @@ class Upscaler:
         self._aspect = self.__calculate_aspect(*self.window.get_framebuffer_size())
         self._target_area = self.__calculate_area(*self.window.get_framebuffer_size())
 
-    def __calculate_aspect(self, new_screen_width, new_screen_height):
+    def __calculate_aspect(self, new_screen_width, new_screen_height) -> tuple[float, float]:
         aspect_ratio = self.width / self.height
         aspect_width = new_screen_width
         aspect_height = (aspect_width / aspect_ratio) + 0.5
@@ -121,41 +121,33 @@ class TrueUpscaler:
     def __init__(
         self,
         window: pyglet.window.Window,
-        width: int,
-        height: int
+        render_width: int,
+        render_height: int
     ) -> None:
         self.window: pyglet.window.Window = window
-        self.width: int = width
-        self.height: int = height
+        self.render_width: int = render_width
+        self.render_height: int = render_height
+        self.aspect: tuple[float, float] = self.__compute_aspect(window.size)
+        self.render_area: tuple[float, float, float, float] = self.__compute_area(window.size, self.aspect)
+        window.push_handlers(self)
 
         # Generate a framebuffer to render to.
         self.framebuffer_id = gl.GLuint()
         gl.glGenFramebuffers(1, byref(self.framebuffer_id))
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
 
+        # Make sure the frame buffer is complete.
+        assert gl.glCheckFramebufferStatus(gl.GL_FRAMEBUFFER) != gl.GL_FRAMEBUFFER_COMPLETE, "framebuffer is not complete"
+
         # Generate a texture to attach to the framebuffer.
-        image: pyglet.image.ImageData = pyglet.image.create(width = width, height = height)
+        image: pyglet.image.ImageData = pyglet.image.create(width = render_width, height = render_height)
         self.texture: pyglet.image.Texture = image.get_texture()
         gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
         gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-        # gl.glTexImage2D(
-        #     gl.GL_TEXTURE_2D,
-        #     0,
-        #     gl.GL_RGB,
-        #     width,
-        #     height,
-        #     0,
-        #     gl.GL_RGB,
-        #     gl.GL_UNSIGNED_BYTE,
-        #     None
-        # )
 
         # Bind the framebuffer to the destination texture.
         gl.glFramebufferTexture2D(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_TEXTURE_2D, self.texture.id, 0)
-
-        # Make sure the frame buffer is complete.
-        assert gl.glCheckFramebufferStatus(gl.GL_FRAMEBUFFER) != gl.GL_FRAMEBUFFER_COMPLETE, "framebuffer is not complete"
 
         # Setup the depth buffer.
         self.depthbuffer_id = gl.GLuint()
@@ -166,7 +158,35 @@ class TrueUpscaler:
         # Bind the generated depthbuffer to the framebuffer.
         gl.glFramebufferRenderbuffer(gl.GL_FRAMEBUFFER, gl.GL_DEPTH_ATTACHMENT, gl.GL_RENDERBUFFER, self.depthbuffer_id)
 
+    def on_resize(self, _width, _height):
+        self.aspect = self.__compute_aspect(self.window.size)
+        self.target_area = self.__compute_area(self.window.size, self.aspect)
+
+    def __compute_aspect(self, size: tuple[int, int]) -> tuple[float, float]:
+        aspect_ratio = self.render_width / self.render_height
+        aspect_width = size[0]
+        aspect_height = (aspect_width / aspect_ratio) + 0.5
+
+        if aspect_height > size[1]:
+            aspect_height = size[1]
+            aspect_width = (aspect_height * aspect_ratio) + 0.5
+
+        return (aspect_width, aspect_height)
+
+    def __compute_area(self, size: tuple[int, int], aspect: tuple[float, float]) -> tuple[float, float, float, float]:
+        return (
+            # X.
+            int((size[0] / 2) - (aspect[0] / 2)),
+            # Y.
+            int((size[1] / 2) - (aspect[1] / 2)),
+            # Width.
+            int(aspect[0]),
+            # Height.
+            int(aspect[1])
+        )
+
     def __enter__(self):
+        # Bind the destination framebuffer and enable depth testing.
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
         gl.glEnable(gl.GL_DEPTH_TEST)
 
@@ -174,12 +194,24 @@ class TrueUpscaler:
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
     def __exit__(self, *params):
+        # Disable depth testing and unbind the destination framebuffer.
         gl.glDisable(gl.GL_DEPTH_TEST)
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
-        # self.window.clear()
+
+        # Blit the now populated
         self.texture.blit(
-            x = 0,
-            y = 0,
-            width = self.window.width,
-            height = self.window.height
+            # x = 0,
+            # y = 0,
+            # width = self.window.width,
+            # height = self.window.height
+            self.render_area[0],
+            self.render_area[1],
+            self.render_area[2],
+            self.render_area[3]
         )
+
+    def begin(self):
+        self.__enter__()
+
+    def end(self):
+        self.__exit__()
