@@ -45,8 +45,6 @@ class Rughai:
             samples = 16
         )
 
-        print("WINDOW SIZE", self.window.width, self.window.height)
-
         # Controllers.
         controllers.create_controllers(window = self.window)
 
