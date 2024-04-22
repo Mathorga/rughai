@@ -3,6 +3,8 @@ from typing import Dict, Optional
 from engine.collision.collision_node import CollisionType, CollisionNode
 from engine.utils.utils import CollisionHit
 
+VELOCITY_TOLERANCE: float = 1e-5
+
 class CollisionController:
     def __init__(self) -> None:
         self.__colliders: Dict[CollisionType, list[CollisionNode]] = {}
@@ -36,7 +38,7 @@ class CollisionController:
                 actor.out_collisions.clear()
 
                 # Solve collision and iterate until velocity is exhausted.
-                while abs(actor.velocity_x) > 0.0 or abs(actor.velocity_y) > 0.0:
+                while abs(actor.velocity_x) > VELOCITY_TOLERANCE or abs(actor.velocity_y) > VELOCITY_TOLERANCE:
                     # Save the resulting collisions for the given actor.
                     nearest_collision: Optional[CollisionHit] = None
 
