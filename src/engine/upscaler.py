@@ -51,7 +51,6 @@ import pyglet
 import pyglet.gl as gl
 
 from engine.settings import GLOBALS, Keys
-from engine.utils.utils import set_texture_filter
 
 class Upscaler:
     def __init__(
@@ -204,10 +203,10 @@ class TrueUpscaler:
             # y = 0,
             # width = self.window.width,
             # height = self.window.height
-            self.render_area[0],
-            self.render_area[1],
-            self.render_area[2],
-            self.render_area[3]
+            x = self.render_area[0],
+            y = self.render_area[1],
+            width = self.render_area[2],
+            height = self.render_area[3]
         )
 
     def begin(self):
