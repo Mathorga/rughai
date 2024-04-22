@@ -199,10 +199,6 @@ class TrueUpscaler:
 
         # Blit the now populated
         self.texture.blit(
-            # x = 0,
-            # y = 0,
-            # width = self.window.width,
-            # height = self.window.height
             x = self.render_area[0],
             y = self.render_area[1],
             width = self.render_area[2],
