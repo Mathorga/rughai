@@ -4,7 +4,7 @@ import xml.etree.ElementTree as xml
 import pyglet
 import pyglet.gl as gl
 
-from engine.depth_sprite import DepthSprite
+from engine.shaded_sprite import ShadedSprite
 from engine.node import PositionNode
 from engine.scene_node import Bounds
 from engine.settings import GLOBALS, SETTINGS, Keys
@@ -88,7 +88,7 @@ class TilemapNode(PositionNode):
         self.map_height = map_height
 
         self.__sprites = [
-            DepthSprite(
+            ShadedSprite(
                 img = tileset.tiles[tex_index],
                 x = int(x + (index % map_width) * tileset.tile_width * GLOBALS[Keys.SCALING]),
                 y = int(y + (map_height - 1 - (index // map_width)) * tileset.tile_height * GLOBALS[Keys.SCALING]),

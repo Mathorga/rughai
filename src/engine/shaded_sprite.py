@@ -29,14 +29,14 @@ vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex
 frag_shader = pyglet.graphics.shader.Shader(FRAGMENT_SOURCE, "fragment")
 depth_shader_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
 
-class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
+class ShadedSpriteGroup(pyglet.sprite.SpriteGroup):
     def __init__(
         self,
         texture,
-        blend_src,
-        blend_dest,
-        program,
-        parent = None,
+        blend_src: int = gl.GL_SRC_ALPHA,
+        blend_dest: int = gl.GL_ONE_MINUS_SRC_ALPHA,
+        program: pyglet.graphics.shader.ShaderProgram = depth_shader_program,
+        parent: pyglet.graphics.Group | None = None,
         samplers_2d: Optional[Dict[str, pyglet.image.ImageData]] = None
     ):
         super().__init__(texture, blend_src, blend_dest, program, parent)
@@ -99,22 +99,22 @@ class DepthSpriteGroup(pyglet.sprite.SpriteGroup):
         gl.glDisable(gl.GL_DEPTH_TEST)
         self.program.stop()
 
-class DepthSprite(pyglet.sprite.AdvancedSprite):
-    group_class = DepthSpriteGroup
+class ShadedSprite(pyglet.sprite.AdvancedSprite):
+    group_class = ShadedSpriteGroup
 
     def __init__(
         self,
-        img: Union[pyglet.image.AbstractImage, pyglet.image.Animation],
+        img: pyglet.image.AbstractImage | pyglet.image.Animation,
         x = 0,
         y = 0,
         z = 0,
         blend_src: int = gl.GL_SRC_ALPHA,
         blend_dest: int = gl.GL_ONE_MINUS_SRC_ALPHA,
-        batch: Optional[pyglet.graphics.Batch] = None,
-        group: Optional[pyglet.graphics.Group] = None,
+        batch: pyglet.graphics.Batch | None = None,
+        group: pyglet.graphics.Group | None = None,
         subpixel: bool = False,
-        program: Optional[pyglet.graphics.shader.ShaderProgram] = None,
-        samplers_2d: Optional[Dict[str, pyglet.image.ImageData]] = None
+        program: pyglet.graphics.shader.ShaderProgram | None = None,
+        samplers_2d: dict[str, pyglet.image.ImageData] | None = None
     ):
         super().__init__(
             img,

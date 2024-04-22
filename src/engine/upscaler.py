@@ -50,6 +50,7 @@ from ctypes import byref
 import pyglet
 import pyglet.gl as gl
 
+from engine.shaded_sprite import ShadedSprite
 from engine.settings import GLOBALS, Keys
 
 class Upscaler:
@@ -139,8 +140,12 @@ class TrueUpscaler:
         assert gl.glCheckFramebufferStatus(gl.GL_FRAMEBUFFER) != gl.GL_FRAMEBUFFER_COMPLETE, "framebuffer is not complete"
 
         # Generate a texture to attach to the framebuffer.
-        image: pyglet.image.ImageData = pyglet.image.create(width = render_width, height = render_height)
-        self.texture: pyglet.image.Texture = image.get_texture()
+        # image: pyglet.image.ImageData = pyglet.image.create(width = render_width, height = render_height)
+        self.texture: pyglet.image.Texture = pyglet.image.Texture.create(
+            width = render_width,
+            height = render_height
+        )
+        self.sprite: ShadedSprite = ShadedSprite(img = self.texture)
         gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
         gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
@@ -159,7 +164,12 @@ class TrueUpscaler:
 
     def on_resize(self, _width, _height):
         self.aspect = self.__compute_aspect(self.window.size)
-        self.target_area = self.__compute_area(self.window.size, self.aspect)
+        self.render_area = self.__compute_area(self.window.size, self.aspect)
+        self.sprite.position = ((*self.render_area[:2], 0))
+        self.sprite.scale = min(
+            self.window.width / self.render_width,
+            self.window.height / self.render_height
+        )
 
     def __compute_aspect(self, size: tuple[int, int]) -> tuple[float, float]:
         aspect_ratio = self.render_width / self.render_height
@@ -188,6 +198,7 @@ class TrueUpscaler:
         # Bind the destination framebuffer and enable depth testing.
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
         gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 
         # Clear the framebuffer from depth data.
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
@@ -197,13 +208,15 @@ class TrueUpscaler:
         gl.glDisable(gl.GL_DEPTH_TEST)
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
 
-        # Blit the now populated
-        self.texture.blit(
-            x = self.render_area[0],
-            y = self.render_area[1],
-            width = self.render_area[2],
-            height = self.render_area[3]
-        )
+        # For some reason rendering a sprite is way less expensive than rendering a texture directly,
+        # so draw the sprite instead of blitting the texture.
+        # self.texture.blit(
+        #     x = self.render_area[0],
+        #     y = self.render_area[1],
+        #     width = self.render_area[2],
+        #     height = self.render_area[3]
+        # )
+        self.sprite.draw()
 
     def begin(self):
         self.__enter__()

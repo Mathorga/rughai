@@ -2,7 +2,7 @@ from typing import Callable, Dict, Optional, Tuple, Union
 import pyglet
 import pyglet.gl as gl
 
-from engine.depth_sprite import DepthSprite
+from engine.shaded_sprite import ShadedSprite
 from engine.node import PositionNode
 from engine.settings import GLOBALS, Keys
 from engine.utils import utils
@@ -27,7 +27,7 @@ class SpriteNode(PositionNode):
         # Make sure the given resource is filtered using a nearest neighbor filter.
         utils.set_filter(resource = resource, filter = gl.GL_NEAREST)
 
-        self.sprite = DepthSprite(
+        self.sprite = ShadedSprite(
             img = resource,
             x = int(x * GLOBALS[Keys.SCALING]),
             y = int(y * GLOBALS[Keys.SCALING]),
