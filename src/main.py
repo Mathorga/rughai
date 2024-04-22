@@ -58,17 +58,17 @@ class Rughai:
             self.window.height // SETTINGS[Keys.VIEW_HEIGHT]
         )
 
-        self._upscaler = Upscaler(
-            window = self.window,
-            width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
-            height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
-        )
-
-        # self._upscaler = TrueUpscaler(
+        # self._upscaler = Upscaler(
         #     window = self.window,
         #     width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
         #     height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
         # )
+
+        self._upscaler = TrueUpscaler(
+            window = self.window,
+            render_width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
+            render_height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
+        )
 
         # Create benchmarks.
         self._update_bench = Benchmark(
