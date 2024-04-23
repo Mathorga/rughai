@@ -97,6 +97,9 @@ class Rughai:
             resizable = True
         )
 
+        # Set the clear color (used when the window is cleared).
+        gl.glClearColor(0.0, 0.0, 0.0, 1.0)
+
         window.push_handlers(self)
         if not SETTINGS[Keys.DEBUG]:
             window.set_mouse_visible(False)

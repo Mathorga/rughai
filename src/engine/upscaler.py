@@ -198,15 +198,16 @@ class TrueUpscaler:
         # Bind the destination framebuffer and enable depth testing.
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
         gl.glEnable(gl.GL_DEPTH_TEST)
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+        # gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_COLOR)
 
         # Clear the framebuffer from depth data.
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
     def __exit__(self, *params):
         # Disable depth testing and unbind the destination framebuffer.
-        gl.glDisable(gl.GL_DEPTH_TEST)
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
+        gl.glDisable(gl.GL_DEPTH_TEST)
+        # gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE)
 
         # For some reason rendering a sprite is way less expensive than rendering a texture directly,
         # so draw the sprite instead of blitting the texture.
