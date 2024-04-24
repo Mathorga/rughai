@@ -129,6 +129,10 @@ class TrueUpscaler:
         self.render_width: int = render_width
         self.render_height: int = render_height
         self.program: pyglet.graphics.shader.ShaderProgram | None = program
+
+        # On retina Macs everything is rendered 4x-zoomed for some reason. compensate for this using a platform scaling.
+        self.platform_scaling: float = 0.5 if "macOS" in GLOBALS[Keys.PLATFORM] else 1.0
+
         self.aspect: tuple[float, float] = self.__compute_aspect(window.size)
         self.render_area: tuple[float, float, float, float] = self.__compute_area(window.size, self.aspect)
         window.push_handlers(self)
@@ -174,8 +178,8 @@ class TrueUpscaler:
         self.render_area = self.__compute_area(self.window.size, self.aspect)
         self.sprite.position = ((*self.render_area[:2], 0))
         self.sprite.scale = min(
-            self.window.width / self.render_width,
-            self.window.height / self.render_height
+            self.window.width / self.render_width * self.platform_scaling,
+            self.window.height / self.render_height * self.platform_scaling
         )
 
     def __compute_aspect(self, size: tuple[int, int]) -> tuple[float, float]:
