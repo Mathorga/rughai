@@ -145,7 +145,11 @@ class TrueUpscaler:
             width = render_width,
             height = render_height
         )
-        self.sprite: ShadedSprite = ShadedSprite(img = self.texture)
+        self.sprite: ShadedSprite = ShadedSprite(
+            img = self.texture,
+            blend_src = gl.GL_ONE,
+            blend_dest = gl.GL_ONE
+        )
         gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
         gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
         gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
