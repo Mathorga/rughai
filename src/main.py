@@ -32,9 +32,17 @@ FRAGMENT_SOURCE = """
     void main() {
         final_color = texture(sprite_texture, texture_coords.xy) * vertex_colors;
 
+        // Dips to red on long rendered frames.
         //final_color.gb *= (1.0 - (dt - 0.01) * 100.0);
-        # final_color.rgb *= texture_coords.xy;
+
+        // Shows current xy coords on top of real colors.
+        //final_color.rgb *= texture_coords.xy;
+
+        // Negative colors.
         //final_color.rgb = 1.0 - final_color.rgb;
+
+        // Rotate colors.
+        //final_color.rgb = final_color.gbr;
 
         if (final_color.a < 0.01) {
             discard;
