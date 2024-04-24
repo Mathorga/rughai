@@ -20,6 +20,31 @@ from scenes.rughai.r_0_6 import R_0_6
 from scenes.rughai.r_0_7 import R_0_7
 from scenes.rughai.r_0_8 import R_0_8
 
+FRAGMENT_SOURCE = """
+    #version 150 core
+    in vec4 vertex_colors;
+    in vec3 texture_coords;
+    out vec4 final_color;
+
+    uniform sampler2D sprite_texture;
+    uniform float dt;
+
+    void main() {
+        final_color = texture(sprite_texture, texture_coords.xy) * vertex_colors;
+
+        //final_color.gb *= (1.0 - (dt - 0.01) * 100.0);
+        # final_color.rgb *= texture_coords.xy;
+        //final_color.rgb = 1.0 - final_color.rgb;
+
+        if (final_color.a < 0.01) {
+            discard;
+        }
+    }
+"""
+vert_shader = pyglet.graphics.shader.Shader(pyglet.sprite.vertex_source, "vertex")
+frag_shader = pyglet.graphics.shader.Shader(FRAGMENT_SOURCE, "fragment")
+upscaler_program = pyglet.graphics.shader.ShaderProgram(vert_shader, frag_shader)
+
 class Rughai:
     """
     Main class: this is where scene changing happens and everything is set up.
@@ -65,7 +90,8 @@ class Rughai:
         self._upscaler = TrueUpscaler(
             window = self.window,
             render_width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
-            render_height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
+            render_height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING],
+            program = upscaler_program
         )
 
         # Create benchmarks.
@@ -219,6 +245,7 @@ class Rughai:
             self.fps_display.draw()
 
     def update(self, dt: float) -> None:
+        # upscaler_program["dt"] = dt
         # Benchmark measures update time.
         with self._update_bench:
             # InputController makes sure every input is handled correctly.
