@@ -218,7 +218,7 @@ class Rughai:
         if SETTINGS[Keys.DEBUG]:
             self.fps_display.draw()
 
-    def update(self, dt) -> None:
+    def update(self, dt: float) -> None:
         # Benchmark measures update time.
         with self._update_bench:
             # InputController makes sure every input is handled correctly.

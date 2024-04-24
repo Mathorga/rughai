@@ -122,11 +122,13 @@ class TrueUpscaler:
         self,
         window: pyglet.window.Window,
         render_width: int,
-        render_height: int
+        render_height: int,
+        program: pyglet.graphics.shader.ShaderProgram | None = None
     ) -> None:
         self.window: pyglet.window.Window = window
         self.render_width: int = render_width
         self.render_height: int = render_height
+        self.program: pyglet.graphics.shader.ShaderProgram | None = program
         self.aspect: tuple[float, float] = self.__compute_aspect(window.size)
         self.render_area: tuple[float, float, float, float] = self.__compute_area(window.size, self.aspect)
         window.push_handlers(self)
@@ -148,7 +150,8 @@ class TrueUpscaler:
         self.sprite: ShadedSprite = ShadedSprite(
             img = self.texture,
             blend_src = gl.GL_ONE,
-            blend_dest = gl.GL_ONE
+            blend_dest = gl.GL_ONE,
+            program = program
         )
         gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
         gl.glTexParameteri(self.texture.target, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
@@ -166,7 +169,7 @@ class TrueUpscaler:
         # Bind the generated depthbuffer to the framebuffer.
         gl.glFramebufferRenderbuffer(gl.GL_FRAMEBUFFER, gl.GL_DEPTH_ATTACHMENT, gl.GL_RENDERBUFFER, self.depthbuffer_id)
 
-    def on_resize(self, _width, _height):
+    def on_resize(self, width, height):
         self.aspect = self.__compute_aspect(self.window.size)
         self.render_area = self.__compute_area(self.window.size, self.aspect)
         self.sprite.position = ((*self.render_area[:2], 0))
@@ -199,6 +202,12 @@ class TrueUpscaler:
         )
 
     def __enter__(self):
+        self.begin()
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.end()
+
+    def begin(self):
         # Bind the destination framebuffer and enable depth testing.
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer_id)
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -207,7 +216,7 @@ class TrueUpscaler:
         # Clear the framebuffer from depth data.
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
-    def __exit__(self, *params):
+    def end(self):
         # Disable depth testing and unbind the destination framebuffer.
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
         gl.glDisable(gl.GL_DEPTH_TEST)
@@ -223,8 +232,8 @@ class TrueUpscaler:
         # )
         self.sprite.draw()
 
-    def begin(self):
-        self.__enter__()
-
-    def end(self):
-        self.__exit__()
+    def set_program(
+        self,
+        program: pyglet.graphics.shader.ShaderProgram
+    ):
+        self.sprite.program = program
