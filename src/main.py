@@ -87,7 +87,6 @@ class Rughai:
 
         # On retina Macs everything is rendered 2x-zoomed for some reason. compensate for this using a platform scaling.
         platform_scaling: float = 0.5 if "macOS" in GLOBALS[Keys.PLATFORM] else 1.0
-        # platform_scaling: float = 1.0
 
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
@@ -96,12 +95,6 @@ class Rughai:
             self.window.width // SETTINGS[Keys.VIEW_WIDTH],
             self.window.height // SETTINGS[Keys.VIEW_HEIGHT]
         ) * platform_scaling)
-
-        # self._upscaler = Upscaler(
-        #     window = self.window,
-        #     width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
-        #     height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]
-        # )
 
         self._upscaler = TrueUpscaler(
             window = self.window,

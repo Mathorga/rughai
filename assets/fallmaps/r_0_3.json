@@ -2,7 +2,7 @@
     "elements": [
         {
             "tags": [
-                "player_collision"
+                "fall"
             ],
             "positions": [
                 "936,96",
