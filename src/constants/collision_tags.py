@@ -7,5 +7,8 @@ PLAYER_SENSE = "player_sense"
 # Player interaction, used to know when to display interaction signals.
 PLAYER_INTERACTION = "player_interaction"
 
+# All fall-related collisions.
+FALL = "fall"
+
 # All damage-related collisions.
 DAMAGE = "damage"

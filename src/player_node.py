@@ -156,7 +156,8 @@ class PlayerNode(PositionNode):
             collision_type = CollisionType.DYNAMIC,
             active_tags = [
                 collision_tags.PLAYER_COLLISION,
-                collision_tags.PLAYER_SENSE
+                collision_tags.PLAYER_SENSE,
+                collision_tags.FALL
             ],
             passive_tags = [
                 collision_tags.DAMAGE
@@ -169,7 +170,8 @@ class PlayerNode(PositionNode):
                 width = 6,
                 height = 6,
                 batch = batch
-            )
+            ),
+            on_triggered = self.on_collision
         )
         controllers.COLLISION_CONTROLLER.add_collider(self.__collider)
 
@@ -231,6 +233,17 @@ class PlayerNode(PositionNode):
         # Update sprites accordingly.
         self.__update_sprites(dt)
 
+    def set_position(
+        self,
+        position: tuple[float, float],
+        z: float | None = None
+    ):
+        super().set_position(position = position, z = z)
+        self.__collider.set_position(position = position)
+
+    def on_collision(self, tags: list[str], entered: bool) -> None:
+        self.__state_machine.on_collision(tags = tags, enter = entered)
+
     def on_sprite_animation_end(self):
         self.__state_machine.on_animation_end()
 
@@ -274,7 +287,7 @@ class PlayerNode(PositionNode):
             self.__hor_facing = int(math.copysign(1.0, dir_cos))
 
         # Update sprite position.
-        self.__sprite.set_position((self.x, self.y))
+        self.__sprite.set_position(self.get_position())
 
         # Flip sprite if moving to the left.
         self.__sprite.set_scale(x_scale = self.__hor_facing)
@@ -401,6 +414,11 @@ class PlayerStateMachine(StateMachine):
 
         if isinstance(current_state, PlayerState):
             current_state.disable_input()
+
+    def on_collision(self, tags: list[str], enter: bool) -> None:
+        # Transition to fall state if a fall collision is met.
+        if enter and collision_tags.FALL in tags:
+            self.transition(PlayerStates.FALL)
 
 class PlayerState(State):
     """
@@ -1127,3 +1145,19 @@ class PlayerFallState(PlayerState):
         actor: PlayerNode
     ) -> None:
         super().__init__(actor)
+
+        # Animations.
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_fall.json")
+
+    def start(self) -> None:
+        self.actor.set_animation(self.__animation)
+
+        # Hide loading indicator.
+        self.actor.draw_indicator.hide()
+
+    def on_animation_end(self) -> str | None:
+        dir: float = self.actor.stats.move_dir + math.pi
+        displacement_vec: pyglet.math.Vec2 = pyglet.math.Vec2.from_polar(mag = 10.0, angle = dir)
+        self.actor.set_position((self.actor.x + displacement_vec.x, self.actor.y + displacement_vec.y))
+
+        return PlayerStates.IDLE

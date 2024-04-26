@@ -1,10 +1,10 @@
 import math
 import random
-from typing import Callable, Optional
+from typing import Callable
 
-DEFAULT_MIN = 5.0
-DEFAULT_MAX = 20.0
-LEVELS = 25
+DEFAULT_MIN: float = 5.0
+DEFAULT_MAX: float = 20.0
+LEVELS: int = 25
 
 class PlayerStats():
     def __init__(
