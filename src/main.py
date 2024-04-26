@@ -35,14 +35,18 @@ FRAGMENT_SOURCE = """
         // Dips to red on long rendered frames.
         //final_color.gb *= (1.0 - (dt - 0.01) * 100.0);
 
+        // Rotate colors.
+        //final_color.rgb = final_color.gbr;
+
+        // Black/white.
+        //float brightness = (final_color.r + final_color.g + final_color.b) / 3.0;
+        //final_color = vec4(brightness, brightness, brightness, final_color.a);
+
         // Shows current xy coords on top of real colors.
-        //final_color.rgb *= texture_coords.xy;
+        //final_color.rg *= texture_coords.xy;
 
         // Negative colors.
         //final_color.rgb = 1.0 - final_color.rgb;
-
-        // Rotate colors.
-        //final_color.rgb = final_color.gbr;
 
         if (final_color.a < 0.01) {
             discard;
@@ -81,13 +85,17 @@ class Rughai:
         # Controllers.
         controllers.create_controllers(window = self.window)
 
+        # On retina Macs everything is rendered 2x-zoomed for some reason. compensate for this using a platform scaling.
+        platform_scaling: float = 0.5 if "macOS" in GLOBALS[Keys.PLATFORM] else 1.0
+        # platform_scaling: float = 1.0
+
         # Compute pixel scaling (minimum unit is <1 / scaling>)
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
-        GLOBALS[Keys.SCALING] = 1 if SETTINGS[Keys.PIXEL_PERFECT] else min(
+        GLOBALS[Keys.SCALING] = 1 if SETTINGS[Keys.PIXEL_PERFECT] else int(min(
             self.window.width // SETTINGS[Keys.VIEW_WIDTH],
             self.window.height // SETTINGS[Keys.VIEW_HEIGHT]
-        )
+        ) * platform_scaling)
 
         # self._upscaler = Upscaler(
         #     window = self.window,
@@ -97,8 +105,8 @@ class Rughai:
 
         self._upscaler = TrueUpscaler(
             window = self.window,
-            render_width = SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING],
-            render_height = SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING],
+            render_width = int((SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING]) / platform_scaling),
+            render_height = int((SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]) / platform_scaling),
             program = upscaler_program
         )
 
@@ -106,11 +114,12 @@ class Rughai:
         self._update_bench = Benchmark(
             window = self.window,
             text = "UT: ",
-            y = 30
+            y = 80
         )
         self._render_bench = Benchmark(
             window = self.window,
-            text = "RT: "
+            text = "RT: ",
+            y = 50
         )
 
         # Create a scene.
@@ -249,8 +258,8 @@ class Rughai:
                     self._render_bench.draw()
                     self._update_bench.draw()
 
-        if SETTINGS[Keys.DEBUG]:
-            self.fps_display.draw()
+                if SETTINGS[Keys.DEBUG]:
+                    self.fps_display.draw()
 
     def update(self, dt: float) -> None:
         # upscaler_program["dt"] = dt
