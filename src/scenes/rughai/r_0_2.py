@@ -4,10 +4,12 @@ from clouds_node import CloudsNode
 from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 
+from engine.fall_node import FallNode
 from engine.node import PositionNode
 from engine.playable_scene_node import PlayableSceneNode
 from engine.utils.utils import remap
 from engine.wall_node import WallNode
+from falls_loader import FallsLoader
 from idle_prop_loader import IdlePropLoader
 from engine.scene_node import SceneNode
 from engine.sprite_node import SpriteNode
@@ -60,6 +62,12 @@ class R_0_2(PlayableSceneNode):
         # Solid walls.
         walls: list[WallNode] = WallsLoader.fetch(
             source = "wallmaps/r_0_2.json",
+            batch = scenes.ACTIVE_SCENE.world_batch
+        )
+
+        # Falls.
+        falls: list[FallNode] = FallsLoader.fetch(
+            source = "fallmaps/r_0_2.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
@@ -140,6 +148,7 @@ class R_0_2(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_child(bg)
         scenes.ACTIVE_SCENE.add_children(tilemaps)
         scenes.ACTIVE_SCENE.add_children(walls)
+        scenes.ACTIVE_SCENE.add_children(falls)
         scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
         scenes.ACTIVE_SCENE.add_child(self._player)
         # self._scene.add_child(duk)
