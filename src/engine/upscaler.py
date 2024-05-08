@@ -223,14 +223,6 @@ class TrueUpscaler:
         gl.glDisable(gl.GL_DEPTH_TEST)
         # gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE)
 
-        # For some reason rendering a sprite is way less expensive than rendering a texture directly,
-        # so draw the sprite instead of blitting the texture.
-        # self.texture.blit(
-        #     x = self.render_area[0],
-        #     y = self.render_area[1],
-        #     width = self.render_area[2],
-        #     height = self.render_area[3]
-        # )
         self.sprite.draw()
 
     def set_program(
