@@ -135,26 +135,12 @@ class R_0_0(PlayableSceneNode):
         )
 
         # Props.
-        idle_props = IdlePropLoader.fetch_prop_list(
-            "propmaps/r_0_0",
+        idle_props = IdlePropLoader.fetch(
+            source = "idlepropmaps/r_0_0.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
         props = PropLoader.fetch(
             source = "propmaps/r_0_0.json",
-            world_batch = scenes.ACTIVE_SCENE.world_batch,
-            ui_batch = scenes.ACTIVE_SCENE.ui_batch
-        )
-
-        # Stan Lee.
-        stan_lee = PROP_MAPPING["stan_lee"](
-            x = self.__tile_size * 48,
-            y = self.__tile_size * 35,
-            world_batch = scenes.ACTIVE_SCENE.world_batch,
-            ui_batch = scenes.ACTIVE_SCENE.ui_batch
-        )
-        self.battery = PROP_MAPPING["battery"](
-            x = self.__tile_size * 58,
-            y = self.__tile_size * 35,
             world_batch = scenes.ACTIVE_SCENE.world_batch,
             ui_batch = scenes.ACTIVE_SCENE.ui_batch
         )
@@ -169,8 +155,6 @@ class R_0_0(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_child(clouds)
         scenes.ACTIVE_SCENE.add_children(idle_props)
         scenes.ACTIVE_SCENE.add_children(props)
-        scenes.ACTIVE_SCENE.add_child(stan_lee)
-        scenes.ACTIVE_SCENE.add_child(self.battery)
         scenes.ACTIVE_SCENE.add_child(self._player)
         scenes.ACTIVE_SCENE.add_children(doors)
         scenes.ACTIVE_SCENE.add_child(energy_bar)

@@ -5,6 +5,8 @@ import json
 from typing import Callable
 import pyglet
 
+from props.idle_prop_node import IdlePropNode
+
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")))
 
 from engine import controllers
@@ -246,13 +248,11 @@ class PlaceIdlePropTool(EditorTool):
         self.__tilemap_height: int = tilemap_height
 
         self.__prop_sets: list[dict[str, set[tuple[int, int]]]] = [
-            IdlePropLoader.fetch_prop_sets(
-                source = f"propmaps/{scene_name}"
-            )
+            IdlePropLoader.fetch_positions(source = f"idlepropmaps/{scene_name}.json")
         ]
         self.__current_props_index: int = 0
 
-        self.__props: list[PositionNode] = []
+        self.__props: list[IdlePropNode] = []
         self.__refresh_props()
 
         self.__menu: IdlePropEditorMenuNode = IdlePropEditorMenuNode(
@@ -308,16 +308,24 @@ class PlaceIdlePropTool(EditorTool):
 
         if self.alt_mode:
             # Just clear if in alt mode.
-            self.clear(position = map_position)
+            self.clear(
+                position = (
+                    int(map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2),
+                    int(map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2)
+                )
+            )
         else:
             # Place the currently selected prop otherwise.
-            self.place_prop(position = map_position)
+            self.place_prop(
+                position = (
+                    int(map_position[0] * self.__tile_size[0] + self.__tile_size[0] / 2),
+                    int(map_position[1] * self.__tile_size[1] + self.__tile_size[1] / 2)
+                )
+            )
 
-        IdlePropLoader.save_prop_sets(
-            dest = f"{pyglet.resource.path[0]}/propmaps/{self.__scene_name}",
-            map_width = self.__tilemap_width,
-            map_height = self.__tilemap_height,
-            prop_sets = self.__prop_sets[self.__current_props_index]
+        IdlePropLoader.store(
+            dest = f"{pyglet.resource.path[0]}/idlepropmaps/{self.__scene_name}.json",
+            props = self.__props
         )
 
     def place_prop(self, position: tuple[int, int]) -> None:
@@ -389,8 +397,8 @@ class PlaceIdlePropTool(EditorTool):
             for position in self.__prop_sets[self.__current_props_index][prop_name]:
                 prop = IdlePropLoader.map_prop(
                     prop_name,
-                    x = position[0] * self.__tile_size[0] + self.__tile_size[0] / 2,
-                    y = position[1] * self.__tile_size[1] + self.__tile_size[1] / 2,
+                    x = position[0],
+                    y = position[1],
                     batch = self.__world_batch
                 )
 

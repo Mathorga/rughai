@@ -1,5 +1,2 @@
 # All OpenGL rendering, sound and input management.
 pyglet==2.0.10
-
-# Pixel information retrieval from image file.
-pillow==10.1.0

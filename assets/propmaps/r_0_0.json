@@ -2,11 +2,15 @@
     "elements": [
         {
             "id": "stan_lee",
-            "positions": []
+            "positions": [
+                "388,284"
+            ]
         },
         {
             "id": "battery",
-            "positions": []
+            "positions": [
+                "468,276"
+            ]
         }
     ]
 }

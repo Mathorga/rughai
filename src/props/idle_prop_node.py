@@ -1,3 +1,4 @@
+import os
 from enum import Enum
 import json
 import random
@@ -13,6 +14,7 @@ from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
 from engine.utils.utils import set_animation_anchor_x, set_animation_anchor_y, x_center_animation, y_center_animation
 from constants import scenes
+from props.prop_node import PropNode
 
 class IdlePropStates(str, Enum):
     IDLE = "idle"
@@ -24,7 +26,7 @@ class IdlePropStates(str, Enum):
     DESTROY = "destroy"
     DESTROYED = "destroyed"
 
-class IdlePropNode(PositionNode):
+class IdlePropNode(PropNode):
     """
         Generic idle prop node.
         Takes the path to a json definition file as input.
@@ -97,7 +99,14 @@ class IdlePropNode(PositionNode):
         z: float = 0.0,
         batch: pyglet.graphics.Batch | None = None
     ) -> None:
-        super().__init__(x, y, z)
+        # Read id from source.
+        id: str = os.path.basename(source).split(".")[0]
+        super().__init__(
+            id = id,
+            x = x,
+            y = y,
+            world_batch = batch
+        )
 
         self.source = source
         self.__animations_data: dict[str, pyglet.image.animation.Animation] = {}
@@ -113,8 +122,8 @@ class IdlePropNode(PositionNode):
         }
 
         self.__interactor: InteractionNode | None = None
-        self.__colliders: list[PositionNode] = []
-        self.__sensors: list[PositionNode] = []
+        self.__colliders: list[CollisionNode] = []
+        self.__sensors: list[CollisionNode] = []
         self.__sensors_tags: list[dict[str, list[str]]] = []
 
         data: dict = {}

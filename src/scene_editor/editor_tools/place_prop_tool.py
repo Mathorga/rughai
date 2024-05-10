@@ -248,9 +248,7 @@ class PlacePropTool(EditorTool):
         self.__tilemap_height: int = tilemap_height
 
         self.__prop_sets: list[dict[str, set[tuple[int, int]]]] = [
-            PropLoader.fetch_prop_sets(
-                source = f"propmaps/{scene_name}.json"
-            )
+            PropLoader.fetch_positions(source = f"propmaps/{scene_name}.json")
         ]
         self.__current_props_index: int = 0
 

@@ -129,8 +129,8 @@ class R_0_7(PlayableSceneNode):
         )
 
         # Props.
-        props = IdlePropLoader.fetch_prop_list(
-            "propmaps/r_0_7",
+        props = IdlePropLoader.fetch(
+            source = "propmaps/r_0_7.json",
             batch = scenes.ACTIVE_SCENE.world_batch
         )
 
