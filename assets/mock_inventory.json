@@ -1,0 +1,15 @@
+{
+    "currencies": {
+        "svoltz": 0,
+        "ohms": 0,
+        "couls": 0
+    },
+    "consumables": {
+        "djeenie": 0
+    },
+    "ammo": {
+        "arrow": 0,
+        "fire_arrow": 0,
+        "exp_arrow": 0
+    }
+}
