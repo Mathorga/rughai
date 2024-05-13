@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional
 import pyglet
 import pyglet.math as pm
-from constants import collision_tags, scenes
+from constants import collision_tags, uniques
 from engine import controllers
 
 from engine.animation import Animation
@@ -141,8 +141,8 @@ class ArrowNode(PositionNode):
         self.sprites.clear()
 
         # Remove from the current scene.
-        if universals.ACTIVE_SCENE is not None:
-            universals.ACTIVE_SCENE.remove_child(self)
+        if uniques.ACTIVE_SCENE is not None:
+            uniques.ACTIVE_SCENE.remove_child(self)
 
 class ArrowState(State):
     def __init__(
@@ -160,7 +160,7 @@ class ArrowFlyState(ArrowState):
 
         self.actor.set_velocity((movement.x, movement.y))
 
-        scene_bounds: Bounds = universals.ACTIVE_SCENE.get_cam_bounds()
+        scene_bounds: Bounds = uniques.ACTIVE_SCENE.get_cam_bounds()
         position: tuple[float, float] = self.actor.get_position()
         if position[0] < scene_bounds.left or position[0] > scene_bounds.right or position[1] < scene_bounds.bottom or position[1] > scene_bounds.top:
             return ArrowStates.OUT

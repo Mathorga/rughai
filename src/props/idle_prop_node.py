@@ -8,12 +8,11 @@ from engine import controllers
 from engine.collision.collision_node import CollisionNode, CollisionType
 from engine.collision.collision_shape import CollisionRect
 from engine.interaction_node import InteractionNode
-from engine.node import PositionNode
 from engine.settings import SETTINGS, Keys
 from engine.sprite_node import SpriteNode
 from engine.state_machine import State, StateMachine
 from engine.utils.utils import set_animation_anchor_x, set_animation_anchor_y, x_center_animation, y_center_animation
-from constants import scenes
+from constants import uniques
 from props.prop_node import PropNode
 
 class IdlePropStates(str, Enum):
@@ -368,8 +367,8 @@ class IdlePropNode(PropNode):
         self.delete_colliders()
 
         # Remove from the current scene.
-        if universals.ACTIVE_SCENE is not None:
-            universals.ACTIVE_SCENE.remove_child(self)
+        if uniques.ACTIVE_SCENE is not None:
+            uniques.ACTIVE_SCENE.remove_child(self)
 
 class IdlePropStateMachine(StateMachine):
 

@@ -4,12 +4,11 @@ Module containing the main player's classes.
 
 from enum import Enum
 import math
-from typing import Optional, Tuple
+from typing import Optional
 import pyglet
 import pyglet.math as pm
 
 from engine.loading_indicator_node import LoadingIndicatorNode
-from engine.utils.utils import scale
 from engine.utils.tween import Tween
 import engine.controllers as controllers
 from engine.animation import Animation
@@ -20,7 +19,7 @@ from engine.sprite_node import SpriteNode
 from engine.settings import GLOBALS, SETTINGS, Keys
 from engine.state_machine import State, StateMachine
 
-from constants import collision_tags, scenes
+from constants import collision_tags, uniques
 from scope_node import ScopeNode
 from player_stats import PlayerStats
 from arrow_node import ArrowNode
@@ -1098,9 +1097,9 @@ class PlayerShootState(PlayerState):
         # Hide loading indicator.
         self.actor.draw_indicator.hide()
 
-        if universals.ACTIVE_SCENE is not None:
+        if uniques.ACTIVE_SCENE is not None:
             # Create a projectile.
-            universals.ACTIVE_SCENE.add_child(ArrowNode(
+            uniques.ACTIVE_SCENE.add_child(ArrowNode(
                 x = self.actor.x + self.actor.scope_offset[0],
                 y = self.actor.y + self.actor.scope_offset[1],
                 speed = 500.0,
@@ -1109,7 +1108,7 @@ class PlayerShootState(PlayerState):
             ))
 
             # Camera feedback.
-            universals.ACTIVE_SCENE.apply_cam_impulse(
+            uniques.ACTIVE_SCENE.apply_cam_impulse(
                 impulse = pyglet.math.Vec2.from_polar(
                     mag = 10.0,
                     angle = self.actor.stats.look_dir
