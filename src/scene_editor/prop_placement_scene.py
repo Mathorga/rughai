@@ -163,8 +163,8 @@ class PropPlacementScene(Node):
         self.__setup(self.__rooms[self.__current_room])
 
     def draw(self) -> None:
-        if scenes.ACTIVE_SCENE is not None:
-            scenes.ACTIVE_SCENE.draw()
+        if universals.ACTIVE_SCENE is not None:
+            universals.ACTIVE_SCENE.draw()
 
     def update(self, dt) -> None:
         self.__tools[self.__current_tool].update(dt = dt)
@@ -207,19 +207,19 @@ class PropPlacementScene(Node):
             elif controllers.INPUT_CONTROLLER.get_undo():
                 self.__tools[self.__current_tool].undo()
 
-        if scenes.ACTIVE_SCENE is not None:
-            scenes.ACTIVE_SCENE.update(dt)
+        if universals.ACTIVE_SCENE is not None:
+            universals.ACTIVE_SCENE.update(dt)
 
     def delete(self) -> None:
-        if scenes.ACTIVE_SCENE is not None:
-            scenes.ACTIVE_SCENE.delete()
+        if universals.ACTIVE_SCENE is not None:
+            universals.ACTIVE_SCENE.delete()
 
     def __setup(self, scene_name: str) -> None:
         # Delete the current scene and recreate everything.
         self.delete()
 
         # Define the scene.
-        scenes.ACTIVE_SCENE = SceneNode(
+        universals.ACTIVE_SCENE = SceneNode(
             window = self.__window,
             view_width = self.__view_width,
             view_height = self.__view_height,
@@ -230,7 +230,7 @@ class PropPlacementScene(Node):
         # Define a tilemap.
         tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = f"tilemaps/{scene_name}.tmx",
-            batch = scenes.ACTIVE_SCENE.world_batch
+            batch = universals.ACTIVE_SCENE.world_batch
         )
         self.__tile_size: tuple[int, int] = tilemaps[0].get_tile_size()
         self.__tilemap_width = tilemaps[0].map_width
@@ -253,8 +253,8 @@ class PropPlacementScene(Node):
                 tile_size = self.__tile_size,
                 scene_name = scene_name,
                 on_icon_changed = self.__update_cursor_icon,
-                world_batch = scenes.ACTIVE_SCENE.world_batch,
-                ui_batch = scenes.ACTIVE_SCENE.ui_batch
+                world_batch = universals.ACTIVE_SCENE.world_batch,
+                ui_batch = universals.ACTIVE_SCENE.ui_batch
             ),
             PlacePropTool(
                 view_width = self.__view_width,
@@ -264,8 +264,8 @@ class PropPlacementScene(Node):
                 tile_size = self.__tile_size,
                 scene_name = scene_name,
                 on_icon_changed = self.__update_cursor_icon,
-                world_batch = scenes.ACTIVE_SCENE.world_batch,
-                ui_batch = scenes.ACTIVE_SCENE.ui_batch
+                world_batch = universals.ACTIVE_SCENE.world_batch,
+                ui_batch = universals.ACTIVE_SCENE.ui_batch
             ),
             PlaceWallTool(
                 view_width = self.__view_width,
@@ -273,8 +273,8 @@ class PropPlacementScene(Node):
                 tile_size = self.__tile_size,
                 scene_name = scene_name,
                 on_icon_changed = self.__update_cursor_icon,
-                world_batch = scenes.ACTIVE_SCENE.world_batch,
-                ui_batch = scenes.ACTIVE_SCENE.ui_batch
+                world_batch = universals.ACTIVE_SCENE.world_batch,
+                ui_batch = universals.ACTIVE_SCENE.ui_batch
             ),
             PlaceFallTool(
                 view_width = self.__view_width,
@@ -282,12 +282,12 @@ class PropPlacementScene(Node):
                 tile_size = self.__tile_size,
                 scene_name = scene_name,
                 on_icon_changed = self.__update_cursor_icon,
-                world_batch = scenes.ACTIVE_SCENE.world_batch,
-                ui_batch = scenes.ACTIVE_SCENE.ui_batch
+                world_batch = universals.ACTIVE_SCENE.world_batch,
+                ui_batch = universals.ACTIVE_SCENE.ui_batch
             ),
             PlaceDoorTool(
                 tile_size = self.__tile_size,
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             )
         ]
 
@@ -318,7 +318,7 @@ class PropPlacementScene(Node):
             tool_name = self.__tools[self.__current_tool].name,
             room_name = self.__rooms[self.__current_room],
             color = self.__tools[self.__current_tool].color,
-            batch = scenes.ACTIVE_SCENE.ui_batch
+            batch = universals.ACTIVE_SCENE.ui_batch
         )
         self.__action_sign.show()
 
@@ -329,7 +329,7 @@ class PropPlacementScene(Node):
                 delta_x = (self.__tilemap_width) * self.__tile_size[0],
                 delta_y = 0.0,
                 color = (0xFF, 0x33, 0x00, 0x7F),
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             ),
             LineNode(
                 x = self.__tilemap_width * self.__tile_size[0],
@@ -337,7 +337,7 @@ class PropPlacementScene(Node):
                 delta_x = 0.0,
                 delta_y = self.__tilemap_height * self.__tile_size[1],
                 color = (0xFF, 0x33, 0x00, 0x7F),
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             ),
             LineNode(
                 x = 0.0,
@@ -345,7 +345,7 @@ class PropPlacementScene(Node):
                 delta_x = self.__tilemap_width * self.__tile_size[0],
                 delta_y = 0.0,
                 color = (0xFF, 0x33, 0x00, 0x7F),
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             ),
             LineNode(
                 x = 0.0,
@@ -353,14 +353,14 @@ class PropPlacementScene(Node):
                 delta_x = 0.0,
                 delta_y = self.__tilemap_height * self.__tile_size[1],
                 color = (0xFF, 0x33, 0x00, 0x7F),
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             )
         ]
 
-        scenes.ACTIVE_SCENE.add_children(tilemaps)
-        scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
-        scenes.ACTIVE_SCENE.add_child(self.__action_sign)
-        scenes.ACTIVE_SCENE.add_child(self.__cursor)
+        universals.ACTIVE_SCENE.add_children(tilemaps)
+        universals.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
+        universals.ACTIVE_SCENE.add_child(self.__action_sign)
+        universals.ACTIVE_SCENE.add_child(self.__cursor)
 
     def __on_cursor_move(self, position: tuple[int, int]) -> None:
         self.__tools[self.__current_tool].move_cursor(map_position = position)

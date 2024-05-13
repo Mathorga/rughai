@@ -368,8 +368,8 @@ class IdlePropNode(PropNode):
         self.delete_colliders()
 
         # Remove from the current scene.
-        if scenes.ACTIVE_SCENE is not None:
-            scenes.ACTIVE_SCENE.remove_child(self)
+        if universals.ACTIVE_SCENE is not None:
+            universals.ACTIVE_SCENE.remove_child(self)
 
 class IdlePropStateMachine(StateMachine):
 

@@ -9,6 +9,7 @@ from engine.upscaler import TrueUpscaler, Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
 
 import constants.scenes as scenes
+from inventory.inventory_node import InventoryNode
 
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1

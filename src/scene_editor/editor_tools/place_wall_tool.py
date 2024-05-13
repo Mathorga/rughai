@@ -203,7 +203,7 @@ class PlaceWallTool(EditorTool):
                 # Save the newly created wall
                 self.__walls.append(wall)
 
-                scenes.ACTIVE_SCENE.add_child(wall)
+                universals.ACTIVE_SCENE.add_child(wall)
 
                 # Reset the starting position.
                 self.__starting_position = None

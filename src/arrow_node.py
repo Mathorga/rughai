@@ -141,8 +141,8 @@ class ArrowNode(PositionNode):
         self.sprites.clear()
 
         # Remove from the current scene.
-        if scenes.ACTIVE_SCENE is not None:
-            scenes.ACTIVE_SCENE.remove_child(self)
+        if universals.ACTIVE_SCENE is not None:
+            universals.ACTIVE_SCENE.remove_child(self)
 
 class ArrowState(State):
     def __init__(
@@ -160,7 +160,7 @@ class ArrowFlyState(ArrowState):
 
         self.actor.set_velocity((movement.x, movement.y))
 
-        scene_bounds: Bounds = scenes.ACTIVE_SCENE.get_cam_bounds()
+        scene_bounds: Bounds = universals.ACTIVE_SCENE.get_cam_bounds()
         position: tuple[float, float] = self.actor.get_position()
         if position[0] < scene_bounds.left or position[0] > scene_bounds.right or position[1] < scene_bounds.bottom or position[1] > scene_bounds.top:
             return ArrowStates.OUT

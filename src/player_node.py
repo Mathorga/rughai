@@ -1098,9 +1098,9 @@ class PlayerShootState(PlayerState):
         # Hide loading indicator.
         self.actor.draw_indicator.hide()
 
-        if scenes.ACTIVE_SCENE is not None:
+        if universals.ACTIVE_SCENE is not None:
             # Create a projectile.
-            scenes.ACTIVE_SCENE.add_child(ArrowNode(
+            universals.ACTIVE_SCENE.add_child(ArrowNode(
                 x = self.actor.x + self.actor.scope_offset[0],
                 y = self.actor.y + self.actor.scope_offset[1],
                 speed = 500.0,
@@ -1109,7 +1109,7 @@ class PlayerShootState(PlayerState):
             ))
 
             # Camera feedback.
-            scenes.ACTIVE_SCENE.apply_cam_impulse(
+            universals.ACTIVE_SCENE.apply_cam_impulse(
                 impulse = pyglet.math.Vec2.from_polar(
                     mag = 10.0,
                     angle = self.actor.stats.look_dir

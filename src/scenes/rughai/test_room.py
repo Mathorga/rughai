@@ -37,7 +37,7 @@ class TestRoom(PlayableSceneNode):
         )
 
         # Define the scene.
-        scenes.ACTIVE_SCENE = SceneNode(
+        universals.ACTIVE_SCENE = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
@@ -49,7 +49,7 @@ class TestRoom(PlayableSceneNode):
         # Define a tilemap.
         tilemaps = TilemapNode.from_tmx_file(
             source = "tilemaps/rughai/r_0_0.tmx",
-            batch = scenes.ACTIVE_SCENE.world_batch
+            batch = universals.ACTIVE_SCENE.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -70,7 +70,7 @@ class TestRoom(PlayableSceneNode):
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 1,
                 tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 43,
@@ -78,7 +78,7 @@ class TestRoom(PlayableSceneNode):
                 width = self.__tile_size * 1,
                 height = self.__tile_size * 4,
                 tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 40,
@@ -86,7 +86,7 @@ class TestRoom(PlayableSceneNode):
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 1,
                 tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 40,
@@ -94,7 +94,7 @@ class TestRoom(PlayableSceneNode):
                 width = self.__tile_size * 1,
                 height = self.__tile_size * 4,
                 tags = [collision_tags.PLAYER_COLLISION],
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             ),
 
             # Angle.
@@ -103,14 +103,14 @@ class TestRoom(PlayableSceneNode):
                 y = self.__tile_size * 20,
                 width = self.__tile_size * 4,
                 height = self.__tile_size * 1,
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             ),
             WallNode(
                 x = self.__tile_size * 40,
                 y = self.__tile_size * 17,
                 width = self.__tile_size * 1,
                 height = self.__tile_size * 4,
-                batch = scenes.ACTIVE_SCENE.world_batch
+                batch = universals.ACTIVE_SCENE.world_batch
             )
         ]
 
@@ -124,12 +124,12 @@ class TestRoom(PlayableSceneNode):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            batch = scenes.ACTIVE_SCENE.world_batch
+            batch = universals.ACTIVE_SCENE.world_batch
         )
 
-        scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
+        universals.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
-        scenes.ACTIVE_SCENE.add_children(tilemaps)
-        scenes.ACTIVE_SCENE.add_children(walls)
-        scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
-        scenes.ACTIVE_SCENE.add_child(self._player)
+        universals.ACTIVE_SCENE.add_children(tilemaps)
+        universals.ACTIVE_SCENE.add_children(walls)
+        universals.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
+        universals.ACTIVE_SCENE.add_child(self._player)

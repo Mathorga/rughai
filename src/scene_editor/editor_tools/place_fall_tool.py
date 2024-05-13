@@ -203,7 +203,7 @@ class PlaceFallTool(EditorTool):
                 # Save the newly created fall
                 self.__falls.append(fall)
 
-                scenes.ACTIVE_SCENE.add_child(fall)
+                universals.ACTIVE_SCENE.add_child(fall)
 
                 # Reset the starting position.
                 self.__starting_position = None

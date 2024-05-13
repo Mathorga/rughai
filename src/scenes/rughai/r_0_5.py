@@ -1,5 +1,6 @@
 from typing import Callable, Optional
 import pyglet
+from constants import uniques
 from doors_loader import DoorsLoader
 from engine.door_node import DoorNode
 
@@ -33,7 +34,7 @@ class R_0_5(PlayableSceneNode):
         )
 
         # Define the scene.
-        scenes.ACTIVE_SCENE = SceneNode(
+        uniques.ACTIVE_SCENE = SceneNode(
             window = window,
             view_width = view_width,
             view_height = view_height,
@@ -45,7 +46,7 @@ class R_0_5(PlayableSceneNode):
         # Define a tilemap.
         tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = "tilemaps/r_0_5.tmx",
-            batch = scenes.ACTIVE_SCENE.world_batch
+            batch = uniques.ACTIVE_SCENE.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
         tilemap_width = tilemaps[0].map_width
@@ -55,7 +56,7 @@ class R_0_5(PlayableSceneNode):
         # Solid walls.
         walls: list[WallNode] = WallsLoader.fetch(
             source = "wallmaps/r_0_5.json",
-            batch = scenes.ACTIVE_SCENE.world_batch
+            batch = uniques.ACTIVE_SCENE.world_batch
         )
 
         # Define a background.
@@ -68,7 +69,7 @@ class R_0_5(PlayableSceneNode):
             x = (tilemaps[0].map_width * self.__tile_size) // 2,
             y = (tilemaps[0].map_height * self.__tile_size) // 2,
             z = -500,
-            batch = scenes.ACTIVE_SCENE.world_batch
+            batch = uniques.ACTIVE_SCENE.world_batch
         )
 
         # Player.
@@ -81,7 +82,7 @@ class R_0_5(PlayableSceneNode):
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
-            batch = scenes.ACTIVE_SCENE.world_batch
+            batch = uniques.ACTIVE_SCENE.world_batch
         )
 
         # Place doors.
@@ -89,7 +90,7 @@ class R_0_5(PlayableSceneNode):
             source = "doormaps/r_0_5.json",
             tile_size = (self.__tile_size, self.__tile_size),
             on_triggered = self.on_door_triggered,
-            batch = scenes.ACTIVE_SCENE.world_batch
+            batch = uniques.ACTIVE_SCENE.world_batch
         )
 
         # Define energy bars.
@@ -100,22 +101,22 @@ class R_0_5(PlayableSceneNode):
             resource = bar_img,
             x = 4,
             y = view_height - 4,
-            batch = scenes.ACTIVE_SCENE.ui_batch
+            batch = uniques.ACTIVE_SCENE.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
-            batch = scenes.ACTIVE_SCENE.ui_batch
+            batch = uniques.ACTIVE_SCENE.ui_batch
         )
 
-        scenes.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
+        uniques.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
-        scenes.ACTIVE_SCENE.add_child(bg)
-        scenes.ACTIVE_SCENE.add_children(tilemaps)
-        scenes.ACTIVE_SCENE.add_children(walls)
-        scenes.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
-        scenes.ACTIVE_SCENE.add_child(self._player)
-        scenes.ACTIVE_SCENE.add_children(doors)
-        scenes.ACTIVE_SCENE.add_child(energy_bar)
-        scenes.ACTIVE_SCENE.add_child(health_bar)
+        uniques.ACTIVE_SCENE.add_child(bg)
+        uniques.ACTIVE_SCENE.add_children(tilemaps)
+        uniques.ACTIVE_SCENE.add_children(walls)
+        uniques.ACTIVE_SCENE.add_child(cam_target, cam_target = True)
+        uniques.ACTIVE_SCENE.add_child(self._player)
+        uniques.ACTIVE_SCENE.add_children(doors)
+        uniques.ACTIVE_SCENE.add_child(energy_bar)
+        uniques.ACTIVE_SCENE.add_child(health_bar)
