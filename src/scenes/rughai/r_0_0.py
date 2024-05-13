@@ -14,11 +14,12 @@ from engine.tilemap_node import TilemapNode
 from engine.wall_node import WallNode
 from engine.settings import SETTINGS, Keys
 from engine import controllers
+from engine.utils import utils
 
 from player_node import PlayerNode
 from clouds_node import CloudsNode
 import constants.scenes as scenes
-from prop_loader import PROP_MAPPING, PropLoader
+from prop_loader import PropLoader
 from walls_loader import WallsLoader
 
 class R_0_0(PlayableSceneNode):
@@ -111,20 +112,32 @@ class R_0_0(PlayableSceneNode):
 
         # Define energy bars.
         bar_img = pyglet.resource.image("sprites/energy_bar.png")
-        bar_img.anchor_x = 0
-        bar_img.anchor_y = bar_img.height
+        utils.set_anchor(resource = bar_img, x = 0.0, y = bar_img.height)
         energy_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 4,
-            z = 500,
+            z = 500.0,
             batch = scenes.ACTIVE_SCENE.ui_batch
         )
         health_bar = SpriteNode(
             resource = bar_img,
             x = 4,
             y = view_height - 12,
-            z = 500,
+            z = 500.0,
+            batch = scenes.ACTIVE_SCENE.ui_batch
+        )
+        quik_img: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/hud/quik.png")
+        utils.set_anchor(
+            resource = quik_img,
+            x = quik_img.width / 2,
+            y = 0.0
+        )
+        quik: SpriteNode = SpriteNode(
+            resource = quik_img,
+            x = view_width / 2,
+            y = 0.0,
+            z = 500.0,
             batch = scenes.ACTIVE_SCENE.ui_batch
         )
 
@@ -159,3 +172,4 @@ class R_0_0(PlayableSceneNode):
         scenes.ACTIVE_SCENE.add_children(doors)
         scenes.ACTIVE_SCENE.add_child(energy_bar)
         scenes.ACTIVE_SCENE.add_child(health_bar)
+        scenes.ACTIVE_SCENE.add_child(quik)

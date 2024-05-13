@@ -245,10 +245,10 @@ def sweep_circle_rect() -> Optional[CollisionHit]:
 
 
 def set_offset(
-    resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
-    x: Optional[float],
-    y: Optional[float],
-    center: Optional[bool]
+    resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
+    x: float | None = None,
+    y: float | None = None,
+    center: bool = False
 ) -> None:
     if isinstance(resource, pyglet.image.TextureRegion):
         if x is not None:
@@ -263,21 +263,25 @@ def set_offset(
                 frame.image.anchor_y = ((frame.image.height / 2) if center else 0) + int(y)
 
 def set_anchor(
-    resource: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation],
-    x: Optional[float],
-    y: Optional[float]
+    resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
+    x: float | None = None,
+    y: float | None = None,
+    center: bool = False
 ) -> None:
     if isinstance(resource, pyglet.image.TextureRegion):
         if x is not None:
-            resource.anchor_x = int(x)
+            resource.anchor_x = ((resource.width / 2) if center else 0) + int(x)
         if y is not None:
-            resource.anchor_y = int(y)
+            resource.anchor_y = ((resource.height / 2) if center else 0) + int(y)
     elif isinstance(resource, pyglet.image.animation.Animation):
-        set_animation_anchor(
-            animation = resource,
-            x = x,
-            y = y
-        )
+        if center:
+            center_animation(animation = resource)
+        else:
+            set_animation_anchor(
+                animation = resource,
+                x = x,
+                y = y
+            )
 
 
 def set_filter(
