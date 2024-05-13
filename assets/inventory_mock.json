@@ -1,0 +1,20 @@
+{
+    "currencies": {
+        "voltz": 10,
+        "ohms": 20,
+        "couls": 10
+    },
+    "consumables": {
+        "djeenie": 2
+    },
+    "ammo": {
+        "arrow": 44,
+        "fire_arrow": 21,
+        "exp_arrow": 7
+    },
+    "keys": {
+        "r_0_2_key_0": true,
+        "s_1_1_key_0": false,
+        "targa_gamepad": false
+    }
+}
