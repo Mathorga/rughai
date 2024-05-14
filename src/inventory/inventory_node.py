@@ -54,6 +54,7 @@ class InventoryNode:
         "quicks",
         "current_ammo",
         "ammo",
+        "ammo_sprites",
         "currencies",
         "consumables_count",
         "consumables",
@@ -71,6 +72,7 @@ class InventoryNode:
         # Currently equipped ammo.
         self.current_ammo: str | None = None
         self.ammo: list[str] = []
+        self.ammo_sprites: dict[str, SpriteNode] = {}
 
         self.currencies: dict[str, int] = {}
 
@@ -93,6 +95,10 @@ class InventoryNode:
         world_batch: pyglet.graphics.Batch | None,
         ui_batch: pyglet.graphics.Batch | None
     ) -> None:
+        """
+        Saves the provided batches for sprites creation.
+        """
+
         self.world_batch = world_batch
         self.ui_batch = ui_batch
 
@@ -100,7 +106,39 @@ class InventoryNode:
             return
 
         # Create sprites.
-        
+        for quick in self.quicks:
+            self.consumables_sprite[quick]
+
+        if self.is_open:
+            for j in range(len(self.consumables)):
+                for i in range(len(self.consumables[j])):
+                    consumable: str = self.consumables[j][i]
+                    if not consumable in self.consumables_sprite.keys:
+                        self.consumables_sprite[consumable] = SpriteNode(
+                            # TODO Scale and shift correctly.
+                            x = i * 8,
+                            y = j * 8,
+                            resource = CONSUMABLES_ANIMATION[consumable],
+                            batch = ui_batch
+                        )
+
+    def clear_batches(self) -> None:
+        """
+        Unsets all batches and deletes any existing sprite using them.
+        """
+
+        self.world_batch = None
+        self.ui_batch = None
+
+        # Clear consumables sprites.
+        for sprite in self.consumables_sprite.values():
+            sprite.delete()
+        self.consumables_sprite.clear()
+
+        # Clear ammo sprites.
+        for sprite in self.ammo_sprites.values():
+            sprite.delete()
+        self.ammo_sprites.clear()
 
     def toggle(self) -> None:
         """
