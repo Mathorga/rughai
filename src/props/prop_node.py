@@ -21,5 +21,5 @@ class PropNode(PositionNode):
         super().__init__(x, y)
 
         self.id = id
-        self.world_batch = world_batch
-        self.ui_batch = ui_batch
+        self.world_batch: pyglet.graphics.Batch | None = world_batch
+        self.ui_batch: pyglet.graphics.Batch | None = ui_batch

@@ -2,15 +2,25 @@
     "currencies": {
         "voltz": 10,
         "ohms": 20,
-        "couls": 10
+        "couls": 0
     },
-    "consumables": {
-        "djeenie": 2
-    },
+    "quicks": [
+        null,
+        null,
+        null,
+        null
+    ],
     "ammo": {
         "arrow": 44,
         "fire_arrow": 21,
-        "exp_arrow": 7
+        "exp_arrow": 7,
+        "travel_arrow": 2
+    },
+    "consumables": {
+        "tomato": 4,
+        "catroot": 6,
+        "carrot": 12,
+        "energy_drink": 2
     },
     "keys": {
         "r_0_2_key_0": true,
