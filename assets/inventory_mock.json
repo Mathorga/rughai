@@ -6,8 +6,8 @@
     },
     "quicks": [
         null,
-        null,
-        null,
+        "caroot",
+        "bloobary",
         null
     ],
     "ammo": {
@@ -17,9 +17,8 @@
         "travel_arrow": 2
     },
     "consumables": {
-        "tomato": 4,
-        "catroot": 6,
-        "carrot": 12,
+        "caroot": 4,
+        "bloobary": 6,
         "energy_drink": 2
     },
     "keys": {

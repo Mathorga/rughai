@@ -26,6 +26,13 @@ class Animation:
     loop[bool](optional): whether the animation should loop or not.
     """
 
+    __slots__ = (
+        "source",
+        "source_data",
+        "name",
+        "content"
+    )
+
     def __init__(
         self,
         source: str,

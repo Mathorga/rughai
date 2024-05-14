@@ -1,60 +1,124 @@
+import os
+from typing import Callable
 import pyglet
-from engine.node import PositionNode
+from pyglet.graphics import Batch
 
-class ItemNode:
+from engine.animation import Animation
+from engine.node import PositionNode
+from engine.sprite_node import SpriteNode
+
+class RealWorldItemNode(PositionNode):
     __slots__ = (
-        "rwo",
-        "world_batch",
-        "ui_batch"
+        "sprite"
     )
 
     def __init__(
         self,
-        world_batch: pyglet.graphics.Batch | None = None,
-        ui_batch: pyglet.graphics.Batch | None = None
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
+        sprite: SpriteNode | None = None,
     ) -> None:
-        self.rwo: PositionNode | None = None
-        self.world_batch: pyglet.graphics.Batch | None = world_batch
-        self.ui_batch: pyglet.graphics.Batch | None = ui_batch
+        super().__init__(
+            x = x,
+            y = y,
+            z = z
+        )
 
-class TomatoNode(ItemNode):
-    def __init__(self) -> None:
-        super().__init__()
+        self.sprite: SpriteNode | None = sprite
+        if self.sprite is not None:
+            self.add_component(self.sprite)
 
-class CatrootNode(ItemNode):
-    def __init__(self) -> None:
-        super().__init__()
+CONSUMABLES_ANIMATION: dict[str, Animation] = {
+    "caroot": Animation(source = "sprites/items/consumables/caroot.json"),
+    "bloobary": Animation(source = "sprites/items/consumables/bloobary.json")
+}
 
-ITEM_MAPPING: dict[str, type] = {
-    "tomato": TomatoNode,
-    "catroot": CatrootNode
+CONSUMABLES_USE: dict[str, Callable] = {
+    "caroot": lambda: print("you ate a caroot"),
+    "bloobary": lambda: print("you ate a bloobary")
+}
+
+AMMO_ICON_ANIMATION: dict[str, Animation] = {
+    "arrow": Animation(source = "sprites/items/ammo/arrow.json"),
+    "fire_arrow": Animation(source = "sprites/items/ammo/fire_arrow.json"),
 }
 
 class InventoryNode:
     """
-        Holds all inventory data and provides accessors to it.
+    Holds all inventory data and provides accessors to it.
     """
 
     __slots__ = (
         "quicks_count",
         "quicks",
-        "current_ammo"
+        "current_ammo",
         "ammo",
         "currencies",
-        "consumables"
+        "consumables_count",
+        "consumables",
+        "world_batch",
+        "ui_batch",
+        "is_open"
     )
 
     def __init__(self) -> None:
+        # Currently equipped quick-access consumables.
         self.quicks_count: int = 4
-        self.quicks: list[ItemNode | None] = [None for _ in range(self.quicks_count)]
+        self.quicks: list[str | None] = [None for _ in range(self.quicks_count)]
 
+        # Currently equipped ammo.
         self.current_ammo: str | None = None
-        self.ammo: list[ItemNode] = []
+        self.ammo: list[str] = []
 
         self.currencies: dict[str, int] = {}
 
-        self.consumables: list[ItemNode] = []
+        # Current amount for each consumable.
+        self.consumables_count: dict[str, int] = {}
 
-    def load_file(self, file_path: str) -> None:
+        # Consumables.
+        self.consumables: list[list[str]] = []
+
+        # Batches.
+        self.world_batch: pyglet.graphics.Batch | None = None
+        self.ui_batch: pyglet.graphics.Batch | None = None
+
+        # Tells whether the inventory menu is open or closed.
+        self.is_open: bool = False
+
+    def set_batches(
+        self,
+        world_batch: pyglet.graphics.Batch | None,
+        ui_batch: pyglet.graphics.Batch | None
+    ) -> None:
+        self.world_batch = world_batch
+        self.ui_batch = ui_batch
+
+        if world_batch is None or ui_batch is None:
+            return
+
+        # Create sprites.
+        
+
+    def toggle(self) -> None:
+        """
+        Opens or closes the inventory based on its current state.
+        """
+        # TODO
+
+    def use_consumable(self, position: tuple[int, int]) -> None:
+        CONSUMABLES_USE[self.consumables[position[0]][position[1]]]()
+
+    def load_file(self, source: str) -> None:
+        """
+        Reads and stores all inventory data from the file provided in [source].
+        """
+
+        abs_path: str = os.path.join(pyglet.resource.path[0], source)
+
+        # Just return if the source file is not found.
+        if not os.path.exists(abs_path):
+            return
+
         # TODO Open file and read data from it.
         pass
