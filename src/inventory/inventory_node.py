@@ -29,9 +29,9 @@ class RealWorldItemNode(PositionNode):
         if self.sprite is not None:
             self.add_component(self.sprite)
 
-CONSUMABLES_ANIMATION: dict[str, Animation] = {
-    "caroot": Animation(source = "sprites/items/consumables/caroot.json"),
-    "bloobary": Animation(source = "sprites/items/consumables/bloobary.json")
+CONSUMABLES_ANIMATION: dict[str, str] = {
+    # "caroot": "sprites/items/consumables/caroot.json",
+    "bloobary": "sprites/items/consumables/bloobary.json"
 }
 
 CONSUMABLES_USE: dict[str, Callable] = {
@@ -40,8 +40,8 @@ CONSUMABLES_USE: dict[str, Callable] = {
 }
 
 AMMO_ICON_ANIMATION: dict[str, Animation] = {
-    "arrow": Animation(source = "sprites/items/ammo/arrow.json"),
-    "fire_arrow": Animation(source = "sprites/items/ammo/fire_arrow.json"),
+    # "arrow": Animation(source = "sprites/items/ammo/arrow.json"),
+    # "fire_arrow": Animation(source = "sprites/items/ammo/fire_arrow.json"),
 }
 
 class InventoryNode:
@@ -57,6 +57,7 @@ class InventoryNode:
         "currencies",
         "consumables_count",
         "consumables",
+        "consumables_sprite",
         "world_batch",
         "ui_batch",
         "is_open"
@@ -78,6 +79,7 @@ class InventoryNode:
 
         # Consumables.
         self.consumables: list[list[str]] = []
+        self.consumables_sprite: dict[str, SpriteNode] = {}
 
         # Batches.
         self.world_batch: pyglet.graphics.Batch | None = None
