@@ -57,6 +57,7 @@ class InventoryNode:
         "ammo_sprites",
         "currencies",
         "consumables_count",
+        "consumables_size",
         "consumables",
         "consumables_sprite",
         "world_batch",
@@ -80,8 +81,9 @@ class InventoryNode:
         self.consumables_count: dict[str, int] = {}
 
         # Consumables.
-        self.consumables: list[list[str]] = []
-        self.consumables_sprite: dict[str, SpriteNode] = {}
+        self.consumables_size: tuple[int, int] = (5, 4)
+        self.consumables: list[list[str | None]] = [[None for i in range(self.consumables_size[0])] for j in range(self.consumables_size[1])]
+        self.consumables_sprites: dict[str, SpriteNode] = {}
 
         # Batches.
         self.world_batch: pyglet.graphics.Batch | None = None
@@ -107,14 +109,14 @@ class InventoryNode:
 
         # Create sprites.
         for quick in self.quicks:
-            self.consumables_sprite[quick]
+            self.consumables_sprites[quick]
 
         if self.is_open:
             for j in range(len(self.consumables)):
                 for i in range(len(self.consumables[j])):
-                    consumable: str = self.consumables[j][i]
-                    if not consumable in self.consumables_sprite.keys:
-                        self.consumables_sprite[consumable] = SpriteNode(
+                    consumable: str | None = self.consumables[j][i]
+                    if not consumable in self.consumables_sprites.keys:
+                        self.consumables_sprites[consumable] = SpriteNode(
                             # TODO Scale and shift correctly.
                             x = i * 8,
                             y = j * 8,
@@ -131,9 +133,9 @@ class InventoryNode:
         self.ui_batch = None
 
         # Clear consumables sprites.
-        for sprite in self.consumables_sprite.values():
+        for sprite in self.consumables_sprites.values():
             sprite.delete()
-        self.consumables_sprite.clear()
+        self.consumables_sprites.clear()
 
         # Clear ammo sprites.
         for sprite in self.ammo_sprites.values():
@@ -147,7 +149,23 @@ class InventoryNode:
         # TODO
 
     def use_consumable(self, position: tuple[int, int]) -> None:
+        consumable: str | None = self.consumables[position[0]][position[1]]
+        if consumable is None:
+            return
+
+        count: int | None = self.consumables_count[consumable]
+
+        if count is None or count <= 0:
+            return
+
         CONSUMABLES_USE[self.consumables[position[0]][position[1]]]()
+
+        # The consumable was consumed, so decrease its count by 1.
+        self.consumables_count[consumable] -= 1
+
+        # Remove the consumable from the inventory if it was the last one of its kind.
+        if self.consumables_count[consumable] <= 0:
+            self.consumables[position[0]][position[1]] = None
 
     def load_file(self, source: str) -> None:
         """
