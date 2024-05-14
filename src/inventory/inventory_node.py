@@ -56,10 +56,10 @@ class InventoryNode:
         "ammo",
         "ammo_sprites",
         "currencies",
-        "consumables_count",
         "consumables_size",
         "consumables",
-        "consumables_sprite",
+        "consumables_count",
+        "consumables_sprites",
         "world_batch",
         "ui_batch",
         "is_open"
@@ -77,12 +77,16 @@ class InventoryNode:
 
         self.currencies: dict[str, int] = {}
 
+        # Amount of available comsumables slots.
+        self.consumables_size: tuple[int, int] = (5, 4)
+
+        # Grid of available consumables slots.
+        self.consumables: list[list[str | None]] = [[None for i in range(self.consumables_size[0])] for j in range(self.consumables_size[1])]
+
         # Current amount for each consumable.
         self.consumables_count: dict[str, int] = {}
 
-        # Consumables.
-        self.consumables_size: tuple[int, int] = (5, 4)
-        self.consumables: list[list[str | None]] = [[None for i in range(self.consumables_size[0])] for j in range(self.consumables_size[1])]
+        # Consumables sprites.
         self.consumables_sprites: dict[str, SpriteNode] = {}
 
         # Batches.
