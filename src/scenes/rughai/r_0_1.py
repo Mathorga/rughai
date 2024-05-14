@@ -17,7 +17,6 @@ from engine.tilemap_node import TilemapNode
 from engine.settings import SETTINGS, Keys
 
 from player_node import PlayerNode
-import constants.scenes as scenes
 from walls_loader import WallsLoader
 
 class R_0_1(PlayableSceneNode):
