@@ -2,9 +2,11 @@ import os.path
 import pyglet
 import pyglet.gl as gl
 
+from constants.uniques import ACTIVE_SCENE, INVENTORY
 import engine.controllers as controllers
 from engine.benchmark import Benchmark
 from engine.dungen.dungen import random_walk
+from engine.playable_scene_node import PlayableSceneNode
 from engine.upscaler import TrueUpscaler, Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
 
@@ -117,12 +119,12 @@ class Rughai:
         )
 
         # Create a scene.
-        self.__active_scene = R_0_0(
+        self.set_active_scene(R_0_0(
             window = self.window,
             view_width = SETTINGS[Keys.VIEW_WIDTH],
             view_height = SETTINGS[Keys.VIEW_HEIGHT],
             on_ended = self.__on_scene_end
-        )
+        ))
 
     def __create_window(self) -> pyglet.window.Window:
         window = pyglet.window.Window(
@@ -146,83 +148,103 @@ class Rughai:
     def __on_scene_end(self, bundle: dict):
         print("scene_ended", bundle)
         if bundle["next_scene"]:
+            # Clear the inventory.
+            INVENTORY.clear_batches()
+
             # First delete the current scene then clear controllers.
             self.__active_scene.delete()
             controllers.COLLISION_CONTROLLER.clear()
             controllers.INTERACTION_CONTROLLER.clear()
 
             if bundle["next_scene"] == scenes.R_0_0:
-                self.__active_scene = R_0_0(
+                self.set_active_scene(R_0_0(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
             elif bundle["next_scene"] == scenes.R_0_1:
-                self.__active_scene = R_0_1(
+                self.set_active_scene(R_0_1(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
             elif bundle["next_scene"] == scenes.R_0_2:
-                self.__active_scene = R_0_2(
+                self.set_active_scene(R_0_2(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
             elif bundle["next_scene"] == scenes.R_0_3:
-                self.__active_scene = R_0_3(
+                self.set_active_scene(R_0_3(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
             elif bundle["next_scene"] == scenes.R_0_4:
-                self.__active_scene = R_0_4(
+                self.set_active_scene(R_0_4(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
             elif bundle["next_scene"] == scenes.R_0_5:
-                self.__active_scene = R_0_5(
+                self.set_active_scene(R_0_5(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
             elif bundle["next_scene"] == scenes.R_0_6:
-                self.__active_scene = R_0_6(
+                self.set_active_scene(R_0_6(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
             elif bundle["next_scene"] == scenes.R_0_7:
-                self.__active_scene = R_0_7(
+                self.set_active_scene(R_0_7(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
             elif bundle["next_scene"] == scenes.R_0_8:
-                self.__active_scene = R_0_8(
+                self.set_active_scene(R_0_8(
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                )
+                ))
+
+    def set_active_scene(self, scene: PlayableSceneNode) -> None:
+        """
+        Sets the currently active scene to [scene].
+        """
+
+        self.__active_scene = scene
+
+        # Just return if no scene was set.
+        if ACTIVE_SCENE is None:
+            return
+
+        # Apply batches to inventory.
+        INVENTORY.set_batches(
+            world_batch = ACTIVE_SCENE.world_batch,
+            ui_batch = ACTIVE_SCENE.ui_batch,
+        )
 
     def on_draw(self) -> None:
         """

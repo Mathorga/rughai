@@ -1,5 +1,3 @@
-from engine.scene_node import SceneNode
-
 R_0_0 = "r_0_0"
 R_0_1 = "r_0_1"
 R_0_2 = "r_0_2"
