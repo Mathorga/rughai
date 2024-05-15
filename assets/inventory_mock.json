@@ -1,29 +1,75 @@
 {
-    "currencies": {
-        "voltz": 10,
-        "ohms": 20,
-        "couls": 0
+    "consumables_size": "5,4",
+    "quicks_count": 4,
+    "currencies": [
+        {
+            "id": "voltz",
+            "count": 10
+        },
+        {
+            "id": "ohms",
+            "count": 20
+        },
+        {
+            "id": "couls",
+            "count": 0
+        }
+    ],
+    "ammo": [
+        {
+            "id": "arrow",
+            "count": 44
+        },
+        {
+            "id": "fire_arrow",
+            "count": 21
+        },
+        {
+            "id": "exp_arrow",
+            "count": 7
+        },
+        {
+            "id": "travel_arrow",
+            "count": 2
+        }
+    ],
+    "consumables_count": [
+        {
+            "id": "caroot",
+            "count": 4
+        },
+        {
+            "id": "bloobary",
+            "count": 6
+        },
+        {
+            "id": "hokbary",
+            "count": 2
+        }
+    ],
+    "consumables_position": [
+        {
+            "id": "caroot",
+            "position": "4,0"
+        },
+        {
+            "id": "bloobary",
+            "position": "2,1"
+        },
+        {
+            "id": "energy_drink",
+            "position": "2,0"
+        }
+    ],
+    "keys": {
+        "r_0_2_key_0": true,
+        "s_1_1_key_0": false,
+        "targa_gamepad": false
     },
     "quicks": [
         null,
         "caroot",
         "bloobary",
         null
-    ],
-    "ammo": {
-        "arrow": 44,
-        "fire_arrow": 21,
-        "exp_arrow": 7,
-        "travel_arrow": 2
-    },
-    "consumables": {
-        "caroot": 4,
-        "bloobary": 6,
-        "energy_drink": 2
-    },
-    "keys": {
-        "r_0_2_key_0": true,
-        "s_1_1_key_0": false,
-        "targa_gamepad": false
-    }
+    ]
 }

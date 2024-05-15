@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Callable
 import pyglet
@@ -48,6 +49,131 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
     # "fire_arrow": Animation(source = "sprites/items/ammo/fire_arrow.json"),
 }
 
+class InventoryController:
+    """
+    Holds all inventory data and provides accessors to it.
+    """
+
+    __slots__ = (
+        "quicks_count",
+        "quicks",
+        "current_ammo",
+        "ammo",
+        "currencies",
+        "consumables_size",
+        "consumables_position",
+        "consumables_count"
+    )
+
+    def __init__(self) -> None:
+        # Currently equipped quick-access consumables.
+        self.quicks_count: int = 4
+        self.quicks: list[str | None] = [None for _ in range(self.quicks_count)]
+
+        # Currently equipped ammo.
+        self.current_ammo: str | None = None
+        self.ammo: dict[str, int] = {}
+
+        self.currencies: dict[str, int] = {}
+
+        # Amount of available comsumables slots.
+        self.consumables_size: tuple[int, int] = (5, 4)
+
+        # List of all consumables' positions.
+        self.consumables_position: dict[str, int] = {
+            "bloobary": 12,
+            "caroot": 13,
+            "hokbary": 14
+        }
+
+        # Current amount for each consumable.
+        self.consumables_count: dict[str, int] = {}
+
+    def use_consumable(self, consumable: str) -> None:
+        """
+        Uses (consumes) the item with id [consumable].
+        """
+
+        count: int | None = self.consumables_count[consumable]
+
+        if count is None or count <= 0:
+            return
+
+        # Actually use the consumable.
+        CONSUMABLES_USE[consumable]()
+
+        # The consumable was consumed, so decrease its count by 1.
+        self.consumables_count[consumable] -= 1
+
+        # Remove the consumable from the inventory if it was the last one of its kind.
+        if self.consumables_count[consumable] <= 0:
+            self.consumables_position.pop(consumable)
+
+    def equip_consumable(self, consumable: str) -> None:
+        """
+        Equips [consumable] to a quick slot.
+        """
+        # TODO
+
+    def load_file(self, source: str) -> None:
+        """
+        Reads and stores all inventory data from the file provided in [source].
+        """
+
+        abs_path: str = os.path.join(pyglet.resource.path[0], source)
+
+        # Just return if the source file is not found.
+        if not os.path.exists(abs_path):
+            return
+
+        data: dict
+
+        # Load the json file.
+        with open(file = abs_path, mode = "r", encoding = "UTF8") as source_file:
+            data = json.load(source_file)
+
+        # Just return if no data is read.
+        if len(data) <= 0:
+            return
+
+        # Read consumables size.
+        size_str: str = data["consumables_size"]
+        cons_size: list[int] = list(map(lambda item: int(item), size_str.split(",")))
+        self.consumables_size = (cons_size[0], cons_size[1])
+
+        # Read quicks count.
+        self.quicks_count = data["quicks_count"]
+
+        # Load currencies.
+        for element in data["currencies"]:
+            id: str = element["id"]
+            count: int = element["count"]
+
+            self.currencies[id] = count
+
+        # Load ammo.
+        for element in data["ammo"]:
+            id: str = element["id"]
+            count: int = element["count"]
+
+            self.ammo[id] = count
+
+        # Load consumables.
+        for element in data["consumables_count"]:
+            id: str = element["id"]
+            count: int = element["count"]
+
+            self.consumables_count[id] = count
+
+        # Load consumables positions.
+        for element in data["consumables_position"]:
+            id: str = element["id"]
+            position_str: str = element["position"]
+            position: list[int] = list(map(lambda item: int(item), position_str.split(",")))
+            self.consumables_position[id] = idx2to1(i = position[0], j = position[1], m = self.consumables_size[0])
+
+            self.consumables_position[id] = count
+
 class InventoryNode:
     """
     Holds all inventory data and provides accessors to it.
@@ -84,11 +210,7 @@ class InventoryNode:
         # Amount of available comsumables slots.
         self.consumables_size: tuple[int, int] = (5, 4)
 
-        # Grid of available consumables slots.
-        # This is a 2d grid flattened to 1d.
-        # self.consumables: list[str | None] = ["bloobary" for i in range(self.consumables_size[0] * self.consumables_size[1])]
-        # self.consumables[12] = "caroot"
-        # self.consumables[13] = "hokbary"
+        # List of all consumables' positions.
         self.consumables_position: dict[str, int] = {
             "bloobary": 12,
             "caroot": 13,
@@ -134,8 +256,8 @@ class InventoryNode:
                     position: tuple[int, int] = idx1to2(consumable_position[1], self.consumables_size[1])
                     self.consumables_sprites[consumable_position[0]] = SpriteNode(
                         # TODO Scale and shift correctly.
-                        x = position[1] * 5 * GLOBALS[Keys.SCALING] + 20,
-                        y = position[0] * 5 * GLOBALS[Keys.SCALING] + 20,
+                        x = position[1] * GLOBALS[Keys.SCALING] + 20,
+                        y = position[0] * GLOBALS[Keys.SCALING] + 20,
                         resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
                         batch = ui_batch
                     )
@@ -162,14 +284,14 @@ class InventoryNode:
         """
         Opens or closes the inventory based on its current state.
         """
+
+        self.is_open = not self.is_open
         # TODO
 
     def use_consumable(self, consumable: str) -> None:
         """
         Uses (consumes) the item with id [consumable].
         """
-
-        index: int = self.consumables.index(consumable)
 
         count: int | None = self.consumables_count[consumable]
 
@@ -184,7 +306,8 @@ class InventoryNode:
 
         # Remove the consumable from the inventory if it was the last one of its kind.
         if self.consumables_count[consumable] <= 0:
-            self.consumables[index] = None
+            self.consumables_position.pop(consumable)
+            self.consumables_sprites.pop(consumable)
 
     def equip_consumable(self, consumable: str) -> None:
         """
