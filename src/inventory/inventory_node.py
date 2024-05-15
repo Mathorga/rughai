@@ -5,7 +5,9 @@ from pyglet.graphics import Batch
 
 from engine.animation import Animation
 from engine.node import PositionNode
+from engine.settings import GLOBALS, SETTINGS, Keys
 from engine.sprite_node import SpriteNode
+from engine.utils.utils import idx1to2, idx2to1
 
 class RealWorldItemNode(PositionNode):
     __slots__ = (
@@ -81,7 +83,9 @@ class InventoryNode:
         self.consumables_size: tuple[int, int] = (5, 4)
 
         # Grid of available consumables slots.
-        self.consumables: list[list[str | None]] = [[None for i in range(self.consumables_size[0])] for j in range(self.consumables_size[1])]
+        # This is a 2d grid flattened to 1d.
+        self.consumables: list[str | None] = ["bloobary" for i in range(self.consumables_size[0] * self.consumables_size[1])]
+        # self.consumables[12] = "bloobary"
 
         # Current amount for each consumable.
         self.consumables_count: dict[str, int] = {}
@@ -94,7 +98,7 @@ class InventoryNode:
         self.ui_batch: pyglet.graphics.Batch | None = None
 
         # Tells whether the inventory menu is open or closed.
-        self.is_open: bool = False
+        self.is_open: bool = True
 
     def set_batches(
         self,
@@ -113,20 +117,20 @@ class InventoryNode:
 
         # Create sprites.
         for quick in self.quicks:
-            self.consumables_sprites[quick]
+            if quick is not None:
+                self.consumables_sprites[quick]
 
         if self.is_open:
-            for j in range(len(self.consumables)):
-                for i in range(len(self.consumables[j])):
-                    consumable: str | None = self.consumables[j][i]
-                    if not consumable in self.consumables_sprites.keys:
-                        self.consumables_sprites[consumable] = SpriteNode(
-                            # TODO Scale and shift correctly.
-                            x = i * 8,
-                            y = j * 8,
-                            resource = CONSUMABLES_ANIMATION[consumable],
-                            batch = ui_batch
-                        )
+            for i, consumable in enumerate(self.consumables):
+                if consumable is not None:# and not consumable in self.consumables_sprites:
+                    position: tuple[int, int] = idx1to2(i, self.consumables_size[1])
+                    self.consumables_sprites[consumable] = SpriteNode(
+                        # TODO Scale and shift correctly.
+                        x = position[1] * 5 * GLOBALS[Keys.SCALING] + 20,
+                        y = position[0] * 5 * GLOBALS[Keys.SCALING] + 20,
+                        resource = Animation(source = CONSUMABLES_ANIMATION[consumable]).content,
+                        batch = ui_batch
+                    )
 
     def clear_batches(self) -> None:
         """
@@ -152,24 +156,33 @@ class InventoryNode:
         """
         # TODO
 
-    def use_consumable(self, position: tuple[int, int]) -> None:
-        consumable: str | None = self.consumables[position[0]][position[1]]
-        if consumable is None:
-            return
+    def use_consumable(self, consumable: str) -> None:
+        """
+        Uses (consumes) the item with id [consumable].
+        """
+
+        index: int = self.consumables.index(consumable)
 
         count: int | None = self.consumables_count[consumable]
 
         if count is None or count <= 0:
             return
 
-        CONSUMABLES_USE[self.consumables[position[0]][position[1]]]()
+        # Actually use the consumable.
+        CONSUMABLES_USE[consumable]()
 
         # The consumable was consumed, so decrease its count by 1.
         self.consumables_count[consumable] -= 1
 
         # Remove the consumable from the inventory if it was the last one of its kind.
         if self.consumables_count[consumable] <= 0:
-            self.consumables[position[0]][position[1]] = None
+            self.consumables[index] = None
+
+    def equip_consumable(self, consumable: str) -> None:
+        """
+        Equips [consumable] to a quick slot.
+        """
+        # TODO
 
     def load_file(self, source: str) -> None:
         """

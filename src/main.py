@@ -2,7 +2,7 @@ import os.path
 import pyglet
 import pyglet.gl as gl
 
-from constants.uniques import ACTIVE_SCENE, INVENTORY
+from constants import uniques
 import engine.controllers as controllers
 from engine.benchmark import Benchmark
 from engine.dungen.dungen import random_walk
@@ -149,7 +149,7 @@ class Rughai:
         print("scene_ended", bundle)
         if bundle["next_scene"]:
             # Clear the inventory.
-            INVENTORY.clear_batches()
+            uniques.INVENTORY.clear_batches()
 
             # First delete the current scene then clear controllers.
             self.__active_scene.delete()
@@ -237,13 +237,13 @@ class Rughai:
         self.__active_scene = scene
 
         # Just return if no scene was set.
-        if ACTIVE_SCENE is None:
+        if uniques.ACTIVE_SCENE is None:
             return
 
         # Apply batches to inventory.
-        INVENTORY.set_batches(
-            world_batch = ACTIVE_SCENE.world_batch,
-            ui_batch = ACTIVE_SCENE.ui_batch,
+        uniques.INVENTORY.set_batches(
+            world_batch = uniques.ACTIVE_SCENE.world_batch,
+            ui_batch = uniques.ACTIVE_SCENE.ui_batch,
         )
 
     def on_draw(self) -> None:

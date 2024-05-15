@@ -7,6 +7,20 @@ import pyglet.gl as gl
 
 EPSILON = 1e-8
 
+def idx2to1(i: int, j: int, m: int) -> int:
+    """
+    Converts a 2d index (i, j) into a 1d one and returns it.
+    """
+
+    return (m * j) + i
+
+def idx1to2(i: int, m: int) -> tuple[int, int]:
+    """
+    Converts a 1d index (i) into a 2d one and returns it.
+    """
+
+    return (i % m, i // m)
+
 def scale(val: float, src: tuple[float, float], dst: tuple[float, float]) -> float:
     """
     Scale the given value from the scale of src to the scale of dst.
