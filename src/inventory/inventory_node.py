@@ -32,13 +32,15 @@ class RealWorldItemNode(PositionNode):
             self.add_component(self.sprite)
 
 CONSUMABLES_ANIMATION: dict[str, str] = {
-    # "caroot": "sprites/items/consumables/caroot.json",
-    "bloobary": "sprites/items/consumables/bloobary.json"
+    "caroot": "sprites/items/consumables/caroot.json",
+    "bloobary": "sprites/items/consumables/bloobary.json",
+    "hokbary": "sprites/items/consumables/hokbary.json"
 }
 
 CONSUMABLES_USE: dict[str, Callable] = {
     "caroot": lambda: print("you ate a caroot"),
-    "bloobary": lambda: print("you ate a bloobary")
+    "bloobary": lambda: print("you ate a bloobary"),
+    "hokbary": lambda: print("you ate a hokbary")
 }
 
 AMMO_ICON_ANIMATION: dict[str, Animation] = {
@@ -59,7 +61,7 @@ class InventoryNode:
         "ammo_sprites",
         "currencies",
         "consumables_size",
-        "consumables",
+        "consumables_position",
         "consumables_count",
         "consumables_sprites",
         "world_batch",
@@ -84,8 +86,14 @@ class InventoryNode:
 
         # Grid of available consumables slots.
         # This is a 2d grid flattened to 1d.
-        self.consumables: list[str | None] = ["bloobary" for i in range(self.consumables_size[0] * self.consumables_size[1])]
-        # self.consumables[12] = "bloobary"
+        # self.consumables: list[str | None] = ["bloobary" for i in range(self.consumables_size[0] * self.consumables_size[1])]
+        # self.consumables[12] = "caroot"
+        # self.consumables[13] = "hokbary"
+        self.consumables_position: dict[str, int] = {
+            "bloobary": 12,
+            "caroot": 13,
+            "hokbary": 14
+        }
 
         # Current amount for each consumable.
         self.consumables_count: dict[str, int] = {}
@@ -121,14 +129,14 @@ class InventoryNode:
                 self.consumables_sprites[quick]
 
         if self.is_open:
-            for i, consumable in enumerate(self.consumables):
-                if consumable is not None:# and not consumable in self.consumables_sprites:
-                    position: tuple[int, int] = idx1to2(i, self.consumables_size[1])
-                    self.consumables_sprites[consumable] = SpriteNode(
+            for consumable_position in self.consumables_position.items():
+                if consumable_position[0] is not None and not consumable_position[0] in self.consumables_sprites:
+                    position: tuple[int, int] = idx1to2(consumable_position[1], self.consumables_size[1])
+                    self.consumables_sprites[consumable_position[0]] = SpriteNode(
                         # TODO Scale and shift correctly.
                         x = position[1] * 5 * GLOBALS[Keys.SCALING] + 20,
                         y = position[0] * 5 * GLOBALS[Keys.SCALING] + 20,
-                        resource = Animation(source = CONSUMABLES_ANIMATION[consumable]).content,
+                        resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
                         batch = ui_batch
                     )
 
