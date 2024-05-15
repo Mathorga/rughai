@@ -89,6 +89,18 @@ class InventoryController:
         # Current amount for each consumable.
         self.consumables_count: dict[str, int] = {}
 
+    def to_string(self) -> str:
+        return f"""
+            quicks_count: {self.quicks_count}\n
+            quicks: {self.quicks}\n
+            current_ammo: {self.current_ammo}\n
+            ammo: {self.ammo}\n
+            currencies: {self.currencies}\n
+            consumables_size: {self.consumables_size}\n
+            consumables_position: {self.consumables_position}\n
+            consumables_count: {self.consumables_count}\n
+        """
+
     def use_consumable(self, consumable: str) -> None:
         """
         Uses (consumes) the item with id [consumable].

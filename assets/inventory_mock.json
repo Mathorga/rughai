@@ -45,6 +45,10 @@
         {
             "id": "hokbary",
             "count": 2
+        },
+        {
+            "id": "energy_drink",
+            "count": 1
         }
     ],
     "consumables_position": [
@@ -55,6 +59,10 @@
         {
             "id": "bloobary",
             "position": "2,1"
+        },
+        {
+            "id": "hokbary",
+            "position": "3,2"
         },
         {
             "id": "energy_drink",
