@@ -48,16 +48,7 @@ class InventoryController:
         self.consumables_count: dict[str, int] = {}
 
     def to_string(self) -> str:
-        return f"""
-            quicks_count: {self.quicks_count}
-            quicks: {self.quicks}
-            current_ammo: {self.current_ammo}
-            ammo: {self.ammo}
-            currencies: {self.currencies}
-            consumables_size: {self.consumables_size}
-            consumables_position: {self.consumables_position}
-            consumables_count: {self.consumables_count}
-        """
+        return f"quicks_count: {self.quicks_count}\nquicks: {self.quicks}\ncurrent_ammo: {self.current_ammo}\nammo: {self.ammo}\ncurrencies: {self.currencies}\nconsumables_size: {self.consumables_size}\nconsumables_position: {self.consumables_position}\nconsumables_count: {self.consumables_count}\n"
 
     def equip_consumable(self, consumable: str) -> None:
         """

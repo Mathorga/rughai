@@ -1,9 +1,8 @@
-import json
 import os
 from typing import Callable
 import pyglet
-from pyglet.graphics import Batch
 
+import engine.controllers as controllers
 from engine.animation import Animation
 from engine.node import PositionNode
 from engine.settings import GLOBALS, SETTINGS, Keys
@@ -52,20 +51,8 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
 }
 
 class InventoryNode:
-    """
-    Holds all inventory data and provides accessors to it.
-    """
-
     __slots__ = (
-        "quicks_count",
-        "quicks",
-        "current_ammo",
-        "ammo",
         "ammo_sprites",
-        "currencies",
-        "consumables_size",
-        "consumables_position",
-        "consumables_count",
         "consumables_sprites",
         "world_batch",
         "ui_batch",
@@ -73,30 +60,7 @@ class InventoryNode:
     )
 
     def __init__(self) -> None:
-        # Currently equipped quick-access consumables.
-        self.quicks_count: int = 4
-        self.quicks: list[str | None] = [None for _ in range(self.quicks_count)]
-
-        # Currently equipped ammo.
-        self.current_ammo: str | None = None
-        self.ammo: list[str] = []
         self.ammo_sprites: dict[str, SpriteNode] = {}
-
-        self.currencies: dict[str, int] = {}
-
-        # Amount of available comsumables slots.
-        self.consumables_size: tuple[int, int] = (5, 4)
-
-        # List of all consumables' positions.
-        self.consumables_position: dict[str, int] = {
-            "bloobary": 12,
-            "caroot": 13,
-            "hokbary": 14,
-            "energy_drink": 15
-        }
-
-        # Current amount for each consumable.
-        self.consumables_count: dict[str, int] = {}
 
         # Consumables sprites.
         self.consumables_sprites: dict[str, SpriteNode] = {}
@@ -124,14 +88,14 @@ class InventoryNode:
             return
 
         # Create sprites.
-        for quick in self.quicks:
-            if quick is not None:
-                self.consumables_sprites[quick]
+        # for quick in controllers.INVENTORY_CONTROLLER.quicks:
+        #     if quick is not None:
+        #         self.consumables_sprites[quick]
 
         if self.is_open:
-            for consumable_position in self.consumables_position.items():
+            for consumable_position in controllers.INVENTORY_CONTROLLER.consumables_position.items():
                 if consumable_position[0] is not None and not consumable_position[0] in self.consumables_sprites:
-                    position: tuple[int, int] = idx1to2(consumable_position[1], self.consumables_size[1])
+                    position: tuple[int, int] = idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
                     self.consumables_sprites[consumable_position[0]] = SpriteNode(
                         # TODO Scale and shift correctly.
                         x = position[1] * GLOBALS[Keys.SCALING] + 20,
@@ -171,7 +135,7 @@ class InventoryNode:
         Uses (consumes) the item with id [consumable].
         """
 
-        count: int | None = self.consumables_count[consumable]
+        count: int | None = controllers.INVENTORY_CONTROLLER.consumables_count[consumable]
 
         if count is None or count <= 0:
             return
@@ -180,11 +144,11 @@ class InventoryNode:
         CONSUMABLES_USE[consumable]()
 
         # The consumable was consumed, so decrease its count by 1.
-        self.consumables_count[consumable] -= 1
+        controllers.INVENTORY_CONTROLLER.consumables_count[consumable] -= 1
 
         # Remove the consumable from the inventory if it was the last one of its kind.
-        if self.consumables_count[consumable] <= 0:
-            self.consumables_position.pop(consumable)
+        if controllers.INVENTORY_CONTROLLER.consumables_count[consumable] <= 0:
+            controllers.INVENTORY_CONTROLLER.consumables_position.pop(consumable)
             self.consumables_sprites.pop(consumable)
 
     def equip_consumable(self, consumable: str) -> None:
