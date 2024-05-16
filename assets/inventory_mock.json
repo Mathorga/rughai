@@ -79,5 +79,6 @@
         "caroot",
         "bloobary",
         null
-    ]
+    ],
+    "current_ammo": "arrow"
 }

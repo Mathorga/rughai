@@ -91,19 +91,20 @@ class InventoryController:
         cons_size: list[int] = list(map(lambda item: int(item), size_str.split(",")))
         self.consumables_size = (cons_size[0], cons_size[1])
 
-        # Read quicks count.
+        # Load quicks.
         self.quicks_count = data["quicks_count"]
+        self.quicks = data["quicks"]
 
         # Load currencies.
         self.currencies.clear()
         for element in data["currencies"]:
             id: str = element["id"]
             count: int = element["count"]
-
             self.currencies[id] = count
 
         # Load ammo.
         self.ammo.clear()
+        self.current_ammo = data["current_ammo"]
         for element in data["ammo"]:
             id: str = element["id"]
             count: int = element["count"]
