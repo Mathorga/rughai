@@ -1,0 +1,8 @@
+{
+    "name": "main",
+    "path": "sprites/items/consumables/energy_drink.png",
+    "center_x": true,
+    "center_y": true,
+    "rows": 1,
+    "columns": 1
+}
