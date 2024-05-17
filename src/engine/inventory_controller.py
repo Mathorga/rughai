@@ -1,6 +1,5 @@
 import json
 import os
-from typing import Callable
 
 import pyglet
 
@@ -38,11 +37,7 @@ class InventoryController:
         self.consumables_size: tuple[int, int] = (5, 4)
 
         # List of all consumables' positions.
-        self.consumables_position: dict[str, int] = {
-            "bloobary": 12,
-            "caroot": 13,
-            "hokbary": 14
-        }
+        self.consumables_position: dict[str, int] = {}
 
         # Current amount for each consumable.
         self.consumables_count: dict[str, int] = {}
@@ -54,7 +49,17 @@ class InventoryController:
         """
         Equips [consumable] to a quick slot.
         """
-        # TODO
+
+        free_index: int
+        try:
+            # Get the index of the first empty slot in the list.
+            free_index = self.quicks.index(next(filter(lambda quick: quick is None, self.quicks)))
+        except ValueError:
+            # Just return if no empty spot is found.
+            return
+
+        # Set the given consumable to the found empty slot.
+        self.quicks[free_index] = consumable
 
     def load_file(self, source: str) -> None:
         """

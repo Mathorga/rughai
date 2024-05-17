@@ -1,4 +1,3 @@
-from typing import Dict, Tuple
 import pyglet
 
 class InputController:
@@ -11,16 +10,16 @@ class InputController:
         self.__threshold = threshold
 
         # Keyboard.
-        self.keys: Dict = {}
-        self.key_presses: Dict = {}
-        self.key_releases: Dict = {}
+        self.keys: dict = {}
+        self.key_presses: dict = {}
+        self.key_releases: dict = {}
 
         # Controller.
-        self.buttons: Dict = {}
-        self.button_presses: Dict = {}
-        self.button_releases: Dict = {}
-        self.sticks: Dict = {}
-        self.triggers: Dict = {}
+        self.buttons: dict = {}
+        self.button_presses: dict = {}
+        self.button_releases: dict = {}
+        self.sticks: dict = {}
+        self.triggers: dict = {}
 
         self.__window.push_handlers(self)
 
@@ -275,3 +274,10 @@ class InputController:
         """
 
         return self[pyglet.window.key.SPACE] or self.triggers.get("righttrigger", 0.0) > 0.0
+
+    def get_inventory_toggle(self) -> bool:
+        """
+        Returns whether the inventory toggle button was pressed or not.
+        """
+
+        return self.key_presses.get(pyglet.window.key.ENTER, False) or self.button_presses.get("start", False)

@@ -17,6 +17,7 @@ from engine.settings import SETTINGS, Keys
 from engine import controllers
 from engine.utils import utils
 
+from inventory.inventory_node import InventoryNode
 from player_node import PlayerNode
 from clouds_node import CloudsNode
 from prop_loader import PropLoader
@@ -48,6 +49,14 @@ class R_0_0(PlayableSceneNode):
             title = "R_0_0",
             on_scene_start = self._on_scene_start,
             on_scene_end = self._on_scene_end
+        )
+
+        # Inventory.
+        inventory: InventoryNode = InventoryNode(
+            view_width = view_width,
+            view_height = view_height,
+            world_batch = uniques.ACTIVE_SCENE.world_batch,
+            ui_batch = uniques.ACTIVE_SCENE.ui_batch
         )
 
         # Scene music.
@@ -161,6 +170,7 @@ class R_0_0(PlayableSceneNode):
         uniques.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
         uniques.ACTIVE_SCENE.add_child(bg)
+        uniques.ACTIVE_SCENE.add_child(inventory)
         uniques.ACTIVE_SCENE.add_children(tilemaps)
         uniques.ACTIVE_SCENE.add_children(walls)
         uniques.ACTIVE_SCENE.add_children(falls)

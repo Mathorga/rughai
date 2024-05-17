@@ -9,9 +9,7 @@ from engine.dungen.dungen import random_walk
 from engine.playable_scene_node import PlayableSceneNode
 from engine.upscaler import TrueUpscaler, Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
-
 import constants.scenes as scenes
-from inventory.inventory_node import InventoryNode
 
 from scenes.rughai.r_0_0 import R_0_0
 from scenes.rughai.r_0_1 import R_0_1
@@ -150,9 +148,6 @@ class Rughai:
     def __on_scene_end(self, bundle: dict):
         print("scene_ended", bundle)
         if bundle["next_scene"]:
-            # Clear the inventory.
-            uniques.INVENTORY.clear_batches()
-
             # First delete the current scene then clear controllers.
             self.__active_scene.delete()
             controllers.COLLISION_CONTROLLER.clear()
@@ -241,12 +236,6 @@ class Rughai:
         # Just return if no scene was set.
         if uniques.ACTIVE_SCENE is None:
             return
-
-        # Apply batches to inventory.
-        uniques.INVENTORY.set_batches(
-            world_batch = uniques.ACTIVE_SCENE.world_batch,
-            ui_batch = uniques.ACTIVE_SCENE.ui_batch,
-        )
 
     def on_draw(self) -> None:
         """

@@ -69,11 +69,20 @@
             "position": "0,1"
         }
     ],
-    "keys": {
-        "r_0_2_key_0": true,
-        "s_1_1_key_0": false,
-        "targa_gamepad": false
-    },
+    "keys": [
+        {
+            "id": "r_0_2_key_0",
+            "value": true
+        },
+        {
+            "id": "s_1_1_key_0",
+            "value": false
+        },
+        {
+            "id": "targa_gamepad",
+            "value": false
+        }
+    ],
     "quicks": [
         null,
         "caroot",
