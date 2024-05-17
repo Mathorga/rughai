@@ -98,8 +98,8 @@ class InventoryNode:
                     position: tuple[int, int] = idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
                     self.consumables_sprites[consumable_position[0]] = SpriteNode(
                         # TODO Scale and shift correctly.
-                        x = position[1] * 5 * GLOBALS[Keys.SCALING] + 20,
-                        y = position[0] * 5 * GLOBALS[Keys.SCALING] + 20,
+                        x = position[1] * 20 + 20,
+                        y = position[0] * 20 + 20,
                         resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
                         batch = ui_batch
                     )

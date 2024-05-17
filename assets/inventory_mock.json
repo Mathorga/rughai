@@ -54,15 +54,15 @@
     "consumables_position": [
         {
             "id": "caroot",
-            "position": "1,0"
+            "position": "0,0"
         },
         {
             "id": "bloobary",
-            "position": "2,0"
+            "position": "1,0"
         },
         {
             "id": "hokbary",
-            "position": "3,0"
+            "position": "2,0"
         },
         {
             "id": "energy_drink",
