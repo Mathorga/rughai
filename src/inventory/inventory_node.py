@@ -1,11 +1,9 @@
-import os
 from typing import Callable
 import pyglet
 
 import engine.controllers as controllers
 from engine.animation import Animation
 from engine.node import PositionNode
-from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.utils.utils import idx1to2
 
