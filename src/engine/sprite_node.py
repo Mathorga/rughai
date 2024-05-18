@@ -16,6 +16,7 @@ class SpriteNode(PositionNode):
         x: float = 0,
         y: float = 0,
         z: float | None = None,
+        transparent: bool = False,
         shader: pyglet.graphics.shader.ShaderProgram | None = None,
         samplers_2d: dict[str, pyglet.image.ImageData] | None = None,
     ) -> None:
@@ -27,12 +28,18 @@ class SpriteNode(PositionNode):
         # Make sure the given resource is filtered using a nearest neighbor filter.
         utils.set_filter(resource = resource, filter = gl.GL_NEAREST)
 
+        # Store flags.
+        self.transparent: bool = transparent
+
+        self.group: pyglet.graphics.Group | None = pyglet.graphics.Group(order = int(z if z is not None else -y)) if transparent else None
+
         self.sprite = ShadedSprite(
             img = resource,
             x = int(x * GLOBALS[Keys.SCALING]),
             y = int(y * GLOBALS[Keys.SCALING]),
             z = int(z if z is not None else -y),
             program = shader,
+            group = self.group,
             samplers_2d = samplers_2d,
             batch = batch
         )
@@ -55,6 +62,10 @@ class SpriteNode(PositionNode):
         self.x = position[0]
         self.y = position[1]
         self.z = z if z is not None else -position[1]
+
+        if self.transparent:
+            self.group = pyglet.graphics.Group(order = self.z)
+            self.sprite.group = self.group
 
         self.sprite.position = (
             self.x * GLOBALS[Keys.SCALING],

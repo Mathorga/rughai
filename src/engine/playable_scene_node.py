@@ -140,6 +140,7 @@ class PlayableSceneNode(Node):
             x = view_width / 2,
             y = 0.0,
             z = 500.0,
+            transparent = True,
             batch = uniques.ACTIVE_SCENE.ui_batch
         )
 

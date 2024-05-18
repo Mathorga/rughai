@@ -110,6 +110,7 @@ class InventoryNode:
                     x = position[1] * 20 + 20,
                     y = position[0] * 20 + 20,
                     z = 500.0,
+                    transparent = True,
                     resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
                     batch = self.ui_batch
                 )

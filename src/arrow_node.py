@@ -64,6 +64,7 @@ class ArrowNode(PositionNode):
                     resource = animation.content,
                     x = x,
                     y = y,
+                    transparent = True,
                     batch = batch
                 )
             )

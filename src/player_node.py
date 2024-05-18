@@ -145,6 +145,7 @@ class PlayerNode(PositionNode):
             resource = shadow_image,
             x = x,
             y = y,
+            transparent = True,
             batch = batch
         )
 
