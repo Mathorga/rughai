@@ -31,7 +31,9 @@ class SpriteNode(PositionNode):
         # Store flags.
         self.transparent: bool = transparent
 
-        self.group: pyglet.graphics.Group | None = pyglet.graphics.Group(order = int(z if z is not None else -y)) if transparent else None
+        self.group: pyglet.graphics.Group = pyglet.graphics.Group(
+            order = int(z if z is not None else -y) if transparent else 0
+        )
 
         self.sprite = ShadedSprite(
             img = resource,
