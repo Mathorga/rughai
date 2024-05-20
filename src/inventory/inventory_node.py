@@ -1,13 +1,11 @@
-import os
 from typing import Callable
 import pyglet
 
 import engine.controllers as controllers
 from engine.animation import Animation
 from engine.node import PositionNode
-from engine.settings import GLOBALS, SETTINGS, Keys
 from engine.sprite_node import SpriteNode
-from engine.utils.utils import idx1to2, idx2to1
+from engine.utils.utils import idx1to2
 
 class RealWorldItemNode(PositionNode):
     __slots__ = (
@@ -56,61 +54,75 @@ class InventoryNode:
         "consumables_sprites",
         "world_batch",
         "ui_batch",
+        "view_width",
+        "view_height",
+        "background",
+        "view_width",
+        "view_height",
         "is_open"
     )
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        view_width: int,
+        view_height: int,
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None
+    ) -> None:
         self.ammo_sprites: dict[str, SpriteNode] = {}
 
         # Consumables sprites.
         self.consumables_sprites: dict[str, SpriteNode] = {}
 
         # Batches.
-        self.world_batch: pyglet.graphics.Batch | None = None
-        self.ui_batch: pyglet.graphics.Batch | None = None
+        self.world_batch: pyglet.graphics.Batch | None = world_batch
+        self.ui_batch: pyglet.graphics.Batch | None = ui_batch
+
+        self.view_width: int = view_width
+        self.view_height: int = view_height
+
+        # Inventory background.
+        self.background: SpriteNode | None = None
 
         # Tells whether the inventory menu is open or closed.
-        self.is_open: bool = True
+        self.is_open: bool = False
 
-    def set_batches(
-        self,
-        world_batch: pyglet.graphics.Batch | None,
-        ui_batch: pyglet.graphics.Batch | None
-    ) -> None:
+    def create_sprites(self) -> None:
         """
-        Saves the provided batches for sprites creation.
+        Creates all inventory sprites.
         """
 
-        self.world_batch = world_batch
-        self.ui_batch = ui_batch
+        # Create background.
+        self.background = SpriteNode(
+            x = 0.0,
+            y = 0.0,
+            z = 400.0,
+            resource = pyglet.resource.image("sprites/menus/inventory/background.png"),
+            batch = self.ui_batch
+        )
 
-        if world_batch is None or ui_batch is None:
-            return
+        # Create all items' sprites.
+        for consumable_position in controllers.INVENTORY_CONTROLLER.consumables_position.items():
+            if consumable_position[0] is not None and not consumable_position[0] in self.consumables_sprites:
+                position: tuple[int, int] = idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
+                self.consumables_sprites[consumable_position[0]] = SpriteNode(
+                    # TODO Scale and shift correctly.
+                    x = position[1] * 20 + 20,
+                    y = position[0] * 20 + 20,
+                    z = 500.0,
+                    resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
+                    batch = self.ui_batch
+                )
 
-        # Create sprites.
-        # for quick in controllers.INVENTORY_CONTROLLER.quicks:
-        #     if quick is not None:
-        #         self.consumables_sprites[quick]
-
-        if self.is_open:
-            for consumable_position in controllers.INVENTORY_CONTROLLER.consumables_position.items():
-                if consumable_position[0] is not None and not consumable_position[0] in self.consumables_sprites:
-                    position: tuple[int, int] = idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
-                    self.consumables_sprites[consumable_position[0]] = SpriteNode(
-                        # TODO Scale and shift correctly.
-                        x = position[1] * 20 + 20,
-                        y = position[0] * 20 + 20,
-                        resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
-                        batch = ui_batch
-                    )
-
-    def clear_batches(self) -> None:
+    def clear_sprites(self) -> None:
         """
-        Unsets all batches and deletes any existing sprite using them.
+        Deletes all inventory sprites.
         """
 
-        self.world_batch = None
-        self.ui_batch = None
+        # Clear background.
+        if self.background is not None:
+            self.background.delete()
+            self.background = None
 
         # Clear consumables sprites.
         for sprite in self.consumables_sprites.values():
@@ -128,7 +140,11 @@ class InventoryNode:
         """
 
         self.is_open = not self.is_open
-        # TODO
+
+        if self.is_open:
+            self.create_sprites()
+        else:
+            self.clear_sprites()
 
     def use_consumable(self, consumable: str) -> None:
         """
@@ -157,16 +173,13 @@ class InventoryNode:
         """
         # TODO
 
-    def load_file(self, source: str) -> None:
-        """
-        Reads and stores all inventory data from the file provided in [source].
-        """
+    def update(self, dt: float) -> None:
+        # Fetch input.
+        inventory_toggled: bool = controllers.INPUT_CONTROLLER.get_inventory_toggle()
 
-        abs_path: str = os.path.join(pyglet.resource.path[0], source)
+        # Use input.
+        if inventory_toggled:
+            self.toggle()
 
-        # Just return if the source file is not found.
-        if not os.path.exists(abs_path):
-            return
-
-        # TODO Open file and read data from it.
-        pass
+    def delete(self) -> None:
+        self.clear_sprites()

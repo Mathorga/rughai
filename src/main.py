@@ -6,22 +6,9 @@ from constants import uniques
 import engine.controllers as controllers
 from engine.benchmark import Benchmark
 from engine.dungen.dungen import random_walk
-from engine.playable_scene_node import PlayableSceneNode
+from engine.playable_scene_node import PlayableSceneNode, PlayableSceneNode
 from engine.upscaler import TrueUpscaler, Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
-
-import constants.scenes as scenes
-from inventory.inventory_node import InventoryNode
-
-from scenes.rughai.r_0_0 import R_0_0
-from scenes.rughai.r_0_1 import R_0_1
-from scenes.rughai.r_0_2 import R_0_2
-from scenes.rughai.r_0_3 import R_0_3
-from scenes.rughai.r_0_4 import R_0_4
-from scenes.rughai.r_0_5 import R_0_5
-from scenes.rughai.r_0_6 import R_0_6
-from scenes.rughai.r_0_7 import R_0_7
-from scenes.rughai.r_0_8 import R_0_8
 
 FRAGMENT_SOURCE = """
     #version 150 core
@@ -121,12 +108,15 @@ class Rughai:
         )
 
         # Create a scene.
-        self.set_active_scene(R_0_0(
-            window = self.window,
-            view_width = SETTINGS[Keys.VIEW_WIDTH],
-            view_height = SETTINGS[Keys.VIEW_HEIGHT],
-            on_ended = self.__on_scene_end
-        ))
+        self.set_active_scene(
+            scene = PlayableSceneNode(
+                name = "r_0_0",
+                window = self.window,
+                view_width = SETTINGS[Keys.VIEW_WIDTH],
+                view_height = SETTINGS[Keys.VIEW_HEIGHT],
+                on_ended = self.__on_scene_end
+            )
+        )
 
     def __create_window(self) -> pyglet.window.Window:
         window = pyglet.window.Window(
@@ -150,86 +140,21 @@ class Rughai:
     def __on_scene_end(self, bundle: dict):
         print("scene_ended", bundle)
         if bundle["next_scene"]:
-            # Clear the inventory.
-            uniques.INVENTORY.clear_batches()
-
             # First delete the current scene then clear controllers.
             self.__active_scene.delete()
             controllers.COLLISION_CONTROLLER.clear()
             controllers.INTERACTION_CONTROLLER.clear()
 
-            if bundle["next_scene"] == scenes.R_0_0:
-                self.set_active_scene(R_0_0(
+            self.set_active_scene(
+                scene = PlayableSceneNode(
+                    name = bundle["next_scene"],
                     window = self.window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
                     on_ended = self.__on_scene_end
-                ))
-            elif bundle["next_scene"] == scenes.R_0_1:
-                self.set_active_scene(R_0_1(
-                    window = self.window,
-                    view_width = SETTINGS[Keys.VIEW_WIDTH],
-                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
-                    bundle = bundle,
-                    on_ended = self.__on_scene_end
-                ))
-            elif bundle["next_scene"] == scenes.R_0_2:
-                self.set_active_scene(R_0_2(
-                    window = self.window,
-                    view_width = SETTINGS[Keys.VIEW_WIDTH],
-                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
-                    bundle = bundle,
-                    on_ended = self.__on_scene_end
-                ))
-            elif bundle["next_scene"] == scenes.R_0_3:
-                self.set_active_scene(R_0_3(
-                    window = self.window,
-                    view_width = SETTINGS[Keys.VIEW_WIDTH],
-                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
-                    bundle = bundle,
-                    on_ended = self.__on_scene_end
-                ))
-            elif bundle["next_scene"] == scenes.R_0_4:
-                self.set_active_scene(R_0_4(
-                    window = self.window,
-                    view_width = SETTINGS[Keys.VIEW_WIDTH],
-                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
-                    bundle = bundle,
-                    on_ended = self.__on_scene_end
-                ))
-            elif bundle["next_scene"] == scenes.R_0_5:
-                self.set_active_scene(R_0_5(
-                    window = self.window,
-                    view_width = SETTINGS[Keys.VIEW_WIDTH],
-                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
-                    bundle = bundle,
-                    on_ended = self.__on_scene_end
-                ))
-            elif bundle["next_scene"] == scenes.R_0_6:
-                self.set_active_scene(R_0_6(
-                    window = self.window,
-                    view_width = SETTINGS[Keys.VIEW_WIDTH],
-                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
-                    bundle = bundle,
-                    on_ended = self.__on_scene_end
-                ))
-            elif bundle["next_scene"] == scenes.R_0_7:
-                self.set_active_scene(R_0_7(
-                    window = self.window,
-                    view_width = SETTINGS[Keys.VIEW_WIDTH],
-                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
-                    bundle = bundle,
-                    on_ended = self.__on_scene_end
-                ))
-            elif bundle["next_scene"] == scenes.R_0_8:
-                self.set_active_scene(R_0_8(
-                    window = self.window,
-                    view_width = SETTINGS[Keys.VIEW_WIDTH],
-                    view_height = SETTINGS[Keys.VIEW_HEIGHT],
-                    bundle = bundle,
-                    on_ended = self.__on_scene_end
-                ))
+                )
+            )
 
     def set_active_scene(self, scene: PlayableSceneNode) -> None:
         """
@@ -241,12 +166,6 @@ class Rughai:
         # Just return if no scene was set.
         if uniques.ACTIVE_SCENE is None:
             return
-
-        # Apply batches to inventory.
-        uniques.INVENTORY.set_batches(
-            world_batch = uniques.ACTIVE_SCENE.world_batch,
-            ui_batch = uniques.ACTIVE_SCENE.ui_batch,
-        )
 
     def on_draw(self) -> None:
         """
