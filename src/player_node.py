@@ -146,6 +146,7 @@ class PlayerNode(PositionNode):
             x = x,
             y = y,
             transparent = True,
+            dynamic_depth = True,
             batch = batch
         )
 

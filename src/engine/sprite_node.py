@@ -17,6 +17,7 @@ class SpriteNode(PositionNode):
         y: float = 0,
         z: float | None = None,
         transparent: bool = False,
+        dynamic_depth: bool = False,
         shader: pyglet.graphics.shader.ShaderProgram | None = None,
         samplers_2d: dict[str, pyglet.image.ImageData] | None = None,
     ) -> None:
@@ -30,9 +31,10 @@ class SpriteNode(PositionNode):
 
         # Store flags.
         self.transparent: bool = transparent
+        self.dynamic_depth: bool = dynamic_depth
 
         self.group: pyglet.graphics.Group = pyglet.graphics.Group(
-            order = int(z if z is not None else -y) if transparent else 0
+            order = int(z if z is not None else y) + 1 if transparent else 0
         )
 
         self.sprite = ShadedSprite(
@@ -65,8 +67,8 @@ class SpriteNode(PositionNode):
         self.y = position[1]
         self.z = z if z is not None else -position[1]
 
-        if self.transparent:
-            self.group = pyglet.graphics.Group(order = self.z)
+        if self.transparent and self.dynamic_depth:
+            self.group = pyglet.graphics.Group(order = position[1] + 1)
             self.sprite.group = self.group
 
         self.sprite.position = (
