@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, Tuple, Union
+from typing import Callable, Optional, Union
 import pyglet
 import pyglet.gl as gl
 
