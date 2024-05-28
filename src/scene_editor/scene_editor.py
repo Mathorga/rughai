@@ -9,7 +9,6 @@ sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__
 import engine.controllers as controllers
 from engine.upscaler import Upscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
-from constants import scenes
 from prop_placement_scene import PropPlacementScene
 
 class RugHaiSceneEditor:
