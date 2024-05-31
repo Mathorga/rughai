@@ -25,6 +25,20 @@ from constants import uniques
 class PlayableSceneNode(Node):
     """
     Node defining any playable (by a player) scene.
+
+    Parameters
+    ----------
+    name: str
+        Name of the scene.
+    window: pyglet.window.Window
+        Window.
+    view_width: int
+        Width of the in-game view.
+    view_height: int
+        Height of the in-game view.
+    bundle: dict | None
+        Starting bundle of the scene. The bundle is structured as follows:
+        "destination"
     """
 
     def __init__(
