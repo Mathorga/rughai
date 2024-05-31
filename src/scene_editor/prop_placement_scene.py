@@ -1,7 +1,7 @@
 from typing import Callable
 import pyglet
 
-from constants import scenes, uniques
+from constants import uniques
 from engine import controllers
 from engine.node import Node, PositionNode
 from engine.scene_node import Bounds, SceneNode

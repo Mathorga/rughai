@@ -23,6 +23,10 @@ from clouds_node import CloudsNode
 from constants import uniques
 
 class PlayableSceneNode(Node):
+    """
+    Node defining any playable (by a player) scene.
+    """
+
     def __init__(
         self,
         name: str,
@@ -181,10 +185,6 @@ class PlayableSceneNode(Node):
 
             if self._player is not None:
                 self._player.disable_controls()
-
-    def _on_scene_start(self) -> None:
-        if self._player is not None:
-            self._player.enable_controls()
 
     def draw(self) -> None:
         if uniques.ACTIVE_SCENE is not None:

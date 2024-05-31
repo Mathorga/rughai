@@ -3,7 +3,7 @@ import pyglet
 
 import engine.controllers as controllers
 from engine.animation import Animation
-from engine.node import PositionNode
+from engine.node import Node, PositionNode
 from engine.sprite_node import SpriteNode
 from engine.utils.utils import idx1to2
 
@@ -48,7 +48,7 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
     # "fire_arrow": Animation(source = "sprites/items/ammo/fire_arrow.json"),
 }
 
-class InventoryNode:
+class InventoryNode(Node):
     __slots__ = (
         "ammo_sprites",
         "consumables_sprites",
