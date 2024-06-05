@@ -7,7 +7,7 @@ import engine.controllers as controllers
 from engine.benchmark import Benchmark
 from engine.dungen.dungen import random_walk
 from engine.playable_scene_node import PlayableSceneNode, PlayableSceneNode
-from engine.upscaler import TrueUpscaler, Upscaler
+from engine.upscaler import TrueUpscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
 
 FRAGMENT_SOURCE = """
