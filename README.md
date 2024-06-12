@@ -54,8 +54,11 @@ You can then find the compiled version of the game inside the main_dist:</br>
   * Windows:</br>
 `.\main_dist\main.exe`</br>
 
-  * Linux and MacOS:</br>
-`.\main_dist\main`</br>
+  * Linux:</br>
+`./main_dist/main`</br>
+
+  * MacOS:</br>
+`./main.dist/main.bin`</br>
 
 ## Settings
 You can change game settings by manually editing the [assets/settings.json](/assets/settings.json) file:</br>
