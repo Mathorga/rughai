@@ -357,12 +357,10 @@ def center_animation(
     y: bool = True
 ) -> None:
     if x:
-        for frame in animation.frames:
-            frame.image.anchor_x = animation.get_max_width() / 2
+        x_center_animation(animation = animation)
 
     if y:
-        for frame in animation.frames:
-            frame.image.anchor_y = animation.get_max_width() / 2
+        y_center_animation(animation = animation)
 
 def x_center_animation(animation: pyglet.image.animation.Animation):
     for frame in animation.frames:

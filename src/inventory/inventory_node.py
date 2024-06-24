@@ -5,7 +5,7 @@ import engine.controllers as controllers
 from engine.animation import Animation
 from engine.node import Node, PositionNode
 from engine.sprite_node import SpriteNode
-from engine.utils.utils import idx1to2
+from engine.utils import utils
 
 class RealWorldItemNode(PositionNode):
     __slots__ = (
@@ -51,6 +51,8 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
 class InventoryNode(Node):
     __slots__ = (
         "ammo_sprites",
+        "consumable_slot_image",
+        "consumables_slots_sprites",
         "consumables_sprites",
         "world_batch",
         "ui_batch",
@@ -71,7 +73,15 @@ class InventoryNode(Node):
     ) -> None:
         self.ammo_sprites: dict[str, SpriteNode] = {}
 
+        # Fetch consumable slot image.
+        self.consumable_slot_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/shadow.png")
+        utils.set_anchor(
+            resource = self.consumable_slot_image,
+            center = True
+        )
+
         # Consumables sprites.
+        self.consumables_slots_sprites: list[SpriteNode] = []
         self.consumables_sprites: dict[str, SpriteNode] = {}
 
         # Batches.
@@ -101,14 +111,37 @@ class InventoryNode(Node):
             batch = self.ui_batch
         )
 
+        consumables_area_size: tuple[int, int] = (
+            self.view_width // 2,
+            self.view_height // 2
+        )
+        step: tuple[int, int] = (
+            consumables_area_size[0] // controllers.INVENTORY_CONTROLLER.consumables_size[0],
+            consumables_area_size[1] // controllers.INVENTORY_CONTROLLER.consumables_size[1]
+        )
+
+        # Create all items' slots.
+        for i in range(controllers.INVENTORY_CONTROLLER.consumables_size[0]):
+            for j in range(controllers.INVENTORY_CONTROLLER.consumables_size[1]):
+                position: int = utils.idx2to1(i, j, controllers.INVENTORY_CONTROLLER.consumables_size[1])
+                self.consumables_slots_sprites.append(SpriteNode(
+                    x = i * step[0] + step[1],
+                    y = self.view_height - (j * step[1] + step[1]),
+                    z = 500.0,
+                    resource = self.consumable_slot_image,
+                    batch = self.ui_batch
+                ))
+
         # Create all items' sprites.
         for consumable_position in controllers.INVENTORY_CONTROLLER.consumables_position.items():
             if consumable_position[0] is not None and not consumable_position[0] in self.consumables_sprites:
-                position: tuple[int, int] = idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
+                # Compute the current position.
+                position: tuple[int, int] = utils.idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
+
                 self.consumables_sprites[consumable_position[0]] = SpriteNode(
                     # TODO Scale and shift correctly.
-                    x = position[1] * 20 + 20,
-                    y = position[0] * 20 + 20,
+                    x = position[1] * step[0] + step[0],
+                    y = self.view_height - (position[0] * step[1] + step[1]),
                     z = 500.0,
                     resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
                     batch = self.ui_batch
@@ -123,6 +156,11 @@ class InventoryNode(Node):
         if self.background is not None:
             self.background.delete()
             self.background = None
+
+        # Clear consumables slots sprites.
+        for sprite in self.consumables_slots_sprites:
+            sprite.delete()
+        self.consumables_slots_sprites.clear()
 
         # Clear consumables sprites.
         for sprite in self.consumables_sprites.values():
