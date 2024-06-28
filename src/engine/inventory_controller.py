@@ -19,7 +19,8 @@ class InventoryController:
         "currencies",
         "consumables_size",
         "consumables_position",
-        "consumables_count"
+        "consumables_count",
+        "is_open"
     )
 
     def __init__(self) -> None:
@@ -41,6 +42,16 @@ class InventoryController:
 
         # Current amount for each consumable.
         self.consumables_count: dict[str, int] = {}
+
+        # Tells whether the inventory is open or not.
+        self.is_open: bool = False
+
+    def toggle(self) -> None:
+        """
+        Toggles the open state of the inventory by opening it if closed and closing it if open.
+        """
+
+        self.is_open = not self.is_open
 
     def to_string(self) -> str:
         return f"quicks_count: {self.quicks_count}\nquicks: {self.quicks}\ncurrent_ammo: {self.current_ammo}\nammo: {self.ammo}\ncurrencies: {self.currencies}\nconsumables_size: {self.consumables_size}\nconsumables_position: {self.consumables_position}\nconsumables_count: {self.consumables_count}\n"
