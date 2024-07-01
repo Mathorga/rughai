@@ -119,7 +119,6 @@ class InventoryNode(Node):
         # Create all items' slots.
         for i in range(controllers.INVENTORY_CONTROLLER.consumables_size[0]):
             for j in range(controllers.INVENTORY_CONTROLLER.consumables_size[1]):
-                position: int = utils.idx2to1(i, j, controllers.INVENTORY_CONTROLLER.consumables_size[1])
                 self.consumables_slots_sprites.append(SpriteNode(
                     x = i * step[0] + step[0] // 2,
                     y = self.view_height - consumables_area_size[1] // 2 - (j * step[1] + step[1] // 2),
@@ -131,13 +130,13 @@ class InventoryNode(Node):
         # Create all items' sprites.
         for consumable_position in controllers.INVENTORY_CONTROLLER.consumables_position.items():
             if consumable_position[0] is not None and not consumable_position[0] in self.consumables_sprites:
-                # Compute the current position.
-                position: tuple[int, int] = utils.idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
+                # Compute the current 2d index.
+                idx2d: tuple[int, int] = utils.idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
 
                 self.consumables_sprites[consumable_position[0]] = SpriteNode(
                     # TODO Scale and shift correctly.
-                    x = position[0] * step[0] + step[0] // 2,
-                    y = self.view_height - consumables_area_size[1] // 2 - (position[1] * step[1] + step[1] // 2),
+                    x = idx2d[0] * step[0] + step[0] // 2,
+                    y = self.view_height - consumables_area_size[1] // 2 - (idx2d[1] * step[1] + step[1] // 2),
                     z = 500.0,
                     resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
                     batch = self.ui_batch
