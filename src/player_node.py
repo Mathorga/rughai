@@ -260,6 +260,30 @@ class PlayerNode(PositionNode):
 
         self.__state_machine.enable_input()
 
+    def get_input_movement(self) -> bool:
+        return controllers.INPUT_CONTROLLER.get_movement()
+
+    def get_input_aim(self) -> bool:
+        return False if controllers.INVENTORY_CONTROLLER.is_open else controllers.INPUT_CONTROLLER.get_aim()
+
+    def get_input_movement_vec(self) -> pm.Vec2:
+        return controllers.INPUT_CONTROLLER.get_movement_vec()
+
+    def get_input_aim_vec(self) -> pm.Vec2:
+        return pm.Vec2() if controllers.INVENTORY_CONTROLLER.is_open else controllers.INPUT_CONTROLLER.get_aim_vec()
+
+    def get_input_sprint(self) -> bool:
+        return controllers.INPUT_CONTROLLER.get_sprint()
+
+    def get_input_shift(self) -> bool:
+        return controllers.INPUT_CONTROLLER.get_shift()
+
+    def get_input_interaction(self) -> bool:
+        return controllers.INPUT_CONTROLLER.get_interaction()
+
+    def get_input_draw(self) -> bool:
+        return controllers.INPUT_CONTROLLER.get_draw()
+
     def set_animation(self, animation: Animation) -> None:
         self.__sprite.set_image(animation.content)
 
@@ -495,10 +519,10 @@ class PlayerIdleState(PlayerState):
         """
 
         if self.input_enabled:
-            self.__move = controllers.INPUT_CONTROLLER.get_movement()
-            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
-            self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
-            self.__interact = controllers.INPUT_CONTROLLER.get_interaction()
+            self.__move = self.actor.get_input_movement()
+            self.__aim = self.actor.get_input_aim()
+            self.__sprint = self.actor.get_input_sprint()
+            self.__interact = self.actor.get_input_interaction()
 
     def update(self, dt: float) -> Optional[str]:
         # Read inputs.
@@ -560,11 +584,11 @@ class PlayerWalkState(PlayerState):
         """
 
         if self.input_enabled:
-            self.__move_vec = controllers.INPUT_CONTROLLER.get_movement_vec()
-            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
-            self.__shift = controllers.INPUT_CONTROLLER.get_shift()
-            self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
-            self.__interact = controllers.INPUT_CONTROLLER.get_interaction()
+            self.__move_vec = self.actor.get_input_movement_vec()
+            self.__aim = self.actor.get_input_aim()
+            self.__shift = self.actor.get_input_shift()
+            self.__sprint = self.actor.get_input_sprint()
+            self.__interact = self.actor.get_input_interaction()
 
     def update(self, dt: float) -> Optional[str]:
         # Read inputs.
@@ -649,11 +673,11 @@ class PlayerRunState(PlayerState):
         """
 
         if self.input_enabled:
-            self.__move_vec = controllers.INPUT_CONTROLLER.get_movement_vec()
-            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
-            self.__shift = controllers.INPUT_CONTROLLER.get_shift()
-            self.__sprint = controllers.INPUT_CONTROLLER.get_sprint()
-            self.__interact = controllers.INPUT_CONTROLLER.get_interaction()
+            self.__move_vec = self.actor.get_input_movement_vec()
+            self.__aim = self.actor.get_input_aim()
+            self.__shift = self.actor.get_input_shift()
+            self.__sprint = self.actor.get_input_sprint()
+            self.__interact = self.actor.get_input_interaction()
 
     def update(self, dt: float) -> Optional[str]:
         # Read inputs.
@@ -813,10 +837,10 @@ class PlayerAimState(PlayerState):
         """
 
         if self.input_enabled:
-            self.__move = controllers.INPUT_CONTROLLER.get_movement()
-            self.__aim = controllers.INPUT_CONTROLLER.get_aim()
-            self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
-            self.__draw = controllers.INPUT_CONTROLLER.get_draw()
+            self.__move = self.actor.get_input_movement()
+            self.__aim = self.actor.get_input_aim()
+            self.__aim_vec = self.actor.get_input_aim_vec()
+            self.__draw = self.actor.get_input_draw()
 
     def update(self, dt: float) -> Optional[str]:
         # Read input.
@@ -878,9 +902,9 @@ class PlayerAimWalkState(PlayerState):
         """
 
         if self.input_enabled:
-            self.__move_vec = controllers.INPUT_CONTROLLER.get_movement_vec()
-            self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
-            self.__draw = controllers.INPUT_CONTROLLER.get_draw()
+            self.__move_vec = self.actor.get_input_movement_vec()
+            self.__aim_vec = self.actor.get_input_aim_vec()
+            self.__draw = self.actor.get_input_draw()
 
     def update(self, dt: float) -> Optional[str]:
         # Read input.
@@ -956,9 +980,9 @@ class PlayerDrawState(PlayerState):
         """
 
         if self.input_enabled:
-            self.__move = controllers.INPUT_CONTROLLER.get_movement()
-            self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
-            self.__draw = controllers.INPUT_CONTROLLER.get_draw()
+            self.__move = self.actor.get_input_movement()
+            self.__aim_vec = self.actor.get_input_aim_vec()
+            self.__draw = self.actor.get_input_draw()
 
     def update(self, dt: float) -> Optional[str]:
         # Read input.
@@ -1024,9 +1048,9 @@ class PlayerDrawWalkState(PlayerState):
         """
 
         if self.input_enabled:
-            self.__move_vec = controllers.INPUT_CONTROLLER.get_movement_vec()
-            self.__aim_vec = controllers.INPUT_CONTROLLER.get_aim_vec()
-            self.__draw = controllers.INPUT_CONTROLLER.get_draw()
+            self.__move_vec = self.actor.get_input_movement_vec()
+            self.__aim_vec = self.actor.get_input_aim_vec()
+            self.__draw = self.actor.get_input_draw()
 
     def update(self, dt: float) -> Optional[str]:
         # Read input.
@@ -1125,7 +1149,7 @@ class PlayerShootState(PlayerState):
         Reads all necessary inputs.
         """
 
-        if self.input_enabled:
+        if self.input_enabled and not controllers.INVENTORY_CONTROLLER.is_open:
             self.__aim = controllers.INPUT_CONTROLLER.get_aim()
 
     def update(self, dt: float) -> Optional[str]:

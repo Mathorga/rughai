@@ -60,8 +60,7 @@ class InventoryNode(Node):
         "view_height",
         "background",
         "view_width",
-        "view_height",
-        "is_open"
+        "view_height"
     )
 
     def __init__(
@@ -94,9 +93,6 @@ class InventoryNode(Node):
         # Inventory background.
         self.background: SpriteNode | None = None
 
-        # Tells whether the inventory menu is open or closed.
-        self.is_open: bool = False
-
     def create_sprites(self) -> None:
         """
         Creates all inventory sprites.
@@ -125,9 +121,9 @@ class InventoryNode(Node):
             for j in range(controllers.INVENTORY_CONTROLLER.consumables_size[1]):
                 position: int = utils.idx2to1(i, j, controllers.INVENTORY_CONTROLLER.consumables_size[1])
                 self.consumables_slots_sprites.append(SpriteNode(
-                    x = i * step[0] + step[1],
-                    y = self.view_height - (j * step[1] + step[1]),
-                    z = 500.0,
+                    x = i * step[0] + step[0] // 2,
+                    y = self.view_height - consumables_area_size[1] // 2 - (j * step[1] + step[1] // 2),
+                    z = 450.0,
                     resource = self.consumable_slot_image,
                     batch = self.ui_batch
                 ))
@@ -140,8 +136,8 @@ class InventoryNode(Node):
 
                 self.consumables_sprites[consumable_position[0]] = SpriteNode(
                     # TODO Scale and shift correctly.
-                    x = position[1] * step[0] + step[0],
-                    y = self.view_height - (position[0] * step[1] + step[1]),
+                    x = position[0] * step[0] + step[0] // 2,
+                    y = self.view_height - consumables_area_size[1] // 2 - (position[1] * step[1] + step[1] // 2),
                     z = 500.0,
                     resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
                     batch = self.ui_batch
@@ -177,9 +173,9 @@ class InventoryNode(Node):
         Opens or closes the inventory based on its current state.
         """
 
-        self.is_open = not self.is_open
+        controllers.INVENTORY_CONTROLLER.toggle()
 
-        if self.is_open:
+        if controllers.INVENTORY_CONTROLLER.is_open:
             self.create_sprites()
         else:
             self.clear_sprites()
