@@ -50,19 +50,20 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
 
 class InventoryNode(Node):
     __slots__ = (
+        "view_width",
+        "view_height",
+        "world_batch",
+        "ui_batch",
+        "consumables_area_size",
+        "step",
         "ammo_sprites",
         "consumable_slot_image",
         "consumables_slots_sprites",
         "consumables_sprites",
-        "world_batch",
-        "ui_batch",
-        "view_width",
-        "view_height",
+        "quiks_slots_sprites",
         "background",
         "cursor_image",
         "cursor",
-        "view_width",
-        "view_height"
     )
 
     def __init__(
@@ -72,10 +73,26 @@ class InventoryNode(Node):
         world_batch: pyglet.graphics.Batch | None = None,
         ui_batch: pyglet.graphics.Batch | None = None
     ) -> None:
+        self.view_width: int = view_width
+        self.view_height: int = view_height
+
+        # Batches.
+        self.world_batch: pyglet.graphics.Batch | None = world_batch
+        self.ui_batch: pyglet.graphics.Batch | None = ui_batch
+
+        self.consumables_area_size: tuple[int, int] = (
+            self.view_width // 2,
+            self.view_height * 3 // 4
+        )
+        self.step: tuple[int, int] = (
+            self.consumables_area_size[0] // controllers.INVENTORY_CONTROLLER.consumables_size[0],
+            self.consumables_area_size[1] // controllers.INVENTORY_CONTROLLER.consumables_size[1]
+        )
+
         self.ammo_sprites: dict[str, SpriteNode] = {}
 
         # Fetch consumable slot image.
-        self.consumable_slot_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/shadow.png")
+        self.consumable_slot_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
         utils.set_anchor(
             resource = self.consumable_slot_image,
             center = True
@@ -85,23 +102,26 @@ class InventoryNode(Node):
         self.consumables_slots_sprites: list[SpriteNode] = []
         self.consumables_sprites: dict[str, SpriteNode] = {}
 
-        # Batches.
-        self.world_batch: pyglet.graphics.Batch | None = world_batch
-        self.ui_batch: pyglet.graphics.Batch | None = ui_batch
-
-        self.view_width: int = view_width
-        self.view_height: int = view_height
-
         # Inventory background.
         self.background: SpriteNode | None = None
 
+        # Quiks access sprites.
+        self.quiks_slots_sprites: list[SpriteNode] = []
+
         # Cursor sprite.
-        self.cursor_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/inventory_cursor.png")
-        utils.set_anchor(
-            resource = self.cursor_image,
-            center = True
-        )
+        self.cursor_image: Animation = Animation(source = "sprites/menus/inventory/inventory_cursor.json")
         self.cursor: SpriteNode | None = None
+
+        # Create all quiks' slots.
+        # Quiks should always be visible, so they're 
+        for i in range(controllers.INVENTORY_CONTROLLER.quicks_count):
+            self.quiks_slots_sprites.append(SpriteNode(
+                resource = self.consumable_slot_image,
+                x = (self.view_width // 2) + (i * self.step[0] + self.step[0] // 2),
+                y = 10.0,
+                z = 550.0,
+                batch = self.ui_batch
+            ))
 
     def create_sprites(self) -> None:
         """
@@ -117,34 +137,27 @@ class InventoryNode(Node):
             batch = self.ui_batch
         )
 
-        consumables_area_size: tuple[int, int] = (
-            self.view_width // 2,
-            self.view_height // 2
-        )
-        step: tuple[int, int] = (
-            consumables_area_size[0] // controllers.INVENTORY_CONTROLLER.consumables_size[0],
-            consumables_area_size[1] // controllers.INVENTORY_CONTROLLER.consumables_size[1]
-        )
-
-        # Create cursor.
-        self.cursor = SpriteNode(
-            x = step[0] // 2,
-            y = self.view_height - consumables_area_size[1] // 2 - (step[1] // 2),
-            z = 425.0,
-            resource = self.cursor_image,
-            batch = self.ui_batch
-        )
-
-        # Create all items' slots.
+        # Create all consumables' slots.
         for i in range(controllers.INVENTORY_CONTROLLER.consumables_size[0]):
             for j in range(controllers.INVENTORY_CONTROLLER.consumables_size[1]):
                 self.consumables_slots_sprites.append(SpriteNode(
-                    x = i * step[0] + step[0] // 2,
-                    y = self.view_height - consumables_area_size[1] // 2 - (j * step[1] + step[1] // 2),
-                    z = 450.0,
                     resource = self.consumable_slot_image,
+                    x = i * self.step[0] + self.step[0] // 2,
+                    y = self.view_height - (j * self.step[1] + self.step[1] // 2),
+                    # y = self.view_height - consumables_area_size[1] // 2 - (j * step[1] + step[1] // 2),
+                    z = 425.0,
                     batch = self.ui_batch
                 ))
+
+        # Create cursor.
+        self.cursor = SpriteNode(
+            resource = self.cursor_image.content,
+            x = self.step[0] // 2,
+            y = self.view_height - (self.step[1] // 2),
+            # y = self.view_height - consumables_area_size[1] // 2 - (step[1] // 2),
+            z = 450.0,
+            batch = self.ui_batch
+        )
 
         # Create all items' sprites.
         for consumable_position in controllers.INVENTORY_CONTROLLER.consumables_position.items():
@@ -153,17 +166,19 @@ class InventoryNode(Node):
                 idx2d: tuple[int, int] = utils.idx1to2(consumable_position[1], controllers.INVENTORY_CONTROLLER.consumables_size[1])
 
                 self.consumables_sprites[consumable_position[0]] = SpriteNode(
-                    # TODO Scale and shift correctly.
-                    x = idx2d[0] * step[0] + step[0] // 2,
-                    y = self.view_height - consumables_area_size[1] // 2 - (idx2d[1] * step[1] + step[1] // 2),
-                    z = 500.0,
                     resource = Animation(source = CONSUMABLES_ANIMATION[consumable_position[0]]).content,
+                    # TODO Scale and shift correctly.
+                    x = idx2d[0] * self.step[0] + self.step[0] // 2,
+                    # y = self.view_height - consumables_area_size[1] // 2 - (idx2d[1] * step[1] + step[1] // 2),
+                    y = self.view_height - (idx2d[1] * self.step[1] + self.step[1] // 2),
+                    z = 500.0,
                     batch = self.ui_batch
                 )
 
     def clear_sprites(self) -> None:
         """
-        Deletes all inventory sprites.
+        Deletes all temporary inventory sprites.
+        By tempo
         """
 
         # Clear background.
@@ -171,15 +186,15 @@ class InventoryNode(Node):
             self.background.delete()
             self.background = None
 
-        # Clear cursor.
-        if self.cursor is not None:
-            self.cursor.delete()
-            self.cursor = None
-
         # Clear consumables slots sprites.
         for sprite in self.consumables_slots_sprites:
             sprite.delete()
         self.consumables_slots_sprites.clear()
+
+        # Clear cursor.
+        if self.cursor is not None:
+            self.cursor.delete()
+            self.cursor = None
 
         # Clear consumables sprites.
         for sprite in self.consumables_sprites.values():
@@ -190,6 +205,11 @@ class InventoryNode(Node):
         for sprite in self.ammo_sprites.values():
             sprite.delete()
         self.ammo_sprites.clear()
+
+        # # Clear quiks slots sprites.
+        # for sprite in self.quiks_slots_sprites:
+        #     sprite.delete()
+        # self.quiks_slots_sprites.clear()
 
     def toggle(self) -> None:
         """
@@ -234,9 +254,17 @@ class InventoryNode(Node):
         # Fetch input.
         inventory_toggled: bool = controllers.INPUT_CONTROLLER.get_inventory_toggle()
 
+        if self.cursor is not None:
+            self.cursor.update(dt = dt)
+
         # Use input.
         if inventory_toggled:
             self.toggle()
 
     def delete(self) -> None:
         self.clear_sprites()
+
+        # Clear quiks slots sprites.
+        for sprite in self.quiks_slots_sprites:
+            sprite.delete()
+        self.quiks_slots_sprites.clear()
