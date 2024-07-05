@@ -147,20 +147,6 @@ class PlayableSceneNode(Node):
             batch = uniques.ACTIVE_SCENE.world_batch
         )
 
-        quik_img: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/hud/quik.png")
-        utils.set_anchor(
-            resource = quik_img,
-            x = quik_img.width / 2,
-            y = 0.0
-        )
-        quik: SpriteNode = SpriteNode(
-            resource = quik_img,
-            x = view_width / 2,
-            y = 0.0,
-            z = 500.0,
-            batch = uniques.ACTIVE_SCENE.ui_batch
-        )
-
         # Clouds.
         clouds = CloudsNode(
             bounds = cam_bounds,
@@ -180,7 +166,6 @@ class PlayableSceneNode(Node):
         uniques.ACTIVE_SCENE.add_children(props)
         uniques.ACTIVE_SCENE.add_child(self._player)
         uniques.ACTIVE_SCENE.add_children(doors)
-        uniques.ACTIVE_SCENE.add_child(quik)
 
     def _on_scene_end(self) -> None:
         if self.on_ended:

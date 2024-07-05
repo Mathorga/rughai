@@ -1,4 +1,5 @@
 #version 150 core
+
 in vec4 vertex_colors;
 in vec3 texture_coords;
 out vec4 final_color;
