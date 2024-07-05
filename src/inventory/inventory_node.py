@@ -97,9 +97,12 @@ class InventoryNode(Node):
 
         # Cursor sprite.
         self.cursor_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/inventory_cursor.png")
+        print("GINORO", self.cursor_image.width, self.cursor_image.height)
         utils.set_anchor(
             resource = self.cursor_image,
-            center = True
+            # center = True,
+            x = 6,
+            y = 6
         )
         self.cursor: SpriteNode | None = None
 

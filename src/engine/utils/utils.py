@@ -265,16 +265,12 @@ def set_offset(
     center: bool = False
 ) -> None:
     if isinstance(resource, pyglet.image.TextureRegion):
-        if x is not None:
-            resource.anchor_x = ((resource.width / 2) if center else 0) + int(x)
-        if y is not None:
-            resource.anchor_y = ((resource.height / 2) if center else 0) + int(y)
+        resource.anchor_x = ((resource.width / 2) if center else 0) - int(x or 0)
+        resource.anchor_y = ((resource.height / 2) if center else 0) - int(y or 0)
     elif isinstance(resource, pyglet.image.animation.Animation):
         for frame in resource.frames:
-            if x is not None:
-                frame.image.anchor_x = ((frame.image.width / 2) if center else 0) + int(x)
-            if y is not None:
-                frame.image.anchor_y = ((frame.image.height / 2) if center else 0) + int(y)
+            frame.image.anchor_x = ((frame.image.width / 2) if center else 0) - int(x or 0)
+            frame.image.anchor_y = ((frame.image.height / 2) if center else 0) - int(y or 0)
 
 def set_anchor(
     resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
@@ -283,19 +279,12 @@ def set_anchor(
     center: bool = False
 ) -> None:
     if isinstance(resource, pyglet.image.TextureRegion):
-        if x is not None:
-            resource.anchor_x = ((resource.width / 2) if center else 0) + int(x)
-        if y is not None:
-            resource.anchor_y = ((resource.height / 2) if center else 0) + int(y)
+        resource.anchor_x = ((resource.width / 2) if center else 0) + int(x or 0)
+        resource.anchor_y = ((resource.height / 2) if center else 0) + int(y or 0)
     elif isinstance(resource, pyglet.image.animation.Animation):
-        if center:
-            center_animation(animation = resource)
-        else:
-            set_animation_anchor(
-                animation = resource,
-                x = x,
-                y = y
-            )
+        for frame in resource.frames:
+            frame.image.anchor_x = ((frame.image.width / 2) if center else 0) + int(x or 0)
+            frame.image.anchor_y = ((frame.image.height / 2) if center else 0) + int(y or 0)
 
 
 def set_filter(
