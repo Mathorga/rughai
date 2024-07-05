@@ -59,6 +59,8 @@ class InventoryNode(Node):
         "view_width",
         "view_height",
         "background",
+        "cursor_image",
+        "cursor",
         "view_width",
         "view_height"
     )
@@ -93,6 +95,14 @@ class InventoryNode(Node):
         # Inventory background.
         self.background: SpriteNode | None = None
 
+        # Cursor sprite.
+        self.cursor_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/inventory_cursor.png")
+        utils.set_anchor(
+            resource = self.cursor_image,
+            center = True
+        )
+        self.cursor: SpriteNode | None = None
+
     def create_sprites(self) -> None:
         """
         Creates all inventory sprites.
@@ -114,6 +124,15 @@ class InventoryNode(Node):
         step: tuple[int, int] = (
             consumables_area_size[0] // controllers.INVENTORY_CONTROLLER.consumables_size[0],
             consumables_area_size[1] // controllers.INVENTORY_CONTROLLER.consumables_size[1]
+        )
+
+        # Create cursor.
+        self.cursor = SpriteNode(
+            x = step[0] // 2,
+            y = self.view_height - consumables_area_size[1] // 2 - (step[1] // 2),
+            z = 425.0,
+            resource = self.cursor_image,
+            batch = self.ui_batch
         )
 
         # Create all items' slots.
@@ -151,6 +170,11 @@ class InventoryNode(Node):
         if self.background is not None:
             self.background.delete()
             self.background = None
+
+        # Clear cursor.
+        if self.cursor is not None:
+            self.cursor.delete()
+            self.cursor = None
 
         # Clear consumables slots sprites.
         for sprite in self.consumables_slots_sprites:
