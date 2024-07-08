@@ -145,6 +145,17 @@ Animation files are defined as follows:</br>
 
 [Examples](/assets/sprites/iryo/animations)</br>
 
+## Inventory
+The inventory structure (sections, sizes etc) is defined by a json file made up as follows:
+  * **sections[array]**: array of all inventory sections, each defined as follows:</br>
+    * **size[string]**: string representation of the section size (in slots count), encoded as "[width],[height]".</br>
+    * **name[string]**: name of the section, used to section to section linkage.</br>
+    * **overflows[object]**: links to other sections upon overflow: tells which section the cursor should go to when overflowing in each direction. The go to for each overflow can be the name of another section or the "wrap" keyword, which means wrapping around itself keeping the other index unchanged.</br>
+      * **top[string]**: section to go to when overflowing to the top.</br>
+      * **bottom[string]**: section to go to when overflowing to the bottom.</br>
+      * **left[string]**: section to go to when overflowing to the left.</br>
+      * **right[string]**: section to go to when overflowing to the right.</br>
+
 ## Wallmaps
 All walls for a room can be defined via a simple json placement file.</br>
 #TODO

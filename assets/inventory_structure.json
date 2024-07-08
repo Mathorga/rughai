@@ -1,0 +1,34 @@
+{
+    "sections": [
+        {
+            "size": "5,4",
+            "name": "bag",
+            "overflows": {
+                "top": "ammo",
+                "bottom": "ammo",
+                "left": "wrap",
+                "right": "wrap"
+            }
+        },
+        {
+            "size": "1,1",
+            "name": "ammo",
+            "overflows": {
+                "top": "bag",
+                "bottom": "bag",
+                "left": "quik",
+                "right": "quik"
+            }
+        },
+        {
+            "size": "4,1",
+            "name": "quik",
+            "overflows": {
+                "top": "wrap",
+                "bottom": "wrap",
+                "left": "ammo",
+                "right": "ammo"
+            }
+        }
+    ]
+}
