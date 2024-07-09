@@ -5,6 +5,71 @@ import pyglet
 
 from engine.utils.utils import idx2to1
 
+class SectionOverflow:
+    def __init__(
+        self,
+        top: str,
+        bottom: str,
+        left: str,
+        right: str
+    ) -> None:
+        self.top: str = top
+        self.bottom: str = bottom
+        self.left: str = left
+        self.right: str = right
+
+    def to_string(self) -> str:
+        return f"top: {self.top}, bottom: {self.bottom}, left: {self.left}, right: {self.right}"
+
+class GenInventoryController:
+    """
+    Holds all inventory data and provides accessors to it.
+    """
+
+    def __init__(self) -> None:
+        # Sizes by section name.
+        self.sizes: dict[str, tuple[int, int]] = {}
+
+        # Overflows by section name.
+        self.overflows: dict[str, SectionOverflow] = {}
+
+    def load_file(self, src: str) -> None:
+        abs_path: str = os.path.join(pyglet.resource.path[0], src)
+
+        # Just return if the source file is not found.
+        if not os.path.exists(abs_path):
+            print(f"File does not exist: {abs_path}")
+            return
+
+        data: dict
+
+        # Read the source file.
+        with open(file = abs_path, mode = "r", encoding = "UTF8") as content:
+            data = json.load(content)
+
+        # Just return if no data is read.
+        if len(data) <= 0:
+            print(f"File is empty: {abs_path}")
+            return
+
+        if not "sections" in data:
+            print(f"Error reading file: {abs_path}")
+            return
+
+        for section in data["sections"]:
+            name: str = section["name"]
+            size_str: str = section["size"]
+            raw_overflows: dict[str, str] = section["overflows"]
+
+            size: list[int] = size_str.split(",")
+
+            self.sizes[name] = (size[0], size[1])
+            self.overflows[name] = SectionOverflow(
+                top = raw_overflows["top"],
+                bottom = raw_overflows["bottom"],
+                left = raw_overflows["left"],
+                right = raw_overflows["right"],
+            )
 
 class InventoryController:
     """
