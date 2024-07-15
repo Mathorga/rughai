@@ -6,7 +6,7 @@ from constants import uniques
 import engine.controllers as controllers
 from engine.benchmark import Benchmark
 from engine.dungen.dungen import random_walk
-from engine.inventory_controller import GenInventoryController
+from engine.inventory_controller import MenuController
 from engine.playable_scene_node import PlayableSceneNode, PlayableSceneNode
 from engine.upscaler import TrueUpscaler
 from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
@@ -57,7 +57,7 @@ class Rughai:
         # Set resources path.
         pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
         pyglet.resource.reindex()
-        GenInventoryController().load_file(src = "inventory_structure.json")
+        MenuController().load_file(src = "inventory_structure.json")
 
         # Load font files.
         pyglet.font.add_file(f"{pyglet.resource.path[0]}/fonts/I-pixel-u.ttf")

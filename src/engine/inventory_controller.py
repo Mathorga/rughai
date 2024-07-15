@@ -21,7 +21,7 @@ class SectionOverflow:
     def to_string(self) -> str:
         return f"top: {self.top}, bottom: {self.bottom}, left: {self.left}, right: {self.right}"
 
-class GenInventoryController:
+class MenuController:
     """
     Holds all inventory data and provides accessors to it.
     """
@@ -29,6 +29,9 @@ class GenInventoryController:
     def __init__(self) -> None:
         # Sizes by section name.
         self.sizes: dict[str, tuple[int, int]] = {}
+
+        # Last position of the cursor by section name, useful when jumping through sections and getting back.
+        self.last_cursor_position: dict[str, tuple[int, int]] = {}
 
         # Overflows by section name.
         self.overflows: dict[str, SectionOverflow] = {}
