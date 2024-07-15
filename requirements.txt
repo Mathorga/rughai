@@ -1,2 +1,2 @@
 # All OpenGL rendering, sound and input management.
-pyglet==2.0.15
+pyglet==2.0.16

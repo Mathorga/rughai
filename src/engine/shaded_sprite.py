@@ -99,7 +99,7 @@ class ShadedSpriteGroup(pyglet.sprite.SpriteGroup):
         gl.glDisable(gl.GL_DEPTH_TEST)
         self.program.stop()
 
-class ShadedSprite(pyglet.sprite.AdvancedSprite):
+class ShadedSprite(pyglet.sprite.Sprite):
     group_class = ShadedSpriteGroup
 
     def __init__(
