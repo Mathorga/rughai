@@ -1,8 +1,10 @@
 import json
 import os
+from typing import Callable
 
 import pyglet
 
+from engine.node import Node
 from engine.utils.utils import idx2to1
 
 class SectionOverflow:
@@ -21,20 +23,49 @@ class SectionOverflow:
     def to_string(self) -> str:
         return f"top: {self.top}, bottom: {self.bottom}, left: {self.left}, right: {self.right}"
 
+class MenuSection(Node):
+    """
+    Handles cursor movement and callbacks for a menu section.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        size: tuple[int, int],
+        overflow: SectionOverflow,
+        on_overflow: Callable[[str], None] | None = None
+    ) -> None:
+        # Section name.
+        self.name: str = name
+
+        # Section size.
+        self.size: tuple[int, int] = size
+
+        # Overflows.
+        self.overflow: SectionOverflow
+
+        # Callback for handling overflow events.
+        self.on_overflow: Callable[[str], None] = on_overflow
+
+        # Current cursor position.
+        self.cursor_position: tuple[int, int] = (0, 0)
+
+    def update(self, dt: float) -> None:
+        super().update(dt)
+
+        # TODO 
+
 class MenuController:
     """
     Holds all inventory data and provides accessors to it.
     """
 
     def __init__(self) -> None:
-        # Sizes by section name.
-        self.sizes: dict[str, tuple[int, int]] = {}
+        # All menu sections by name.
+        self.sections: dict[str, MenuSection] = {}
 
-        # Last position of the cursor by section name, useful when jumping through sections and getting back.
-        self.last_cursor_position: dict[str, tuple[int, int]] = {}
-
-        # Overflows by section name.
-        self.overflows: dict[str, SectionOverflow] = {}
+        # Currently active section
+        self.current_section: str = ""
 
     def load_file(self, src: str) -> None:
         abs_path: str = os.path.join(pyglet.resource.path[0], src)
@@ -55,6 +86,7 @@ class MenuController:
             print(f"File is empty: {abs_path}")
             return
 
+        # Just return if the "sections" entry is not found in the source file.
         if not "sections" in data:
             print(f"Error reading file: {abs_path}")
             return
@@ -66,13 +98,24 @@ class MenuController:
 
             size: list[int] = size_str.split(",")
 
-            self.sizes[name] = (size[0], size[1])
-            self.overflows[name] = SectionOverflow(
-                top = raw_overflows["top"],
-                bottom = raw_overflows["bottom"],
-                left = raw_overflows["left"],
-                right = raw_overflows["right"],
+            self.sections[name] = MenuSection(
+                name = name,
+                size = size,
+                overflow = SectionOverflow(
+                    top = raw_overflows["top"],
+                    bottom = raw_overflows["bottom"],
+                    left = raw_overflows["left"],
+                    right = raw_overflows["right"],
+                ),
+                on_overflow = self.on_overflow
             )
+
+    def on_overflow(self, new_section: str) -> None:
+        """
+        Handles the current section overflow.
+        """
+
+        self.current_section = new_section
 
 class InventoryController:
     """
