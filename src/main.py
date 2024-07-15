@@ -57,7 +57,9 @@ class Rughai:
         # Set resources path.
         pyglet.resource.path = [f"{os.path.dirname(__file__)}/../assets"]
         pyglet.resource.reindex()
-        MenuController().load_file(src = "inventory_structure.json")
+        menuController: MenuController = MenuController()
+        menuController.load_file(src = "inventory.json")
+        print(menuController.to_string())
 
         # Load font files.
         pyglet.font.add_file(f"{pyglet.resource.path[0]}/fonts/I-pixel-u.ttf")

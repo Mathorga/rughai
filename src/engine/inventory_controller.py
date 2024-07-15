@@ -1,3 +1,4 @@
+from functools import reduce
 import json
 import os
 from typing import Callable
@@ -23,7 +24,7 @@ class SectionOverflow:
     def to_string(self) -> str:
         return f"top: {self.top}, bottom: {self.bottom}, left: {self.left}, right: {self.right}"
 
-class MenuSection(Node):
+class MenuSection:
     """
     Handles cursor movement and callbacks for a menu section.
     """
@@ -31,18 +32,18 @@ class MenuSection(Node):
     def __init__(
         self,
         name: str,
-        size: tuple[int, int],
+        slots: tuple[int, int],
         overflow: SectionOverflow,
         on_overflow: Callable[[str], None] | None = None
     ) -> None:
         # Section name.
         self.name: str = name
 
-        # Section size.
-        self.size: tuple[int, int] = size
+        # Section slots.
+        self.slots: tuple[int, int] = slots
 
         # Overflows.
-        self.overflow: SectionOverflow
+        self.overflow: SectionOverflow = overflow
 
         # Callback for handling overflow events.
         self.on_overflow: Callable[[str], None] = on_overflow
@@ -50,10 +51,8 @@ class MenuSection(Node):
         # Current cursor position.
         self.cursor_position: tuple[int, int] = (0, 0)
 
-    def update(self, dt: float) -> None:
-        super().update(dt)
-
-        # TODO 
+    def to_string(self) -> str:
+        return f"name: {self.name}, slots: {self.slots}, overflow: {self.overflow.to_string()}"
 
 class MenuController:
     """
@@ -66,6 +65,10 @@ class MenuController:
 
         # Currently active section
         self.current_section: str = ""
+
+
+    def to_string(self) -> str:
+        return f"sections: \n\t{reduce(lambda a, b: f"{a}{b}", map(lambda section: f"{section.to_string()}\n\t", self.sections.values()))}"
 
     def load_file(self, src: str) -> None:
         abs_path: str = os.path.join(pyglet.resource.path[0], src)
@@ -93,14 +96,14 @@ class MenuController:
 
         for section in data["sections"]:
             name: str = section["name"]
-            size_str: str = section["size"]
+            size_str: str = section["slots"]
             raw_overflows: dict[str, str] = section["overflows"]
 
             size: list[int] = size_str.split(",")
 
             self.sections[name] = MenuSection(
                 name = name,
-                size = size,
+                slots = size,
                 overflow = SectionOverflow(
                     top = raw_overflows["top"],
                     bottom = raw_overflows["bottom"],
@@ -116,6 +119,10 @@ class MenuController:
         """
 
         self.current_section = new_section
+
+    def update(self, dt: float) -> None:
+        # TODO Fetch input.
+        pass
 
 class InventoryController:
     """
