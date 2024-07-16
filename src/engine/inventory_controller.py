@@ -4,8 +4,11 @@ import os
 from typing import Callable
 
 import pyglet
+import pyglet.math as pm
 
+from engine import controllers
 from engine.node import Node
+from engine.scene_node import Bounds
 from engine.utils.utils import idx2to1
 
 class SectionOverflow:
@@ -21,8 +24,8 @@ class SectionOverflow:
         self.left: str = left
         self.right: str = right
 
-    def to_string(self) -> str:
-        return f"top: {self.top}, bottom: {self.bottom}, left: {self.left}, right: {self.right}"
+    def __str__(self) -> str:
+        return f"{{top: {self.top}, bottom: {self.bottom}, left: {self.left}, right: {self.right}}}"
 
 class MenuSection:
     """
@@ -33,6 +36,7 @@ class MenuSection:
         self,
         name: str,
         slots: tuple[int, int],
+        bounds: Bounds,
         overflow: SectionOverflow,
         on_overflow: Callable[[str], None] | None = None
     ) -> None:
@@ -41,6 +45,9 @@ class MenuSection:
 
         # Section slots.
         self.slots: tuple[int, int] = slots
+
+        # Graphic bounds in the given viewport.
+        self.bounds: Bounds = bounds
 
         # Overflows.
         self.overflow: SectionOverflow = overflow
@@ -51,8 +58,8 @@ class MenuSection:
         # Current cursor position.
         self.cursor_position: tuple[int, int] = (0, 0)
 
-    def to_string(self) -> str:
-        return f"name: {self.name}, slots: {self.slots}, overflow: {self.overflow.to_string()}"
+    def __str__(self) -> str:
+        return f"{{name: {self.name}, slots: {self.slots}, bounds: {self.bounds} overflow: {self.overflow}}}"
 
 class MenuController:
     """
@@ -66,9 +73,11 @@ class MenuController:
         # Currently active section
         self.current_section: str = ""
 
+        # Cursor movement vector.
+        self.cursor_movement: pm.Vec2 = pm.Vec2()
 
-    def to_string(self) -> str:
-        return f"sections: \n\t{reduce(lambda a, b: f"{a}{b}", map(lambda section: f"{section.to_string()}\n\t", self.sections.values()))}"
+    def __str__(self) -> str:
+        return f"sections: \n\t{reduce(lambda a, b: f"{a}{b}", map(lambda section: f"{section}\n\t", self.sections.values()))}"
 
     def load_file(self, src: str) -> None:
         abs_path: str = os.path.join(pyglet.resource.path[0], src)
@@ -97,13 +106,21 @@ class MenuController:
         for section in data["sections"]:
             name: str = section["name"]
             size_str: str = section["slots"]
+            bounds_str: str = section["bounds"]
             raw_overflows: dict[str, str] = section["overflows"]
 
             size: list[int] = size_str.split(",")
+            bounds: list[float] = bounds_str.split(",")
 
             self.sections[name] = MenuSection(
                 name = name,
                 slots = size,
+                bounds = Bounds(
+                    left = bounds[0],
+                    bottom = bounds[1],
+                    right = bounds[2],
+                    top = bounds[3]
+                ),
                 overflow = SectionOverflow(
                     top = raw_overflows["top"],
                     bottom = raw_overflows["bottom"],
@@ -121,8 +138,27 @@ class MenuController:
         self.current_section = new_section
 
     def update(self, dt: float) -> None:
-        # TODO Fetch input.
-        pass
+        # Fetch input.
+        self.cursor_movement = controllers.INPUT_CONTROLLER.get_aim_vec()
+
+class MenuNode(Node):
+    def __init__(
+        self,
+        view_width: int,
+        view_height: int,
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None
+    ) -> None:
+        super().__init__()
+
+        self.view_width: int = view_width
+        self.view_height: int = view_height
+
+        # Batches.
+        self.world_batch: pyglet.graphics.Batch | None = world_batch
+        self.ui_batch: pyglet.graphics.Batch | None = ui_batch
+
+        
 
 class InventoryController:
     """
@@ -171,7 +207,7 @@ class InventoryController:
 
         self.is_open = not self.is_open
 
-    def to_string(self) -> str:
+    def __str__(self) -> str:
         return f"quicks_count: {self.quicks_count}\nquicks: {self.quicks}\ncurrent_ammo: {self.current_ammo}\nammo: {self.ammo}\ncurrencies: {self.currencies}\nconsumables_size: {self.consumables_size}\nconsumables_position: {self.consumables_position}\nconsumables_count: {self.consumables_count}\n"
 
     def equip_consumable(self, consumable: str) -> None:

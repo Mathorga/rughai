@@ -18,27 +18,27 @@ SCENE_START_THRESHOLD: float = 0.4
 class Bounds:
     def __init__(
         self,
-        top: Optional[int] = None,
-        bottom: Optional[int] = None,
-        left: Optional[int] = None,
-        right: Optional[int] = None
+        top: Optional[float] = None,
+        bottom: Optional[float] = None,
+        left: Optional[float] = None,
+        right: Optional[float] = None
     ) -> None:
         self.top = top if top is not None else None
         self.bottom = bottom if bottom is not None else None
         self.left = left if left is not None else None
         self.right = right if right is not None else None
 
-    def get_width(self) -> int:
+    def get_width(self) -> float:
         assert self.right is not None and self.left is not None
 
         return self.right - self.left
 
-    def get_height(self) -> int:
+    def get_height(self) -> float:
         assert self.top is not None and self.bottom is not None
 
         return self.top - self.bottom
 
-    def get_bounding_box(self) -> tuple[int, int, int, int]:
+    def get_bounding_box(self) -> tuple[float, float, float, float]:
         assert self.top is not None and self.bottom is not None
         assert self.right is not None and self.left is not None
 
@@ -48,6 +48,9 @@ class Bounds:
             self.right - self.left,
             self.top - self.bottom
         )
+
+    def __str__(self) -> str:
+        return f"{{left: {self.left}, bottom: {self.bottom}, right: {self.right}, top: {self.top}}}"
 
 class SceneNode(Node):
     def __init__(

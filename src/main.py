@@ -59,7 +59,7 @@ class Rughai:
         pyglet.resource.reindex()
         menuController: MenuController = MenuController()
         menuController.load_file(src = "inventory.json")
-        print(menuController.to_string())
+        print(menuController)
 
         # Load font files.
         pyglet.font.add_file(f"{pyglet.resource.path[0]}/fonts/I-pixel-u.ttf")
@@ -79,7 +79,7 @@ class Rughai:
         # Controllers.
         controllers.create_controllers(window = self.window)
         controllers.INVENTORY_CONTROLLER.load_file("inventory_mock.json")
-        print(controllers.INVENTORY_CONTROLLER.to_string())
+        print(controllers.INVENTORY_CONTROLLER)
 
         # On retina Macs everything is rendered 2x-zoomed for some reason. compensate for this using a platform scaling.
         platform_scaling: float = 0.5 if "macOS" in GLOBALS[Keys.PLATFORM] else 1.0
@@ -233,4 +233,4 @@ class Rughai:
 
 
 app = Rughai()
-app.run()
+# app.run()
