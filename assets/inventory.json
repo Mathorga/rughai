@@ -1,8 +1,9 @@
 {
     "sections": [
         {
-            "size": "5,4",
             "name": "bag",
+            "slots": "5,4",
+            "position": "0.0,0.2,0.5,1.0",
             "overflows": {
                 "top": "ammo",
                 "bottom": "ammo",
@@ -11,8 +12,9 @@
             }
         },
         {
-            "size": "1,1",
             "name": "ammo",
+            "slots": "1,1",
+            "position": "0.0,0.0,0.5,0.2",
             "overflows": {
                 "top": "bag",
                 "bottom": "bag",
@@ -21,8 +23,9 @@
             }
         },
         {
-            "size": "4,1",
             "name": "quik",
+            "slots": "4,1",
+            "position": "0.5,0.0,1.0,0.2",
             "overflows": {
                 "top": "wrap",
                 "bottom": "wrap",
