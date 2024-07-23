@@ -21,7 +21,7 @@ class SectionOverflow:
         self.left: str = left
         self.right: str = right
 
-    def to_string(self) -> str:
+    def __str__(self) -> str:
         return f"top: {self.top}, bottom: {self.bottom}, left: {self.left}, right: {self.right}"
 
 class MenuSection:
@@ -33,6 +33,8 @@ class MenuSection:
         self,
         name: str,
         slots: tuple[int, int],
+        position: tuple[float, float],
+        size: tuple[float, float],
         overflow: SectionOverflow,
         on_overflow: Callable[[str], None] | None = None
     ) -> None:
@@ -42,17 +44,23 @@ class MenuSection:
         # Section slots.
         self.slots: tuple[int, int] = slots
 
+        # Section position (0.0 to 1.0) relative to its container.
+        self.position: tuple[float, float] = position
+
+        # Section size (0.0 to 1.0) relative to its container.
+        self.size: tuple[float, float] = size
+
         # Overflows.
         self.overflow: SectionOverflow = overflow
 
         # Callback for handling overflow events.
-        self.on_overflow: Callable[[str], None] = on_overflow
+        self.on_overflow: Callable[[str], None] | None = on_overflow
 
         # Current cursor position.
         self.cursor_position: tuple[int, int] = (0, 0)
 
-    def to_string(self) -> str:
-        return f"name: {self.name}, slots: {self.slots}, overflow: {self.overflow.to_string()}"
+    def __str__(self) -> str:
+        return f"name: {self.name}, slots: {self.slots}, position: {self.position}, size: {self.size}, overflow: {self.overflow}"
 
 class MenuController:
     """
@@ -67,8 +75,8 @@ class MenuController:
         self.current_section: str = ""
 
 
-    def to_string(self) -> str:
-        return f"sections: \n\t{reduce(lambda a, b: f"{a}{b}", map(lambda section: f"{section.to_string()}\n\t", self.sections.values()))}"
+    def __str__(self) -> str:
+        return f"sections: \n\t{reduce(lambda a, b: f"{a}{b}", map(lambda section: f"{section}\n\t", self.sections.values()))}"
 
     def load_file(self, src: str) -> None:
         abs_path: str = os.path.join(pyglet.resource.path[0], src)
@@ -95,15 +103,21 @@ class MenuController:
             return
 
         for section in data["sections"]:
-            name: str = section["name"]
-            size_str: str = section["slots"]
+            name: str = str(section["name"])
+            slots_str: str = str(section["slots"])
+            position_str: str = str(section["position"])
             raw_overflows: dict[str, str] = section["overflows"]
 
-            size: list[int] = size_str.split(",")
+            slots: list[int] = list(map(lambda item: int(item), slots_str.split(",")))
+            raw_position: list[float] = list(map(lambda item: float(item), position_str.split(",")))
+            position: list[float] = raw_position[:2]
+            size: list[float] = raw_position[2:]
 
             self.sections[name] = MenuSection(
                 name = name,
-                slots = size,
+                slots = (slots[0], slots[1]),
+                position = (position[0], position[1]),
+                size = (size[0], size[1]),
                 overflow = SectionOverflow(
                     top = raw_overflows["top"],
                     bottom = raw_overflows["bottom"],
@@ -171,7 +185,7 @@ class InventoryController:
 
         self.is_open = not self.is_open
 
-    def to_string(self) -> str:
+    def __str__(self) -> str:
         return f"quicks_count: {self.quicks_count}\nquicks: {self.quicks}\ncurrent_ammo: {self.current_ammo}\nammo: {self.ammo}\ncurrencies: {self.currencies}\nconsumables_size: {self.consumables_size}\nconsumables_position: {self.consumables_position}\nconsumables_count: {self.consumables_count}\n"
 
     def equip_consumable(self, consumable: str) -> None:

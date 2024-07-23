@@ -4,6 +4,7 @@ import pyglet
 import engine.controllers as controllers
 from engine.animation import Animation
 from engine.node import Node, PositionNode
+from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.utils import utils
 
@@ -47,6 +48,32 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
     # "arrow": Animation(source = "sprites/items/ammo/arrow.json"),
     # "fire_arrow": Animation(source = "sprites/items/ammo/fire_arrow.json"),
 }
+
+class MenuNode(Node):
+    def __init__(
+        self,
+        view_width: int,
+        view_height: int,
+        world_batch: pyglet.graphics.Batch | None = None,
+        ui_batch: pyglet.graphics.Batch | None = None
+    ) -> None:
+        self.view_width: int = view_width
+        self.view_height: int = view_height
+
+        # Batches.
+        self.world_batch: pyglet.graphics.Batch | None = world_batch
+        self.ui_batch: pyglet.graphics.Batch | None = ui_batch
+
+        self.sections: list[RectNode] = []
+
+        for section in controllers.MENU_CONTROLLER.sections:
+            self.sections.append(RectNode(
+                x = controllers.MENU_CONTROLLER.sections[section].position[0],
+                y = controllers.MENU_CONTROLLER.sections[section].position[1],
+                width = controllers.MENU_CONTROLLER.sections[section].size[0],
+                height = controllers.MENU_CONTROLLER.sections[section].size[1],
+                batch = ui_batch
+            ))
 
 class InventoryNode(Node):
     __slots__ = (

@@ -15,7 +15,7 @@ from engine.utils import utils
 from doors_loader import DoorsLoader
 from falls_loader import FallsLoader
 from idle_prop_loader import IdlePropLoader
-from inventory.inventory_node import InventoryNode
+from inventory.inventory_node import InventoryNode, MenuNode
 from player_node import PlayerNode
 from prop_loader import PropLoader
 from walls_loader import WallsLoader
@@ -70,6 +70,12 @@ class PlayableSceneNode(Node):
 
         # Inventory.
         inventory: InventoryNode = InventoryNode(
+            view_width = view_width,
+            view_height = view_height,
+            world_batch = uniques.ACTIVE_SCENE.world_batch,
+            ui_batch = uniques.ACTIVE_SCENE.ui_batch
+        )
+        menu: MenuNode = MenuNode(
             view_width = view_width,
             view_height = view_height,
             world_batch = uniques.ACTIVE_SCENE.world_batch,
@@ -157,6 +163,7 @@ class PlayableSceneNode(Node):
 
         uniques.ACTIVE_SCENE.add_child(bg)
         uniques.ACTIVE_SCENE.add_child(inventory)
+        uniques.ACTIVE_SCENE.add_child(menu)
         uniques.ACTIVE_SCENE.add_children(tilemaps)
         uniques.ACTIVE_SCENE.add_children(walls)
         uniques.ACTIVE_SCENE.add_children(falls)
