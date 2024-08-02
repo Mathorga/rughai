@@ -75,12 +75,12 @@ class PlayableSceneNode(Node):
             world_batch = uniques.ACTIVE_SCENE.world_batch,
             ui_batch = uniques.ACTIVE_SCENE.ui_batch
         )
-        menu: MenuNode = MenuNode(
-            view_width = view_width,
-            view_height = view_height,
-            world_batch = uniques.ACTIVE_SCENE.world_batch,
-            ui_batch = uniques.ACTIVE_SCENE.ui_batch
-        )
+        # menu: MenuNode = MenuNode(
+        #     view_width = view_width,
+        #     view_height = view_height,
+        #     world_batch = uniques.ACTIVE_SCENE.world_batch,
+        #     ui_batch = uniques.ACTIVE_SCENE.ui_batch
+        # )
 
         # Scene music.
         self.scene_music: pyglet.media.Source = pyglet.resource.media(name = "sounds/rughai_myst.wav")
@@ -163,7 +163,7 @@ class PlayableSceneNode(Node):
 
         uniques.ACTIVE_SCENE.add_child(bg)
         uniques.ACTIVE_SCENE.add_child(inventory)
-        uniques.ACTIVE_SCENE.add_child(menu)
+        # uniques.ACTIVE_SCENE.add_child(menu)
         uniques.ACTIVE_SCENE.add_children(tilemaps)
         uniques.ACTIVE_SCENE.add_children(walls)
         uniques.ACTIVE_SCENE.add_children(falls)
