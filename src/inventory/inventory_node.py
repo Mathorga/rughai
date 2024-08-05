@@ -77,19 +77,19 @@ class MenuNode(Node):
 
         self.sections: list[RectNode] = []
 
-        for section in controllers.MENU_CONTROLLER.sections:
+        for index, section in enumerate(controllers.MENU_CONTROLLER.sections):
             print(controllers.MENU_CONTROLLER.sections[section])
             self.sections.append(RectNode(
-                # x = view_width / 2,
                 x = controllers.MENU_CONTROLLER.sections[section].position[0] * view_width,
-                # y = view_height / 2,
                 y = controllers.MENU_CONTROLLER.sections[section].position[1] * view_height,
-                # width = 50,
                 width = int((controllers.MENU_CONTROLLER.sections[section].position[0] + controllers.MENU_CONTROLLER.sections[section].size[0]) * view_width),
-                # width = int(controllers.MENU_CONTROLLER.sections[section].size[0]) * view_width,
-                # height = 50,
                 height = int((controllers.MENU_CONTROLLER.sections[section].position[1] + controllers.MENU_CONTROLLER.sections[section].size[1]) * view_height),
-                # height = int(controllers.MENU_CONTROLLER.sections[section].size[1]) * view_height,
+                color = (
+                    int(0xFF / len(controllers.MENU_CONTROLLER.sections) * index),
+                    0xFF - int(0xFF / len(controllers.MENU_CONTROLLER.sections) * index),
+                    0xFF - int(0xFF / len(controllers.MENU_CONTROLLER.sections) * index),
+                    0x7F
+                ),
                 batch = ui_batch
             ))
 
