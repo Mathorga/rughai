@@ -4,6 +4,7 @@ import pyglet
 import engine.controllers as controllers
 from engine.animation import Animation
 from engine.node import Node, PositionNode
+from engine.settings import GLOBALS, Keys
 from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.utils import utils
@@ -50,6 +51,14 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
 }
 
 class MenuNode(Node):
+    __slots__ = (
+        "view_width",
+        "view_height",
+        "world_batch",
+        "ui_batch",
+        "sections"
+    )
+
     def __init__(
         self,
         view_width: int,
@@ -57,6 +66,8 @@ class MenuNode(Node):
         world_batch: pyglet.graphics.Batch | None = None,
         ui_batch: pyglet.graphics.Batch | None = None
     ) -> None:
+        super().__init__()
+
         self.view_width: int = view_width
         self.view_height: int = view_height
 
@@ -67,11 +78,18 @@ class MenuNode(Node):
         self.sections: list[RectNode] = []
 
         for section in controllers.MENU_CONTROLLER.sections:
+            print(controllers.MENU_CONTROLLER.sections[section])
             self.sections.append(RectNode(
-                x = controllers.MENU_CONTROLLER.sections[section].position[0],
-                y = controllers.MENU_CONTROLLER.sections[section].position[1],
-                width = controllers.MENU_CONTROLLER.sections[section].size[0],
-                height = controllers.MENU_CONTROLLER.sections[section].size[1],
+                # x = view_width / 2,
+                x = controllers.MENU_CONTROLLER.sections[section].position[0] * view_width,
+                # y = view_height / 2,
+                y = controllers.MENU_CONTROLLER.sections[section].position[1] * view_height,
+                # width = 50,
+                width = int((controllers.MENU_CONTROLLER.sections[section].position[0] + controllers.MENU_CONTROLLER.sections[section].size[0]) * view_width),
+                # width = int(controllers.MENU_CONTROLLER.sections[section].size[0]) * view_width,
+                # height = 50,
+                height = int((controllers.MENU_CONTROLLER.sections[section].position[1] + controllers.MENU_CONTROLLER.sections[section].size[1]) * view_height),
+                # height = int(controllers.MENU_CONTROLLER.sections[section].size[1]) * view_height,
                 batch = ui_batch
             ))
 

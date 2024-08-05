@@ -3,7 +3,8 @@
         {
             "name": "bag",
             "slots": "5,4",
-            "position": "0.0,0.2,0.5,1.0",
+            "position": "0.0,0.2",
+            "size": "0.5,0.8",
             "overflows": {
                 "top": "ammo",
                 "bottom": "ammo",
@@ -14,7 +15,8 @@
         {
             "name": "ammo",
             "slots": "1,1",
-            "position": "0.0,0.0,0.5,0.2",
+            "position": "0.0,0.0",
+            "size": "0.5,0.2",
             "overflows": {
                 "top": "bag",
                 "bottom": "bag",
@@ -25,7 +27,8 @@
         {
             "name": "quik",
             "slots": "4,1",
-            "position": "0.5,0.0,1.0,0.2",
+            "position": "0.5,0.0",
+            "size": "0.5,0.2",
             "overflows": {
                 "top": "wrap",
                 "bottom": "wrap",

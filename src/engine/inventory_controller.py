@@ -106,12 +106,12 @@ class MenuController:
             name: str = str(section["name"])
             slots_str: str = str(section["slots"])
             position_str: str = str(section["position"])
+            size_str: str = str(section["size"])
             raw_overflows: dict[str, str] = section["overflows"]
 
             slots: list[int] = list(map(lambda item: int(item), slots_str.split(",")))
-            raw_position: list[float] = list(map(lambda item: float(item), position_str.split(",")))
-            position: list[float] = raw_position[:2]
-            size: list[float] = raw_position[2:]
+            position: list[float] = list(map(lambda item: float(item), position_str.split(",")))
+            size: list[float] = list(map(lambda item: float(item), size_str.split(",")))
 
             self.sections[name] = MenuSection(
                 name = name,

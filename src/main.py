@@ -77,8 +77,8 @@ class Rughai:
         controllers.create_controllers(window = self.window)
         controllers.INVENTORY_CONTROLLER.load_file("inventory_mock.json")
         print(controllers.INVENTORY_CONTROLLER)
-        # controllers.MENU_CONTROLLER.load_file(src = "inventory.json")
-        # print(controllers.MENU_CONTROLLER)
+        controllers.MENU_CONTROLLER.load_file(src = "inventory.json")
+        print(controllers.MENU_CONTROLLER)
 
         # On retina Macs everything is rendered 2x-zoomed for some reason. compensate for this using a platform scaling.
         platform_scaling: float = 0.5 if "macOS" in GLOBALS[Keys.PLATFORM] else 1.0
