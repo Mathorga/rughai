@@ -14,6 +14,7 @@ class MapCursorNode(PositionNode):
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
+        step_time: float = 0.2,
         fast_speed: int = 5,
         child: Optional[PositionNode] = None,
         on_move: Optional[Callable[[tuple[int, int]], None]] = None,
@@ -31,9 +32,11 @@ class MapCursorNode(PositionNode):
 
         # Setup input handling.
         self.__controls_enabled = True
-        self.__move_input = pm.Vec2()
-        self.__look_input = pm.Vec2()
+        self.__move_input: pm.Vec2 = pm.Vec2()
+        self.__look_input: pm.Vec2 = pm.Vec2()
         self.__move_modifier = False
+        self.__step_time: float = step_time
+        self.__elapsed_step: float = 0.0
 
         # Save child.
         self.__child = child
@@ -103,7 +106,8 @@ class MapCursorNode(PositionNode):
             # Allow the user to look around.
             self.__look_input = controllers.INPUT_CONTROLLER.get_aim_vec().limit(1.0)
 
-            self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()
+            # self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()
+            self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement_hold()
 
             self.__move_modifier = controllers.INPUT_CONTROLLER.get_modifier()
             if self.__move_modifier:
@@ -115,13 +119,19 @@ class MapCursorNode(PositionNode):
                 controllers.INTERACTION_CONTROLLER.interact()
 
     def __move(self, dt):
-        self.set_position((
-            self.x + int(self.__move_input.x * self.__tile_width),
-            self.y + int(self.__move_input.y * self.__tile_height)
-        ))
+        if self.__move_input.mag > 0.0:
+            self.__elapsed_step += dt
 
-        if self.__on_move is not None:
-            self.__on_move(self.get_map_position())
+        if self.__elapsed_step > self.__step_time:
+            self.__elapsed_step = 0.0
+
+            self.set_position((
+                self.x + int(self.__move_input.x * self.__tile_width),
+                self.y + int(self.__move_input.y * self.__tile_height)
+            ))
+
+            if self.__on_move is not None:
+                self.__on_move(self.get_map_position())
 
     def __update_child(self, dt):
         # Update child position.

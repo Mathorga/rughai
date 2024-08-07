@@ -1,3 +1,4 @@
+import random
 from typing import Callable
 import pyglet
 
@@ -77,7 +78,7 @@ class MenuNode(Node):
 
         self.sections: list[RectNode] = []
 
-        for index, section in enumerate(controllers.MENU_CONTROLLER.sections):
+        for section in controllers.MENU_CONTROLLER.sections:
             print(controllers.MENU_CONTROLLER.sections[section])
             self.sections.append(RectNode(
                 x = controllers.MENU_CONTROLLER.sections[section].position[0] * view_width,
@@ -85,9 +86,9 @@ class MenuNode(Node):
                 width = int((controllers.MENU_CONTROLLER.sections[section].position[0] + controllers.MENU_CONTROLLER.sections[section].size[0]) * view_width),
                 height = int((controllers.MENU_CONTROLLER.sections[section].position[1] + controllers.MENU_CONTROLLER.sections[section].size[1]) * view_height),
                 color = (
-                    int(0xFF / len(controllers.MENU_CONTROLLER.sections) * index),
-                    0xFF - int(0xFF / len(controllers.MENU_CONTROLLER.sections) * index),
-                    0xFF - int(0xFF / len(controllers.MENU_CONTROLLER.sections) * index),
+                    random.randint(0x00, 0xFF),
+                    random.randint(0x00, 0xFF),
+                    random.randint(0x00, 0xFF),
                     0x7F
                 ),
                 batch = ui_batch
