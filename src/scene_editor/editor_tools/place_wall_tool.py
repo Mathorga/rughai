@@ -47,7 +47,7 @@ class WallEditorMenuNode(Node):
         if self.__open:
             # Only handle controls if open:
             # Wall selection.
-            self.__current_wall_index -= controllers.INPUT_CONTROLLER.get_cursor_movement().y
+            self.__current_wall_index -= controllers.INPUT_CONTROLLER.get_cursor_movement_vec().y
             if self.__current_wall_index < 0:
                 self.__current_wall_index = 0
             if self.__current_wall_index >= len(self.__wall_names[list(self.__wall_names.keys())[self.__current_page_index]]):

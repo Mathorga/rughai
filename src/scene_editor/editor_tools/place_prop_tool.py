@@ -118,7 +118,7 @@ class PropEditorMenuNode(Node):
                 self.__current_page_index = self.__current_page_index % len(self.__prop_names)
 
             # Prop selection.
-            self.__current_prop_index -= int(controllers.INPUT_CONTROLLER.get_cursor_movement().y)
+            self.__current_prop_index -= int(controllers.INPUT_CONTROLLER.get_cursor_movement_vec().y)
             if self.__current_prop_index < 0:
                 self.__current_prop_index = 0
             if self.__current_prop_index >= len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page_index]]):

@@ -14,7 +14,8 @@ class MapCursorNode(PositionNode):
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
-        step_time: float = 0.2,
+        falter_time: float = 0.3,
+        step_time: float = 0.1,
         fast_speed: int = 5,
         child: Optional[PositionNode] = None,
         on_move: Optional[Callable[[tuple[int, int]], None]] = None,
@@ -31,10 +32,14 @@ class MapCursorNode(PositionNode):
         self.__fast_speed = fast_speed
 
         # Setup input handling.
-        self.__controls_enabled = True
+        self.__controls_enabled: bool = True
+        self.__movement_started: bool = False
+        self.__movement_ended: bool = False
         self.__move_input: pm.Vec2 = pm.Vec2()
         self.__look_input: pm.Vec2 = pm.Vec2()
-        self.__move_modifier = False
+        self.__move_modifier: bool = False
+        self.__falter_time: float = falter_time
+        self.__elapsed_falter: float = 0.0
         self.__step_time: float = step_time
         self.__elapsed_step: float = 0.0
 
@@ -107,7 +112,14 @@ class MapCursorNode(PositionNode):
             self.__look_input = controllers.INPUT_CONTROLLER.get_aim_vec().limit(1.0)
 
             # self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()
-            self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement_hold()
+            self.__movement_started = controllers.INPUT_CONTROLLER.get_cursor_movement_press()
+            self.__movement_ended = controllers.INPUT_CONTROLLER.get_cursor_movement_release()
+
+            if not self.__movement_ended:
+                self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement_hold_vec()
+            else:
+                self.__elapsed_falter = 0.0
+                self.__move_input = pm.Vec2()
 
             self.__move_modifier = controllers.INPUT_CONTROLLER.get_modifier()
             if self.__move_modifier:
@@ -120,9 +132,10 @@ class MapCursorNode(PositionNode):
 
     def __move(self, dt):
         if self.__move_input.mag > 0.0:
+            self.__elapsed_falter += dt
             self.__elapsed_step += dt
 
-        if self.__elapsed_step > self.__step_time:
+        if (self.__elapsed_falter > self.__falter_time and self.__elapsed_step > self.__step_time) or self.__movement_started:
             self.__elapsed_step = 0.0
 
             self.set_position((

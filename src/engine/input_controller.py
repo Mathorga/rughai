@@ -201,7 +201,31 @@ class InputController:
 
         return (stick_vec + keyboard_vec).normalize()
 
-    def get_cursor_movement(self) -> pyglet.math.Vec2:
+    def get_cursor_movement_press(self) -> bool:
+        """
+        Returns whether the cursor movement is being started or not.
+        """
+
+        up = self.key_presses.get(pyglet.window.key.W, False) or self.key_presses.get(pyglet.window.key.UP)
+        left = self.key_presses.get(pyglet.window.key.A, False) or self.key_presses.get(pyglet.window.key.LEFT)
+        down = self.key_presses.get(pyglet.window.key.S, False) or self.key_presses.get(pyglet.window.key.DOWN)
+        right = self.key_presses.get(pyglet.window.key.D, False) or self.key_presses.get(pyglet.window.key.RIGHT)
+
+        return bool(up or left or down or right)
+
+    def get_cursor_movement_release(self) -> bool:
+        """
+        Returns whether the cursor movement is being ended or not.
+        """
+
+        up = not self[pyglet.window.key.W] and not self[pyglet.window.key.UP]
+        left = not self[pyglet.window.key.A] and not self[pyglet.window.key.LEFT]
+        down = not self[pyglet.window.key.S] and not self[pyglet.window.key.DOWN]
+        right = not self[pyglet.window.key.D] and not self[pyglet.window.key.RIGHT]
+
+        return bool(up and left and down and right)
+
+    def get_cursor_movement_vec(self) -> pyglet.math.Vec2:
         """
         Returns the movement vector from keyboard and controller.
         """
@@ -216,7 +240,7 @@ class InputController:
             1 if up else 0 - 1 if down else 0
         )
 
-    def get_cursor_movement_hold(self) -> pyglet.math.Vec2:
+    def get_cursor_movement_hold_vec(self) -> pyglet.math.Vec2:
         """
         Returns the movement vector from keyboard and controller.
         """

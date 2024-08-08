@@ -47,7 +47,7 @@ class FallEditorMenuNode(Node):
         if self.__open:
             # Only handle controls if open:
             # Fall selection.
-            self.__current_fall_index -= controllers.INPUT_CONTROLLER.get_cursor_movement().y
+            self.__current_fall_index -= controllers.INPUT_CONTROLLER.get_cursor_movement_vec().y
             if self.__current_fall_index < 0:
                 self.__current_fall_index = 0
             if self.__current_fall_index >= len(self.__fall_names[list(self.__fall_names.keys())[self.__current_page_index]]):
