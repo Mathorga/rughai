@@ -1,8 +1,9 @@
-from typing import Callable, Optional, Tuple
+from typing import Callable, Optional
 
 import pyglet
 import pyglet.math as pm
 
+from engine.cursor_input_handler import CursorInputHandler
 from engine.node import PositionNode
 import engine.controllers as controllers
 
@@ -14,8 +15,6 @@ class MapCursorNode(PositionNode):
         cam_target: PositionNode,
         cam_target_distance: float = 50.0,
         cam_target_offset: tuple = (0.0, 8.0),
-        falter_time: float = 0.3,
-        step_time: float = 0.1,
         fast_speed: int = 5,
         child: Optional[PositionNode] = None,
         on_move: Optional[Callable[[tuple[int, int]], None]] = None,
@@ -33,15 +32,9 @@ class MapCursorNode(PositionNode):
 
         # Setup input handling.
         self.__controls_enabled: bool = True
-        self.__movement_started: bool = False
-        self.__movement_ended: bool = False
-        self.__move_input: pm.Vec2 = pm.Vec2()
+        self.__input_handler: CursorInputHandler = CursorInputHandler()
         self.__look_input: pm.Vec2 = pm.Vec2()
         self.__move_modifier: bool = False
-        self.__falter_time: float = falter_time
-        self.__elapsed_falter: float = 0.0
-        self.__step_time: float = step_time
-        self.__elapsed_step: float = 0.0
 
         # Save child.
         self.__child = child
@@ -58,6 +51,7 @@ class MapCursorNode(PositionNode):
 
     def update(self, dt) -> None:
         # Fetch input.
+        self.__input_handler.update(dt = dt)
         self.__fetch_input()
 
         # Compute and apply movement to self's x and y coords.
@@ -111,19 +105,7 @@ class MapCursorNode(PositionNode):
             # Allow the user to look around.
             self.__look_input = controllers.INPUT_CONTROLLER.get_aim_vec().limit(1.0)
 
-            # self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement()
-            self.__movement_started = controllers.INPUT_CONTROLLER.get_cursor_movement_press()
-            self.__movement_ended = controllers.INPUT_CONTROLLER.get_cursor_movement_release()
-
-            if not self.__movement_ended:
-                self.__move_input = controllers.INPUT_CONTROLLER.get_cursor_movement_hold_vec()
-            else:
-                self.__elapsed_falter = 0.0
-                self.__move_input = pm.Vec2()
-
             self.__move_modifier = controllers.INPUT_CONTROLLER.get_modifier()
-            if self.__move_modifier:
-                self.__move_input = self.__move_input * self.__fast_speed
 
             # Trigger action.
             interact = controllers.INPUT_CONTROLLER.get_interaction()
@@ -131,16 +113,14 @@ class MapCursorNode(PositionNode):
                 controllers.INTERACTION_CONTROLLER.interact()
 
     def __move(self, dt):
-        if self.__move_input.mag > 0.0:
-            self.__elapsed_falter += dt
-            self.__elapsed_step += dt
+        movement: pm.Vec2 = self.__input_handler.get_movement()
+        if self.__move_modifier:
+            movement *= self.__fast_speed
 
-        if (self.__elapsed_falter > self.__falter_time and self.__elapsed_step > self.__step_time) or self.__movement_started:
-            self.__elapsed_step = 0.0
-
+        if movement.mag > 0.0:
             self.set_position((
-                self.x + int(self.__move_input.x * self.__tile_width),
-                self.y + int(self.__move_input.y * self.__tile_height)
+                self.x + int(movement.x * self.__tile_width),
+                self.y + int(movement.y * self.__tile_height)
             ))
 
             if self.__on_move is not None:
