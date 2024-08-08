@@ -67,6 +67,12 @@ class MenuController:
     Holds all inventory data and provides accessors to it.
     """
 
+    __slots__ = (
+        "sections",
+        "current_section",
+        "is_open"
+    )
+
     def __init__(self) -> None:
         # All menu sections by name.
         self.sections: dict[str, MenuSection] = {}
@@ -74,9 +80,18 @@ class MenuController:
         # Currently active section
         self.current_section: str = ""
 
+        # Tells whether the menu is open or not.
+        self.is_open: bool = False
 
     def __str__(self) -> str:
         return f"sections: \n\t{reduce(lambda a, b: f"{a}{b}", map(lambda section: f"{section}\n\t", self.sections.values()))}"
+
+    def toggle(self) -> None:
+        """
+        Toggles the open state of the menu by opening it if closed and closing it if open.
+        """
+
+        self.is_open = not self.is_open
 
     def load_file(self, src: str) -> None:
         abs_path: str = os.path.join(pyglet.resource.path[0], src)

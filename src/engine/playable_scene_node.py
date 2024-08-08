@@ -162,7 +162,7 @@ class PlayableSceneNode(Node):
         uniques.ACTIVE_SCENE.set_cam_bounds(cam_bounds)
 
         uniques.ACTIVE_SCENE.add_child(bg)
-        uniques.ACTIVE_SCENE.add_child(inventory)
+        # uniques.ACTIVE_SCENE.add_child(inventory)
         uniques.ACTIVE_SCENE.add_child(menu)
         uniques.ACTIVE_SCENE.add_children(tilemaps)
         uniques.ACTIVE_SCENE.add_children(walls)
