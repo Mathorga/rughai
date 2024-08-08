@@ -4,6 +4,8 @@ import pyglet
 
 import engine.controllers as controllers
 from engine.animation import Animation
+from engine.cursor_input_handler import CursorInputHandler
+from engine.inventory_controller import MenuSection
 from engine.node import Node, PositionNode
 from engine.settings import GLOBALS, Keys
 from engine.shapes.rect_node import RectNode
@@ -53,11 +55,13 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
 
 class MenuNode(Node):
     __slots__ = (
-        "view_width",
-        "view_height",
-        "world_batch",
-        "ui_batch",
-        "sections"
+        "__view_width",
+        "__view_height",
+        "__cursor_input",
+        "__world_batch",
+        "__ui_batch",
+        "sections",
+        "__slots_sprites"
     )
 
     def __init__(
@@ -69,30 +73,75 @@ class MenuNode(Node):
     ) -> None:
         super().__init__()
 
-        self.view_width: int = view_width
-        self.view_height: int = view_height
+        self.__view_width: int = view_width
+        self.__view_height: int = view_height
+
+        self.__cursor_input: CursorInputHandler = CursorInputHandler()
 
         # Batches.
-        self.world_batch: pyglet.graphics.Batch | None = world_batch
-        self.ui_batch: pyglet.graphics.Batch | None = ui_batch
+        self.__world_batch: pyglet.graphics.Batch | None = world_batch
+        self.__ui_batch: pyglet.graphics.Batch | None = ui_batch
 
         self.sections: list[RectNode] = []
+        self.__slots_sprites: list[SpriteNode] = []
 
-        for section in controllers.MENU_CONTROLLER.sections:
-            print(controllers.MENU_CONTROLLER.sections[section])
+        self.create_sprites()
+
+    def update(self, dt: float) -> None:
+        super().update(dt = dt)
+
+        self.__cursor_input.update(dt = dt)
+
+    def create_sprites(self) -> None:
+        """
+        Creates all inventory sprites.
+        """
+
+        # Fetch consumable slot image.
+        consumable_slot_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
+        utils.set_anchor(
+            resource = consumable_slot_image,
+            center = True
+        )
+
+        for section_name in controllers.MENU_CONTROLLER.sections:
+            section: MenuSection = controllers.MENU_CONTROLLER.sections[section_name]
+            print(section)
+            section_position: tuple[float, float] = (
+                section.position[0] * self.__view_width,
+                section.position[1] * self.__view_height
+            )
+            section_size: tuple[float, float] = (
+                section.size[0] * self.__view_width,
+                section.size[1] * self.__view_height
+            )
+
             self.sections.append(RectNode(
-                x = controllers.MENU_CONTROLLER.sections[section].position[0] * view_width,
-                y = controllers.MENU_CONTROLLER.sections[section].position[1] * view_height,
-                width = int((controllers.MENU_CONTROLLER.sections[section].position[0] + controllers.MENU_CONTROLLER.sections[section].size[0]) * view_width),
-                height = int((controllers.MENU_CONTROLLER.sections[section].position[1] + controllers.MENU_CONTROLLER.sections[section].size[1]) * view_height),
+                x = controllers.MENU_CONTROLLER.sections[section_name].position[0] * self.__view_width,
+                y = controllers.MENU_CONTROLLER.sections[section_name].position[1] * self.__view_height,
+                width = int((controllers.MENU_CONTROLLER.sections[section_name].position[0] + controllers.MENU_CONTROLLER.sections[section_name].size[0]) * self.__view_width),
+                height = int((controllers.MENU_CONTROLLER.sections[section_name].position[1] + controllers.MENU_CONTROLLER.sections[section_name].size[1]) * self.__view_height),
                 color = (
                     random.randint(0x00, 0xFF),
                     random.randint(0x00, 0xFF),
                     random.randint(0x00, 0xFF),
                     0x7F
                 ),
-                batch = ui_batch
+                batch = self.__ui_batch
             ))
+
+            # Create all slots' sprites.
+            for i in range(section.slots[0]):
+                for j in range(section.slots[0]):
+                    self.__slots_sprites.append(SpriteNode(
+                        resource = consumable_slot_image,
+                        x = section_position[0] + (section_size[0] / (section.slots[0] + 1) * (i + 1)),
+                        y = section_position[1] + (section_size[1] / (section.slots[1] + 1) * (j + 1)),
+                        # y = self.__view_height - (j * self.step[1] + self.step[1] // 2),
+                        # y = self.view_height - consumables_area_size[1] // 2 - (j * step[1] + step[1] // 2),
+                        z = 425.0,
+                        batch = self.__ui_batch
+                    ))
 
 class InventoryNode(Node):
     __slots__ = (
@@ -109,7 +158,7 @@ class InventoryNode(Node):
         "quiks_slots_sprites",
         "background",
         "cursor_image",
-        "cursor",
+        "cursor"
     )
 
     def __init__(
