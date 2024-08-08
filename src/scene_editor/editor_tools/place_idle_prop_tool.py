@@ -5,6 +5,7 @@ import json
 from typing import Callable
 import pyglet
 
+from engine.cursor_input_handler import CursorInputHandler
 from props.idle_prop_node import IdlePropNode
 
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")))
@@ -101,13 +102,16 @@ class IdlePropEditorMenuNode(Node):
         # Currently selected element.
         self.__current_prop_index: int = 0
         self.__current_prop_icon: SpriteNode | None = None
+        self.__input_handler: CursorInputHandler = CursorInputHandler()
 
         self.__background: RectNode | None = None
 
     def update(self, dt: int) -> None:
-        super().update(dt)
+        super().update(dt = dt)
 
         if self.__open:
+            self.__input_handler.update(dt = dt)
+
             # Only handle controls if open:
             # Page change.
             if controllers.INPUT_CONTROLLER.get_menu_page_left():
@@ -118,7 +122,7 @@ class IdlePropEditorMenuNode(Node):
                 self.__current_page_index = self.__current_page_index % len(self.__prop_names)
 
             # Prop selection.
-            self.__current_prop_index -= int(controllers.INPUT_CONTROLLER.get_cursor_movement_vec().y)
+            self.__current_prop_index -= int(self.__input_handler.get_movement().y)
             if self.__current_prop_index < 0:
                 self.__current_prop_index = 0
             if self.__current_prop_index >= len(self.__prop_names[list(self.__prop_names.keys())[self.__current_page_index]]):

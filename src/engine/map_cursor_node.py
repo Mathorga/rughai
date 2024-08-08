@@ -113,18 +113,19 @@ class MapCursorNode(PositionNode):
                 controllers.INTERACTION_CONTROLLER.interact()
 
     def __move(self, dt):
-        movement: pm.Vec2 = self.__input_handler.get_movement()
-        if self.__move_modifier:
-            movement *= self.__fast_speed
+        if self.__controls_enabled:
+            movement: pm.Vec2 = self.__input_handler.get_movement()
+            if self.__move_modifier:
+                movement *= self.__fast_speed
 
-        if movement.mag > 0.0:
-            self.set_position((
-                self.x + int(movement.x * self.__tile_width),
-                self.y + int(movement.y * self.__tile_height)
-            ))
+            if movement.mag > 0.0:
+                self.set_position((
+                    self.x + int(movement.x * self.__tile_width),
+                    self.y + int(movement.y * self.__tile_height)
+                ))
 
-            if self.__on_move is not None:
-                self.__on_move(self.get_map_position())
+                if self.__on_move is not None:
+                    self.__on_move(self.get_map_position())
 
     def __update_child(self, dt):
         # Update child position.
