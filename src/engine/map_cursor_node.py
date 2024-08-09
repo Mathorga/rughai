@@ -32,7 +32,12 @@ class MapCursorNode(PositionNode):
 
         # Setup input handling.
         self.__controls_enabled: bool = True
-        self.__input_handler: CursorInputHandler = CursorInputHandler()
+        self.__input_handler: CursorInputHandler = CursorInputHandler(
+            up_keys = [pyglet.window.key.W, pyglet.window.key.UP],
+            left_keys = [pyglet.window.key.A, pyglet.window.key.LEFT],
+            down_keys = [pyglet.window.key.S, pyglet.window.key.DOWN],
+            right_keys = [pyglet.window.key.D, pyglet.window.key.RIGHT],
+        )
         self.__look_input: pm.Vec2 = pm.Vec2()
         self.__move_modifier: bool = False
 

@@ -1,6 +1,8 @@
+import math
 import random
 from typing import Callable
 import pyglet
+import pyglet.math as pm
 
 import engine.controllers as controllers
 from engine.animation import Animation
@@ -57,11 +59,16 @@ class MenuNode(Node):
     __slots__ = (
         "__view_width",
         "__view_height",
-        "__cursor_input",
         "__world_batch",
         "__ui_batch",
         "sections",
-        "__slots_sprites"
+        "__slot_image",
+        "__slots_sprites",
+        "__cursor_input",
+        "__cursor_section",
+        "__cursor_slot_position",
+        "__cursor_image",
+        "__cursor_sprite"
     )
 
     def __init__(
@@ -76,33 +83,93 @@ class MenuNode(Node):
         self.__view_width: int = view_width
         self.__view_height: int = view_height
 
-        self.__cursor_input: CursorInputHandler = CursorInputHandler()
-
-        # Batches.
+        ################ Batches ################
         self.__world_batch: pyglet.graphics.Batch | None = world_batch
         self.__ui_batch: pyglet.graphics.Batch | None = ui_batch
 
         self.sections: list[RectNode] = []
+
+        ################ Slots ################
+        # Fetch a generic slot image.
+        self.__slot_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
+        utils.set_anchor(
+            resource = self.__slot_image,
+            center = True
+        )
         self.__slots_sprites: list[SpriteNode] = []
 
-        self.create_sprites()
+        ################ Cursor ################
+        # Cursor movement handler.
+        self.__cursor_input: CursorInputHandler = CursorInputHandler(
+            up_keys = [pyglet.window.key.I],
+            left_keys = [pyglet.window.key.J],
+            down_keys = [pyglet.window.key.K],
+            right_keys = [pyglet.window.key.L],
+        )
+
+        # The section the cursor is currently located in.
+        self.__cursor_section: str = list(controllers.MENU_CONTROLLER.sections)[0]
+
+        # The position the cursor currently highlights inside its current section.
+        self.__cursor_slot_position: tuple[int, int] = (0, 0)
+
+        # Cursor sprite data.
+        self.__cursor_image: Animation = Animation(source = "sprites/menus/inventory/inventory_cursor.json")
+        self.__cursor_sprite: SpriteNode | None = None
 
     def update(self, dt: float) -> None:
         super().update(dt = dt)
 
+        # Fetch input.
+        inventory_toggled: bool = controllers.INPUT_CONTROLLER.get_inventory_toggle()
+
         self.__cursor_input.update(dt = dt)
+
+        if self.__cursor_sprite is not None:
+            self.__cursor_sprite.update(dt = dt)
+
+        # Use input.
+        if inventory_toggled:
+            self.toggle()
+
+        if controllers.MENU_CONTROLLER.is_open:
+            # Fetch movement from input handler and update cursor.
+            self.__update_cursor_position(self.__cursor_input.get_movement())
+
+    def delete(self) -> None:
+        self.clear_sprites()
+
+    def __update_cursor_position(self, movement: pm.Vec2) -> None:
+        # Fetch current cursor section.
+        cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
+
+        self.__cursor_slot_position = (
+            utils.clamp(src = self.__cursor_slot_position[0] + movement.x, min_value = 0, max_value = cursor_section.slots[0] - 1),
+            utils.clamp(src = self.__cursor_slot_position[1] + movement.y, min_value = 0, max_value = cursor_section.slots[1] - 1)
+        )
+
+        section_position: tuple[float, float] = (
+            cursor_section.position[0] * self.__view_width,
+            cursor_section.position[1] * self.__view_height
+        )
+        section_size: tuple[float, float] = (
+            cursor_section.size[0] * self.__view_width,
+            cursor_section.size[1] * self.__view_height
+        )
+
+        if self.__cursor_sprite is not None:
+            self.__cursor_sprite.set_position(
+                position = (
+                    section_position[0] +  + (section_size[0] / (cursor_section.slots[0] + 1) * (self.__cursor_slot_position[0] + 1)),
+                    section_position[1] + (section_size[1] / (cursor_section.slots[1] + 1) * (self.__cursor_slot_position[1] + 1)),
+                ),
+                z = 450
+            )
 
     def create_sprites(self) -> None:
         """
-        Creates all inventory sprites.
+        Creates all menu sprites.
         """
-
-        # Fetch consumable slot image.
-        consumable_slot_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
-        utils.set_anchor(
-            resource = consumable_slot_image,
-            center = True
-        )
 
         for section_name in controllers.MENU_CONTROLLER.sections:
             section: MenuSection = controllers.MENU_CONTROLLER.sections[section_name]
@@ -117,10 +184,10 @@ class MenuNode(Node):
             )
 
             self.sections.append(RectNode(
-                x = controllers.MENU_CONTROLLER.sections[section_name].position[0] * self.__view_width,
-                y = controllers.MENU_CONTROLLER.sections[section_name].position[1] * self.__view_height,
-                width = int((controllers.MENU_CONTROLLER.sections[section_name].position[0] + controllers.MENU_CONTROLLER.sections[section_name].size[0]) * self.__view_width),
-                height = int((controllers.MENU_CONTROLLER.sections[section_name].position[1] + controllers.MENU_CONTROLLER.sections[section_name].size[1]) * self.__view_height),
+                x = section.position[0] * self.__view_width,
+                y = section.position[1] * self.__view_height,
+                width = int((section.position[0] + section.size[0]) * self.__view_width),
+                height = int((section.position[1] + section.size[1]) * self.__view_height),
                 color = (
                     random.randint(0x00, 0xFF),
                     random.randint(0x00, 0xFF),
@@ -132,16 +199,66 @@ class MenuNode(Node):
 
             # Create all slots' sprites.
             for i in range(section.slots[0]):
-                for j in range(section.slots[0]):
+                for j in range(section.slots[1]):
                     self.__slots_sprites.append(SpriteNode(
-                        resource = consumable_slot_image,
+                        resource = self.__slot_image,
                         x = section_position[0] + (section_size[0] / (section.slots[0] + 1) * (i + 1)),
                         y = section_position[1] + (section_size[1] / (section.slots[1] + 1) * (j + 1)),
-                        # y = self.__view_height - (j * self.step[1] + self.step[1] // 2),
-                        # y = self.view_height - consumables_area_size[1] // 2 - (j * step[1] + step[1] // 2),
                         z = 425.0,
                         batch = self.__ui_batch
                     ))
+
+        # Fetch current cursor section.
+        cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
+        section_position: tuple[float, float] = (
+            cursor_section.position[0] * self.__view_width,
+            cursor_section.position[1] * self.__view_height
+        )
+        section_size: tuple[float, float] = (
+            cursor_section.size[0] * self.__view_width,
+            cursor_section.size[1] * self.__view_height
+        )
+
+        # Create cursor sprite.
+        self.__cursor_sprite = SpriteNode(
+            resource = self.__cursor_image.content,
+            x = section_position[0] +  + (section_size[0] / (cursor_section.slots[0] + 1) * (self.__cursor_slot_position[0] + 1)),
+            y = section_position[1] + (section_size[1] / (cursor_section.slots[1] + 1) * (self.__cursor_slot_position[1] + 1)),
+            z = 450.0,
+            batch = self.__ui_batch
+        )
+
+    def clear_sprites(self) -> None:
+        """
+        Deletes all temporary sprites.
+        """
+
+        # Clear slots sprites.
+        for sprite in self.__slots_sprites:
+            sprite.delete()
+        self.__slots_sprites.clear()
+
+        # Clear cursor.
+        if self.__cursor_sprite is not None:
+            self.__cursor_sprite.delete()
+            self.__cursor_sprite = None
+
+        # Clear sections sprites.
+        for section in self.sections:
+            section.delete()
+        self.sections.clear()
+
+    def toggle(self) -> None:
+        """
+        Opens or closes the menu based on its current state.
+        """
+
+        controllers.MENU_CONTROLLER.toggle()
+
+        if controllers.MENU_CONTROLLER.is_open:
+            self.create_sprites()
+        else:
+            self.clear_sprites()
 
 class InventoryNode(Node):
     __slots__ = (

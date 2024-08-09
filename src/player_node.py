@@ -264,13 +264,13 @@ class PlayerNode(PositionNode):
         return controllers.INPUT_CONTROLLER.get_movement()
 
     def get_input_aim(self) -> bool:
-        return False if controllers.INVENTORY_CONTROLLER.is_open else controllers.INPUT_CONTROLLER.get_aim()
+        return False if controllers.INVENTORY_CONTROLLER.is_open or controllers.MENU_CONTROLLER.is_open else controllers.INPUT_CONTROLLER.get_aim()
 
     def get_input_movement_vec(self) -> pm.Vec2:
         return controllers.INPUT_CONTROLLER.get_movement_vec()
 
     def get_input_aim_vec(self) -> pm.Vec2:
-        return pm.Vec2() if controllers.INVENTORY_CONTROLLER.is_open else controllers.INPUT_CONTROLLER.get_aim_vec()
+        return pm.Vec2() if controllers.INVENTORY_CONTROLLER.is_open or controllers.MENU_CONTROLLER.is_open else controllers.INPUT_CONTROLLER.get_aim_vec()
 
     def get_input_sprint(self) -> bool:
         return controllers.INPUT_CONTROLLER.get_sprint()
@@ -1149,7 +1149,7 @@ class PlayerShootState(PlayerState):
         Reads all necessary inputs.
         """
 
-        if self.input_enabled and not controllers.INVENTORY_CONTROLLER.is_open:
+        if self.input_enabled and not (controllers.INVENTORY_CONTROLLER.is_open or controllers.MENU_CONTROLLER.is_open):
             self.__aim = controllers.INPUT_CONTROLLER.get_aim()
 
     def update(self, dt: float) -> Optional[str]:

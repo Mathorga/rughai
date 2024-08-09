@@ -28,6 +28,17 @@ def scale(val: float, src: tuple[float, float], dst: tuple[float, float]) -> flo
 
     return ((val - src[0]) / (src[1]-src[0])) * (dst[1]-dst[0]) + dst[0]
 
+# def clamp(low: int | float, high: int | float, value: int | float) -> int | float:
+#     return max(low, min(value, high))
+
+def clamp(src: int | float, min_value: int | float, max_value: int | float) -> int | float:
+    if src < min_value:
+        return min_value
+    elif src > max_value:
+        return max_value
+    else:
+        return src
+
 class Rect:
     def __init__(
         self,
@@ -406,14 +417,6 @@ def rect_rect_min_dist(
     inner_height = rect_outer[3] - rect_outer[1] - h1 - h2
 
     return math.sqrt(inner_width ** 2 + inner_height ** 2)
-
-def clamp(src, min_value, max_value):
-    if src < min_value:
-        return min_value
-    elif src > max_value:
-        return max_value
-    else:
-        return src
 
 def rect_rect_check(
     x1: float,
