@@ -101,6 +101,8 @@ class MenuNode(Node):
         ################ Cursor ################
         # Cursor movement handler.
         self.__cursor_input: CursorInputHandler = CursorInputHandler(
+            kick_time = 0.5,
+            step_time = 0.2,
             up_keys = [pyglet.window.key.I],
             left_keys = [pyglet.window.key.J],
             down_keys = [pyglet.window.key.K],
