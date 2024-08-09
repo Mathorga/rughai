@@ -1,3 +1,4 @@
+import math
 import random
 from typing import Callable
 import pyglet
@@ -139,13 +140,14 @@ class MenuNode(Node):
         self.clear_sprites()
 
     def __update_cursor_position(self, movement: pm.Vec2) -> None:
-        self.__cursor_slot_position = (
-            self.__cursor_slot_position[0] + movement.x,
-            self.__cursor_slot_position[1] + movement.y
-        )
-
         # Fetch current cursor section.
         cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
+
+        self.__cursor_slot_position = (
+            utils.clamp(src = self.__cursor_slot_position[0] + movement.x, min_value = 0, max_value = cursor_section.slots[0] - 1),
+            utils.clamp(src = self.__cursor_slot_position[1] + movement.y, min_value = 0, max_value = cursor_section.slots[1] - 1)
+        )
+
         section_position: tuple[float, float] = (
             cursor_section.position[0] * self.__view_width,
             cursor_section.position[1] * self.__view_height
@@ -156,10 +158,13 @@ class MenuNode(Node):
         )
 
         if self.__cursor_sprite is not None:
-            self.__cursor_sprite.set_position((
-                section_position[0] +  + (section_size[0] / (cursor_section.slots[0] + 1) * (self.__cursor_slot_position[0] + 1)),
-                section_position[1] + (section_size[1] / (cursor_section.slots[1] + 1) * (self.__cursor_slot_position[1] + 1)),
-            ))
+            self.__cursor_sprite.set_position(
+                position = (
+                    section_position[0] +  + (section_size[0] / (cursor_section.slots[0] + 1) * (self.__cursor_slot_position[0] + 1)),
+                    section_position[1] + (section_size[1] / (cursor_section.slots[1] + 1) * (self.__cursor_slot_position[1] + 1)),
+                ),
+                z = 450
+            )
 
     def create_sprites(self) -> None:
         """
