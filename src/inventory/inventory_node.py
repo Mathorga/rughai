@@ -131,8 +131,9 @@ class MenuNode(Node):
         if inventory_toggled:
             self.toggle()
 
-        # Fetch movement from input handler and update cursor.
-        self.__update_cursor_position(self.__cursor_input.get_movement())
+        if controllers.MENU_CONTROLLER.is_open:
+            # Fetch movement from input handler and update cursor.
+            self.__update_cursor_position(self.__cursor_input.get_movement())
 
     def delete(self) -> None:
         self.clear_sprites()
