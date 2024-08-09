@@ -1,3 +1,4 @@
+from functools import reduce
 import pyglet
 
 class InputController:
@@ -201,54 +202,57 @@ class InputController:
 
         return (stick_vec + keyboard_vec).normalize()
 
-    def get_cursor_movement_press(self) -> bool:
+    def get_cursor_movement_press(
+        self,
+        up_keys: list[int],
+        left_keys: list[int],
+        down_keys: list[int],
+        right_keys: list[int]
+    ) -> bool:
         """
-        Returns whether the cursor movement is being started or not.
+        Returns whether the cursor movement is being started or not given the provided keys.
         """
 
-        up = self.key_presses.get(pyglet.window.key.W, False) or self.key_presses.get(pyglet.window.key.UP)
-        left = self.key_presses.get(pyglet.window.key.A, False) or self.key_presses.get(pyglet.window.key.LEFT)
-        down = self.key_presses.get(pyglet.window.key.S, False) or self.key_presses.get(pyglet.window.key.DOWN)
-        right = self.key_presses.get(pyglet.window.key.D, False) or self.key_presses.get(pyglet.window.key.RIGHT)
+        up: bool = reduce(lambda a, b: a or b, map(lambda element: self.key_presses.get(element, False), up_keys))
+        left: bool = reduce(lambda a, b: a or b, map(lambda element: self.key_presses.get(element, False), left_keys))
+        down: bool = reduce(lambda a, b: a or b, map(lambda element: self.key_presses.get(element, False), down_keys))
+        right: bool = reduce(lambda a, b: a or b, map(lambda element: self.key_presses.get(element, False), right_keys))
 
-        return bool(up or left or down or right)
+        return up or left or down or right
 
-    def get_cursor_movement_release(self) -> bool:
+    def get_cursor_movement_release(
+        self,
+        up_keys: list[int],
+        left_keys: list[int],
+        down_keys: list[int],
+        right_keys: list[int]
+    ) -> bool:
         """
         Returns whether the cursor movement is being ended or not.
         """
 
-        up = not self[pyglet.window.key.W] and not self[pyglet.window.key.UP]
-        left = not self[pyglet.window.key.A] and not self[pyglet.window.key.LEFT]
-        down = not self[pyglet.window.key.S] and not self[pyglet.window.key.DOWN]
-        right = not self[pyglet.window.key.D] and not self[pyglet.window.key.RIGHT]
+        up: bool = reduce(lambda a, b: a and b, map(lambda element: not self[element], up_keys))
+        left: bool = reduce(lambda a, b: a and b, map(lambda element: not self[element], left_keys))
+        down: bool = reduce(lambda a, b: a and b, map(lambda element: not self[element], down_keys))
+        right: bool = reduce(lambda a, b: a and b, map(lambda element: not self[element], right_keys))
 
-        return bool(up and left and down and right)
+        return up and left and down and right
 
-    def get_cursor_movement_vec(self) -> pyglet.math.Vec2:
+    def get_cursor_movement_vec(
+        self,
+        up_keys: list[int],
+        left_keys: list[int],
+        down_keys: list[int],
+        right_keys: list[int]
+    ) -> pyglet.math.Vec2:
         """
         Returns the movement vector from keyboard and controller.
         """
 
-        up = self.key_presses.get(pyglet.window.key.W, False) or self.key_presses.get(pyglet.window.key.UP)
-        left = self.key_presses.get(pyglet.window.key.A, False) or self.key_presses.get(pyglet.window.key.LEFT)
-        down = self.key_presses.get(pyglet.window.key.S, False) or self.key_presses.get(pyglet.window.key.DOWN)
-        right = self.key_presses.get(pyglet.window.key.D, False) or self.key_presses.get(pyglet.window.key.RIGHT)
-
-        return pyglet.math.Vec2(
-            1 if right else 0 - 1 if left else 0,
-            1 if up else 0 - 1 if down else 0
-        )
-
-    def get_cursor_movement_hold_vec(self) -> pyglet.math.Vec2:
-        """
-        Returns the movement vector from keyboard and controller.
-        """
-
-        up = self[pyglet.window.key.W] or self[pyglet.window.key.UP]
-        left = self[pyglet.window.key.A] or self[pyglet.window.key.LEFT]
-        down = self[pyglet.window.key.S] or self[pyglet.window.key.DOWN]
-        right = self[pyglet.window.key.D] or self[pyglet.window.key.RIGHT]
+        up: bool = reduce(lambda a, b: a or b, map(lambda element: self[element], up_keys))
+        left: bool = reduce(lambda a, b: a or b, map(lambda element: self[element], left_keys))
+        down: bool = reduce(lambda a, b: a or b, map(lambda element: self[element], down_keys))
+        right: bool = reduce(lambda a, b: a or b, map(lambda element: self[element], right_keys))
 
         return pyglet.math.Vec2(
             1 if right else 0 - 1 if left else 0,

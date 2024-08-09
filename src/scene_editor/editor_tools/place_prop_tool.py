@@ -102,7 +102,12 @@ class PropEditorMenuNode(Node):
         # Currently selected element.
         self.__current_prop_index: int = 0
         self.__current_prop_icon: SpriteNode | None = None
-        self.__input_handler: CursorInputHandler = CursorInputHandler()
+        self.__input_handler: CursorInputHandler = CursorInputHandler(
+            up_keys = [pyglet.window.key.W, pyglet.window.key.UP],
+            left_keys = [pyglet.window.key.A, pyglet.window.key.LEFT],
+            down_keys = [pyglet.window.key.S, pyglet.window.key.DOWN],
+            right_keys = [pyglet.window.key.D, pyglet.window.key.RIGHT],
+        )
 
         self.__background: RectNode | None = None
 

@@ -99,7 +99,12 @@ class MenuNode(Node):
 
         ################ Cursor ################
         # Cursor movement handler.
-        self.__cursor_input: CursorInputHandler = CursorInputHandler()
+        self.__cursor_input: CursorInputHandler = CursorInputHandler(
+            up_keys = [pyglet.window.key.I],
+            left_keys = [pyglet.window.key.J],
+            down_keys = [pyglet.window.key.K],
+            right_keys = [pyglet.window.key.L],
+        )
 
         # The section the cursor is currently located in.
         self.__cursor_section: str = list(controllers.MENU_CONTROLLER.sections)[0]
