@@ -8,6 +8,9 @@ import pyglet
 from engine.node import Node
 from engine.utils.utils import idx2to1
 
+SECTION_OVERFLOW_NONE: str = "none"
+SECTION_OVERFLOW_WRAP: str = "wrap"
+
 class SectionOverflow:
     def __init__(
         self,
