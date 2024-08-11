@@ -229,13 +229,14 @@ class MenuNode(Node):
         )
 
     def __update_cursor_position(self, movement: pm.Vec2) -> None:
-        # Fetch current cursor section.
-        cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
-
         # Check for overflows.
+        # The overflow checks update the current section and slot coordinates of the cursor.
         self.__compute_overflow(
             movement = movement
         )
+
+        # Fetch current cursor section.
+        cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
 
         section_position: tuple[float, float] = (
             cursor_section.position[0] * self.__view_width,
