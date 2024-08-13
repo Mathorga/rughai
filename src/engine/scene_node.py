@@ -52,7 +52,7 @@ class Bounds:
 class SceneNode(Node):
     def __init__(
         self,
-        window: pyglet.window.Window,
+        window: pyglet.window.BaseWindow,
         view_width: int,
         view_height: int,
         title: str | None = None,

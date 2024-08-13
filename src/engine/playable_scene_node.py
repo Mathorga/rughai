@@ -30,7 +30,7 @@ class PlayableSceneNode(Node):
     ----------
     name: str
         Name of the scene.
-    window: pyglet.window.Window
+    window: pyglet.window.BaseWindow
         Window.
     view_width: int
         Width of the in-game view.
@@ -44,7 +44,7 @@ class PlayableSceneNode(Node):
     def __init__(
         self,
         name: str,
-        window: pyglet.window.Window,
+        window: pyglet.window.BaseWindow,
         view_width: int,
         view_height: int,
         bundle: dict | None = None,
@@ -78,6 +78,10 @@ class PlayableSceneNode(Node):
         menu: MenuNode = MenuNode(
             view_width = view_width,
             view_height = view_height,
+            x = 0.0,
+            y = 0.0,
+            width = 1.0,
+            height = 1.0,
             world_batch = uniques.ACTIVE_SCENE.world_batch,
             ui_batch = uniques.ACTIVE_SCENE.ui_batch
         )
@@ -129,8 +133,7 @@ class PlayableSceneNode(Node):
 
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
-        bg_image.anchor_x = bg_image.width / 2
-        bg_image.anchor_y = bg_image.height / 2
+        utils.set_anchor(bg_image, center = True)
         bg = SpriteNode(
             resource = bg_image,
             on_animation_end = lambda : None,

@@ -121,7 +121,7 @@ class Rughai:
             )
         )
 
-    def __create_window(self) -> pyglet.window.Window:
+    def __create_window(self) -> pyglet.window.BaseWindow:
         window = pyglet.window.Window(
             width = SETTINGS[Keys.WINDOW_WIDTH] if not SETTINGS[Keys.FULLSCREEN] else None,
             height = SETTINGS[Keys.WINDOW_HEIGHT] if not SETTINGS[Keys.FULLSCREEN] else None,

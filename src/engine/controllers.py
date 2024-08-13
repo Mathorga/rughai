@@ -13,7 +13,7 @@ SOUND_CONTROLLER: SoundController
 INVENTORY_CONTROLLER: InventoryController
 MENU_CONTROLLER: MenuController
 
-def create_controllers(window: pyglet.window.Window) -> None:
+def create_controllers(window: pyglet.window.BaseWindow) -> None:
     global COLLISION_CONTROLLER
     global INPUT_CONTROLLER
     global INTERACTION_CONTROLLER

@@ -4,7 +4,7 @@ import pyglet
 class InputController:
     def __init__(
         self,
-        window: pyglet.window.Window,
+        window: pyglet.window.BaseWindow,
         threshold: float = 0.1
     ):
         self.__window = window

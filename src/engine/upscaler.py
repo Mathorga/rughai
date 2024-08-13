@@ -56,18 +56,18 @@ from engine.settings import GLOBALS, Keys
 class Upscaler:
     def __init__(
         self,
-        window: pyglet.window.Window,
+        window: pyglet.window.BaseWindow,
         width: int,
         height: int
     ):
-        self.window: pyglet.window.Window = window
+        self.window: pyglet.window.BaseWindow = window
         self.width: int = width
         self.height: int = height
 
         # On retina Macs everything is rendered 4x-zoomed for some reason. compensate for this using a platform scaling.
         self.platform_scaling: float = 0.25 if "macOS" in GLOBALS[Keys.PLATFORM] else 1.0
 
-        self._target_area = (0, 0, 0, 0, 0)
+        self._target_area = (0, 0, 0, 0)
         self._aspect = (0, 0)
 
         self.window.push_handlers(self)
@@ -120,12 +120,12 @@ class Upscaler:
 class TrueUpscaler:
     def __init__(
         self,
-        window: pyglet.window.Window,
+        window: pyglet.window.BaseWindow,
         render_width: int,
         render_height: int,
         program: pyglet.graphics.shader.ShaderProgram | None = None
     ) -> None:
-        self.window: pyglet.window.Window = window
+        self.window: pyglet.window.BaseWindow = window
         self.render_width: int = render_width
         self.render_height: int = render_height
         self.program: pyglet.graphics.shader.ShaderProgram | None = program

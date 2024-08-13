@@ -56,9 +56,16 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
 }
 
 class MenuNode(Node):
+    """
+    Generic menu node, holds the structure of a menu from a menu definition file.
+
+    """
+    
     __slots__ = (
-        "__view_width",
-        "__view_height",
+        "__x",
+        "__y",
+        "__width",
+        "__height",
         "__world_batch",
         "__ui_batch",
         "sections",
@@ -75,13 +82,19 @@ class MenuNode(Node):
         self,
         view_width: int,
         view_height: int,
+        x: float,
+        y: float,
+        width: float,
+        height: float,
         world_batch: pyglet.graphics.Batch | None = None,
         ui_batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__()
 
-        self.__view_width: int = view_width
-        self.__view_height: int = view_height
+        self.__x: int = int(x * view_width)
+        self.__y: int = int(y * view_height)
+        self.__width: int = int(width * view_width)
+        self.__height: int = int(height * view_height)
 
         ################ Batches ################
         self.__world_batch: pyglet.graphics.Batch | None = world_batch
@@ -239,12 +252,12 @@ class MenuNode(Node):
         cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
 
         section_position: tuple[float, float] = (
-            cursor_section.position[0] * self.__view_width,
-            cursor_section.position[1] * self.__view_height
+            cursor_section.position[0] * self.__width,
+            cursor_section.position[1] * self.__height
         )
         section_size: tuple[float, float] = (
-            cursor_section.size[0] * self.__view_width,
-            cursor_section.size[1] * self.__view_height
+            cursor_section.size[0] * self.__width,
+            cursor_section.size[1] * self.__height
         )
 
         if self.__cursor_sprite is not None:
@@ -265,19 +278,19 @@ class MenuNode(Node):
             section: MenuSection = controllers.MENU_CONTROLLER.sections[section_name]
             print(section)
             section_position: tuple[float, float] = (
-                section.position[0] * self.__view_width,
-                section.position[1] * self.__view_height
+                section.position[0] * self.__width,
+                section.position[1] * self.__height
             )
             section_size: tuple[float, float] = (
-                section.size[0] * self.__view_width,
-                section.size[1] * self.__view_height
+                section.size[0] * self.__width,
+                section.size[1] * self.__height
             )
 
             self.sections.append(RectNode(
-                x = section.position[0] * self.__view_width,
-                y = section.position[1] * self.__view_height,
-                width = int((section.position[0] + section.size[0]) * self.__view_width),
-                height = int((section.position[1] + section.size[1]) * self.__view_height),
+                x = section.position[0] * self.__width,
+                y = section.position[1] * self.__height,
+                width = int((section.position[0] + section.size[0]) * self.__width),
+                height = int((section.position[1] + section.size[1]) * self.__height),
                 color = (
                     random.randint(0x00, 0xFF),
                     random.randint(0x00, 0xFF),
@@ -301,12 +314,12 @@ class MenuNode(Node):
         # Fetch current cursor section.
         cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
         section_position: tuple[float, float] = (
-            cursor_section.position[0] * self.__view_width,
-            cursor_section.position[1] * self.__view_height
+            cursor_section.position[0] * self.__width,
+            cursor_section.position[1] * self.__height
         )
         section_size: tuple[float, float] = (
-            cursor_section.size[0] * self.__view_width,
-            cursor_section.size[1] * self.__view_height
+            cursor_section.size[0] * self.__width,
+            cursor_section.size[1] * self.__height
         )
 
         # Create cursor sprite.

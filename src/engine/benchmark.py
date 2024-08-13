@@ -7,7 +7,7 @@ import pyglet
 class Benchmark:
     def __init__(
         self,
-        window: pyglet.window.Window,
+        window: pyglet.window.BaseWindow,
         batch: Optional[pyglet.graphics.Batch] = None,
         x: Optional[int] = None,
         y: Optional[int] = None,

@@ -113,7 +113,7 @@ class ActionSign(PositionNode):
 class PropPlacementScene(Node):
     def __init__(
         self,
-        window: pyglet.window.Window,
+        window: pyglet.window.BaseWindow,
         view_width: int,
         view_height: int,
         on_ended: Callable[[dict], None] | None = None
