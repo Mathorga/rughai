@@ -42,8 +42,8 @@
             "position": "0.5,0.0",
             "size": "0.5,0.2",
             "overflows": {
-                "top": "wrap",
-                "bottom": "wrap",
+                "top": "none",
+                "bottom": "none",
                 "left": "ammo",
                 "right": "ammo"
             }

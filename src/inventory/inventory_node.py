@@ -7,7 +7,7 @@ import pyglet.math as pm
 import engine.controllers as controllers
 from engine.animation import Animation
 from engine.cursor_input_handler import CursorInputHandler
-from engine.inventory_controller import MenuSection
+from engine.inventory_controller import SECTION_OVERFLOW_NONE, SECTION_OVERFLOW_WRAP, MenuSection
 from engine.node import Node, PositionNode
 from engine.settings import GLOBALS, Keys
 from engine.shapes.rect_node import RectNode
@@ -141,14 +141,102 @@ class MenuNode(Node):
     def delete(self) -> None:
         self.clear_sprites()
 
-    def __update_cursor_position(self, movement: pm.Vec2) -> None:
+    def __compute_overflow(
+        self,
+        movement: pm.Vec2
+    ) -> None:
         # Fetch current cursor section.
         cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
 
+        # Compute updated cursor position.
+        updated_slot_position_x: int = self.__cursor_slot_position[0] + movement.x
+        updated_slot_position_y: int = self.__cursor_slot_position[1] + movement.y
+        
+        # Right.
+        if updated_slot_position_x > cursor_section.slots[0] - 1:
+            right_overflow: str = cursor_section.overflow.right
+            if right_overflow == SECTION_OVERFLOW_NONE:
+                updated_slot_position_x = cursor_section.slots[0] - 1
+            else:
+                updated_slot_position_x = 0
+
+                # Make sure to jump to the new section if provided.
+                if right_overflow != SECTION_OVERFLOW_WRAP:
+                    self.__cursor_section = right_overflow
+
+                    # Make sure the other axis does not overflow.
+                    cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
+                    updated_slot_position_y = utils.clamp(updated_slot_position_y, 0, cursor_section.slots[1] - 1)
+
+        # Left.
+        if updated_slot_position_x < 0:
+            left_overflow: str = cursor_section.overflow.left
+            if left_overflow == SECTION_OVERFLOW_NONE:
+                updated_slot_position_x = 0
+            elif left_overflow == SECTION_OVERFLOW_WRAP:
+                updated_slot_position_x = cursor_section.slots[0] - 1
+            else:
+                right_section: MenuSection = controllers.MENU_CONTROLLER.sections[left_overflow]
+                updated_slot_position_x = right_section.slots[0] - 1
+
+                # Make sure to jump to the new section if provided.
+                if left_overflow != SECTION_OVERFLOW_WRAP:
+                    self.__cursor_section = left_overflow
+
+                    # Make sure the other axis does not overflow.
+                    cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
+                    updated_slot_position_y = utils.clamp(updated_slot_position_y, 0, cursor_section.slots[1] - 1)
+
+        # Top.
+        if updated_slot_position_y > cursor_section.slots[1] - 1:
+            top_overflow: str = cursor_section.overflow.top
+            if top_overflow == SECTION_OVERFLOW_NONE:
+                updated_slot_position_y = cursor_section.slots[1] - 1
+            else:
+                updated_slot_position_y = 0
+
+                # Make sure to jump to the new section if provided.
+                if top_overflow != SECTION_OVERFLOW_WRAP:
+                    self.__cursor_section = top_overflow
+
+                    # Make sure the other axis does not overflow.
+                    cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
+                    updated_slot_position_x = utils.clamp(updated_slot_position_x, 0, cursor_section.slots[0] - 1)
+
+        # Bottom.
+        if updated_slot_position_y < 0:
+            bottom_overflow: str = cursor_section.overflow.bottom
+            if bottom_overflow == SECTION_OVERFLOW_NONE:
+                updated_slot_position_y = 0
+            elif bottom_overflow == SECTION_OVERFLOW_WRAP:
+                updated_slot_position_y = cursor_section.slots[1] - 1
+            else:
+                right_section: MenuSection = controllers.MENU_CONTROLLER.sections[bottom_overflow]
+                updated_slot_position_y = right_section.slots[1] - 1
+
+                # Make sure to jump to the new section if provided.
+                if bottom_overflow != SECTION_OVERFLOW_WRAP:
+                    self.__cursor_section = bottom_overflow
+
+                    # Make sure the other axis does not overflow.
+                    cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
+                    updated_slot_position_x = utils.clamp(updated_slot_position_x, 0, cursor_section.slots[0] - 1)
+
+        # Update the current cursor slot position.
         self.__cursor_slot_position = (
-            utils.clamp(src = self.__cursor_slot_position[0] + movement.x, min_value = 0, max_value = cursor_section.slots[0] - 1),
-            utils.clamp(src = self.__cursor_slot_position[1] + movement.y, min_value = 0, max_value = cursor_section.slots[1] - 1)
+            updated_slot_position_x,
+            updated_slot_position_y
         )
+
+    def __update_cursor_position(self, movement: pm.Vec2) -> None:
+        # Check for overflows.
+        # The overflow checks update the current section and slot coordinates of the cursor.
+        self.__compute_overflow(
+            movement = movement
+        )
+
+        # Fetch current cursor section.
+        cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
 
         section_position: tuple[float, float] = (
             cursor_section.position[0] * self.__view_width,
@@ -162,7 +250,7 @@ class MenuNode(Node):
         if self.__cursor_sprite is not None:
             self.__cursor_sprite.set_position(
                 position = (
-                    section_position[0] +  + (section_size[0] / (cursor_section.slots[0] + 1) * (self.__cursor_slot_position[0] + 1)),
+                    section_position[0] + (section_size[0] / (cursor_section.slots[0] + 1) * (self.__cursor_slot_position[0] + 1)),
                     section_position[1] + (section_size[1] / (cursor_section.slots[1] + 1) * (self.__cursor_slot_position[1] + 1)),
                 ),
                 z = 450
