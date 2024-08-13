@@ -10,8 +10,8 @@ class RectNode(ShapeNode):
         x: float = 0.0,
         y: float = 0.0,
         z: float = 0.0,
-        width: int = 0,
-        height: int = 0,
+        width: float = 0.0,
+        height: float = 0.0,
         anchor_x: float = 0,
         anchor_y: float = 0,
         color: tuple[int, int, int, int] = (0x00, 0x00, 0x00, 0x7F),
@@ -79,7 +79,7 @@ class RectNode(ShapeNode):
         self.__shape.width = bounds[2] * GLOBALS[Keys.SCALING]
         self.__shape.height = bounds[3] * GLOBALS[Keys.SCALING]
 
-    def set_opacity(self, opacity: float):
+    def set_opacity(self, opacity: int):
         self.__shape.opacity = opacity
 
     def draw(self) -> None:

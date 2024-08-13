@@ -78,10 +78,10 @@ class PlayableSceneNode(Node):
         menu: MenuNode = MenuNode(
             view_width = view_width,
             view_height = view_height,
-            x = 0.0,
-            y = 0.0,
-            width = 1.0,
-            height = 1.0,
+            x = 0.1,
+            y = 0.1,
+            width = 0.8,
+            height = 0.8,
             world_batch = uniques.ACTIVE_SCENE.world_batch,
             ui_batch = uniques.ACTIVE_SCENE.ui_batch
         )

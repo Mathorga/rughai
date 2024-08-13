@@ -58,7 +58,6 @@ AMMO_ICON_ANIMATION: dict[str, Animation] = {
 class MenuNode(Node):
     """
     Generic menu node, holds the structure of a menu from a menu definition file.
-
     """
     
     __slots__ = (
@@ -252,8 +251,8 @@ class MenuNode(Node):
         cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
 
         section_position: tuple[float, float] = (
-            cursor_section.position[0] * self.__width,
-            cursor_section.position[1] * self.__height
+            self.__x + cursor_section.position[0] * self.__width,
+            self.__y + cursor_section.position[1] * self.__height
         )
         section_size: tuple[float, float] = (
             cursor_section.size[0] * self.__width,
@@ -278,8 +277,8 @@ class MenuNode(Node):
             section: MenuSection = controllers.MENU_CONTROLLER.sections[section_name]
             print(section)
             section_position: tuple[float, float] = (
-                section.position[0] * self.__width,
-                section.position[1] * self.__height
+                self.__x + section.position[0] * self.__width,
+                self.__y + section.position[1] * self.__height
             )
             section_size: tuple[float, float] = (
                 section.size[0] * self.__width,
@@ -287,10 +286,10 @@ class MenuNode(Node):
             )
 
             self.sections.append(RectNode(
-                x = section.position[0] * self.__width,
-                y = section.position[1] * self.__height,
-                width = int((section.position[0] + section.size[0]) * self.__width),
-                height = int((section.position[1] + section.size[1]) * self.__height),
+                x = section_position[0],
+                y = section_position[1],
+                width = section_size[0],
+                height = section_size[1],
                 color = (
                     random.randint(0x00, 0xFF),
                     random.randint(0x00, 0xFF),
@@ -314,8 +313,8 @@ class MenuNode(Node):
         # Fetch current cursor section.
         cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
         section_position: tuple[float, float] = (
-            cursor_section.position[0] * self.__width,
-            cursor_section.position[1] * self.__height
+            self.__x + cursor_section.position[0] * self.__width,
+            self.__y + cursor_section.position[1] * self.__height
         )
         section_size: tuple[float, float] = (
             cursor_section.size[0] * self.__width,
@@ -325,7 +324,7 @@ class MenuNode(Node):
         # Create cursor sprite.
         self.__cursor_sprite = SpriteNode(
             resource = self.__cursor_image.content,
-            x = section_position[0] +  + (section_size[0] / (cursor_section.slots[0] + 1) * (self.__cursor_slot_position[0] + 1)),
+            x = section_position[0] + (section_size[0] / (cursor_section.slots[0] + 1) * (self.__cursor_slot_position[0] + 1)),
             y = section_position[1] + (section_size[1] / (cursor_section.slots[1] + 1) * (self.__cursor_slot_position[1] + 1)),
             z = 450.0,
             batch = self.__ui_batch
