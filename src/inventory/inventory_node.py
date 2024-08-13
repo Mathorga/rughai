@@ -91,7 +91,7 @@ class MenuNode(Node):
 
         ################ Slots ################
         # Fetch a generic slot image.
-        self.__slot_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
+        self.__slot_image: pyglet.image.Texture = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
         utils.set_anchor(
             resource = self.__slot_image,
             center = True
@@ -149,8 +149,8 @@ class MenuNode(Node):
         cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
 
         # Compute updated cursor position.
-        updated_slot_position_x: int = self.__cursor_slot_position[0] + movement.x
-        updated_slot_position_y: int = self.__cursor_slot_position[1] + movement.y
+        updated_slot_position_x: int = self.__cursor_slot_position[0] + int(movement.x)
+        updated_slot_position_y: int = self.__cursor_slot_position[1] + int(movement.y)
         
         # Right.
         if updated_slot_position_x > cursor_section.slots[0] - 1:
@@ -166,7 +166,7 @@ class MenuNode(Node):
 
                     # Make sure the other axis does not overflow.
                     cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
-                    updated_slot_position_y = utils.clamp(updated_slot_position_y, 0, cursor_section.slots[1] - 1)
+                    updated_slot_position_y = int(utils.clamp(updated_slot_position_y, 0, cursor_section.slots[1] - 1))
 
         # Left.
         if updated_slot_position_x < 0:
@@ -185,7 +185,7 @@ class MenuNode(Node):
 
                     # Make sure the other axis does not overflow.
                     cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
-                    updated_slot_position_y = utils.clamp(updated_slot_position_y, 0, cursor_section.slots[1] - 1)
+                    updated_slot_position_y = int(utils.clamp(updated_slot_position_y, 0, cursor_section.slots[1] - 1))
 
         # Top.
         if updated_slot_position_y > cursor_section.slots[1] - 1:
@@ -201,7 +201,7 @@ class MenuNode(Node):
 
                     # Make sure the other axis does not overflow.
                     cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
-                    updated_slot_position_x = utils.clamp(updated_slot_position_x, 0, cursor_section.slots[0] - 1)
+                    updated_slot_position_x = int(utils.clamp(updated_slot_position_x, 0, cursor_section.slots[0] - 1))
 
         # Bottom.
         if updated_slot_position_y < 0:
@@ -220,7 +220,7 @@ class MenuNode(Node):
 
                     # Make sure the other axis does not overflow.
                     cursor_section: MenuSection = controllers.MENU_CONTROLLER.sections[self.__cursor_section]
-                    updated_slot_position_x = utils.clamp(updated_slot_position_x, 0, cursor_section.slots[0] - 1)
+                    updated_slot_position_x = int(utils.clamp(updated_slot_position_x, 0, cursor_section.slots[0] - 1))
 
         # Update the current cursor slot position.
         self.__cursor_slot_position = (
@@ -394,7 +394,7 @@ class InventoryNode(Node):
         self.ammo_sprites: dict[str, SpriteNode] = {}
 
         # Fetch consumable slot image.
-        self.consumable_slot_image: pyglet.image.TextureRegion = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
+        self.consumable_slot_image: pyglet.image.Texture = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
         utils.set_anchor(
             resource = self.consumable_slot_image,
             center = True

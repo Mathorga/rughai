@@ -10,7 +10,7 @@ from engine.utils import utils
 class SpriteNode(PositionNode):
     def __init__(
         self,
-        resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
+        resource: pyglet.image.Texture | pyglet.image.animation.Animation,
         batch: pyglet.graphics.Batch | None = None,
         on_animation_end: Callable | None = None,
         x: float = 0,

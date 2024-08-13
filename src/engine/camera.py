@@ -62,18 +62,18 @@ class Camera:
     def __init__(
         self,
         window: pyglet.window.Window,
-        scroll_speed = 1,
-        min_zoom = 1,
-        max_zoom = 4
+        scroll_speed: float = 1.0,
+        min_zoom: int = 1,
+        max_zoom: int = 4
     ):
         assert min_zoom <= max_zoom, "Minimum zoom must not be greater than maximum zoom"
-        self._window = window
-        self.scroll_speed = scroll_speed
-        self.max_zoom = max_zoom
-        self.min_zoom = min_zoom
-        self.offset_x = 0
-        self.offset_y = 0
-        self._zoom = max(min(1, self.max_zoom), self.min_zoom)
+        self._window: pyglet.window.Window = window
+        self.scroll_speed: float = scroll_speed
+        self.max_zoom: int = max_zoom
+        self.min_zoom: int = min_zoom
+        self.offset_x: int = 0
+        self.offset_y: int = 0
+        self._zoom: int = max(min(1, self.max_zoom), self.min_zoom)
 
     @property
     def zoom(self):

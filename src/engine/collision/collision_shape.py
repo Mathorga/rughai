@@ -100,17 +100,17 @@ class CollisionRect(CollisionShape):
         z: float = 0.0,
         width: int = 0,
         height: int = 0,
-        anchor_x: float = 0.0,
-        anchor_y: float = 0.0,
+        anchor_x: int = 0,
+        anchor_y: int = 0,
         color: tuple[int, int, int, int] = FREE_COLOR,
         batch: Optional[pyglet.graphics.Batch] = None
     ) -> None:
         super().__init__(x, y, z, color)
 
-        self.width = width
-        self.height = height
-        self.anchor_x = anchor_x
-        self.anchor_y = anchor_y
+        self.width: int = width
+        self.height: int = height
+        self.anchor_x: int = anchor_x
+        self.anchor_y: int = anchor_y
 
         if SETTINGS[Keys.DEBUG] and SETTINGS[Keys.SHOW_COLLISIONS]:
             self.render_shape = RectNode(

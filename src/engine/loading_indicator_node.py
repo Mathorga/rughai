@@ -1,14 +1,12 @@
 import os
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable
 import pyglet
 
 from engine.node import PositionNode
 from engine.sprite_node import SpriteNode
 from engine.utils.tween import Tween
+from engine.utils.types import OptionalSpriteRes, SpriteRes
 from engine.utils.utils import set_offset
-
-SpriteRes = Union[pyglet.image.animation.Animation, pyglet.image.TextureRegion]
-OptionalSpriteRes = Optional[Union[pyglet.image.animation.Animation, pyglet.image.TextureRegion]]
 
 class LoadingIndicatorNode(PositionNode):
     def __init__(
@@ -19,24 +17,24 @@ class LoadingIndicatorNode(PositionNode):
         x: float = 0.0,
         y: float = 0.0,
         z: float = 0.0,
-        offset_x: float = 0.0,
-        offset_y: float = 0.0,
+        offset_x: int = 0,
+        offset_y: int = 0,
         starting_fill: float = 1.0,
         start_visible: bool = False,
         ease_function: Callable[[float], float] = Tween.linear,
-        batch: Optional[pyglet.graphics.Batch] = None
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(x, y, z)
 
         self.__ease_function: Callable[[float], float] = ease_function
         self.__fill: float= starting_fill
-        self.__batch: Optional[pyglet.graphics.Batch] = batch
+        self.__batch: pyglet.graphics.Batch | None = batch
         self.__foreground_sprite_res: OptionalSpriteRes = foreground_sprite_res
         self.__background_sprite_res: OptionalSpriteRes = background_sprite_res
         self.__frame_sprite_res: OptionalSpriteRes = frame_sprite_res
-        self.foreground_sprite: Optional[SpriteNode] = None
-        self.background_sprite: Optional[SpriteNode] = None
-        self.frame_sprite: Optional[SpriteNode] = None
+        self.foreground_sprite: SpriteNode | None = None
+        self.background_sprite: SpriteNode | None = None
+        self.frame_sprite: SpriteNode | None = None
 
         # Center all sprites.
         set_offset(
@@ -77,8 +75,8 @@ class LoadingIndicatorNode(PositionNode):
             self.__init_sprites()
 
     def __init_sprites(self) -> None:
-        if self.foreground_sprite is None:
-            self.foreground_sprite: SpriteNode = SpriteNode(
+        if self.foreground_sprite is None and self.__foreground_sprite_res is not None:
+            self.foreground_sprite = SpriteNode(
                 resource = self.__foreground_sprite_res,
                 x = self.x,
                 y = self.y,
@@ -87,8 +85,8 @@ class LoadingIndicatorNode(PositionNode):
                 batch = self.__batch
             )
 
-        if self.background_sprite is None:
-            self.background_sprite: Optional[SpriteNode] = SpriteNode(
+        if self.background_sprite is None and self.__background_sprite_res is not None:
+            self.background_sprite = SpriteNode(
                 resource = self.__background_sprite_res,
                 x = self.x,
                 y = self.y,
@@ -96,8 +94,8 @@ class LoadingIndicatorNode(PositionNode):
                 batch = self.__batch
             ) if self.__background_sprite_res is not None else None
 
-        if self.frame_sprite is None:
-            self.frame_sprite: Optional[SpriteNode] = SpriteNode(
+        if self.frame_sprite is None and self.__background_sprite_res is not None:
+            self.frame_sprite = SpriteNode(
                 resource = self.__frame_sprite_res,
                 x = self.x,
                 y = self.y,
@@ -108,7 +106,7 @@ class LoadingIndicatorNode(PositionNode):
     def set_position(
         self,
         position: tuple[float, float],
-        z: Optional[float] = None
+        z: float | None = None
     ) -> None:
         super().set_position(position, z)
 

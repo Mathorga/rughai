@@ -428,7 +428,7 @@ class IdlePropState(State):
 
     def hit(self) -> str | None:
         # Reduce health points if a damage occurred and health points were defined in the first place.
-        if self.actor.max_health_points is not None:
+        if self.actor.max_health_points is not None and self.actor.health_points is not None:
             self.actor.health_points -= 1
 
             if self.actor.health_points <= 0:
@@ -447,10 +447,14 @@ class IdlePropIdleState(IdlePropState):
     def update(self, dt: float) -> str | None:
         self.__elapsed_anim_time += dt
 
-        if self.__elapsed_anim_time > self.actor.anim_duration and self.actor.sprite.get_frame_index() <= 0:
-            self.actor.set_animation("idle")
+        if self.actor.sprite is not None:
+            # Fetch current frame index.
+            current_frame_index: int = self.actor.sprite.get_frame_index()
 
-            self.__elapsed_anim_time = 0.0
+            if self.__elapsed_anim_time > self.actor.anim_duration and current_frame_index <= 0:
+                self.actor.set_animation("idle")
+
+                self.__elapsed_anim_time = 0.0
 
 class IdlePropMeetInState(IdlePropState):
     def start(self) -> None:
@@ -470,10 +474,14 @@ class IdlePropMeetingState(IdlePropState):
     def update(self, dt: float) -> str | None:
         self.__elapsed_anim_time += dt
 
-        if self.__elapsed_anim_time > self.actor.anim_duration and self.actor.sprite.get_frame_index() <= 0:
-            self.actor.set_animation("meeting")
+        if self.actor.sprite is not None:
+            # Fetch current frame index.
+            current_frame_index: int = self.actor.sprite.get_frame_index()
 
-            self.__elapsed_anim_time = 0.0
+            if self.__elapsed_anim_time > self.actor.anim_duration and current_frame_index <= 0:
+                self.actor.set_animation("meeting")
+
+                self.__elapsed_anim_time = 0.0
 
 class IdlePropMeetOutState(IdlePropState):
     def start(self) -> None:

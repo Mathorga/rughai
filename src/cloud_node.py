@@ -28,8 +28,8 @@ class CloudNode(PositionNode):
         # Pick a random cloud sprite.
         self.image = pyglet.resource.image(f"sprites/clouds/cloud_{random.randint(0, 7)}.png")
         # Center sprite.
-        self.image.anchor_x = self.image.width / 2
-        self.image.anchor_y = self.image.height / 2
+        self.image.anchor_x = int(self.image.width / 2)
+        self.image.anchor_y = int(self.image.height / 2)
 
         # Load fragment source from file.
         fragment_source: str

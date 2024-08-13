@@ -5,6 +5,8 @@ import pyglet
 import pyglet.math as pm
 import pyglet.gl as gl
 
+from engine.utils.types import SpriteRes
+
 EPSILON = 1e-8
 
 def idx2to1(i: int, j: int, m: int) -> int:
@@ -270,45 +272,45 @@ def sweep_circle_rect() -> Optional[CollisionHit]:
 
 
 def set_offset(
-    resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
-    x: float | None = None,
-    y: float | None = None,
+    resource: SpriteRes,
+    x: int | None = None,
+    y: int | None = None,
     center: bool = False
 ) -> None:
-    if isinstance(resource, pyglet.image.TextureRegion):
-        resource.anchor_x = ((resource.width / 2) if center else 0) - int(x or 0)
-        resource.anchor_y = ((resource.height / 2) if center else 0) - int(y or 0)
+    if isinstance(resource, pyglet.image.Texture):
+        resource.anchor_x = int(((resource.width / 2) if center else 0) - int(x or 0))
+        resource.anchor_y = int(((resource.height / 2) if center else 0) - int(y or 0))
     elif isinstance(resource, pyglet.image.animation.Animation):
         for frame in resource.frames:
-            frame.image.anchor_x = ((frame.image.width / 2) if center else 0) - int(x or 0)
-            frame.image.anchor_y = ((frame.image.height / 2) if center else 0) - int(y or 0)
+            frame.image.anchor_x = int(((frame.image.width / 2) if center else 0) - int(x or 0))
+            frame.image.anchor_y = int(((frame.image.height / 2) if center else 0) - int(y or 0))
 
 def set_anchor(
-    resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
-    x: float | None = None,
-    y: float | None = None,
+    resource: pyglet.image.Texture | pyglet.image.animation.Animation,
+    x: int | None = None,
+    y: int | None = None,
     center: bool = False
 ) -> None:
-    if isinstance(resource, pyglet.image.TextureRegion):
-        resource.anchor_x = ((resource.width / 2) if center else 0) + int(x or 0)
-        resource.anchor_y = ((resource.height / 2) if center else 0) + int(y or 0)
+    if isinstance(resource, pyglet.image.Texture):
+        resource.anchor_x = int(((resource.width / 2) if center else 0) + int(x or 0))
+        resource.anchor_y = int(((resource.height / 2) if center else 0) + int(y or 0))
     elif isinstance(resource, pyglet.image.animation.Animation):
         for frame in resource.frames:
-            frame.image.anchor_x = ((frame.image.width / 2) if center else 0) + int(x or 0)
-            frame.image.anchor_y = ((frame.image.height / 2) if center else 0) + int(y or 0)
+            frame.image.anchor_x = int(((frame.image.width / 2) if center else 0) + int(x or 0))
+            frame.image.anchor_y = int(((frame.image.height / 2) if center else 0) + int(y or 0))
 
 
 def set_filter(
-    resource: pyglet.image.TextureRegion | pyglet.image.animation.Animation,
+    resource: SpriteRes,
     filter: int
 ) -> None:
-    if isinstance(resource, pyglet.image.TextureRegion):
+    if isinstance(resource, pyglet.image.Texture):
         set_texture_filter(texture = resource, filter = filter)
     elif isinstance(resource, pyglet.image.animation.Animation):
         set_animation_filter(animation = resource, filter = filter)
 
 def set_texture_filter(
-    texture: pyglet.image.TextureRegion,
+    texture: pyglet.image.Texture,
     filter: int
 ) -> None:
     gl.glBindTexture(texture.target, texture.id)
@@ -321,12 +323,12 @@ def set_animation_filter(
     filter: int
 ) -> None:
     for texture in animation.frames:
-        set_texture_filter(texture = texture.image, filter = filter)
+        set_texture_filter(texture = texture.image.get_texture(), filter = filter)
 
 def set_animation_anchor(
     animation: pyglet.image.animation.Animation,
-    x: Optional[float],
-    y: Optional[float]
+    x: int | None,
+    y: int | None
 ):
     for frame in animation.frames:
         if x is not None:
@@ -337,7 +339,7 @@ def set_animation_anchor(
 
 def set_animation_anchor_x(
     animation: pyglet.image.animation.Animation,
-    anchor: Optional[float]
+    anchor: int | None
 ):
     if anchor is not None:
         for frame in animation.frames:
@@ -345,7 +347,7 @@ def set_animation_anchor_x(
 
 def set_animation_anchor_y(
     animation: pyglet.image.animation.Animation,
-    anchor: Optional[float]
+    anchor: int | None
 ):
     if anchor is not None:
         for frame in animation.frames:
@@ -364,15 +366,11 @@ def center_animation(
 
 def x_center_animation(animation: pyglet.image.animation.Animation):
     for frame in animation.frames:
-        frame.image.anchor_x = animation.get_max_width() / 2
+        frame.image.anchor_x = int(animation.get_max_width() / 2)
 
 def y_center_animation(animation: pyglet.image.animation.Animation):
     for frame in animation.frames:
-        frame.image.anchor_y = animation.get_max_height() / 2
-
-def scale_animation(animation: pyglet.image.animation.Animation, scale: float):
-    for frame in animation.frames:
-        frame.image.scale = scale
+        frame.image.anchor_y = int(animation.get_max_height() / 2)
 
 def set_animation_duration(animation: pyglet.image.animation.Animation, duration: float):
     for frame in animation.frames:

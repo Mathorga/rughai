@@ -9,6 +9,7 @@ import pyglet
 import pyglet.math as pm
 
 from engine.loading_indicator_node import LoadingIndicatorNode
+from engine.utils import utils
 from engine.utils.tween import Tween
 import engine.controllers as controllers
 from engine.animation import Animation
@@ -121,6 +122,7 @@ class PlayerNode(PositionNode):
         self.__scope = ScopeNode(
             x = self.x,
             y = self.y,
+            offset_x = self.scope_offset[0],
             offset_y = self.scope_offset[1],
             batch = batch
         )
@@ -131,15 +133,14 @@ class PlayerNode(PositionNode):
             background_sprite_res = pyglet.resource.image("sprites/loading_background.png"),
             x = self.x,
             y = self.y,
-            offset_y = 4.0,
+            offset_y = 4,
             ease_function = Tween.cubeInOut,
             batch = batch
         )
 
         # Shadow sprite image.
         shadow_image = pyglet.resource.image("sprites/shadow.png")
-        shadow_image.anchor_x = shadow_image.width / 2
-        shadow_image.anchor_y = shadow_image.height / 2
+        utils.set_anchor(shadow_image, center = True)
 
         self.__shadow_sprite = SpriteNode(
             resource = shadow_image,
