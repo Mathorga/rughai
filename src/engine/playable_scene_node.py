@@ -4,6 +4,7 @@ import pyglet
 import engine.controllers as controllers
 from engine.door_node import DoorNode
 from engine.fall_node import FallNode
+from engine.menu.menu_node import MenuNode
 from engine.node import Node, PositionNode
 from engine.scene_node import SceneNode
 from engine.settings import SETTINGS, Keys
@@ -15,7 +16,7 @@ from engine.utils import utils
 from doors_loader import DoorsLoader
 from falls_loader import FallsLoader
 from idle_prop_loader import IdlePropLoader
-from inventory.inventory_node import InventoryNode, MenuNode
+from inventory.inventory_node import InventoryNode
 from player_node import PlayerNode
 from prop_loader import PropLoader
 from walls_loader import WallsLoader
@@ -69,11 +70,16 @@ class PlayableSceneNode(Node):
         )
 
         # Inventory.
-        inventory: InventoryNode = InventoryNode(
-            view_width = view_width,
-            view_height = view_height,
-            world_batch = uniques.ACTIVE_SCENE.world_batch,
-            ui_batch = uniques.ACTIVE_SCENE.ui_batch
+        # inventory: InventoryNode = InventoryNode(
+        #     view_width = view_width,
+        #     view_height = view_height,
+        #     world_batch = uniques.ACTIVE_SCENE.world_batch,
+        #     ui_batch = uniques.ACTIVE_SCENE.ui_batch
+        # )
+        slot_image: pyglet.image.Texture = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
+        utils.set_anchor(
+            resource = slot_image,
+            center = True
         )
         menu: MenuNode = MenuNode(
             view_width = view_width,
@@ -85,6 +91,9 @@ class PlayableSceneNode(Node):
             world_batch = uniques.ACTIVE_SCENE.world_batch,
             ui_batch = uniques.ACTIVE_SCENE.ui_batch
         )
+        menu.set_section_slot_res("bag", slot_image)
+        menu.set_section_slot_res("ammo", slot_image)
+        menu.set_section_slot_res("quik", slot_image)
 
         # Scene music.
         self.scene_music: pyglet.media.Source = pyglet.resource.media(name = "sounds/rughai_myst.wav")
