@@ -118,7 +118,7 @@ class GroupNode(PositionNode):
 
         # Move all children accordingly.
         for child in self.children:
-            current_child_position: tuple[int, int] = child.get_position()
+            current_child_position: tuple[float, float] = child.get_position()
             child.set_position(position = (current_child_position[0] + dp[0], current_child_position[1] + dp[1]), z = child.z + dz)
 
     def update(self, dt: float) -> None:

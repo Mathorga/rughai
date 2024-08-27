@@ -85,7 +85,7 @@ class Camera:
         return self.offset_x, self.offset_y
 
     @zoom.setter
-    def zoom(self, value):
+    def zoom(self, value: int):
         """ Here we set zoom, clamp value to minimum of min_zoom and max of max_zoom."""
         self._zoom = max(min(value, self.max_zoom), self.min_zoom)
 

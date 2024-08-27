@@ -1,4 +1,6 @@
 import os.path
+import time
+import asyncio
 import pyglet
 import pyglet.gl as gl
 
@@ -121,6 +123,8 @@ class Rughai:
             )
         )
 
+        # self.__tick_time: float = time.perf_counter()
+
     def __create_window(self) -> pyglet.window.BaseWindow:
         window = pyglet.window.Window(
             width = SETTINGS[Keys.WINDOW_WIDTH] if not SETTINGS[Keys.FULLSCREEN] else None,
@@ -166,14 +170,20 @@ class Rughai:
 
         self.__active_scene = scene
 
-        # Just return if no scene was set.
-        if uniques.ACTIVE_SCENE is None:
-            return
+        # Make sure the active scene was set globally.
+        assert uniques.ACTIVE_SCENE is not None
 
     def on_draw(self) -> None:
         """
         Draws everything to the screen.
         """
+
+        # new_time: float = time.perf_counter()
+
+        # self.update(dt = new_time - self.__tick_time)
+        # self.update(dt = 1.0 / 60.0)
+
+        # self.__tick_time = new_time
 
         # Update window matrix.
         self.window.projection = pyglet.math.Mat4.orthogonal_projection(
@@ -213,8 +223,8 @@ class Rughai:
             controllers.COLLISION_CONTROLLER.update(dt)
 
     def run(self) -> None:
-        pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Keys.TARGET_FPS])
-        # pyglet.clock.schedule(self.update)
+        # pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Keys.TARGET_FPS])
+        pyglet.clock.schedule(self.update)
         pyglet.app.run()
 
 # map_res = random_walk(

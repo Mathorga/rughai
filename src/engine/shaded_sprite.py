@@ -105,9 +105,9 @@ class ShadedSprite(pyglet.sprite.Sprite):
     def __init__(
         self,
         img: pyglet.image.AbstractImage | pyglet.image.Animation,
-        x = 0,
-        y = 0,
-        z = 0,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
         blend_src: int = gl.GL_SRC_ALPHA,
         blend_dest: int = gl.GL_ONE_MINUS_SRC_ALPHA,
         batch: pyglet.graphics.Batch | None = None,

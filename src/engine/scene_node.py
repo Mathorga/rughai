@@ -114,7 +114,7 @@ class SceneNode(Node):
         self.__curtain_closing: bool = False
         self.__curtain.set_opacity(int(Tween.compute(self.__curtain_opacity_fill, Tween.expInOut) * 0xFF))
 
-    def get_scaled_view_size(self):
+    def get_scaled_view_size(self) -> tuple[int, int]:
         return (
             self.__view_width * GLOBALS[Keys.SCALING],
             self.__view_height * GLOBALS[Keys.SCALING]
@@ -163,7 +163,7 @@ class SceneNode(Node):
 
     def __update_camera(self, dt):
         if self.__camera is not None and self.__cam_target is not None:
-            scaled_view_size = self.get_scaled_view_size()
+            scaled_view_size: tuple[int, int] = self.get_scaled_view_size()
 
             # Compute camera shake.
             camera_shake: pm.Vec2 = pm.Vec2.from_polar(mag = self.__cam_shake * random.random(), angle = math.pi * 2 * random.random())

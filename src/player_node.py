@@ -231,7 +231,7 @@ class PlayerNode(PositionNode):
         self.__state_machine.update(dt = dt)
 
         # Update sprites accordingly.
-        self.__update_sprites(dt)
+        self.__update_sprites(dt = dt)
 
     def set_position(
         self,

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Callable, Optional
+from typing import Callable
 
 from engine.collision.collision_shape import CollisionShape
 from engine.node import PositionNode
@@ -15,15 +15,15 @@ class CollisionType(Enum):
 class CollisionNode(PositionNode):
     def __init__(
         self,
-        shape: Optional[CollisionShape],
+        shape: CollisionShape,
         x: float = 0,
         y: float = 0,
         active_tags: list[str] = [],
         passive_tags: list[str] = [],
         collision_type: CollisionType = CollisionType.STATIC,
         sensor: bool = False,
-        color: Optional[tuple[int, int, int, int]] = None,
-        on_triggered: Optional[Callable[[list[str], bool], None]] = None
+        color: tuple[int, int, int, int] | None = None,
+        on_triggered: Callable[[list[str], bool], None] | None = None
     ) -> None:
         super().__init__(x, y)
 
@@ -35,7 +35,7 @@ class CollisionNode(PositionNode):
         self.passive_tags = passive_tags
         self.type = collision_type
         self.sensor = sensor
-        self.shape: Optional[CollisionShape] = shape
+        self.shape: CollisionShape = shape
         self.on_triggered = on_triggered
 
         self.collisions = set[CollisionNode]()
@@ -51,12 +51,11 @@ class CollisionNode(PositionNode):
     def delete(self) -> None:
         if self.shape is not None:
             self.shape.delete()
-        self.shape = None
 
     def set_position(
         self,
         position: tuple[float, float],
-        z: Optional[float] = None
+        z: float | None = None
     ) -> None:
         super().set_position(position)
 
@@ -89,7 +88,7 @@ class CollisionNode(PositionNode):
         if self.shape is not None:
             self.shape.set_velocity(velocity = velocity)
 
-    def collide(self, other) -> Optional[CollisionHit]:
+    def collide(self, other) -> CollisionHit | None:
         assert isinstance(other, CollisionNode)
 
         # Reset collision time.

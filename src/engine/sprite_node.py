@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Union
+from typing import Callable
 import pyglet
 import pyglet.gl as gl
 
@@ -29,9 +29,9 @@ class SpriteNode(PositionNode):
 
         self.sprite = ShadedSprite(
             img = resource,
-            x = int(x * GLOBALS[Keys.SCALING]),
-            y = int(y * GLOBALS[Keys.SCALING]),
-            z = int(z if z is not None else -y),
+            x = x * GLOBALS[Keys.SCALING],
+            y = y * GLOBALS[Keys.SCALING],
+            z = z if z is not None else -y,
             program = shader,
             samplers_2d = samplers_2d,
             batch = batch
@@ -50,7 +50,7 @@ class SpriteNode(PositionNode):
     def set_position(
         self,
         position: tuple[float, float],
-        z: Optional[float] = None
+        z: float | None = None
     ) -> None:
         self.x = position[0]
         self.y = position[1]
@@ -59,13 +59,13 @@ class SpriteNode(PositionNode):
         self.sprite.position = (
             self.x * GLOBALS[Keys.SCALING],
             self.y * GLOBALS[Keys.SCALING],
-            int(self.z)
+            self.z
         )
 
     def set_scale(
         self,
-        x_scale: Optional[int] = None,
-        y_scale: Optional[int] = None
+        x_scale: int | None = None,
+        y_scale: int | None = None
     ) -> None:
         if x_scale is not None:
             self.sprite.scale_x = x_scale
@@ -75,7 +75,7 @@ class SpriteNode(PositionNode):
 
     def set_image(
         self,
-        image: Union[pyglet.image.TextureRegion, pyglet.image.animation.Animation]
+        image: pyglet.image.Texture | pyglet.image.animation.Animation
     ) -> None:
         if isinstance(self.sprite.image, pyglet.image.animation.Animation):
             if self.sprite.image != image or (self.sprite.image is not None and self.sprite.frame_index >= len(self.sprite.image.frames) - 1):

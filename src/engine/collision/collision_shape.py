@@ -1,4 +1,3 @@
-from typing import Optional, Tuple
 import pyglet
 import pyglet.math as pm
 
@@ -16,8 +15,8 @@ FREE_COLOR = (0x7F, 0xFF, 0xFF, 0x7F)
 class CollisionShape(PositionNode):
     def __init__(
         self,
-        x: float = 0,
-        y: float = 0,
+        x: float = 0.0,
+        y: float = 0.0,
         z: float = 0.0,
         color: tuple[int, int, int, int] = FREE_COLOR
     ) -> None:
@@ -28,13 +27,13 @@ class CollisionShape(PositionNode):
         self.velocity_y = 0.0
         self.color: tuple[int, int, int, int] = color
 
-        self.render_shape: Optional[ShapeNode] = None
-        self.velocity_shape: Optional[LineNode] = None
+        self.render_shape: ShapeNode | None = None
+        self.velocity_shape: LineNode | None = None
 
     def set_position(
         self,
         position: tuple[float, float],
-        z: Optional[float] = None
+        z: float | None = None
     ) -> None:
         """
         Sets the shape position.
@@ -79,7 +78,7 @@ class CollisionShape(PositionNode):
     def set_color(self, color: tuple[int, int, int, int]) -> None:
         self.color = color
 
-    def swept_collide(self, other) -> Optional[utils.CollisionHit]:
+    def swept_collide(self, other) -> utils.CollisionHit | None:
         return None
 
     def overlap(self, _other) -> bool:
@@ -103,7 +102,7 @@ class CollisionRect(CollisionShape):
         anchor_x: int = 0,
         anchor_y: int = 0,
         color: tuple[int, int, int, int] = FREE_COLOR,
-        batch: Optional[pyglet.graphics.Batch] = None
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(x, y, z, color)
 
@@ -141,7 +140,7 @@ class CollisionRect(CollisionShape):
             self.height
         )
 
-    def swept_collide(self, other) -> Optional[utils.CollisionHit]:
+    def swept_collide(self, other) -> utils.CollisionHit | None:
         return utils.sweep_rect_rect(
             collider = utils.Rect(
                 center = pm.Vec2(self.x - self.anchor_x + self.width / 2, self.y - self.anchor_y + self.height / 2),
@@ -190,7 +189,7 @@ class CollisionCircle(CollisionShape):
         y: float = 0,
         z: float = 0.0,
         radius: int = 1,
-        batch: Optional[pyglet.graphics.Batch] = None
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         super().__init__(x, y, z)
 
@@ -231,7 +230,7 @@ class CollisionCircle(CollisionShape):
             # Other.
             return False
 
-    def swept_collide(self, other) -> Optional[utils.CollisionHit]:
+    def swept_collide(self, other) -> utils.CollisionHit | None:
         # TODO
         # https://ericleong.me/research/circle-circle/#dynamic-static-circle-collision-detection
         return None
