@@ -736,7 +736,7 @@ class PlayerRollState(PlayerState):
         super().__init__(actor)
 
         # Animations.
-        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_roll.json")
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_roll_1.json")
         self.__startup: bool = False
 
     def start(self) -> None:
