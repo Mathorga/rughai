@@ -656,7 +656,7 @@ class PlayerRunState(PlayerState):
         super().__init__(actor)
 
         # Animations.
-        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_run.json")
+        self.__animation: Animation = Animation(source = "sprites/iryo/iryo_run_2.json")
 
         # Input.
         self.__move_vec: pyglet.math.Vec2 = pyglet.math.Vec2()
