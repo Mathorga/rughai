@@ -4,7 +4,6 @@ Module containing the main player's classes.
 
 from enum import Enum
 import math
-from typing import Optional
 import pyglet
 import pyglet.math as pm
 
@@ -78,7 +77,7 @@ class PlayerNode(PositionNode):
         cam_target_offset: tuple = (0.0, 8.0),
         x: float = 0,
         y: float = 0,
-        batch: Optional[pyglet.graphics.Batch] = None
+        batch: pyglet.graphics.Batch | None = None
     ) -> None:
         PositionNode.__init__(
             self,
@@ -86,7 +85,7 @@ class PlayerNode(PositionNode):
             y = y
         )
 
-        self.batch: Optional[pyglet.graphics.Batch] = batch
+        self.batch: pyglet.graphics.Batch | None = batch
 
         self.interactor_distance: float = 5.0
 
@@ -227,7 +226,18 @@ class PlayerNode(PositionNode):
         self.__scope.delete()
         self.draw_indicator.delete()
 
+    def pre_update(self, dt: float) -> None:
+        super().pre_update(dt = dt)
+
+        # Compute velocity.
+        velocity: pyglet.math.Vec2 = self.__compute_velocity(dt = dt)
+
+        self.__set_velocity(velocity = velocity)
+
     def update(self, dt) -> None:
+        super().update(dt = dt)
+
+        # Update the state machine.
         self.__state_machine.update(dt = dt)
 
         # Update sprites accordingly.
@@ -288,20 +298,20 @@ class PlayerNode(PositionNode):
     def set_animation(self, animation: Animation) -> None:
         self.__sprite.set_image(animation.content)
 
-    def __compute_velocity(self, dt) -> pm.Vec2:
+    def __compute_velocity(self, dt: float) -> pm.Vec2:
         # Define a vector from speed and direction.
         return pm.Vec2.from_polar(self.stats.speed * dt, self.stats.move_dir)
+
+    def __set_velocity(self, velocity: pyglet.math.Vec2) -> None:
+        # Apply the computed velocity to all colliders.
+        self.__collider.set_velocity((round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(velocity.y, 5)))
+        self.__interactor.set_velocity((round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(velocity.y, 5)))
 
     def move(self, dt: float) -> None:
         # Apply movement after collision.
         self.set_position(self.__collider.get_position())
 
-        # Compute velocity.
-        velocity: pyglet.math.Vec2 = self.__compute_velocity(dt)
-
-        # Apply the computed velocity to all colliders.
-        self.__collider.set_velocity((round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(velocity.y, 5)))
-        self.__interactor.set_velocity((round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(velocity.y, 5)))
+        # self.set_velocity(dt = dt)
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.
@@ -341,7 +351,7 @@ class PlayerNode(PositionNode):
 
     def __update_shadow(self, dt):
         self.__shadow_sprite.set_position(
-            position = (self.x, self.y),
+            position = self.get_position(),
             # z = 0
             z = -(self.y + (SETTINGS[Keys.LAYERS_Z_SPACING] * 0.1))
         )
@@ -525,7 +535,7 @@ class PlayerIdleState(PlayerState):
             self.__sprint = self.actor.get_input_sprint()
             self.__interact = self.actor.get_input_interaction()
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         # Read inputs.
         self.__fetch_input()
 
@@ -591,7 +601,7 @@ class PlayerWalkState(PlayerState):
             self.__sprint = self.actor.get_input_sprint()
             self.__interact = self.actor.get_input_interaction()
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         # Read inputs.
         self.__fetch_input()
 
@@ -680,7 +690,7 @@ class PlayerRunState(PlayerState):
             self.__sprint = self.actor.get_input_sprint()
             self.__interact = self.actor.get_input_interaction()
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         # Read inputs.
         self.__fetch_input()
 
@@ -743,7 +753,7 @@ class PlayerRollState(PlayerState):
         self.actor.set_animation(self.__animation)
         self.__startup = True
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         if self.__startup:
             self.actor.stats.speed = self.actor.stats.max_speed * 2
             self.__startup = False
@@ -757,7 +767,7 @@ class PlayerRollState(PlayerState):
         if self.actor.stats.speed <= 0.0:
             return PlayerStates.IDLE
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> str | None:
         if self.actor.stats.speed <= 0.0:
             return PlayerStates.IDLE
         else:
@@ -792,7 +802,10 @@ class PlayerLoadState(PlayerState):
         # Set aim direction.
         self.actor.stats.look_dir = aim_vec.heading
 
-    def on_animation_end(self) -> Optional[str]:
+        # Stop moving.
+        self.actor.stats.speed = 0.0
+
+    def on_animation_end(self) -> str | None:
         return PlayerStates.AIM
 
 class PlayerAimState(PlayerState):
@@ -832,6 +845,9 @@ class PlayerAimState(PlayerState):
         self.actor.load_scope()
         self.actor.draw_indicator.hide()
 
+        # Stop moving.
+        self.actor.stats.speed = 0.0
+
     def __fetch_input(self) -> None:
         """
         Reads all necessary inputs.
@@ -843,7 +859,7 @@ class PlayerAimState(PlayerState):
             self.__aim_vec = self.actor.get_input_aim_vec()
             self.__draw = self.actor.get_input_draw()
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         # Read input.
         self.__fetch_input()
 
@@ -907,7 +923,7 @@ class PlayerAimWalkState(PlayerState):
             self.__aim_vec = self.actor.get_input_aim_vec()
             self.__draw = self.actor.get_input_draw()
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         # Read input.
         self.__fetch_input()
 
@@ -975,6 +991,9 @@ class PlayerDrawState(PlayerState):
         self.actor.set_animation(self.__animation)
         self.actor.draw_indicator.show()
 
+        # Stop moving.
+        self.actor.stats.speed = 0.0
+
     def __fetch_input(self) -> None:
         """
         Reads all necessary inputs.
@@ -985,7 +1004,7 @@ class PlayerDrawState(PlayerState):
             self.__aim_vec = self.actor.get_input_aim_vec()
             self.__draw = self.actor.get_input_draw()
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         # Read input.
         self.__fetch_input()
 
@@ -1053,7 +1072,7 @@ class PlayerDrawWalkState(PlayerState):
             self.__aim_vec = self.actor.get_input_aim_vec()
             self.__draw = self.actor.get_input_draw()
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         # Read input.
         self.__fetch_input()
 
@@ -1142,6 +1161,9 @@ class PlayerShootState(PlayerState):
 
         controllers.SOUND_CONTROLLER.play_effect(self.actor.shoot_sound)
 
+        # Stop moving.
+        self.actor.stats.speed = 0.0
+
     def end(self) -> None:
         self.actor.set_cam_target_distance_fill(fill = 0.0)
 
@@ -1153,11 +1175,11 @@ class PlayerShootState(PlayerState):
         if self.input_enabled and not (controllers.INVENTORY_CONTROLLER.is_open or controllers.MENU_CONTROLLER.is_open):
             self.__aim = controllers.INPUT_CONTROLLER.get_aim()
 
-    def update(self, dt: float) -> Optional[str]:
+    def update(self, dt: float) -> str | None:
         # Read input.
         self.__fetch_input()
 
-    def on_animation_end(self) -> Optional[str]:
+    def on_animation_end(self) -> str | None:
         if not self.__aim:
             return PlayerStates.IDLE
         else:

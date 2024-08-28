@@ -42,10 +42,10 @@ class Benchmark:
         self._label.draw()
 
     def __enter__(self) -> None:
-        self._start_time = time.time()
+        self._start_time = time.perf_counter()
 
     def __exit__(self, exception_type, exception_value, traceback) -> None:
-        end_time = time.time()
+        end_time = time.perf_counter()
         dt = end_time - self._start_time
         self._elapsed += end_time - self._last_time
         self._last_time = end_time

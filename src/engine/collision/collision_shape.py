@@ -6,6 +6,7 @@ from engine.shapes.circle_node import CircleNode
 from engine.shapes.line_node import LineNode
 from engine.shapes.rect_node import RectNode
 from engine.shapes.shape_node import ShapeNode
+from engine.sprite_node import SpriteNode
 import engine.utils.utils as utils
 from engine.settings import SETTINGS, Keys
 

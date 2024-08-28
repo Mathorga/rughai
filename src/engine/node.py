@@ -1,3 +1,6 @@
+from engine.settings import GLOBALS, Keys
+
+
 class Node:
     __slots__ = (
         "components"
@@ -16,6 +19,19 @@ class Node:
         Adds a component to self.
         """
         self.components.append(component)
+
+    def pre_update(
+            self,
+            dt: float
+        ) -> None:
+        """
+        Performs all preemptive operations on the object.
+
+        Parameters
+        ----------
+        dt: float
+            Time (in s) since the last frame was calculated.
+        """
 
     def update(
             self,
@@ -77,7 +93,7 @@ class PositionNode(Node):
                 component.set_position(position = position, z = z) # type: ignore
 
     def get_position(self) -> tuple[float, float]:
-        return (self.x, self.y)
+        return (round(self.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(self.y, GLOBALS[Keys.FLOAT_ROUNDING]))
 
     def get_bounding_box(self) -> tuple[float, float, float, float]:
         return (self.x, self.y, 0.0, 0.0)

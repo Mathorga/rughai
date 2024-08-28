@@ -52,9 +52,7 @@ class SpriteNode(PositionNode):
         position: tuple[float, float],
         z: float | None = None
     ) -> None:
-        self.x = position[0]
-        self.y = position[1]
-        self.z = z if z is not None else -position[1]
+        super().set_position(position = position, z = z if z is not None else -position[1])
 
         self.sprite.position = (
             self.x * GLOBALS[Keys.SCALING],

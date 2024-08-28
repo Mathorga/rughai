@@ -1,5 +1,3 @@
-from typing import Dict, Optional
-
 from engine.collision.collision_node import CollisionType, CollisionNode
 from engine.utils.utils import CollisionHit
 
@@ -7,7 +5,7 @@ VELOCITY_TOLERANCE: float = 1e-5
 
 class CollisionController:
     def __init__(self) -> None:
-        self.__colliders: Dict[CollisionType, list[CollisionNode]] = {}
+        self.__colliders: dict[CollisionType, list[CollisionNode]] = {}
 
     def add_collider(
         self,
@@ -40,7 +38,7 @@ class CollisionController:
                 # Solve collision and iterate until velocity is exhausted.
                 while abs(actor.velocity_x) > VELOCITY_TOLERANCE or abs(actor.velocity_y) > VELOCITY_TOLERANCE:
                     # Save the resulting collisions for the given actor.
-                    nearest_collision: Optional[CollisionHit] = None
+                    nearest_collision: CollisionHit | None = None
 
                     # Loop through static colliders.
                     for other in self.__colliders[CollisionType.STATIC]:
@@ -62,7 +60,6 @@ class CollisionController:
                     actor_position = actor.get_position()
 
                     # Handling collider movement here allows us to check for all collisions before actually moving.
-                    # for nearest_collision in collisions:
                     if nearest_collision is not None:
                         # Move to the collision point.
                         actor.set_position((
@@ -77,10 +74,13 @@ class CollisionController:
                         # Set the resulting velocity for the next iteration.
                         actor.set_velocity((x_result, y_result))
                     else:
-                        actor.set_position((actor_position[0] + actor.velocity_x, actor_position[1] + actor.velocity_y))
+                        actor.set_position((
+                            actor_position[0] + actor.velocity_x,
+                            actor_position[1] + actor.velocity_y
+                        ))
                         actor.set_velocity((0.0, 0.0))
 
-    def update(self, _dt) -> None:
+    def update(self) -> None:
         self.__handle_collisions()
 
     def clear(self) -> None:

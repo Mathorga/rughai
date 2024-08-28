@@ -68,15 +68,15 @@ class Rughai:
         load_settings(f"{pyglet.resource.path[0]}/settings.json")
 
         # Create a window.
-        self.window = self.__create_window()
-        self.fps_display = pyglet.window.FPSDisplay(
-            window = self.window,
+        self.__window: pyglet.window.BaseWindow = self.__create_window()
+        self.__fps_display = pyglet.window.FPSDisplay(
+            window = self.__window,
             color = (0x00, 0x00, 0x00, 0xFF),
             samples = 16
         )
 
         # Controllers.
-        controllers.create_controllers(window = self.window)
+        controllers.create_controllers(window = self.__window)
         controllers.INVENTORY_CONTROLLER.load_file("inventory_mock.json")
         print(controllers.INVENTORY_CONTROLLER)
         controllers.MENU_CONTROLLER.load_file(src = "inventory.json")
@@ -89,25 +89,25 @@ class Rughai:
         # Using a scaling of 1 means that movements are pixel-perfect (aka nothing moves by sub-pixel values).
         # Using a scaling of 5 means that the minimum unit is 1/5 of a pixel.
         GLOBALS[Keys.SCALING] = 1 if SETTINGS[Keys.PIXEL_PERFECT] else int(min(
-            self.window.width // SETTINGS[Keys.VIEW_WIDTH],
-            self.window.height // SETTINGS[Keys.VIEW_HEIGHT]
+            self.__window.width // SETTINGS[Keys.VIEW_WIDTH],
+            self.__window.height // SETTINGS[Keys.VIEW_HEIGHT]
         ) * platform_scaling)
 
-        self._upscaler = TrueUpscaler(
-            window = self.window,
+        self.__upscaler = TrueUpscaler(
+            window = self.__window,
             render_width = int((SETTINGS[Keys.VIEW_WIDTH] * GLOBALS[Keys.SCALING]) / platform_scaling),
             render_height = int((SETTINGS[Keys.VIEW_HEIGHT] * GLOBALS[Keys.SCALING]) / platform_scaling),
             program = upscaler_program
         )
 
         # Create benchmarks.
-        self._update_bench = Benchmark(
-            window = self.window,
+        self.__update_bench = Benchmark(
+            window = self.__window,
             text = "UT: ",
             y = 80
         )
-        self._render_bench = Benchmark(
-            window = self.window,
+        self.__render_bench = Benchmark(
+            window = self.__window,
             text = "RT: ",
             y = 50
         )
@@ -116,7 +116,7 @@ class Rughai:
         self.set_active_scene(
             scene = PlayableSceneNode(
                 name = "r_0_0",
-                window = self.window,
+                window = self.__window,
                 view_width = SETTINGS[Keys.VIEW_WIDTH],
                 view_height = SETTINGS[Keys.VIEW_HEIGHT],
                 on_ended = self.__on_scene_end
@@ -155,7 +155,7 @@ class Rughai:
             self.set_active_scene(
                 scene = PlayableSceneNode(
                     name = bundle["next_scene"],
-                    window = self.window,
+                    window = self.__window,
                     view_width = SETTINGS[Keys.VIEW_WIDTH],
                     view_height = SETTINGS[Keys.VIEW_HEIGHT],
                     bundle = bundle,
@@ -178,54 +178,47 @@ class Rughai:
         Draws everything to the screen.
         """
 
-        # new_time: float = time.perf_counter()
-
-        # self.update(dt = new_time - self.__tick_time)
-        # self.update(dt = 1.0 / 60.0)
-
-        # self.__tick_time = new_time
-
         # Update window matrix.
-        self.window.projection = pyglet.math.Mat4.orthogonal_projection(
+        self.__window.projection = pyglet.math.Mat4.orthogonal_projection(
             left = 0,
-            right = self.window.width,
+            right = self.__window.width,
             bottom = 0,
-            top = self.window.height,
+            top = self.__window.height,
             # For some reason near and far planes are inverted in sign, so that -500 means 500 and 1024 means -1024.
             z_near = -3000,
             z_far = 3000
         )
 
         # Benchmark measures render time.
-        with self._render_bench:
-            self.window.clear()
+        with self.__render_bench:
+            self.__window.clear()
 
             # Upscaler handles maintaining the wanted output resolution.
-            with self._upscaler:
+            with self.__upscaler:
                 self.__active_scene.draw()
 
                 if SETTINGS[Keys.DEBUG]:
-                    self._render_bench.draw()
-                    self._update_bench.draw()
-
-                if SETTINGS[Keys.DEBUG]:
-                    self.fps_display.draw()
+                    self.__render_bench.draw()
+                    self.__update_bench.draw()
+                    self.__fps_display.draw()
 
     def update(self, dt: float) -> None:
         # upscaler_program["dt"] = dt
         # Benchmark measures update time.
-        with self._update_bench:
-            # InputController makes sure every input is handled correctly.
-            with controllers.INPUT_CONTROLLER:
-                self.__active_scene.update(dt)
+        with self.__update_bench:
+            # Perform all pre update actions.
+            self.__active_scene.pre_update(dt = dt)
 
             # Compute collisions through collision manager.
-            controllers.COLLISION_CONTROLLER.update(dt)
+            controllers.COLLISION_CONTROLLER.update()
+
+            # InputController makes sure every input is handled correctly.
+            with controllers.INPUT_CONTROLLER:
+                self.__active_scene.update(dt = dt)
 
     def run(self) -> None:
-        # pyglet.clock.schedule_interval(self.update, 1.0 / SETTINGS[Keys.TARGET_FPS])
-        pyglet.clock.schedule(self.update)
-        pyglet.app.run()
+        pyglet.clock.schedule_interval(self.update, 1.0 / (2.0 * SETTINGS[Keys.TARGET_FPS]))
+        pyglet.app.run(interval =  1.0 / SETTINGS[Keys.TARGET_FPS])
 
 # map_res = random_walk(
 #     map_width = 30,
@@ -240,6 +233,4 @@ class Rughai:
 
 # print(map_res_trans)
 
-
-app = Rughai()
-app.run()
+Rughai().run()

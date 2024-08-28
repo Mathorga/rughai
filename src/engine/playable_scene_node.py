@@ -208,6 +208,10 @@ class PlayableSceneNode(Node):
         if uniques.ACTIVE_SCENE is not None:
             uniques.ACTIVE_SCENE.draw()
 
+    def pre_update(self, dt) -> None:
+        if uniques.ACTIVE_SCENE is not None:
+            uniques.ACTIVE_SCENE.pre_update(dt)
+
     def update(self, dt) -> None:
         if uniques.ACTIVE_SCENE is not None:
             uniques.ACTIVE_SCENE.update(dt)

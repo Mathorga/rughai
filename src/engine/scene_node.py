@@ -218,14 +218,20 @@ class SceneNode(Node):
 
         self.__frozen = False
 
-    def update(self, dt: float):
+    def pre_update(self, dt: float) -> None:
+        # Update all children if not frozen.
+        if not self.__frozen:
+            for child in self.__children:
+                child.pre_update(dt = dt)
+
+    def update(self, dt: float) -> None:
         # Update curtain.
         self.__update_curtain(dt)
 
         # Update all children if not frozen.
         if not self.__frozen:
             for child in self.__children:
-                child.update(dt)
+                child.update(dt = dt)
 
         # Update camera.
         self.__update_camera(dt)
