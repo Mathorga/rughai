@@ -226,13 +226,13 @@ class PlayerNode(PositionNode):
         self.__scope.delete()
         self.draw_indicator.delete()
 
-    def pre_update(self, dt: float) -> None:
-        super().pre_update(dt = dt)
+    # def pre_update(self, dt: float) -> None:
+    #     super().pre_update(dt = dt)
 
-        # Compute velocity.
-        velocity: pyglet.math.Vec2 = self.__compute_velocity(dt = dt)
+    #     # Compute velocity.
+    #     velocity: pyglet.math.Vec2 = self.__compute_velocity(dt = dt)
 
-        self.__set_velocity(velocity = velocity)
+    #     self.__set_velocity(velocity = velocity)
 
     def update(self, dt) -> None:
         super().update(dt = dt)
@@ -298,9 +298,9 @@ class PlayerNode(PositionNode):
     def set_animation(self, animation: Animation) -> None:
         self.__sprite.set_image(animation.content)
 
-    def __compute_velocity(self, dt: float) -> pm.Vec2:
-        # Define a vector from speed and direction.
-        return pm.Vec2.from_polar(self.stats.speed * dt, self.stats.move_dir)
+    # def __compute_velocity(self, dt: float) -> pm.Vec2:
+    #     # Define a vector from speed and direction.
+    #     return pm.Vec2.from_polar(self.stats.speed * dt, self.stats.move_dir)
 
     def __set_velocity(self, velocity: pyglet.math.Vec2) -> None:
         # Apply the computed velocity to all colliders.
@@ -311,7 +311,10 @@ class PlayerNode(PositionNode):
         # Apply movement after collision.
         self.set_position(self.__collider.get_position())
 
-        # self.set_velocity(dt = dt)
+        # Compute velocity.
+        velocity: pyglet.math.Vec2 = pm.Vec2.from_polar(self.stats.speed, self.stats.move_dir)
+
+        self.__set_velocity(velocity = velocity)
 
     def __update_sprites(self, dt):
         # Only update facing if there's any horizontal movement.

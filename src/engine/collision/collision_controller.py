@@ -16,6 +16,11 @@ class CollisionController:
         else:
             self.__colliders[collider.type] = [collider]
 
+    def __scale_velocity(self, dt: float) -> None:
+        for collider in self.__colliders[CollisionType.DYNAMIC]:
+            collider_velocity: tuple[float, float] = collider.get_velocity()
+            collider.set_velocity((collider_velocity[0] * dt, collider_velocity[1] * dt))
+
     def __handle_collisions(self) -> None:
         # Only check collision from dynamic to static, since dynamic/dynamic collisions are not needed for now.
         if CollisionType.DYNAMIC in self.__colliders and CollisionType.STATIC in self.__colliders:
@@ -80,7 +85,8 @@ class CollisionController:
                         ))
                         actor.set_velocity((0.0, 0.0))
 
-    def update(self) -> None:
+    def update(self, dt: float) -> None:
+        self.__scale_velocity(dt = dt)
         self.__handle_collisions()
 
     def clear(self) -> None:

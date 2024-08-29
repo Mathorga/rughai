@@ -156,13 +156,20 @@ class ArrowState(State):
 class ArrowFlyState(ArrowState):
     def update(self, dt: float) -> Optional[str]:
         # Define a vector from speed and direction.
-        movement: pm.Vec2 = pm.Vec2.from_polar(self.actor.speed * dt, self.actor.direction)
+        movement: pm.Vec2 = pm.Vec2.from_polar(self.actor.speed, self.actor.direction)
 
         self.actor.set_velocity((movement.x, movement.y))
 
-        scene_bounds: Bounds = uniques.ACTIVE_SCENE.get_cam_bounds()
+        if uniques.ACTIVE_SCENE is None:
+            return
+
+        scene_bounds: Bounds | None = uniques.ACTIVE_SCENE.get_cam_bounds()
+
+        if scene_bounds is None:
+            return
+
         position: tuple[float, float] = self.actor.get_position()
-        if position[0] < scene_bounds.left or position[0] > scene_bounds.right or position[1] < scene_bounds.bottom or position[1] > scene_bounds.top:
+        if position[0] < (scene_bounds.left or position[0]) or position[0] > (scene_bounds.right or position[0]) or position[1] < (scene_bounds.bottom or position[1]) or position[1] > (scene_bounds.top or position[1]):
             return ArrowStates.OUT
 
     def on_collision(self, tags: list[str], enter: bool) -> Optional[str]:

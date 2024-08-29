@@ -206,11 +206,8 @@ class Rughai:
         # upscaler_program["dt"] = dt
         # Benchmark measures update time.
         with self.__update_bench:
-            # Perform all pre update actions.
-            self.__active_scene.pre_update(dt = dt)
-
             # Compute collisions through collision manager.
-            controllers.COLLISION_CONTROLLER.update()
+            controllers.COLLISION_CONTROLLER.update(dt = dt)
 
             # InputController makes sure every input is handled correctly.
             with controllers.INPUT_CONTROLLER:
