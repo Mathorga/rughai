@@ -1,12 +1,14 @@
+import random
 import pyglet
 
 from engine.settings import SETTINGS, Keys
+from engine.utils import utils
 
-def on_effect_eos(self: pyglet.media.Player) -> None:
-    self.pause()
-    self.delete()
+# def on_effect_eos(self: pyglet.media.Player) -> None:
+#     self.pause()
+#     self.delete()
 
-pyglet.media.Player.on_effect_eos = on_effect_eos
+# pyglet.media.Player.on_effect_eos = on_effect_eos
 
 class SoundController:
     def __init__(self) -> None:
@@ -41,6 +43,11 @@ class SoundController:
             self.bg_music = current_source.play()
             self.bg_music.loop = True
 
+    def __on_effect_eos(self, player: pyglet.media.Player) -> None:
+        player.pause()
+        self.effects.remove(player)
+        player.delete()
+
     def play_effect(self, sound: pyglet.media.StaticSource) -> None:
         """
         Plays the provided sound effect.
@@ -50,6 +57,18 @@ class SoundController:
         if not SETTINGS[Keys.SOUND] or not SETTINGS[Keys.SFX]:
             return
 
-        player: pyglet.media.Player = sound.play()
-        player.on_eos = player.on_effect_eos
+        # Create a temporary player.
+        player: pyglet.media.Player = pyglet.media.Player()
+
+        # Queue the source to play.
+        player.queue(sound)
+
+        # Pitch shift the sound.
+        player.pitch = utils.scale(val = random.random(), src = (0.0, 1.0), dst = (0.8, 1.2))
+        player.play()
+
+        # End and delete on end of source event.
+        player.on_eos = lambda : self.__on_effect_eos(player)
+
+        # Store the temporary player.
         self.effects.append(player)

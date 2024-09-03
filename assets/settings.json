@@ -15,7 +15,7 @@
     "camera_speed": 5.0,
     "layers_z_spacing": 64.0,
     "tilemap_buffer": 2,
-    "sound": false,
+    "sound": true,
     "music": false,
     "sfx": false
 }
