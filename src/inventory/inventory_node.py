@@ -6,11 +6,7 @@ import pyglet.math as pm
 
 import engine.controllers as controllers
 from engine.animation import Animation
-from engine.cursor_input_handler import CursorInputHandler
-from engine.inventory_controller import SECTION_OVERFLOW_NONE, SECTION_OVERFLOW_WRAP, MenuSection
 from engine.node import Node, PositionNode
-from engine.settings import GLOBALS, Keys
-from engine.shapes.rect_node import RectNode
 from engine.sprite_node import SpriteNode
 from engine.utils import utils
 

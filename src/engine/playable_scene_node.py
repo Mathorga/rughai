@@ -76,9 +76,14 @@ class PlayableSceneNode(Node):
         #     world_batch = uniques.ACTIVE_SCENE.world_batch,
         #     ui_batch = uniques.ACTIVE_SCENE.ui_batch
         # )
-        slot_image: pyglet.image.Texture = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
+        consumables_slot_image: pyglet.image.Texture = pyglet.resource.image("sprites/menus/inventory/consumable_slot.png")
         utils.set_anchor(
-            resource = slot_image,
+            resource = consumables_slot_image,
+            center = True
+        )
+        ammo_slot_image: pyglet.image.Texture = pyglet.resource.image("sprites/menus/inventory/ammo_slot.png")
+        utils.set_anchor(
+            resource = ammo_slot_image,
             center = True
         )
         menu: MenuNode = MenuNode(
@@ -91,9 +96,9 @@ class PlayableSceneNode(Node):
             world_batch = uniques.ACTIVE_SCENE.world_batch,
             ui_batch = uniques.ACTIVE_SCENE.ui_batch
         )
-        menu.set_section_slot_res("bag", slot_image)
-        menu.set_section_slot_res("ammo", slot_image)
-        menu.set_section_slot_res("quik", slot_image)
+        menu.set_section_slot_res("bag", consumables_slot_image)
+        menu.set_section_slot_res("ammo", ammo_slot_image)
+        menu.set_section_slot_res("quik", ammo_slot_image)
 
         # Scene music.
         self.scene_music: pyglet.media.Source = pyglet.resource.media(name = "sounds/rughai_myst.wav")
