@@ -4,7 +4,7 @@ from typing import Callable
 import pyglet
 
 from constants import collision_tags, events
-from engine.door_node import DoorNode
+from amonite.door_node import DoorNode
 
 DST_DOOR_OFFSET: float = 2.0
 DIRECTIONS: dict[str, tuple[float, float]] = {

@@ -1,6 +1,6 @@
 import pyglet
 
-from engine.node import PositionNode
+from amonite.node import PositionNode
 
 
 class PropNode(PositionNode):

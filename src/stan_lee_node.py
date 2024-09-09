@@ -1,8 +1,8 @@
 import pyglet
 
 from constants import collision_tags
-from engine.dialog_node import DialogNode
-from engine.sprite_node import SpriteNode
+from amonite.dialog_node import DialogNode
+from amonite.sprite_node import SpriteNode
 from props.prop_node import PropNode
 
 class StanLeeNode(PropNode):

@@ -2,7 +2,7 @@ import os
 import json
 import pyglet
 
-from engine.fall_node import FallNode
+from amonite.fall_node import FallNode
 
 
 class FallsLoader:

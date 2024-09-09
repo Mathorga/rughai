@@ -6,9 +6,9 @@ import pyglet.gl as gl
 # setting path
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")))
 
-import engine.controllers as controllers
-from engine.upscaler import Upscaler
-from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
+import amonite.controllers as controllers
+from amonite.upscaler import Upscaler
+from amonite.settings import GLOBALS, SETTINGS, Keys, load_settings
 from prop_placement_scene import PropPlacementScene
 
 class RugHaiSceneEditor:

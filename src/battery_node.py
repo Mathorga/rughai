@@ -1,13 +1,13 @@
 import pyglet
 
 from constants import collision_tags
-from engine import controllers
-from engine.interaction_node import InteractionNode
-from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionRect
+from amonite import controllers
+from amonite.interaction_node import InteractionNode
+from amonite.collision.collision_node import CollisionNode, CollisionType
+from amonite.collision.collision_shape import CollisionRect
 
-from engine.sprite_node import SpriteNode
-from engine.utils import utils
+from amonite.sprite_node import SpriteNode
+from amonite.utils import utils
 from props.prop_node import PropNode
 
 class BatteryNode(PropNode):

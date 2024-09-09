@@ -2,9 +2,9 @@ import random
 from typing import Optional
 import pyglet
 
-from engine.node import Node
-from engine.scene_node import Bounds
-from engine.utils.utils import rect_rect_check
+from amonite.node import Node
+from amonite.scene_node import Bounds
+from amonite.utils.utils import rect_rect_check
 
 from cloud_node import CloudNode
 

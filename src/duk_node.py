@@ -2,9 +2,9 @@ import os
 from typing import Optional
 import pyglet
 
-from engine.node import PositionNode
-from engine.sprite_node import SpriteNode
-from engine.utils import utils
+from amonite.node import PositionNode
+from amonite.sprite_node import SpriteNode
+from amonite.utils import utils
 
 class DukNode(PositionNode):
     def __init__(

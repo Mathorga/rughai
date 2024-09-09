@@ -1,8 +1,8 @@
 from typing import Optional, Tuple
 import pyglet
 
-from engine.node import PositionNode
-from engine.utils.utils import set_animation_anchor
+from amonite.node import PositionNode
+from amonite.utils.utils import set_animation_anchor
 from props.idle_prop_node import PropNode
 
 class RVeg0(PositionNode):

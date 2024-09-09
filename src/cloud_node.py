@@ -5,9 +5,9 @@ import math
 import pyglet
 import pyglet.math as pm
 
-from engine.node import PositionNode
-from engine.sprite_node import SpriteNode
-from engine.settings import SETTINGS, Keys
+from amonite.node import PositionNode
+from amonite.sprite_node import SpriteNode
+from amonite.settings import SETTINGS, Keys
 
 class CloudNode(PositionNode):
     def __init__(

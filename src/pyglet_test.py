@@ -5,8 +5,8 @@ import pyglet.gl as gl
 import pyglet.math as pm
 
 import old_settings
-from engine.camera import Camera
-from engine.upscaler import UpscalerOld
+from amonite.camera import Camera
+from amonite.upscaler import UpscalerOld
 
 pyglet.resource.path = ["../assets"]
 pyglet.resource.reindex()

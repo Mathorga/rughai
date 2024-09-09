@@ -7,17 +7,17 @@ import math
 import pyglet
 import pyglet.math as pm
 
-from engine.loading_indicator_node import LoadingIndicatorNode
-from engine.utils import utils
-from engine.utils.tween import Tween
-import engine.controllers as controllers
-from engine.animation import Animation
-from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionRect
-from engine.node import PositionNode
-from engine.sprite_node import SpriteNode
-from engine.settings import GLOBALS, SETTINGS, Keys
-from engine.state_machine import State, StateMachine
+from amonite.loading_indicator_node import LoadingIndicatorNode
+from amonite.utils import utils
+from amonite.utils.tween import Tween
+import amonite.controllers as controllers
+from amonite.animation import Animation
+from amonite.collision.collision_node import CollisionNode, CollisionType
+from amonite.collision.collision_shape import CollisionRect
+from amonite.node import PositionNode
+from amonite.sprite_node import SpriteNode
+from amonite.settings import GLOBALS, SETTINGS, Keys
+from amonite.state_machine import State, StateMachine
 
 from constants import collision_tags, uniques
 from scope_node import ScopeNode

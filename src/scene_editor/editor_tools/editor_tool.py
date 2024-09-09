@@ -1,10 +1,10 @@
 from typing import Callable, Optional, Tuple
 import pyglet
 
-from engine.collision.collision_node import SENSOR_COLOR
-from engine.door_node import DOOR_COLOR
-from engine.node import Node, PositionNode
-from engine.shapes.rect_node import RectNode
+from amonite.collision.collision_node import SENSOR_COLOR
+from amonite.door_node import DOOR_COLOR
+from amonite.node import Node, PositionNode
+from amonite.shapes.rect_node import RectNode
 
 class EditorTool(Node):
     def __init__(

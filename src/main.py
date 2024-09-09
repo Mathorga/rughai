@@ -5,13 +5,13 @@ import pyglet
 import pyglet.gl as gl
 
 from constants import uniques
-import engine.controllers as controllers
-from engine.benchmark import Benchmark
-from engine.dungen.dungen import random_walk
-from engine.inventory_controller import MenuController
-from engine.playable_scene_node import PlayableSceneNode, PlayableSceneNode
-from engine.upscaler import TrueUpscaler
-from engine.settings import GLOBALS, SETTINGS, Keys, load_settings
+import amonite.controllers as controllers
+from amonite.benchmark import Benchmark
+from amonite.dungen.dungen import random_walk
+from amonite.inventory_controller import MenuController
+from playable_scene_node import PlayableSceneNode, PlayableSceneNode
+from amonite.upscaler import TrueUpscaler
+from amonite.settings import GLOBALS, SETTINGS, Keys, load_settings
 
 FRAGMENT_SOURCE = """
     #version 150 core

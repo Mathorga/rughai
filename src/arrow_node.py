@@ -3,16 +3,16 @@ from typing import Optional
 import pyglet
 import pyglet.math as pm
 from constants import collision_tags, uniques
-from engine import controllers
+from amonite import controllers
 
-from engine.animation import Animation
-from engine.collision.collision_node import CollisionNode, CollisionType
-from engine.collision.collision_shape import CollisionRect
-from engine.node import PositionNode
-from engine.scene_node import Bounds
-from engine.settings import SETTINGS, Keys
-from engine.sprite_node import SpriteNode
-from engine.state_machine import State, StateMachine
+from amonite.animation import Animation
+from amonite.collision.collision_node import CollisionNode, CollisionType
+from amonite.collision.collision_shape import CollisionRect
+from amonite.node import PositionNode
+from amonite.scene_node import Bounds
+from amonite.settings import SETTINGS, Keys
+from amonite.sprite_node import SpriteNode
+from amonite.state_machine import State, StateMachine
 
 class ArrowStates(str, Enum):
     FLY = "fly"

@@ -2,13 +2,13 @@ from typing import Callable
 import pyglet
 
 from constants import collision_tags, scenes
-from engine import controllers
-from engine.node import Node, PositionNode
-from engine.shapes.rect_node import RectNode
+from amonite import controllers
+from amonite.node import Node, PositionNode
+from amonite.shapes.rect_node import RectNode
 from editor_tools.editor_tool import EditorTool
-from engine.text_node import TextNode
-from engine.utils.utils import point_in_rect
-from engine.wall_node import WALL_COLOR, WallNode
+from amonite.text_node import TextNode
+from amonite.utils.utils import point_in_rect
+from amonite.wall_node import WALL_COLOR, WallNode
 from walls_loader import WallsLoader
 
 TOOL_COLOR: tuple[int, int, int, int] = WALL_COLOR

@@ -1,22 +1,21 @@
 from typing import Callable
 import pyglet
 
-import engine.controllers as controllers
-from engine.door_node import DoorNode
-from engine.fall_node import FallNode
-from engine.menu.menu_node import MenuNode
-from engine.node import Node, PositionNode
-from engine.scene_node import SceneNode
-from engine.settings import SETTINGS, Keys
-from engine.sprite_node import SpriteNode
-from engine.tilemap_node import TilemapNode
-from engine.wall_node import WallNode
-from engine.utils import utils
+import amonite.controllers as controllers
+from amonite.door_node import DoorNode
+from amonite.fall_node import FallNode
+from amonite.menu.menu_node import MenuNode
+from amonite.node import Node, PositionNode
+from amonite.scene_node import SceneNode
+from amonite.settings import SETTINGS, Keys
+from amonite.sprite_node import SpriteNode
+from amonite.tilemap_node import TilemapNode
+from amonite.wall_node import WallNode
+from amonite.utils import utils
 
 from doors_loader import DoorsLoader
 from falls_loader import FallsLoader
 from idle_prop_loader import IdlePropLoader
-from inventory.inventory_node import InventoryNode
 from player_node import PlayerNode
 from prop_loader import PropLoader
 from walls_loader import WallsLoader

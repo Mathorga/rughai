@@ -1,12 +1,12 @@
 from enum import Enum
 import os
 import pyglet
-from engine.animation import Animation
+from amonite.animation import Animation
 
-from engine.node import PositionNode
-from engine.settings import SETTINGS, Keys
-from engine.sprite_node import SpriteNode
-from engine.state_machine import State, StateMachine
+from amonite.node import PositionNode
+from amonite.settings import SETTINGS, Keys
+from amonite.sprite_node import SpriteNode
+from amonite.state_machine import State, StateMachine
 
 class ScopeStates(str, Enum):
     IDLE = "idle"

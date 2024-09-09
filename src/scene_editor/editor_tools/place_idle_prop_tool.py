@@ -5,17 +5,17 @@ import json
 from typing import Callable
 import pyglet
 
-from engine.cursor_input_handler import CursorInputHandler
+from amonite.cursor_input_handler import CursorInputHandler
 from props.idle_prop_node import IdlePropNode
 
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")))
 
-from engine import controllers
-from engine.node import Node, PositionNode
+from amonite import controllers
+from amonite.node import Node, PositionNode
 from idle_prop_loader import IdlePropLoader
-from engine.shapes.rect_node import RectNode
-from engine.sprite_node import SpriteNode
-from engine.text_node import TextNode
+from amonite.shapes.rect_node import RectNode
+from amonite.sprite_node import SpriteNode
+from amonite.text_node import TextNode
 from editor_tool import EditorTool
 
 TOOL_COLOR: tuple[int, int, int, int] = (0x22, 0x44, 0x66, 0xAA)

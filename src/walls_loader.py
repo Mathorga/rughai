@@ -2,7 +2,7 @@ import os
 import json
 import pyglet
 
-from engine.wall_node import WallNode
+from amonite.wall_node import WallNode
 
 
 class WallsLoader:

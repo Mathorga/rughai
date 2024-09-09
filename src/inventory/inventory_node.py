@@ -4,11 +4,11 @@ from typing import Callable
 import pyglet
 import pyglet.math as pm
 
-import engine.controllers as controllers
-from engine.animation import Animation
-from engine.node import Node, PositionNode
-from engine.sprite_node import SpriteNode
-from engine.utils import utils
+import amonite.controllers as controllers
+from amonite.animation import Animation
+from amonite.node import Node, PositionNode
+from amonite.sprite_node import SpriteNode
+from amonite.utils import utils
 
 class RealWorldItemNode(PositionNode):
     __slots__ = (

@@ -5,7 +5,7 @@ from pyglet.gl import *
 import random
 import math
 
-from engine.upscaler import UpscalerOld
+from amonite.upscaler import UpscalerOld
 
 # Standard projection Z is 0 to 255. Keep window within that.
 # You will have to change window projection if you wish to go beyond this.

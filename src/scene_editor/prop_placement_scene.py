@@ -2,14 +2,14 @@ from typing import Callable
 import pyglet
 
 from constants import uniques
-from engine import controllers
-from engine.node import Node, PositionNode
-from engine.scene_node import Bounds, SceneNode
-from engine.shapes.line_node import LineNode
-from engine.text_node import TextNode
-from engine.tilemap_node import TilemapNode
-from engine.settings import SETTINGS, Keys
-from engine.map_cursor_node import MapCursorNode
+from amonite import controllers
+from amonite.node import Node, PositionNode
+from amonite.scene_node import Bounds, SceneNode
+from amonite.shapes.line_node import LineNode
+from amonite.text_node import TextNode
+from amonite.tilemap_node import TilemapNode
+from amonite.settings import SETTINGS, Keys
+from amonite.map_cursor_node import MapCursorNode
 
 from editor_tools.editor_tool import EditorTool, PlaceDoorTool
 from editor_tools.place_idle_prop_tool import PlaceIdlePropTool
