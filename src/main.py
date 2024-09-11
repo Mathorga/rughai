@@ -113,6 +113,7 @@ class Rughai:
         )
 
         # Create a scene.
+        self.__active_scene: PlayableSceneNode
         self.set_active_scene(
             scene = PlayableSceneNode(
                 name = "r_0_0",
