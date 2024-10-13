@@ -3,27 +3,19 @@
 </p>
 Rughai is an action RPG game built entirely in Python.
 
+## Create a new venv and activate it
+`python3 -m venv .`</br>
+`chmod +x ./bin/activate`</br>
+`source ./bin/activate`</br>
+
 ## Install dependencies
-`pip3 install -r requirements.txt`
+`pip3 install -r requirements.txt`<br/>
 
 ## Run the game
-`python3 -O .\src\main.py`
+`python3 -O .\src\main.py`<br/>
 
 ## Run the scene editor
-`python3 -O .\src\scene_editor.py <scene_name>`<br/>
-where scene_name is the name of the scene to edit.<br/>
-Possible scene names are:<br/>
-r_0_0<br/>
-r_0_1<br/>
-r_0_2<br/>
-r_0_3<br/>
-r_0_4<br/>
-r_0_5<br/>
-etc<br/>
-
-### Example
-The following command runs the scene editor on r_0_0:<br/>
-`python3 -O .\src\scene_editor.py r_0_0`<br/>
+`python3 -O .\src\scene_editor.py`<br/>
 
 ### Editor tools
 The editor provides various tools, all with the same commands:<br/>
@@ -36,7 +28,8 @@ The editor provides various tools, all with the same commands:<br/>
 
 The currently available tools are:<br/>
   * Prop placement tool<br/>
-  * Wall placement tool (TODO)<br/>
+  * Idle prop placement tool<br/>
+  * Wall placement tool<br/>
   * Door placement tool (TODO)<br/>
 
 ## Compile to executable (using Nuitka)
