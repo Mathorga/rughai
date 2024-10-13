@@ -15,6 +15,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+lib64
 lib64/
 parts/
 sdist/
@@ -131,6 +132,9 @@ env.bak/
 venv.bak/
 bin/
 pyvenv.cfg
+lib/
+# lib64, as created with venv, is a symbolic link, so it's actually a file, not a directory.
+lib64
 
 # Spyder project settings
 .spyderproject
