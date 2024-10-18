@@ -304,8 +304,14 @@ class PlayerNode(PositionNode):
 
     def __set_velocity(self, velocity: pyglet.math.Vec2) -> None:
         # Apply the computed velocity to all colliders.
-        self.__collider.set_velocity((round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(velocity.y, 5)))
-        self.__interactor.set_velocity((round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]), round(velocity.y, 5)))
+        self.__collider.set_velocity((
+            round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]),
+            round(velocity.y, GLOBALS[Keys.FLOAT_ROUNDING])
+        ))
+        self.__interactor.set_velocity((
+            round(velocity.x, GLOBALS[Keys.FLOAT_ROUNDING]),
+            round(velocity.y, GLOBALS[Keys.FLOAT_ROUNDING])
+        ))
 
     def move(self, dt: float) -> None:
         # Apply movement after collision.
