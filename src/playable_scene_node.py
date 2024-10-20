@@ -16,7 +16,7 @@ from amonite.utils import utils
 from doors_loader import DoorsLoader
 from falls_loader import FallsLoader
 from idle_prop_loader import IdlePropLoader
-from player_node import PlayerNode
+from iryo.iryo_node import IryoNode
 from prop_loader import PropLoader
 from walls_loader import WallsLoader
 from clouds_node import CloudsNode
@@ -162,7 +162,7 @@ class PlayableSceneNode(Node):
             bundle["player_position"][1] if bundle else 25 * self.__tile_size,
         )
         cam_target = PositionNode()
-        self._player: PlayerNode = PlayerNode(
+        self._player: IryoNode = IryoNode(
             cam_target = cam_target,
             x = player_position[0],
             y = player_position[1],
