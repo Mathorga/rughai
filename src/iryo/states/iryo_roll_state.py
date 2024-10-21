@@ -12,7 +12,8 @@ class IryoRollState(IryoState):
 
     __slots__ = (
         "__animation",
-        "__startup"
+        "__startup",
+        "__animation_ended"
     )
 
     def __init__(
@@ -24,12 +25,20 @@ class IryoRollState(IryoState):
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_roll_1.json")
         self.__startup: bool = False
+        self.__animation_ended: bool = True
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
         self.__startup = True
+        self.__animation_ended = False
 
     def update(self, dt: float) -> str | None:
+        if self.__animation_ended:
+            if self.actor.stats.speed <= 0.0:
+                return IryoStates.IDLE
+            else:
+                return IryoStates.WALK
+
         if self.__startup:
             self.actor.stats.speed = self.actor.stats.max_speed * 2
             self.__startup = False
@@ -43,8 +52,5 @@ class IryoRollState(IryoState):
         if self.actor.stats.speed <= 0.0:
             return IryoStates.IDLE
 
-    def on_animation_end(self) -> str | None:
-        if self.actor.stats.speed <= 0.0:
-            return IryoStates.IDLE
-        else:
-            return IryoStates.WALK
+    def on_animation_end(self) -> None:
+        self.__animation_ended = True

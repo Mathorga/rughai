@@ -154,7 +154,19 @@ class ArrowState(State):
         self.actor: ArrowNode = actor
 
 class ArrowFlyState(ArrowState):
-    def update(self, dt: float) -> Optional[str]:
+    def __init__(self, actor: ArrowNode) -> None:
+        super().__init__(actor)
+        self.__collided: bool = False
+
+    def start(self) -> None:
+        super().start()
+
+        self.__collided = False
+
+    def update(self, dt: float) -> str | None:
+        if self.__collided:
+            return ArrowStates.HIT
+
         # Define a vector from speed and direction.
         movement: pm.Vec2 = pm.Vec2.from_polar(self.actor.speed, self.actor.direction)
 
@@ -172,9 +184,9 @@ class ArrowFlyState(ArrowState):
         if position[0] < (scene_bounds.left or position[0]) or position[0] > (scene_bounds.right or position[0]) or position[1] < (scene_bounds.bottom or position[1]) or position[1] > (scene_bounds.top or position[1]):
             return ArrowStates.OUT
 
-    def on_collision(self, tags: list[str], enter: bool) -> Optional[str]:
+    def on_collision(self, tags: list[str], enter: bool) -> None:
         if collision_tags.PLAYER_COLLISION in tags and enter:
-            return ArrowStates.HIT
+            self.__collided = True
 
 class ArrowHitState(ArrowState):
     def start(self) -> None:

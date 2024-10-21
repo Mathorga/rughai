@@ -17,6 +17,7 @@ class IryoShootState(IryoState):
 
     __slots__ = (
         "__animation",
+        "__animation_ended",
 
         # Input buffers.
         "__aim"
@@ -30,12 +31,15 @@ class IryoShootState(IryoState):
 
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_shoot_1.json")
+        self.__animation_ended: bool = False
 
         # Input.
         self.__aim: bool = False
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
+
+        self.__animation_ended = False
 
         # Hide loading indicator.
         self.actor.draw_indicator.hide()
@@ -75,11 +79,14 @@ class IryoShootState(IryoState):
             self.__aim = controllers.INPUT_CONTROLLER.get_aim()
 
     def update(self, dt: float) -> str | None:
+        if self.__animation_ended:
+            if not self.__aim:
+                return IryoStates.IDLE
+            else:
+                return IryoStates.AIM
+
         # Read input.
         self.__fetch_input()
 
-    def on_animation_end(self) -> str | None:
-        if not self.__aim:
-            return IryoStates.IDLE
-        else:
-            return IryoStates.AIM
+    def on_animation_end(self) -> None:
+        self.__animation_ended = True

@@ -14,7 +14,8 @@ class IryoLoadState(IryoState):
     """
 
     __slots__ = (
-        "__animation"
+        "__animation",
+        "__animation_ended"
     )
 
     def __init__(
@@ -25,10 +26,13 @@ class IryoLoadState(IryoState):
 
         # Animations.
         self.__animation: Animation = Animation(source = "sprites/iryo/iryo_atk_load.json")
+        self.__animation_ended: bool = False
 
     def start(self) -> None:
         self.actor.set_animation(self.__animation)
         self.actor.draw_indicator.hide()
+
+        self.__animation_ended = False
 
         # Read input.
         aim_vec: pyglet.math.Vec2 = controllers.INPUT_CONTROLLER.get_aim_vec()
@@ -39,5 +43,9 @@ class IryoLoadState(IryoState):
         # Stop moving.
         self.actor.stats.speed = 0.0
 
-    def on_animation_end(self) -> str | None:
-        return IryoStates.AIM
+    def update(self, dt: float) -> str | None:
+        if self.__animation_ended:
+            return IryoStates.AIM
+
+    def on_animation_end(self) -> None:
+        self.__animation_ended = True
