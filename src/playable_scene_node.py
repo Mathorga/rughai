@@ -157,11 +157,11 @@ class PlayableSceneNode(Node):
         )
 
         # Player.
-        player_position = (
+        player_position: tuple[int, int] = (
             bundle["player_position"][0] if bundle else 50 * self.__tile_size,
             bundle["player_position"][1] if bundle else 25 * self.__tile_size,
         )
-        cam_target = PositionNode()
+        cam_target: PositionNode = PositionNode()
         self._player: IryoNode = IryoNode(
             cam_target = cam_target,
             x = player_position[0],
