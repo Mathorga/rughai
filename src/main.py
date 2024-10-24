@@ -9,7 +9,7 @@ import amonite.controllers as controllers
 from amonite.benchmark import Benchmark
 from amonite.dungen.dungen import random_walk
 from amonite.inventory_controller import MenuController
-from playable_scene_node import PlayableSceneNode, PlayableSceneNode
+from playable_scene_node import PlayableSceneNode
 from amonite.upscaler import TrueUpscaler
 from amonite.settings import GLOBALS, SETTINGS, Keys, load_settings
 
