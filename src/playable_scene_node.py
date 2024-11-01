@@ -106,6 +106,7 @@ class PlayableSceneNode(Node):
         # Define a tilemap.
         tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = f"tilemaps/{name}.tmx",
+            tilesets_path = "tilesets/rughai/",
             batch = uniques.ACTIVE_SCENE.world_batch
         )
         self.__tile_size = tilemaps[0].get_tile_size()[0]
@@ -147,11 +148,11 @@ class PlayableSceneNode(Node):
         # Define a background.
         bg_image = pyglet.resource.image("bg.png")
         utils.set_anchor(bg_image, center = True)
-        bg = SpriteNode(
+        bg: SpriteNode = SpriteNode(
             resource = bg_image,
-            on_animation_end = lambda : None,
             x = (tilemap_width * self.__tile_size) // 2,
             y = (tilemap_height * self.__tile_size) // 2,
+            y_sort = False,
             z = -1500,
             batch = uniques.ACTIVE_SCENE.world_batch
         )

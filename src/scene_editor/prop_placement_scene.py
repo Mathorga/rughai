@@ -230,6 +230,7 @@ class PropPlacementScene(Node):
         # Define a tilemap.
         tilemaps: list[TilemapNode] = TilemapNode.from_tmx_file(
             source = f"tilemaps/{scene_name}.tmx",
+            tilesets_path = "tilesets/rughai/",
             batch = uniques.ACTIVE_SCENE.world_batch
         )
         self.__tile_size: tuple[int, int] = tilemaps[0].get_tile_size()

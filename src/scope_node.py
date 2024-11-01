@@ -76,6 +76,7 @@ class ScopeNode(PositionNode):
                     resource = animation.content,
                     x = x,
                     y = y,
+                    y_sort = False,
                     shader = shader_program,
                     batch = batch
                 )
