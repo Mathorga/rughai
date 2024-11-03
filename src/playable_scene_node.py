@@ -12,13 +12,13 @@ from amonite.sprite_node import SpriteNode
 from amonite.tilemap_node import TilemapNode
 from amonite.wall_node import WallNode
 from amonite.utils import utils
+from amonite.utils.walls_loader import WallsLoader
 
 from doors_loader import DoorsLoader
 from falls_loader import FallsLoader
 from idle_prop_loader import IdlePropLoader
 from iryo.iryo_node import IryoNode
 from prop_loader import PropLoader
-from walls_loader import WallsLoader
 from clouds_node import CloudsNode
 from constants import uniques
 
