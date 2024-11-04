@@ -124,6 +124,7 @@ class IryoDataNode(PositionNode):
             resource = shadow_image,
             x = x,
             y = y,
+            y_sort = False,
             batch = batch
         )
 

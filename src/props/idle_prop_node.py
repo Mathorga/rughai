@@ -491,11 +491,24 @@ class IdlePropMeetOutState(IdlePropState):
         return IdlePropStates.IDLE
 
 class IdlePropInteractState(IdlePropState):
+    def __init__(self, actor: IdlePropNode) -> None:
+        super().__init__(actor)
+        self.__animation_ended: bool = False
+
     def start(self) -> None:
         self.actor.set_animation("interact")
 
-    def on_animation_end(self) -> str | None:
-        return IdlePropStates.IDLE
+        # Reset animation end state.
+        self.__animation_ended = False
+
+    def update(self, dt: float) -> str | None:
+        super().update(dt)
+
+        if self.__animation_ended:
+            return IdlePropStates.IDLE
+
+    def on_animation_end(self) -> None:
+        self.__animation_ended = True
 
 class IdlePropHitState(IdlePropState):
     def start(self) -> None:
@@ -505,14 +518,27 @@ class IdlePropHitState(IdlePropState):
         return IdlePropStates.IDLE
 
 class IdlePropDestroyState(IdlePropState):
+    def __init__(self, actor: IdlePropNode) -> None:
+        super().__init__(actor)
+        self.__animation_ended: bool = False
+
     def start(self) -> None:
         self.actor.set_animation("destroy")
 
         # Destroy all colliders and sensors.
         self.actor.delete_colliders()
 
-    def on_animation_end(self) -> str | None:
-        return IdlePropStates.DESTROYED
+        # Reset animation end state.
+        self.__animation_ended = False
+
+    def update(self, dt: float) -> str | None:
+        super().update(dt)
+
+        if self.__animation_ended:
+            return IdlePropStates.DESTROYED
+
+    def on_animation_end(self) -> None:
+        self.__animation_ended = True
 
 class IdlePropDestroyedState(IdlePropState):
     def start(self) -> None:

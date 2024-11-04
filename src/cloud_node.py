@@ -50,6 +50,7 @@ class CloudNode(PositionNode):
             x = x,
             y = y,
             z = self.z,
+            y_sort = False,
             resource = self.image,
             shader = shader_program,
             batch = batch
