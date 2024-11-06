@@ -135,6 +135,7 @@ pyvenv.cfg
 lib/
 # lib64, as created with venv, is a symbolic link, so it's actually a file, not a directory.
 lib64
+Scripts/
 
 # Spyder project settings
 .spyderproject
